@@ -43,7 +43,6 @@ export class ApolloDataSource implements DataSource {
       return;
     }
 
-    const market = res.data.market.tradableInstrument.instrument.code;
     const decimalPlaces = res.data.market.decimalPlaces;
     const candles = res.data.market.candles?.map((d) =>
       extendCandle(d, decimalPlaces)

@@ -3,9 +3,9 @@ import * as React from "react";
 import { ZoomBehavior, zoom, zoomIdentity, zoomTransform } from "d3-zoom";
 import { axisBottom, axisLeft } from "d3-axis";
 import { curveStepAfter, line } from "d3-shape";
+import { extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
-import { extent } from "d3-array";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
 
@@ -51,9 +51,9 @@ export const CandlestickChart = ({
         )
         .range([0, CONTEXT_WIDTH]);
 
-      const yRange = extent(data, (d) => d.open) as [number, number];
+      const yRange = [min(data, (d) => d.low), max(data, (d) => d.high)];
 
-      const y = scaleLinear().domain([652.1002, 668.9113]).range([HEIGHT, 0]);
+      const y = scaleLinear().domain(yRange).range([HEIGHT, 0]);
 
       const xAxis = (g: any, x: any) =>
         g.attr("transform", `translate(0,${HEIGHT})`).call(
@@ -64,7 +64,7 @@ export const CandlestickChart = ({
 
       const yAxis = (g: any, y: any) =>
         g
-          .attr("transform", `translate(0,0)`)
+          .attr("transform", `translate(${20},0)`)
           .call(axisLeft(y).ticks(null, "s"));
 
       const l = (data: any, x: any) =>
@@ -159,13 +159,7 @@ export const CandlestickChart = ({
             .attr("fill", "none")
         );
 
-      focusSvg
-        .call(focusZoomRef.current as ZoomBehavior<SVGSVGElement, any>)
-        .call(
-          (focusZoomRef.current as ZoomBehavior<SVGSVGElement, any>).scaleTo,
-          8,
-          [xFocus(Date.UTC(2021, 1, 18)), 0]
-        );
+      focusSvg.call(focusZoomRef.current as ZoomBehavior<SVGSVGElement, any>);
 
       function zoomed(event: any, data: any) {
         const xz = event.transform.rescaleX(xFocus);
