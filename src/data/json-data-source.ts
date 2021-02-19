@@ -15,7 +15,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
     low: Number(addDecimal(candle.low, decimalPlaces)),
     open: Number(addDecimal(candle.open, decimalPlaces)),
     close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, decimalPlaces)),
+    volume: Number(addDecimal(candle.volume, 0)),
   };
 }
 

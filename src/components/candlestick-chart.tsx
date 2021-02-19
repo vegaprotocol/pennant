@@ -1,14 +1,6 @@
 import * as React from "react";
 
-import {
-  ZoomBehavior,
-  ZoomTransform,
-  zoom as d3Zoom,
-  zoomIdentity,
-  zoomTransform,
-} from "d3-zoom";
-import { candleFill, candleStroke } from "../lib/helpers";
-import { extent, max, min } from "d3-array";
+import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
 // TODO: Rename element to shape
@@ -17,6 +9,7 @@ import { CandleElement } from "./element-candle";
 import { Colors } from "../lib/vega-colours";
 import { Interval } from "../data/globalTypes";
 import { clearCanvas } from "./helpers";
+import { extent } from "d3-array";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
@@ -112,6 +105,22 @@ function drawGrid(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
   }
 }
 
+function drawXAxis(ctx: CanvasRenderingContext2D, xScale: any) {
+  ctx.strokeStyle = "#fff";
+
+  const tickFormat = xScale.tickFormat();
+
+  xScale.ticks().forEach((tick: number) => {
+    ctx.beginPath();
+    ctx.fillStyle = Colors.GRAY_LIGHT;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "center";
+    ctx.font = `12px monospace`;
+    ctx.fillText(tickFormat(tick), xScale(tick), 4);
+    ctx.closePath();
+  });
+}
+
 function drawYAxis(ctx: CanvasRenderingContext2D, yScale: any) {
   ctx.strokeStyle = "#fff";
 
@@ -166,6 +175,8 @@ export const CandlestickChart = ({
   const candleWidth = getCandleWidth(interval);
 
   // Transform data to our intermediate representation. Think of it as a scenegraph
+  // Everything is in domain space. This means this object should only change if the data changes
+  // And ideally, we only need to update a small part of the object
   // Memoize obviously
   const candles = data.map(
     (candle) =>
@@ -209,7 +220,7 @@ export const CandlestickChart = ({
       const context = current;
 
       context.save();
-      clearCanvas(ref.current!, context, "#121212"); // FIXME: Don't use !
+      clearCanvas(ref.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
       drawGrid(context, xr, yr);
 
@@ -224,7 +235,7 @@ export const CandlestickChart = ({
       const context = yAxisContextRef.current;
 
       context.save();
-      clearCanvas(yAxisRef.current!, context, "#121212"); // FIXME: Don't use !
+      clearCanvas(yAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
       drawYAxis(context, yr);
 
@@ -235,7 +246,7 @@ export const CandlestickChart = ({
       const context = studyChartContextRef.current;
 
       context.save();
-      clearCanvas(studyChartRef.current!, context, "#121212"); // FIXME: Don't use !
+      clearCanvas(studyChartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
       for (const bar of bars) {
         bar.draw(context, xr, volumeScale);
@@ -248,17 +259,11 @@ export const CandlestickChart = ({
       const context = studyYAxisContextRef.current;
 
       context.save();
-      clearCanvas(studyYAxisRef.current!, context, "#121212"); // FIXME: Don't use !
+      clearCanvas(studyYAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      context.strokeStyle = "#fff";
+      console.log(volumeScale.domain());
 
-      volumeScale.ticks().forEach((tick) => {
-        context.beginPath();
-        context.moveTo(0, volumeScale(tick));
-        context.lineTo(Y_AXIS_WIDTH, volumeScale(tick));
-        context.stroke();
-        context.closePath();
-      });
+      drawYAxis(context, volumeScale);
 
       context.restore();
     }
@@ -267,17 +272,9 @@ export const CandlestickChart = ({
       const context = xAxisContextRef.current;
 
       context.save();
-      clearCanvas(xAxisRef.current!, context, "#121212"); // FIXME: Don't use !
+      clearCanvas(xAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      context.strokeStyle = "#fff";
-
-      xr.ticks().forEach((tick) => {
-        context.beginPath();
-        context.moveTo(xr(tick), 0);
-        context.lineTo(xr(tick), 20);
-        context.stroke();
-        context.closePath();
-      });
+      drawXAxis(context, xr);
 
       context.restore();
     }
@@ -329,66 +326,106 @@ export const CandlestickChart = ({
         display: "grid",
         gridTemplateColumns: "1fr auto",
         gridTemplateRows: "2fr 1fr auto",
-        gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis ."`,
+        gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
+        gap: "0",
         width: `${WIDTH + Y_AXIS_WIDTH}px`,
         paddingTop: "8px",
       }}
     >
-      <canvas
-        ref={(element) => {
-          if (element) {
-            ref.current = element;
-            contextRef.current = element.getContext("2d");
-          }
+      <div
+        style={{
+          gridArea: "chart",
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
         }}
-        width={WIDTH}
-        height={HEIGHT}
-        style={{ gridArea: "chart" }}
-      ></canvas>
-      <canvas
-        ref={(element) => {
-          if (element) {
-            yAxisRef.current = element;
-            yAxisContextRef.current = element.getContext("2d");
-          }
+      >
+        <canvas
+          ref={(element) => {
+            if (element) {
+              ref.current = element;
+              contextRef.current = element.getContext("2d");
+            }
+          }}
+          width={WIDTH}
+          height={HEIGHT + 1}
+          style={{ display: "block" }}
+        ></canvas>
+      </div>
+      <div
+        style={{
+          gridArea: "y-axis",
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
         }}
-        width={Y_AXIS_WIDTH}
-        height={HEIGHT}
-        style={{ gridArea: "y-axis" }}
-      ></canvas>
-      <canvas
-        ref={(element) => {
-          if (element) {
-            studyChartRef.current = element;
-            studyChartContextRef.current = element.getContext("2d");
-          }
+      >
+        <canvas
+          ref={(element) => {
+            if (element) {
+              yAxisRef.current = element;
+              yAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+          width={Y_AXIS_WIDTH}
+          height={HEIGHT + 1}
+          style={{ display: "block" }}
+        ></canvas>
+      </div>
+      <div
+        style={{
+          gridArea: "study-chart",
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
         }}
-        width={WIDTH}
-        height={HEIGHT / 2}
-        style={{ gridArea: "study-chart" }}
-      ></canvas>
-      <canvas
-        ref={(element) => {
-          if (element) {
-            studyYAxisRef.current = element;
-            studyYAxisContextRef.current = element.getContext("2d");
-          }
+      >
+        <canvas
+          ref={(element) => {
+            if (element) {
+              studyChartRef.current = element;
+              studyChartContextRef.current = element.getContext("2d");
+            }
+          }}
+          width={WIDTH}
+          height={HEIGHT / 2}
+          style={{ display: "block" }}
+        ></canvas>
+      </div>
+      <div
+        style={{
+          gridArea: "study-y-axis",
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
         }}
-        width={Y_AXIS_WIDTH}
-        height={HEIGHT / 2}
-        style={{ gridArea: "study-y-axis" }}
-      ></canvas>
-      <canvas
-        ref={(element) => {
-          if (element) {
-            xAxisRef.current = element;
-            xAxisContextRef.current = element.getContext("2d");
-          }
+      >
+        <canvas
+          ref={(element) => {
+            if (element) {
+              studyYAxisRef.current = element;
+              studyYAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+          width={Y_AXIS_WIDTH}
+          height={HEIGHT / 2}
+          style={{ display: "block" }}
+        ></canvas>
+      </div>
+      <div style={{ gridArea: "x-axis" }}>
+        <canvas
+          ref={(element) => {
+            if (element) {
+              xAxisRef.current = element;
+              xAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+          width={WIDTH}
+          height={20}
+          style={{ display: "block" }}
+        ></canvas>
+      </div>
+      <div
+        style={{
+          gridArea: "corner",
+          backgroundColor: Colors.GRAY_DARK,
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
         }}
-        width={WIDTH}
-        height={20}
-        style={{ gridArea: "x-axis" }}
-      ></canvas>
+      />
     </div>
   );
 };
