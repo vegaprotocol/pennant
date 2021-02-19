@@ -46,7 +46,8 @@ const PADDING_INNER = 0.4;
 const Y_AXIS_WIDTH = 30;
 
 function useZoom(onZoom: any, onEnd: any) {
-  const ref = React.useRef(d3Zoom().on("zoom", onZoom).on("end", onEnd));
+  const ref = React.useRef(d3Zoom());
+  ref.current.on("zoom", onZoom).on("end", onEnd);
   return ref.current;
 }
 
