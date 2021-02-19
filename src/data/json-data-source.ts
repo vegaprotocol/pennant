@@ -1,10 +1,8 @@
-import { candleQuery, candleSubscriptionQuery } from "./queries/candles";
-import { candlesQuery, candlesQueryVariables } from "./candlesQuery";
-
 import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
 import { Interval } from "./globalTypes";
 import { addDecimal } from "../lib/decimal";
+import { candleSubscriptionQuery } from "./queries/candles";
 import json from "../data.json";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {

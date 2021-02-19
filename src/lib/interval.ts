@@ -11,17 +11,6 @@ import { Interval } from "../data/globalTypes";
 type IntervalUnit = "M" | "H" | "D";
 type ParsedInterval = [number, IntervalUnit];
 
-interface IntervalOption {
-  label: string;
-  interval: Interval;
-}
-
-const unitMap = {
-  M: 0,
-  H: 1,
-  D: 2,
-};
-
 /** Parses an interval enum into a value and unit of time */
 export function parseInterval(interval: Interval): ParsedInterval {
   const match = interval.match(/I(\d+)([MHD])/);

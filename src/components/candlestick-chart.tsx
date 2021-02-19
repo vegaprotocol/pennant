@@ -45,9 +45,8 @@ const HEIGHT = 400;
 const PADDING_INNER = 0.4;
 const Y_AXIS_WIDTH = 30;
 
-function useZoom(callback: any) {
-  const ref = React.useRef(d3Zoom().on("zoom", callback));
-
+function useZoom(onZoom: any, onEnd: any) {
+  const ref = React.useRef(d3Zoom().on("zoom", onZoom).on("end", onEnd));
   return ref.current;
 }
 
@@ -302,7 +301,10 @@ export const CandlestickChart = ({
     }
   };
 
-  const zoom = useZoom(({ transform }: any) => zoomed(transform));
+  const zoom = useZoom(
+    ({ transform }: any) => zoomed(transform),
+    () => console.log("end")
+  );
 
   zoom
     .scaleExtent([1, 32])

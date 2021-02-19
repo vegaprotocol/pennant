@@ -5,7 +5,6 @@ import * as React from "react";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 
-import { ApolloDataSource } from "./data/apollo-data-source";
 import { Chart } from "./components/chart";
 import { Interval } from "./data/globalTypes";
 import { JsonDataSource } from "./data/json-data-source";

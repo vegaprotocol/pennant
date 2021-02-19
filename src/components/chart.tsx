@@ -75,7 +75,7 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
     return () => {
       myDataSource.unsubscribe();
     };
-  }, [dataSource, query]);
+  }, [dataSource, interval, query]);
 
   const handleGetDataRange = (from: string, to: string) => {
     //query(from, to);
