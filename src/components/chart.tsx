@@ -3,8 +3,6 @@ import * as React from "react";
 import { CandlestickChart } from "./candlestick-chart";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../data/globalTypes";
-import { extent } from "d3-array";
-import { unionBy } from "lodash";
 
 function mergeData(
   a: { date: Date; datetime: string }[],
@@ -18,7 +16,7 @@ function mergeData(
   while (i < a.length && j < b.length) {
     if (a[i].date < b[j].date) {
       mergedArray.push(a[i++]);
-    } else if (a[i].date > b[i].date) {
+    } else if (a[i].date > b[j].date) {
       mergedArray.push(b[j++]);
     } else {
       mergedArray.push(a[i++]);
@@ -34,50 +32,40 @@ function mergeData(
     mergedArray.push(b[j++]);
   }
 
-  console.log(a, b, mergedArray);
-
   return mergedArray;
 }
 
 export type ChartProps = {
   dataSource: DataSource;
+  interval: Interval;
 };
 
-export const Chart = ({ dataSource }: ChartProps) => {
+export const Chart = ({ dataSource, interval }: ChartProps) => {
   const [data, setData] = React.useState<any[]>([]);
 
   const query = React.useCallback(
     async (from: string, to: string) => {
-      console.log(from, to);
-      const newData = await dataSource.query(Interval.I1M, from, to);
+      const newData = await dataSource.query(interval, from, to);
+
+      console.info("newest data", newData);
 
       // TODO: need convenience functions for calculating range, sorting and distinct values and merging
       setData((data) => mergeData(data, newData));
     },
-    [dataSource]
+    [dataSource, interval]
   );
 
   React.useEffect(() => {
     function subscribe() {
-      dataSource.subscribe(Interval.I1M, (datum) => {
-        const foundIndex = data.findIndex((d) => d.datetime === datum.datetime);
-
-        const newData = [...data];
-
-        if (foundIndex === -1) {
-          newData.push(datum);
-        } else {
-          newData[foundIndex] = datum;
-        }
-
-        //setData(newData);
+      dataSource.subscribe(interval, (datum) => {
+        setData((data) => mergeData(data, [datum]));
       });
     }
 
     const myDataSource = dataSource;
 
     query(new Date(2021, 1, 17, 13).toISOString(), new Date().toISOString());
-    subscribe();
+    //subscribe();
 
     return () => {
       myDataSource.unsubscribe();
@@ -85,13 +73,18 @@ export const Chart = ({ dataSource }: ChartProps) => {
   }, [dataSource, query]);
 
   const handleGetDataRange = (from: string, to: string) => {
-    console.log("getRange");
-    query(from, to);
+    //query(from, to);
   };
 
   return (
     <div>
-      <CandlestickChart data={data} onGetDataRange={handleGetDataRange} />
+      {data.length > 0 && (
+        <CandlestickChart
+          data={data}
+          interval={interval}
+          onGetDataRange={handleGetDataRange}
+        />
+      )}
     </div>
   );
 };

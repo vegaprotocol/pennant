@@ -5,6 +5,7 @@ import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
 import { Interval } from "./globalTypes";
 import { addDecimal } from "../lib/decimal";
+import json from "../data.json";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
@@ -18,7 +19,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
   };
 }
 
-export class ApolloDataSource implements DataSource {
+export class JsonDataSource implements DataSource {
   client: ApolloClient<any>;
   sub: any = null;
   marketId: string;
@@ -29,26 +30,12 @@ export class ApolloDataSource implements DataSource {
   }
 
   async query(interval: Interval, from: string, to: string) {
-    const res = await this.client.query<candlesQuery, candlesQueryVariables>({
-      query: candleQuery,
-      variables: {
-        marketId: this.marketId,
-        interval,
-        since: from,
-      },
-      fetchPolicy: "no-cache",
-    });
-
-    if (!res?.data?.market?.candles) {
-      return [];
-    }
-
-    const decimalPlaces = res.data.market.decimalPlaces;
-    const candles = res.data.market.candles?.map((d) =>
+    const decimalPlaces = json.data.market.decimalPlaces;
+    const candles = json.data.market.candles?.map((d) =>
       extendCandle(d, decimalPlaces)
     );
 
-    return candles;
+    return Promise.resolve(candles);
   }
 
   subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
