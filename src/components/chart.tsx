@@ -3,6 +3,7 @@ import * as React from "react";
 import { CandlestickChart } from "./candlestick-chart";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../data/globalTypes";
+import { format } from "date-fns";
 
 function mergeData(
   a: { date: Date; datetime: string }[],
@@ -42,6 +43,10 @@ export type ChartProps = {
 
 export const Chart = ({ dataSource, interval }: ChartProps) => {
   const [data, setData] = React.useState<any[]>([]);
+  const [bounds, setBounds] = React.useState<[Date, Date]>([
+    new Date(),
+    new Date(),
+  ]);
 
   const query = React.useCallback(
     async (from: string, to: string) => {
@@ -78,10 +83,14 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
 
   return (
     <div>
+      <p>
+        {format(bounds[0], "MMM d HH:mm")} - {format(bounds[1], "MMM d HH:mm")}
+      </p>
       {data.length > 0 && (
         <CandlestickChart
           data={data}
           interval={interval}
+          onBoundsChange={setBounds}
           onGetDataRange={handleGetDataRange}
         />
       )}

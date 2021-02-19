@@ -138,12 +138,14 @@ function drawYAxis(ctx: CanvasRenderingContext2D, yScale: any) {
 export type CandleStickChartProps = {
   data: CandleDetailsExtended[];
   interval: Interval;
+  onBoundsChange?: (bounds: [Date, Date]) => void;
   onGetDataRange: (from: string, to: string) => void;
 };
 
 export const CandlestickChart = ({
   data,
   interval,
+  onBoundsChange,
   onGetDataRange,
 }: CandleStickChartProps) => {
   const zoomRef = React.useRef<HTMLDivElement | null>(null);
@@ -166,6 +168,8 @@ export const CandlestickChart = ({
 
   const xAxisRef = React.useRef<HTMLCanvasElement | null>(null);
   const xAxisContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+
+  const [isPresent, setIsPresent] = React.useState(true);
 
   const throttledOnGetDataRange = React.useMemo(
     () => throttle(onGetDataRange, 5000),
@@ -210,7 +214,7 @@ export const CandlestickChart = ({
     .range([HEIGHT / 2, 0]);
 
   // FIXME: When closed over this is stale?
-  const zoomed = (transform: ZoomTransform) => {
+  const zoomed = (transform: ZoomTransform, interactive = true) => {
     const { current } = contextRef;
 
     const xr = transform.rescaleX(x);
@@ -261,8 +265,6 @@ export const CandlestickChart = ({
       context.save();
       clearCanvas(studyYAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      console.log(volumeScale.domain());
-
       drawYAxis(context, volumeScale);
 
       context.restore();
@@ -280,9 +282,12 @@ export const CandlestickChart = ({
     }
 
     const dataWindow = extent(data, (d) => d.date) as [Date, Date];
-    const viewWindow = xr.domain();
+    const domain = xr.domain();
+    const viewWindow = [domain[0], domain[domain.length - 1]] as [Date, Date];
 
     const viewWindowWidth = viewWindow[1].getTime() - viewWindow[0].getTime();
+
+    onBoundsChange?.(viewWindow);
 
     if (
       viewWindow[0].getTime() <
@@ -290,7 +295,6 @@ export const CandlestickChart = ({
         viewWindow[1].getTime() -
         viewWindow[0].getTime()
     ) {
-      console.info("Fetch me more data :O");
       throttledOnGetDataRange(
         new Date(dataWindow[0].getTime() - 2 * viewWindowWidth).toISOString(),
         new Date(dataWindow[0].getTime()).toISOString()
@@ -317,115 +321,118 @@ export const CandlestickChart = ({
     zoomed(zoomIdentity);
   }, [zoom]);
 
-  zoomed(zoomIdentity);
+  //zoomed(zoomIdentity);
 
   return (
-    <div
-      ref={zoomRef}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr auto",
-        gridTemplateRows: "2fr 1fr auto",
-        gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
-        gap: "0",
-        width: `${WIDTH + Y_AXIS_WIDTH}px`,
-        paddingTop: "8px",
-      }}
-    >
+    <div>
+      <div>{`isPresent: ${isPresent}`}</div>
       <div
+        ref={zoomRef}
         style={{
-          gridArea: "chart",
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+          display: "grid",
+          gridTemplateColumns: "1fr auto",
+          gridTemplateRows: "2fr 1fr auto",
+          gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
+          gap: "0",
+          width: `${WIDTH + Y_AXIS_WIDTH}px`,
+          paddingTop: "8px",
         }}
       >
-        <canvas
-          ref={(element) => {
-            if (element) {
-              ref.current = element;
-              contextRef.current = element.getContext("2d");
-            }
+        <div
+          style={{
+            gridArea: "chart",
+            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
           }}
-          width={WIDTH}
-          height={HEIGHT + 1}
-          style={{ display: "block" }}
-        ></canvas>
-      </div>
-      <div
-        style={{
-          gridArea: "y-axis",
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-      >
-        <canvas
-          ref={(element) => {
-            if (element) {
-              yAxisRef.current = element;
-              yAxisContextRef.current = element.getContext("2d");
-            }
+        >
+          <canvas
+            ref={(element) => {
+              if (element) {
+                ref.current = element;
+                contextRef.current = element.getContext("2d");
+              }
+            }}
+            width={WIDTH}
+            height={HEIGHT + 1}
+            style={{ display: "block" }}
+          ></canvas>
+        </div>
+        <div
+          style={{
+            gridArea: "y-axis",
+            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
           }}
-          width={Y_AXIS_WIDTH}
-          height={HEIGHT + 1}
-          style={{ display: "block" }}
-        ></canvas>
-      </div>
-      <div
-        style={{
-          gridArea: "study-chart",
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-      >
-        <canvas
-          ref={(element) => {
-            if (element) {
-              studyChartRef.current = element;
-              studyChartContextRef.current = element.getContext("2d");
-            }
+        >
+          <canvas
+            ref={(element) => {
+              if (element) {
+                yAxisRef.current = element;
+                yAxisContextRef.current = element.getContext("2d");
+              }
+            }}
+            width={Y_AXIS_WIDTH}
+            height={HEIGHT + 1}
+            style={{ display: "block" }}
+          ></canvas>
+        </div>
+        <div
+          style={{
+            gridArea: "study-chart",
+            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
           }}
-          width={WIDTH}
-          height={HEIGHT / 2}
-          style={{ display: "block" }}
-        ></canvas>
-      </div>
-      <div
-        style={{
-          gridArea: "study-y-axis",
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-      >
-        <canvas
-          ref={(element) => {
-            if (element) {
-              studyYAxisRef.current = element;
-              studyYAxisContextRef.current = element.getContext("2d");
-            }
+        >
+          <canvas
+            ref={(element) => {
+              if (element) {
+                studyChartRef.current = element;
+                studyChartContextRef.current = element.getContext("2d");
+              }
+            }}
+            width={WIDTH}
+            height={HEIGHT / 2}
+            style={{ display: "block" }}
+          ></canvas>
+        </div>
+        <div
+          style={{
+            gridArea: "study-y-axis",
+            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
           }}
-          width={Y_AXIS_WIDTH}
-          height={HEIGHT / 2}
-          style={{ display: "block" }}
-        ></canvas>
-      </div>
-      <div style={{ gridArea: "x-axis" }}>
-        <canvas
-          ref={(element) => {
-            if (element) {
-              xAxisRef.current = element;
-              xAxisContextRef.current = element.getContext("2d");
-            }
+        >
+          <canvas
+            ref={(element) => {
+              if (element) {
+                studyYAxisRef.current = element;
+                studyYAxisContextRef.current = element.getContext("2d");
+              }
+            }}
+            width={Y_AXIS_WIDTH}
+            height={HEIGHT / 2}
+            style={{ display: "block" }}
+          ></canvas>
+        </div>
+        <div style={{ gridArea: "x-axis" }}>
+          <canvas
+            ref={(element) => {
+              if (element) {
+                xAxisRef.current = element;
+                xAxisContextRef.current = element.getContext("2d");
+              }
+            }}
+            width={WIDTH}
+            height={20}
+            style={{ display: "block" }}
+          ></canvas>
+        </div>
+        <div
+          style={{
+            gridArea: "corner",
+            backgroundColor: Colors.GRAY_DARK,
+            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
           }}
-          width={WIDTH}
-          height={20}
-          style={{ display: "block" }}
-        ></canvas>
+        />
       </div>
-      <div
-        style={{
-          gridArea: "corner",
-          backgroundColor: Colors.GRAY_DARK,
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-      />
     </div>
   );
 };

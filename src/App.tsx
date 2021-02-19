@@ -54,22 +54,32 @@ function App() {
     >
       <h1>Console Charts</h1>
 
-      <MarketSelect
-        items={markets}
-        itemRenderer={renderMarket}
-        onItemSelect={(item: any) => {
-          setMarket(item);
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "8px",
+          paddingBottom: "8px",
         }}
-        noResults={<MenuItem disabled={true} text="No results." />}
-        filterable={false}
       >
-        <Button
-          text={
-            market?.tradableInstrument.instrument.name ?? "No market selected"
-          }
-          disabled={false}
-        />
-      </MarketSelect>
+        <MarketSelect
+          items={markets}
+          itemRenderer={renderMarket}
+          onItemSelect={(item: any) => {
+            setMarket(item);
+          }}
+          noResults={<MenuItem disabled={true} text="No results." />}
+          filterable={false}
+        >
+          <Button
+            text={
+              market?.tradableInstrument.instrument.name ?? "No market selected"
+            }
+            disabled={false}
+          />
+        </MarketSelect>
+        <Button icon="refresh" intent="primary" text="Reset" />
+      </div>
       <Chart dataSource={dataSource} interval={Interval.I5M} />
     </div>
   );
