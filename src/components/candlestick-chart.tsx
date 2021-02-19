@@ -252,6 +252,8 @@ export const CandlestickChart = ({
       context.save();
       clearCanvas(studyChartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
+      drawGrid(context, xr, volumeScale);
+
       for (const bar of bars) {
         bar.draw(context, xr, volumeScale);
       }
