@@ -62,11 +62,6 @@ const getCandleWidth = (interval: Interval) => {
 const HEIGHT = 400;
 const PADDING_INNER = 0.4;
 
-function useScale(scale: any) {
-  const ref = React.useRef(scale.copy());
-  return ref;
-}
-
 export interface CandleDetailsExtended {
   datetime: string;
   date: Date;
@@ -181,6 +176,10 @@ export type CandleStickChartProps = {
   data: CandleDetailsExtended[];
   interval: Interval;
   onBoundsChange?: (bounds: [Date, Date]) => void;
+  onMouseMove?: (position: [number, number]) => void;
+  onMouseOut?: () => void;
+  onMouseOver?: () => void;
+  onRightClick?: (position: [number, number]) => void;
   onGetDataRange: (from: string, to: string) => void;
 };
 
@@ -188,10 +187,13 @@ export const CandlestickChart = ({
   data,
   interval,
   onBoundsChange,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+  onRightClick,
   onGetDataRange,
 }: CandleStickChartProps) => {
   const isPinnedRef = React.useRef(true);
-
   const previousZoomTransform = React.useRef(zoomIdentity);
 
   const zoomControl2 = React.useMemo(
@@ -245,7 +247,7 @@ export const CandlestickChart = ({
       scaleUtc().domain(
         extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
       ),
-    []
+    [data]
   );
 
   const xr = React.useMemo(
@@ -253,7 +255,7 @@ export const CandlestickChart = ({
       scaleUtc().domain(
         extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
       ),
-    []
+    [data]
   );
 
   const y = React.useMemo(
@@ -262,7 +264,7 @@ export const CandlestickChart = ({
         min(data, (d: CandleDetailsExtended) => d.low),
         max(data, (d) => d.high),
       ] as [number, number]),
-    []
+    [data]
   );
 
   const volumeScale = scaleLinear()
@@ -302,21 +304,18 @@ export const CandlestickChart = ({
     [render]
   );
 
-  const reset = React.useCallback(
-    function reset() {
-      select(plotYAxisRef.current)
-        .transition()
-        .duration(750)
-        .call(zoom, zoomIdentity);
+  const reset = React.useCallback(function reset() {
+    select(plotYAxisRef.current)
+      .transition()
+      .duration(750)
+      .call(zoom, zoomIdentity);
 
-      (select(chartRef.current).node() as any).requestRedraw();
-    },
-    [x, xr]
-  );
+    (select(chartRef.current).node() as any).requestRedraw();
+  }, []);
 
   // Plot area
   React.useEffect(() => {
-    const container = select(plotAreaRef.current)
+    select(plotAreaRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
         xr.range([0, width]);
@@ -408,7 +407,7 @@ export const CandlestickChart = ({
 
   // Study
   React.useEffect(() => {
-    const container = select(studyAreaRef.current)
+    select(studyAreaRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
         x.range([0, width]);
@@ -430,13 +429,11 @@ export const CandlestickChart = ({
           }
         }
       });
-
-    container.call(zoomControl, x, volumeScale);
   }, [bars, x, volumeScale]);
 
   // Study y axis
   React.useEffect(() => {
-    const container = select(studyYAxisRef.current)
+    select(studyYAxisRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
         x.range([0, width]);
@@ -455,13 +452,11 @@ export const CandlestickChart = ({
 
         ctx.restore();
       });
-
-    //container.call(zoomControl, null, volumeScale);
-  }, [x, volumeScale, zoomControl]);
+  }, [x, volumeScale]);
 
   // X axis
   React.useEffect(() => {
-    const container = select(xAxisRef.current).on("draw", (event) => {
+    select(xAxisRef.current).on("draw", (event) => {
       const canvas = select(xAxisRef.current)
         ?.select("canvas")
         ?.node() as HTMLCanvasElement;
@@ -473,32 +468,17 @@ export const CandlestickChart = ({
         drawXAxis(ctx, x);
       }
     });
-
-    //container.call(zoomControl, x, null);
-  }, [x, y, zoomControl]);
+  }, [x, y]);
 
   // Chart container
   React.useEffect(() => {
     const chartContainer = select(chartRef.current).on("draw", () => {
       // Use group draw event to ensure scales have their domain updated before
       // any of the elements are drawn (draw events are dispatched in document order).
-      const xExtent = extent(data, (d: CandleDetailsExtended) => d.date) as [
-        Date,
-        Date
-      ];
-
-      //x.domain(xExtent);
-
-      const yExtent = [
-        min(data, (d: CandleDetailsExtended) => d.low),
-        max(data, (d: CandleDetailsExtended) => d.high),
-      ] as [number, number];
-
-      // y.domain(yExtent);
     });
 
     (chartContainer?.node() as any).requestRedraw();
-  }, [data, x, y, zoomControl]);
+  }, [data, x, y]);
 
   return (
     <d3fc-group
