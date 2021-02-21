@@ -14,6 +14,7 @@ import { Colors } from "../lib/vega-colours";
 import { Interval } from "../data/globalTypes";
 import { clearCanvas } from "./helpers";
 import fcZoom from "../lib/zoom";
+import { format } from "date-fns";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
@@ -82,7 +83,12 @@ function drawCrosshair(
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
 
+  const width = xScale.range()[1];
+  const height = yScale.range()[1];
+
   ctx.save();
+
+  // Lines
   ctx.setLineDash([6, 6]);
   ctx.strokeStyle = Colors.GRAY_LIGHT;
   ctx.beginPath();
@@ -95,6 +101,40 @@ function drawCrosshair(
   ctx.lineTo(xRange[1], Math.round(y) + 0.5);
   ctx.stroke();
   ctx.closePath();
+
+  // x value
+  ctx.font = `12px monospace`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const value = xScale.invert(x);
+  const xPad = 5;
+  const text = value.toString();
+  const textWidth = ctx.measureText(text).width;
+  const rectWidth = textWidth + xPad * 2;
+  const rectHeight = 19;
+
+  ctx.beginPath();
+  ctx.moveTo(x, height - rectHeight - 5);
+  ctx.lineTo(x + 5, height - rectHeight);
+  ctx.lineTo(x + rectWidth / 2, height - rectHeight);
+  ctx.lineTo(x + rectWidth / 2, height);
+  ctx.lineTo(x - rectWidth / 2, height);
+  ctx.lineTo(x - rectWidth / 2, height - rectHeight);
+  ctx.lineTo(x - 5, height - rectHeight);
+  ctx.closePath();
+
+  ctx.fillStyle = Colors.GRAY_DARK_1;
+  ctx.strokeStyle = "white";
+  ctx.fill();
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.fillStyle = Colors.WHITE;
+  ctx.fillText(text, x, height - rectHeight / 2);
+  ctx.closePath();
+
   ctx.restore();
 }
 
@@ -153,23 +193,123 @@ function drawXAxis(ctx: CanvasRenderingContext2D, xScale: any) {
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     ctx.font = `12px monospace`;
-    ctx.fillText(tickFormat(tick), xScale(tick), 4);
+    ctx.fillText(tickFormat(tick), xScale(tick), 9);
     ctx.closePath();
   });
+}
+
+function drawXAxisTooltip(
+  ctx: CanvasRenderingContext2D,
+  xScale: any,
+  yScale: any,
+  position: [number, number] | null
+) {
+  if (position) {
+    const height = 24.5;
+    const x = position[0];
+
+    ctx.font = `12px monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const value = xScale.invert(x);
+    const xPad = 5;
+    const text = format(value, "HH:mm");
+    const textWidth = ctx.measureText(text).width;
+    const rectWidth = textWidth + xPad * 2;
+    const rectHeight = 19;
+
+    ctx.beginPath();
+    ctx.moveTo(x, height - rectHeight - 5);
+    ctx.lineTo(x + 5, height - rectHeight);
+    ctx.lineTo(x + rectWidth / 2, height - rectHeight);
+    ctx.lineTo(x + rectWidth / 2, height);
+    ctx.lineTo(x - rectWidth / 2, height);
+    ctx.lineTo(x - rectWidth / 2, height - rectHeight);
+    ctx.lineTo(x - 5, height - rectHeight);
+    ctx.closePath();
+
+    ctx.fillStyle = Colors.GRAY_DARK_1;
+    ctx.strokeStyle = "white";
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.fillStyle = Colors.WHITE;
+    ctx.fillText(text, x, height - rectHeight / 2);
+    ctx.closePath();
+  }
 }
 
 function drawYAxis(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
   ctx.strokeStyle = "#fff";
 
   yScale.ticks().forEach((tick: number) => {
+    const text = tick.toString();
+    const textWidth = ctx.measureText(text).width;
+
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(
+      xScale.range()[1] - textWidth - 10,
+      yScale(tick) - 10,
+      textWidth + 10,
+      20
+    );
+    ctx.closePath();
+
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "middle";
     ctx.textAlign = "right";
     ctx.font = `12px monospace`;
-    ctx.fillText(String(Math.round(tick)), xScale.range()[1] - 4, yScale(tick));
+    ctx.fillText(String(Math.round(tick)), xScale.range()[1] - 5, yScale(tick));
     ctx.closePath();
   });
+}
+
+function drawYAxisTooltip(
+  ctx: CanvasRenderingContext2D,
+  xScale: any,
+  yScale: any,
+  position: [number, number] | null,
+  decimalPlaces = 5
+) {
+  if (position) {
+    const width = xScale.range()[1];
+    const y = position[1] + 0.5;
+
+    ctx.font = `12px monospace`;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+    const value = yScale.invert(y);
+    const xPad = 5;
+    const text = value.toFixed(decimalPlaces);
+    const textWidth = ctx.measureText(text).width;
+    const rectWidth = textWidth + xPad;
+    const rectHeight = 18;
+
+    ctx.beginPath();
+    ctx.moveTo(width - rectWidth - 10, y);
+    ctx.lineTo(width - rectWidth, y - rectHeight / 2);
+    ctx.lineTo(width, y - rectHeight / 2);
+    ctx.lineTo(width, y + rectHeight / 2);
+    ctx.lineTo(width - rectWidth, y + rectHeight / 2);
+    ctx.closePath();
+
+    ctx.fillStyle = Colors.GRAY_DARK_1;
+    ctx.strokeStyle = "white";
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.fillStyle = Colors.WHITE;
+    ctx.fillText(text, width - xPad, y);
+    ctx.closePath();
+  }
 }
 
 export type CandleStickChartProps = {
@@ -210,7 +350,9 @@ export const CandlestickChart = ({
   const plotCrosshairRef = React.useRef<HTMLElement>(null!);
   const studyAreaRef = React.useRef<HTMLElement>(null!);
   const studyYAxisRef = React.useRef<HTMLElement>(null!);
-  const xAxisRef = React.useRef<HTMLCanvasElement | null>(null);
+  const xAxisRef = React.useRef<HTMLCanvasElement>(null!);
+
+  const crosshairRef = React.useRef<[number, number] | null>(null);
 
   const throttledOnGetDataRange = React.useMemo(
     () => throttle(onGetDataRange, 5000),
@@ -358,6 +500,7 @@ export const CandlestickChart = ({
 
         if (ctx) {
           drawYAxis(ctx, x, y);
+          drawYAxisTooltip(ctx, xr, y, crosshairRef.current);
         }
 
         ctx.restore();
@@ -388,21 +531,30 @@ export const CandlestickChart = ({
         ctx.restore();
       });
 
-    container.on("mousemove", (event) => {
-      const { offsetX, offsetY } = event;
+    container
+      .on("mousemove", (event) => {
+        const { offsetX, offsetY } = event;
 
-      const canvas = select(plotCrosshairRef.current)
-        ?.select("canvas")
-        ?.node() as HTMLCanvasElement;
+        const canvas = select(plotCrosshairRef.current)
+          ?.select("canvas")
+          ?.node() as HTMLCanvasElement;
 
-      const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
 
-      clearCanvas(canvas, ctx!);
-      drawCrosshair(ctx!, x, y, offsetX, offsetY);
+        crosshairRef.current = [offsetX, offsetY];
 
-      onMouseMove?.([offsetX, offsetY]);
-    });
-  }, [x, y, zoomControl2]);
+        clearCanvas(canvas, ctx!);
+        drawCrosshair(ctx!, x, y, offsetX, offsetY);
+
+        (xAxisRef.current as any).requestRedraw();
+        (plotYAxisRef.current as any).requestRedraw();
+
+        onMouseMove?.([offsetX, offsetY]);
+      })
+      .on("mouseout", () => {
+        crosshairRef.current = null;
+      });
+  }, [onMouseMove, x, y, zoomControl2]);
 
   // Study
   React.useEffect(() => {
@@ -465,9 +617,10 @@ export const CandlestickChart = ({
       if (ctx) {
         clearCanvas(canvas, ctx, "#121212");
         drawXAxis(ctx, x);
+        drawXAxisTooltip(ctx, xr, y, crosshairRef.current);
       }
     });
-  }, [x, y]);
+  }, [x, xr, y]);
 
   // Chart container
   React.useEffect(() => {
@@ -537,13 +690,13 @@ export const CandlestickChart = ({
       <div
         style={{ gridArea: "x-axis", position: "relative" }}
         onClick={() => {
-          console.log("hi");
+          console.log("RESET");
           reset();
         }}
       >
         <d3fc-canvas
           ref={xAxisRef}
-          style={{ width: "100%", height: "20px" }}
+          style={{ width: "100%", height: "26px" }}
         ></d3fc-canvas>
       </div>
     </d3fc-group>
