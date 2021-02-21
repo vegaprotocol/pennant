@@ -659,10 +659,6 @@ export const CandlestickChart = ({
           style={{ position: "absolute", width: "100%", height: "100%" }}
         ></d3fc-canvas>
         <d3fc-canvas
-          ref={plotYAxisRef}
-          style={{ position: "absolute", width: "100%", height: "100%" }}
-        ></d3fc-canvas>
-        <d3fc-canvas
           ref={plotCrosshairRef}
           style={{
             position: "absolute",
@@ -670,6 +666,10 @@ export const CandlestickChart = ({
             height: "100%",
             cursor: "crosshair",
           }}
+        ></d3fc-canvas>
+        <d3fc-canvas
+          ref={plotYAxisRef}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
         ></d3fc-canvas>
       </div>
       <div
