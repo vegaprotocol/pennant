@@ -47,6 +47,7 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
     new Date(),
     new Date(),
   ]);
+  const [position, setPosition] = React.useState<[number, number]>();
 
   const query = React.useCallback(
     async (from: string, to: string) => {
@@ -86,6 +87,7 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
       <p>
         {format(bounds[0], "MMM d HH:mm")} - {format(bounds[1], "MMM d HH:mm")}
       </p>
+      <p>{position && `${position[0]}, ${position[1]}`}</p>
       {data.length > 0 && (
         <div
           style={{
@@ -99,6 +101,7 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
             data={data}
             interval={interval}
             onBoundsChange={setBounds}
+            onMouseMove={setPosition}
             onGetDataRange={handleGetDataRange}
           />
         </div>

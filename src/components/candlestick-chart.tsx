@@ -391,8 +391,6 @@ export const CandlestickChart = ({
     container.on("mousemove", (event) => {
       const { offsetX, offsetY } = event;
 
-      console.log(offsetX, offsetY);
-
       const canvas = select(plotCrosshairRef.current)
         ?.select("canvas")
         ?.node() as HTMLCanvasElement;
@@ -400,8 +398,9 @@ export const CandlestickChart = ({
       const ctx = canvas.getContext("2d");
 
       clearCanvas(canvas, ctx!);
-
       drawCrosshair(ctx!, x, y, offsetX, offsetY);
+
+      onMouseMove?.([offsetX, offsetY]);
     });
   }, [x, y, zoomControl2]);
 
