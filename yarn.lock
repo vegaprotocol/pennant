@@ -1200,6 +1200,23 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@d3fc/d3fc-element@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-element/-/d3fc-element-6.1.2.tgz#0b9cb4cd988e12b61a135e244e343ed5aea6ff20"
+  integrity sha512-1kBs0pzHTanLsDAL43xTSXD9htSQIs9huKTk9Fsse25kQN8tMM5YnUfYKdnyaF+o4qJ41FGX93ot7GHNQlk9AA==
+
+"@d3fc/d3fc-rebind@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-rebind/-/d3fc-rebind-6.0.1.tgz#b66e21d938893a92dd939e55e3147f24f46b652e"
+  integrity sha512-+ryBZ53ALMffbADwnFAtTYQJcT7PE5BwpducGYS0X6Jux6ESnp+fP+cDQvBGbDBOVqaziGnfeLeJXjtMnZujmQ==
+
+"@d3fc/d3fc-zoom@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-zoom/-/d3fc-zoom-1.1.1.tgz#1edbfadafdaef675c802330c93c37627277fd599"
+  integrity sha512-JLYcrdq9W0ZA0vwXcwOhsEkjzfpS+/3Ec3gt1sTJ6KZmILyL+3HCem9y5MeGrns1rBi+9IyMMY2SwOOSJpMGcg==
+  dependencies:
+    "@d3fc/d3fc-rebind" "^6.0.1"
+
 "@eslint/eslintrc@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.3.0.tgz#d736d6963d7003b6514e6324bec9c602ac340318"
@@ -1729,6 +1746,11 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/d3-color/-/d3-color-2.0.1.tgz#570ea7f8b853461301804efa52bd790a640a26db"
   integrity sha512-u7LTCL7RnaavFSmob2rIAJLNwu50i6gFwY9cHFr80BrQURYQBRkJ+Yv47nA3Fm7FeRhdWTiVTeqvSeOuMAOzBQ==
+
+"@types/d3-dispatch@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-dispatch/-/d3-dispatch-2.0.0.tgz#1f8803041b73b81f2c751e026b7bb63dd5f24ce0"
+  integrity sha512-Sh0KW6z/d7uxssD7K4s4uCSzlEG/+SP+U47q098NVdOfFvUKNTvKAIV4XqjxsUuhE/854ARAREHOxkr9gQOCyg==
 
 "@types/d3-interpolate@*":
   version "2.0.0"
@@ -4119,7 +4141,7 @@ d3-array@^2.11.0, d3-array@^2.3.0:
   resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-2.0.0.tgz#8d625cab42ed9b8f601a1760a389f7ea9189d62e"
   integrity sha512-SPXi0TSKPD4g9tw0NMZFnR95XVgUZiBH+uUTqQuDu1OsE2zomHU7ho0FISciaPvosimixwHFl3WHLGabv6dDgQ==
 
-"d3-dispatch@1 - 2":
+"d3-dispatch@1 - 2", d3-dispatch@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/d3-dispatch/-/d3-dispatch-2.0.0.tgz#8a18e16f76dd3fcaef42163c97b926aa9b55e7cf"
   integrity sha512-S/m2VsXI7gAti2pBoLClFFTMOO1HTtT0j99AuXLoGFKO6deHDdnv6ZGTxSTTUTgO1zVcv82fCOtDjYK4EECmWA==

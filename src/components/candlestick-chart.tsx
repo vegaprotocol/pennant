@@ -1,8 +1,9 @@
 import "d3-transition";
+import "@d3fc/d3fc-element";
 
 import * as React from "react";
 
-import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { ZoomTransform, zoom as d3Zoom, zoom, zoomIdentity } from "d3-zoom";
 import { extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
@@ -11,11 +12,26 @@ import { BarElement } from "./element-bar";
 import { CandleElement } from "./element-candle";
 import { Colors } from "../lib/vega-colours";
 import { Interval } from "../data/globalTypes";
-import { VegaCanvas } from "./vega-canvas";
 import { clearCanvas } from "./helpers";
+import fcZoom from "../lib/zoom";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "d3fc-group": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+      "d3fc-canvas": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
 
 const minutesToMS = (mins: number): number => mins * 60 * 1000;
 const hoursToMS = (hours: number): number => hours * 60 * 60 * 1000;
@@ -43,16 +59,8 @@ const getCandleWidth = (interval: Interval) => {
   return ms;
 };
 
-const WIDTH = 800;
 const HEIGHT = 400;
 const PADDING_INNER = 0.4;
-const Y_AXIS_WIDTH = 30;
-
-function useZoom(onZoom: any, onEnd: any) {
-  const ref = React.useRef(d3Zoom());
-  ref.current.on("zoom", onZoom).on("end", onEnd);
-  return ref.current;
-}
 
 function useScale(scale: any) {
   const ref = React.useRef(scale.copy());
@@ -76,14 +84,21 @@ function drawCrosshair(
   x: any,
   y: any
 ) {
-  ctx.save();
-  ctx.beginPath();
-
+  const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
 
-  ctx.moveTo(Math.round(xScale(x)), yRange[0]);
-  ctx.lineTo(Math.round(xScale(x)), yRange[1]);
-
+  ctx.save();
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = Colors.GRAY_LIGHT;
+  ctx.beginPath();
+  ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
+  ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.moveTo(xRange[0], Math.round(y) + 0.5);
+  ctx.lineTo(xRange[1], Math.round(y) + 0.5);
+  ctx.stroke();
   ctx.closePath();
   ctx.restore();
 }
@@ -148,16 +163,16 @@ function drawXAxis(ctx: CanvasRenderingContext2D, xScale: any) {
   });
 }
 
-function drawYAxis(ctx: CanvasRenderingContext2D, yScale: any) {
+function drawYAxis(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
   ctx.strokeStyle = "#fff";
 
   yScale.ticks().forEach((tick: number) => {
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "middle";
-    ctx.textAlign = "left";
+    ctx.textAlign = "right";
     ctx.font = `12px monospace`;
-    ctx.fillText(String(Math.round(tick)), 4, yScale(tick));
+    ctx.fillText(String(Math.round(tick)), xScale.range()[1] - 4, yScale(tick));
     ctx.closePath();
   });
 }
@@ -175,36 +190,25 @@ export const CandlestickChart = ({
   onBoundsChange,
   onGetDataRange,
 }: CandleStickChartProps) => {
-  const [isPinned, setIsPinned] = React.useState(true);
-  const zoomRef = React.useRef<HTMLDivElement | null>(null);
+  const isPinnedRef = React.useRef(true);
 
-  const chartRef = React.useRef<HTMLCanvasElement | null>(null);
-  const chartContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+  const previousZoomTransform = React.useRef(zoomIdentity);
 
-  const chartCrosshairRef = React.useRef<HTMLCanvasElement | null>(null);
-  const chartCrosshairContextRef = React.useRef<CanvasRenderingContext2D | null>(
-    null
+  const zoomControl2 = React.useMemo(
+    () =>
+      d3Zoom().on("zoom", (event) => {
+        render(event.transform);
+      }),
+    []
   );
 
-  const chartInteractionRef = React.useRef<HTMLDivElement>(null!);
-
-  const yAxisRef = React.useRef<HTMLCanvasElement | null>(null);
-  const yAxisContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
-
-  const studyChartRef = React.useRef<HTMLCanvasElement | null>(null);
-  const studyChartContextRef = React.useRef<CanvasRenderingContext2D | null>(
-    null
-  );
-
-  const studyYAxisRef = React.useRef<HTMLCanvasElement | null>(null);
-  const studyYAxisContextRef = React.useRef<CanvasRenderingContext2D | null>(
-    null
-  );
-
+  const chartRef = React.useRef<HTMLElement>(null!);
+  const plotAreaRef = React.useRef<HTMLElement>(null!);
+  const plotYAxisRef = React.useRef<HTMLElement>(null!);
+  const plotCrosshairRef = React.useRef<HTMLElement>(null!);
+  const studyAreaRef = React.useRef<HTMLElement>(null!);
+  const studyYAxisRef = React.useRef<HTMLElement>(null!);
   const xAxisRef = React.useRef<HTMLCanvasElement | null>(null);
-  const xAxisContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
-
-  const [isPresent, setIsPresent] = React.useState(true);
 
   const throttledOnGetDataRange = React.useMemo(
     () => throttle(onGetDataRange, 5000),
@@ -236,186 +240,276 @@ export const CandlestickChart = ({
       })
   );
 
-  const x = scaleUtc()
-    .domain(extent(data, (d) => d.date) as [Date, Date])
-    .range([0, chartRef?.current?.width ?? 300]);
-
-  const y = scaleLinear()
-    .domain([min(data, (d) => d.low), max(data, (d) => d.high)] as [
-      number,
-      number
-    ])
-    .range([chartRef?.current?.height ?? 150, 0])
-    .nice();
-
-  const volumeScale = scaleLinear()
-    .domain(extent(data, (d) => d.volume) as [number, number])
-    .range([HEIGHT / 2, 0]);
-
-  const xr = useScale(x);
-  const yr = useScale(y);
-
-  const draw = React.useCallback(() => {
-    const xScale = xr.current;
-    const yScale = yr.current;
-
-    if (chartContextRef.current) {
-      const context = chartContextRef.current;
-
-      context.save();
-      clearCanvas(chartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
-
-      drawGrid(context, xScale, yScale);
-
-      for (const candle of candles) {
-        candle.draw(context, xScale, yScale);
-      }
-
-      context.restore();
-    }
-
-    if (chartCrosshairContextRef.current) {
-      const context = chartCrosshairContextRef.current;
-
-      context.save();
-      drawCrosshair(context, xScale, yScale, new Date(2021, 17, 12), 600);
-      context.restore();
-    }
-
-    if (yAxisContextRef.current) {
-      const context = yAxisContextRef.current;
-
-      context.save();
-      clearCanvas(yAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
-
-      drawYAxis(context, yScale);
-
-      context.restore();
-    }
-
-    if (studyChartContextRef.current) {
-      const context = studyChartContextRef.current;
-
-      context.save();
-      clearCanvas(studyChartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
-
-      drawGrid(context, xScale, volumeScale);
-
-      for (const bar of bars) {
-        bar.draw(context, xScale, volumeScale);
-      }
-
-      context.restore();
-    }
-
-    if (studyYAxisContextRef.current) {
-      const context = studyYAxisContextRef.current;
-
-      context.save();
-      clearCanvas(studyYAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
-
-      drawYAxis(context, volumeScale);
-
-      context.restore();
-    }
-
-    if (xAxisContextRef.current) {
-      const context = xAxisContextRef.current;
-
-      context.save();
-      clearCanvas(xAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
-
-      drawXAxis(context, xScale);
-
-      context.restore();
-    }
-  }, [bars, candles, volumeScale, xr, yr]);
-
-  // FIXME: When closed over this is stale?
-  const zoomed = (transform: ZoomTransform, interactive = true) => {
-    xr.current = transform.rescaleX(x);
-    yr.current = transform.rescaleY(y);
-
-    draw();
-
-    const dataWindow = extent(data, (d) => d.date) as [Date, Date];
-    const domain = xr.current.domain();
-    const viewWindow = [domain[0], domain[domain.length - 1]] as [Date, Date];
-
-    const viewWindowWidth = viewWindow[1].getTime() - viewWindow[0].getTime();
-
-    // Notify listeners
-    onBoundsChange?.(viewWindow);
-
-    if (
-      viewWindow[0].getTime() <
-      dataWindow[0].getTime() +
-        viewWindow[1].getTime() -
-        viewWindow[0].getTime()
-    ) {
-      throttledOnGetDataRange(
-        new Date(dataWindow[0].getTime() - 2 * viewWindowWidth).toISOString(),
-        new Date(dataWindow[0].getTime()).toISOString()
-      );
-    }
-  };
-
-  const zoom = useZoom(
-    ({ transform }: any) => zoomed(transform),
-    () => {}
+  const x = React.useMemo(
+    () =>
+      scaleUtc().domain(
+        extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
+      ),
+    []
   );
 
-  zoom
-    .scaleExtent([1, 32])
-    .extent([
-      [0, 0],
-      [WIDTH, HEIGHT],
-    ])
-    .translateExtent([
-      [0, -Infinity],
-      [WIDTH, Infinity],
-    ]);
+  const xr = React.useMemo(
+    () =>
+      scaleUtc().domain(
+        extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
+      ),
+    []
+  );
 
-  const reset = () => {
-    select(zoomRef.current as Element)
-      .transition()
-      .duration(200)
-      .call(zoom.transform, zoomIdentity)
-      .end()
-      .then(() => {
-        setIsPinned(false);
+  const y = React.useMemo(
+    () =>
+      scaleLinear().domain([
+        min(data, (d: CandleDetailsExtended) => d.low),
+        max(data, (d) => d.high),
+      ] as [number, number]),
+    []
+  );
+
+  const volumeScale = scaleLinear()
+    .domain(
+      extent(data, (d: CandleDetailsExtended) => d.volume) as [number, number]
+    )
+    .range([HEIGHT / 2, 0]);
+
+  const render = React.useCallback(
+    function render(transform: ZoomTransform) {
+      const k = transform.k / previousZoomTransform.current.k;
+
+      const range = x.range().map(transform.invertX, transform);
+      let diff = 0;
+
+      console.log(k, isPinnedRef.current);
+
+      if (k === 1) {
+        isPinnedRef.current = false;
+      } else {
+        diff = isPinnedRef.current ? range[1] - x.range()[1] : 0;
+      }
+
+      const domain = [range[0] - diff, range[1] - diff].map(x.invert, x);
+
+      xr.domain(domain);
+
+      previousZoomTransform.current = transform;
+
+      (select(chartRef.current).node() as any).requestRedraw();
+    },
+    [x, xr]
+  );
+
+  const zoomControl = React.useMemo(
+    () => (fcZoom() as any).on("zoom", render),
+    [render]
+  );
+
+  const reset = React.useCallback(
+    function reset() {
+      select(plotYAxisRef.current)
+        .transition()
+        .duration(750)
+        .call(zoom, zoomIdentity);
+
+      (select(chartRef.current).node() as any).requestRedraw();
+    },
+    [x, xr]
+  );
+
+  // Plot area
+  React.useEffect(() => {
+    const container = select(plotAreaRef.current)
+      .on("measure", (event: any) => {
+        const { height, width } = event.detail;
+        xr.range([0, width]);
+        y.range([height, 0]);
+      })
+      .on("draw", (event) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
+
+        ctx.save();
+        ctx.scale(pixelRatio, pixelRatio);
+
+        if (ctx) {
+          clearCanvas(child, ctx, Colors.BLACK);
+          drawGrid(ctx, xr, y);
+
+          for (const candle of candles) {
+            candle.draw(ctx, xr, y);
+          }
+        }
+
+        ctx.restore();
       });
-  };
+  }, [candles, xr, y, zoomControl]);
 
+  // Plot y axis
   React.useEffect(() => {
-    select(zoomRef.current as Element).call(zoom);
+    const container = select<Element, unknown>(plotYAxisRef.current)
+      .on("measure", (event: any) => {
+        const { height, width } = event.detail;
+        x.range([0, width]);
+        y.range([height, 0]);
+      })
+      .on("draw", (event) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
 
-    zoomed(zoomIdentity);
-  }, [zoom]);
+        ctx.save();
+        ctx.scale(pixelRatio, pixelRatio);
 
-  /*   React.useEffect(() => {
-    xr.current = x.copy();
-    yr.current = y.copy();
+        if (ctx) {
+          drawYAxis(ctx, x, y);
+        }
 
-    draw();
-  }, [draw, x, xr, y, yr]);
- */
-  //draw();
+        ctx.restore();
+      });
 
-  // Attach event listener to chart crosshair layer
+    container.call(zoomControl2);
+  }, [x, y, zoomControl2]);
+
+  // Plot crosshair
   React.useEffect(() => {
-    console.log(chartInteractionRef);
-    select(chartInteractionRef.current).on("mousemove", console.log);
-  }, []);
+    const container = select<Element, unknown>(plotCrosshairRef.current)
+      .on("measure", (event: any) => {
+        const { height, width } = event.detail;
+        x.range([0, width]);
+        y.range([height, 0]);
+      })
+      .on("draw", (event) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
+
+        ctx.save();
+        ctx.scale(pixelRatio, pixelRatio);
+
+        if (ctx) {
+          drawYAxis(ctx, x, y);
+        }
+
+        ctx.restore();
+      });
+
+    container.on("mousemove", (event) => {
+      const { offsetX, offsetY } = event;
+
+      console.log(offsetX, offsetY);
+
+      const canvas = select(plotCrosshairRef.current)
+        ?.select("canvas")
+        ?.node() as HTMLCanvasElement;
+
+      const ctx = canvas.getContext("2d");
+
+      clearCanvas(canvas, ctx!);
+
+      drawCrosshair(ctx!, x, y, offsetX, offsetY);
+    });
+  }, [x, y, zoomControl2]);
+
+  // Study
+  React.useEffect(() => {
+    const container = select(studyAreaRef.current)
+      .on("measure", (event: any) => {
+        const { height, width } = event.detail;
+        x.range([0, width]);
+        volumeScale.range([height, 0]);
+      })
+      .on("draw", (event) => {
+        const canvas = select(studyAreaRef.current)
+          ?.select("canvas")
+          ?.node() as HTMLCanvasElement;
+
+        const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
+
+        if (ctx) {
+          clearCanvas(canvas, ctx, Colors.BLACK);
+          drawGrid(ctx, x, volumeScale);
+
+          for (const bar of bars) {
+            bar.draw(ctx, x, volumeScale);
+          }
+        }
+      });
+
+    container.call(zoomControl, x, volumeScale);
+  }, [bars, x, volumeScale]);
+
+  // Study y axis
+  React.useEffect(() => {
+    const container = select(studyYAxisRef.current)
+      .on("measure", (event: any) => {
+        const { height, width } = event.detail;
+        x.range([0, width]);
+        volumeScale.range([height, 0]);
+      })
+      .on("draw", (event) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
+
+        ctx.save();
+        ctx.scale(pixelRatio, pixelRatio);
+
+        if (ctx) {
+          drawYAxis(ctx, x, volumeScale);
+        }
+
+        ctx.restore();
+      });
+
+    //container.call(zoomControl, null, volumeScale);
+  }, [x, volumeScale, zoomControl]);
+
+  // X axis
+  React.useEffect(() => {
+    const container = select(xAxisRef.current).on("draw", (event) => {
+      const canvas = select(xAxisRef.current)
+        ?.select("canvas")
+        ?.node() as HTMLCanvasElement;
+
+      const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
+
+      if (ctx) {
+        clearCanvas(canvas, ctx, "#121212");
+        drawXAxis(ctx, x);
+      }
+    });
+
+    //container.call(zoomControl, x, null);
+  }, [x, y, zoomControl]);
+
+  // Chart container
+  React.useEffect(() => {
+    const chartContainer = select(chartRef.current).on("draw", () => {
+      // Use group draw event to ensure scales have their domain updated before
+      // any of the elements are drawn (draw events are dispatched in document order).
+      const xExtent = extent(data, (d: CandleDetailsExtended) => d.date) as [
+        Date,
+        Date
+      ];
+
+      //x.domain(xExtent);
+
+      const yExtent = [
+        min(data, (d: CandleDetailsExtended) => d.low),
+        max(data, (d: CandleDetailsExtended) => d.high),
+      ] as [number, number];
+
+      // y.domain(yExtent);
+    });
+
+    (chartContainer?.node() as any).requestRedraw();
+  }, [data, x, y, zoomControl]);
 
   return (
-    <div
-      ref={zoomRef}
+    <d3fc-group
+      ref={chartRef}
+      auto-resize
+      use-device-pixel-ratio
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr auto",
+        gridTemplateColumns: "1fr",
         gridTemplateRows: "2fr 1fr auto",
-        gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
+        gridTemplateAreas: `"plot-area" "study-area" "x-axis"`,
         gap: "0",
         paddingTop: "8px",
         width: "100%",
@@ -424,102 +518,55 @@ export const CandlestickChart = ({
     >
       <div
         style={{
-          gridArea: "chart",
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+          gridArea: "plot-area",
           position: "relative",
         }}
       >
-        <VegaCanvas
-          ref={(element) => {
-            if (element) {
-              chartRef.current = element;
-              chartContextRef.current = element.getContext("2d");
-            }
+        <d3fc-canvas
+          ref={plotAreaRef}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        ></d3fc-canvas>
+        <d3fc-canvas
+          ref={plotYAxisRef}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        ></d3fc-canvas>
+        <d3fc-canvas
+          ref={plotCrosshairRef}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            cursor: "crosshair",
           }}
-          style={{ position: "absolute" }}
-        ></VegaCanvas>
-        <VegaCanvas
-          ref={(element) => {
-            if (element) {
-              chartCrosshairRef.current = element;
-              chartCrosshairContextRef.current = element.getContext("2d");
-            }
-          }}
-          style={{ position: "absolute" }}
-        ></VegaCanvas>
-        <div
-          ref={chartInteractionRef}
-          style={{ width: "100%", height: "100%" }}
-        />
+        ></d3fc-canvas>
       </div>
       <div
         style={{
-          gridArea: "y-axis",
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+          gridArea: "study-area",
+          position: "relative",
         }}
       >
-        <VegaCanvas
-          width={60}
-          ref={(element) => {
-            if (element) {
-              yAxisRef.current = element;
-              yAxisContextRef.current = element.getContext("2d");
-            }
-          }}
-        ></VegaCanvas>
+        <d3fc-canvas
+          ref={studyAreaRef}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        ></d3fc-canvas>
+        <d3fc-canvas
+          ref={studyYAxisRef}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        ></d3fc-canvas>
       </div>
       <div
-        style={{
-          gridArea: "study-chart",
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+        style={{ gridArea: "x-axis", position: "relative" }}
+        onClick={() => {
+          console.log("hi");
+          reset();
         }}
       >
-        <VegaCanvas
-          ref={(element) => {
-            if (element) {
-              studyChartRef.current = element;
-              studyChartContextRef.current = element.getContext("2d");
-            }
-          }}
-        ></VegaCanvas>
+        <d3fc-canvas
+          ref={xAxisRef}
+          style={{ width: "100%", height: "20px" }}
+        ></d3fc-canvas>
       </div>
-      <div
-        style={{
-          gridArea: "study-y-axis",
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-      >
-        <VegaCanvas
-          width={60}
-          ref={(element) => {
-            if (element) {
-              studyYAxisRef.current = element;
-              studyYAxisContextRef.current = element.getContext("2d");
-            }
-          }}
-        ></VegaCanvas>
-      </div>
-      <div style={{ gridArea: "x-axis" }}>
-        <VegaCanvas
-          ref={(element) => {
-            if (element) {
-              xAxisRef.current = element;
-              xAxisContextRef.current = element.getContext("2d");
-            }
-          }}
-          height={20}
-        ></VegaCanvas>
-      </div>
-      <div
-        style={{
-          gridArea: "corner",
-          backgroundColor: Colors.GRAY_DARK,
-          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-        }}
-        onClick={() => reset()}
-      />
-    </div>
+    </d3fc-group>
   );
 };
