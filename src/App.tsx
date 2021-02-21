@@ -78,6 +78,7 @@ function App() {
           />
         </MarketSelect>
         <Button icon="refresh" intent="primary" text="Reset" />
+        <Button icon="random" intent="primary" text="Randomise" />
       </div>
       <Chart dataSource={dataSource} interval={Interval.I5M} />
     </div>

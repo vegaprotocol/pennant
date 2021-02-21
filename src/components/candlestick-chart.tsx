@@ -1,6 +1,9 @@
+import "d3-transition";
+
 import * as React from "react";
 
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
 // TODO: Rename element to shape
@@ -8,8 +11,8 @@ import { BarElement } from "./element-bar";
 import { CandleElement } from "./element-candle";
 import { Colors } from "../lib/vega-colours";
 import { Interval } from "../data/globalTypes";
+import { VegaCanvas } from "./vega-canvas";
 import { clearCanvas } from "./helpers";
-import { extent } from "d3-array";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
@@ -51,6 +54,11 @@ function useZoom(onZoom: any, onEnd: any) {
   return ref.current;
 }
 
+function useScale(scale: any) {
+  const ref = React.useRef(scale.copy());
+  return ref;
+}
+
 export interface CandleDetailsExtended {
   datetime: string;
   date: Date;
@@ -59,6 +67,25 @@ export interface CandleDetailsExtended {
   open: number;
   close: number;
   volume: number;
+}
+
+function drawCrosshair(
+  ctx: CanvasRenderingContext2D,
+  xScale: any,
+  yScale: any,
+  x: any,
+  y: any
+) {
+  ctx.save();
+  ctx.beginPath();
+
+  const yRange = yScale.range().map(Math.round);
+
+  ctx.moveTo(Math.round(xScale(x)), yRange[0]);
+  ctx.lineTo(Math.round(xScale(x)), yRange[1]);
+
+  ctx.closePath();
+  ctx.restore();
 }
 
 function drawGrid(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
@@ -148,10 +175,18 @@ export const CandlestickChart = ({
   onBoundsChange,
   onGetDataRange,
 }: CandleStickChartProps) => {
+  const [isPinned, setIsPinned] = React.useState(true);
   const zoomRef = React.useRef<HTMLDivElement | null>(null);
 
-  const ref = React.useRef<HTMLCanvasElement | null>(null);
-  const contextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+  const chartRef = React.useRef<HTMLCanvasElement | null>(null);
+  const chartContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+
+  const chartCrosshairRef = React.useRef<HTMLCanvasElement | null>(null);
+  const chartCrosshairContextRef = React.useRef<CanvasRenderingContext2D | null>(
+    null
+  );
+
+  const chartInteractionRef = React.useRef<HTMLDivElement>(null!);
 
   const yAxisRef = React.useRef<HTMLCanvasElement | null>(null);
   const yAxisContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -203,35 +238,47 @@ export const CandlestickChart = ({
 
   const x = scaleUtc()
     .domain(extent(data, (d) => d.date) as [Date, Date])
-    .range([0, WIDTH]);
+    .range([0, chartRef?.current?.width ?? 300]);
 
   const y = scaleLinear()
-    .domain(extent(data, (d) => d.open) as [number, number])
-    .range([HEIGHT, 0]);
+    .domain([min(data, (d) => d.low), max(data, (d) => d.high)] as [
+      number,
+      number
+    ])
+    .range([chartRef?.current?.height ?? 150, 0])
+    .nice();
 
   const volumeScale = scaleLinear()
     .domain(extent(data, (d) => d.volume) as [number, number])
     .range([HEIGHT / 2, 0]);
 
-  // FIXME: When closed over this is stale?
-  const zoomed = (transform: ZoomTransform, interactive = true) => {
-    const { current } = contextRef;
+  const xr = useScale(x);
+  const yr = useScale(y);
 
-    const xr = transform.rescaleX(x);
-    const yr = transform.rescaleY(y);
+  const draw = React.useCallback(() => {
+    const xScale = xr.current;
+    const yScale = yr.current;
 
-    if (current) {
-      const context = current;
+    if (chartContextRef.current) {
+      const context = chartContextRef.current;
 
       context.save();
-      clearCanvas(ref.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
+      clearCanvas(chartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      drawGrid(context, xr, yr);
+      drawGrid(context, xScale, yScale);
 
       for (const candle of candles) {
-        candle.draw(context, xr, yr);
+        candle.draw(context, xScale, yScale);
       }
 
+      context.restore();
+    }
+
+    if (chartCrosshairContextRef.current) {
+      const context = chartCrosshairContextRef.current;
+
+      context.save();
+      drawCrosshair(context, xScale, yScale, new Date(2021, 17, 12), 600);
       context.restore();
     }
 
@@ -241,7 +288,7 @@ export const CandlestickChart = ({
       context.save();
       clearCanvas(yAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      drawYAxis(context, yr);
+      drawYAxis(context, yScale);
 
       context.restore();
     }
@@ -252,10 +299,10 @@ export const CandlestickChart = ({
       context.save();
       clearCanvas(studyChartRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      drawGrid(context, xr, volumeScale);
+      drawGrid(context, xScale, volumeScale);
 
       for (const bar of bars) {
-        bar.draw(context, xr, volumeScale);
+        bar.draw(context, xScale, volumeScale);
       }
 
       context.restore();
@@ -278,17 +325,26 @@ export const CandlestickChart = ({
       context.save();
       clearCanvas(xAxisRef.current!, context, Colors.GRAY_DARK); // FIXME: Don't use !
 
-      drawXAxis(context, xr);
+      drawXAxis(context, xScale);
 
       context.restore();
     }
+  }, [bars, candles, volumeScale, xr, yr]);
+
+  // FIXME: When closed over this is stale?
+  const zoomed = (transform: ZoomTransform, interactive = true) => {
+    xr.current = transform.rescaleX(x);
+    yr.current = transform.rescaleY(y);
+
+    draw();
 
     const dataWindow = extent(data, (d) => d.date) as [Date, Date];
-    const domain = xr.domain();
+    const domain = xr.current.domain();
     const viewWindow = [domain[0], domain[domain.length - 1]] as [Date, Date];
 
     const viewWindowWidth = viewWindow[1].getTime() - viewWindow[0].getTime();
 
+    // Notify listeners
     onBoundsChange?.(viewWindow);
 
     if (
@@ -306,7 +362,7 @@ export const CandlestickChart = ({
 
   const zoom = useZoom(
     ({ transform }: any) => zoomed(transform),
-    () => console.log("end")
+    () => {}
   );
 
   zoom
@@ -320,124 +376,150 @@ export const CandlestickChart = ({
       [WIDTH, Infinity],
     ]);
 
+  const reset = () => {
+    select(zoomRef.current as Element)
+      .transition()
+      .duration(200)
+      .call(zoom.transform, zoomIdentity)
+      .end()
+      .then(() => {
+        setIsPinned(false);
+      });
+  };
+
   React.useEffect(() => {
     select(zoomRef.current as Element).call(zoom);
 
     zoomed(zoomIdentity);
   }, [zoom]);
 
-  //zoomed(zoomIdentity);
+  /*   React.useEffect(() => {
+    xr.current = x.copy();
+    yr.current = y.copy();
+
+    draw();
+  }, [draw, x, xr, y, yr]);
+ */
+  //draw();
+
+  // Attach event listener to chart crosshair layer
+  React.useEffect(() => {
+    console.log(chartInteractionRef);
+    select(chartInteractionRef.current).on("mousemove", console.log);
+  }, []);
 
   return (
-    <div>
-      <div>{`isPresent: ${isPresent}`}</div>
+    <div
+      ref={zoomRef}
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr auto",
+        gridTemplateRows: "2fr 1fr auto",
+        gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
+        gap: "0",
+        paddingTop: "8px",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <div
-        ref={zoomRef}
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr auto",
-          gridTemplateRows: "2fr 1fr auto",
-          gridTemplateAreas: `"chart y-axis" "study-chart study-y-axis" "x-axis corner"`,
-          gap: "0",
-          width: `${WIDTH + Y_AXIS_WIDTH}px`,
-          paddingTop: "8px",
+          gridArea: "chart",
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+          position: "relative",
         }}
       >
-        <div
-          style={{
-            gridArea: "chart",
-            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+        <VegaCanvas
+          ref={(element) => {
+            if (element) {
+              chartRef.current = element;
+              chartContextRef.current = element.getContext("2d");
+            }
           }}
-        >
-          <canvas
-            ref={(element) => {
-              if (element) {
-                ref.current = element;
-                contextRef.current = element.getContext("2d");
-              }
-            }}
-            width={WIDTH}
-            height={HEIGHT + 1}
-            style={{ display: "block" }}
-          ></canvas>
-        </div>
-        <div
-          style={{
-            gridArea: "y-axis",
-            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+          style={{ position: "absolute" }}
+        ></VegaCanvas>
+        <VegaCanvas
+          ref={(element) => {
+            if (element) {
+              chartCrosshairRef.current = element;
+              chartCrosshairContextRef.current = element.getContext("2d");
+            }
           }}
-        >
-          <canvas
-            ref={(element) => {
-              if (element) {
-                yAxisRef.current = element;
-                yAxisContextRef.current = element.getContext("2d");
-              }
-            }}
-            width={Y_AXIS_WIDTH}
-            height={HEIGHT + 1}
-            style={{ display: "block" }}
-          ></canvas>
-        </div>
+          style={{ position: "absolute" }}
+        ></VegaCanvas>
         <div
-          style={{
-            gridArea: "study-chart",
-            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-          }}
-        >
-          <canvas
-            ref={(element) => {
-              if (element) {
-                studyChartRef.current = element;
-                studyChartContextRef.current = element.getContext("2d");
-              }
-            }}
-            width={WIDTH}
-            height={HEIGHT / 2}
-            style={{ display: "block" }}
-          ></canvas>
-        </div>
-        <div
-          style={{
-            gridArea: "study-y-axis",
-            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-            borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
-          }}
-        >
-          <canvas
-            ref={(element) => {
-              if (element) {
-                studyYAxisRef.current = element;
-                studyYAxisContextRef.current = element.getContext("2d");
-              }
-            }}
-            width={Y_AXIS_WIDTH}
-            height={HEIGHT / 2}
-            style={{ display: "block" }}
-          ></canvas>
-        </div>
-        <div style={{ gridArea: "x-axis" }}>
-          <canvas
-            ref={(element) => {
-              if (element) {
-                xAxisRef.current = element;
-                xAxisContextRef.current = element.getContext("2d");
-              }
-            }}
-            width={WIDTH}
-            height={20}
-            style={{ display: "block" }}
-          ></canvas>
-        </div>
-        <div
-          style={{
-            gridArea: "corner",
-            backgroundColor: Colors.GRAY_DARK,
-            borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
-          }}
+          ref={chartInteractionRef}
+          style={{ width: "100%", height: "100%" }}
         />
       </div>
+      <div
+        style={{
+          gridArea: "y-axis",
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+        }}
+      >
+        <VegaCanvas
+          width={60}
+          ref={(element) => {
+            if (element) {
+              yAxisRef.current = element;
+              yAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+        ></VegaCanvas>
+      </div>
+      <div
+        style={{
+          gridArea: "study-chart",
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+        }}
+      >
+        <VegaCanvas
+          ref={(element) => {
+            if (element) {
+              studyChartRef.current = element;
+              studyChartContextRef.current = element.getContext("2d");
+            }
+          }}
+        ></VegaCanvas>
+      </div>
+      <div
+        style={{
+          gridArea: "study-y-axis",
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+          borderBottom: `1px solid ${Colors.GRAY_DARK_2}`,
+        }}
+      >
+        <VegaCanvas
+          width={60}
+          ref={(element) => {
+            if (element) {
+              studyYAxisRef.current = element;
+              studyYAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+        ></VegaCanvas>
+      </div>
+      <div style={{ gridArea: "x-axis" }}>
+        <VegaCanvas
+          ref={(element) => {
+            if (element) {
+              xAxisRef.current = element;
+              xAxisContextRef.current = element.getContext("2d");
+            }
+          }}
+          height={20}
+        ></VegaCanvas>
+      </div>
+      <div
+        style={{
+          gridArea: "corner",
+          backgroundColor: Colors.GRAY_DARK,
+          borderLeft: `1px solid ${Colors.GRAY_DARK_2}`,
+        }}
+        onClick={() => reset()}
+      />
     </div>
   );
 };

@@ -87,12 +87,21 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
         {format(bounds[0], "MMM d HH:mm")} - {format(bounds[1], "MMM d HH:mm")}
       </p>
       {data.length > 0 && (
-        <CandlestickChart
-          data={data}
-          interval={interval}
-          onBoundsChange={setBounds}
-          onGetDataRange={handleGetDataRange}
-        />
+        <div
+          style={{
+            resize: "both",
+            overflow: "auto",
+            width: "800px",
+            height: "600px",
+          }}
+        >
+          <CandlestickChart
+            data={data}
+            interval={interval}
+            onBoundsChange={setBounds}
+            onGetDataRange={handleGetDataRange}
+          />
+        </div>
       )}
     </div>
   );
