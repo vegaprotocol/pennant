@@ -3,7 +3,7 @@ import { ScaleLinear, ScaleTime } from "d3-scale";
 import { Colors } from "../helpers/helpers-color";
 import { Element } from "../types/element";
 
-export function addYAxisPath(
+function addYAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime<number, number, never>,
   yScale: ScaleLinear<number, number, never>

@@ -4,20 +4,22 @@ import "./candlestick-chart.scss";
 
 import * as React from "react";
 
+import {
+  BarElement,
+  CandleElement,
+  CrosshairElement,
+  GridElement,
+  XAxisElement,
+  XAxisTooltipElement,
+  YAxisElement,
+  YAxisTooltipElement,
+} from "../elements";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { bisector, extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
-import { BarElement } from "../elements/element-bar";
-import { CandleElement } from "../elements/element-candle";
 import { Colors } from "../helpers/helpers-color";
-import { CrosshairElement } from "../elements/element-crosshair";
-import { GridElement } from "../elements/element-grid";
 import { Interval } from "../data/globalTypes";
-import { XAxisElement } from "../elements/element-x-axis";
-import { XAxisTooltipElement } from "../elements/element-x-axis-tooltip";
-import { YAxisElement } from "../elements/element-y-axis";
-import { YAxisTooltipElement } from "../elements/element-y-axis-tooltip";
 import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
 import { getCandleWidth } from "../helpers/helpers-candle";

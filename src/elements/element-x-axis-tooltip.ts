@@ -4,7 +4,7 @@ import { Colors } from "../helpers/helpers-color";
 import { Element } from "../types/element";
 import { format } from "date-fns";
 
-export function addXAxisPath(
+function addXAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime<number, number, never>,
   yScale: ScaleLinear<number, number, never>,
