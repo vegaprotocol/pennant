@@ -18,7 +18,7 @@ import { XAxisElement } from "../elements/element-x-axis";
 import { XAxisTooltipElement } from "../elements/element-x-axis-tooltip";
 import { YAxisElement } from "../elements/element-y-axis";
 import { YAxisTooltipElement } from "../elements/element-y-axis-tooltip";
-import { clearCanvas } from "./helpers";
+import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
 import { getCandleWidth } from "../lib/get-candle-width";
 import { select } from "d3-selection";
