@@ -5,12 +5,13 @@ export function addYAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: any,
   yScale: any,
-  position: [number, number] | null,
+  position: [number | null, number | null],
   decimalPlaces = 5
 ) {
-  if (position) {
+  const y = position[1];
+
+  if (y) {
     const width = xScale.range()[1];
-    const y = position[1] + 0.5;
 
     ctx.font = `12px monospace`;
     ctx.textAlign = "right";
@@ -59,7 +60,7 @@ export class YAxisTooltipElement implements Element {
     ctx: CanvasRenderingContext2D,
     xScale: any,
     yScale: any,
-    position: [number, number] | null
+    position: [number | null, number | null]
   ) {
     addYAxisPath(ctx, xScale, yScale, position);
   }

@@ -134,9 +134,11 @@ export const CandlestickChart = React.forwardRef(
     const plotCrosshairRef = React.useRef<HTMLElement>(null!);
     const studyAreaRef = React.useRef<HTMLElement>(null!);
     const studyYAxisRef = React.useRef<HTMLElement>(null!);
-    const xAxisRef = React.useRef<HTMLCanvasElement>(null!);
+    const xAxisRef = React.useRef<HTMLElement>(null!);
 
-    const crosshairRef = React.useRef<[number, number] | null>(null);
+    const crosshairXRef = React.useRef<number | null>(null);
+    const plotCrosshairYRef = React.useRef<number | null>(null);
+    const studyCrosshairYRef = React.useRef<number | null>(null);
 
     const throttledOnGetDataRange = React.useMemo(
       () => throttle(onGetDataRange, 5000),
@@ -169,10 +171,12 @@ export const CandlestickChart = React.forwardRef(
             })
         ),
         grid: new GridElement(),
-        crosshair: new CrosshairElement(),
         plotYAxis: new YAxisElement(),
+        plotCrosshair: new CrosshairElement(),
         plotYAxisTooltip: new YAxisTooltipElement(),
         studyYAxis: new YAxisElement(),
+        studyCrosshair: new CrosshairElement(),
+        studyYAxisTooltip: new YAxisTooltipElement(),
         xAxis: new XAxisElement(),
         xAxisTooltip: new XAxisTooltipElement(),
       }),
@@ -347,15 +351,28 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             scenegraph.plotYAxis.draw(ctx, xr, yr);
-            scenegraph.crosshair.draw(ctx, xr, yr, crosshairRef.current);
-            scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, crosshairRef.current);
+            scenegraph.plotCrosshair.draw(ctx, xr, yr, [
+              crosshairXRef.current,
+              plotCrosshairYRef.current,
+            ]);
+            scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, [
+              crosshairXRef.current,
+              plotCrosshairYRef.current,
+            ]);
           }
 
           ctx.restore();
         });
 
       container.call(zoomControl);
-    }, [scenegraph.crosshair, scenegraph.plotYAxis, scenegraph.plotYAxisTooltip, xr, yr, zoomControl]);
+    }, [
+      scenegraph.plotCrosshair,
+      scenegraph.plotYAxis,
+      scenegraph.plotYAxisTooltip,
+      xr,
+      yr,
+      zoomControl,
+    ]);
 
     // Plot crosshair
     React.useEffect(() => {
@@ -388,21 +405,35 @@ export const CandlestickChart = React.forwardRef(
               candle = secondCandle;
             }
 
-            crosshairRef.current = [xr(candle.date), offsetY];
+            crosshairXRef.current = xr(candle.date);
+            plotCrosshairYRef.current = offsetY;
+
             (xAxisRef.current as any).requestRedraw();
             (plotYAxisRef.current as any).requestRedraw();
+            (studyYAxisRef.current as any).requestRedraw();
 
             onMouseMove?.([offsetX, offsetY]);
           },
           { capture: true } // TODO: It would be preferable to still respond to this event while zooming
         )
         .on("mouseout", () => {
-          crosshairRef.current = null;
+          crosshairXRef.current = null;
+          plotCrosshairYRef.current = null;
 
           (xAxisRef.current as any).requestRedraw();
           (plotYAxisRef.current as any).requestRedraw();
+          (studyYAxisRef.current as any).requestRedraw();
         });
-    }, [data, onMouseMove, scenegraph.crosshair, x, xr, y, yr, zoomControl]);
+    }, [
+      data,
+      onMouseMove,
+      scenegraph.plotCrosshair,
+      x,
+      xr,
+      y,
+      yr,
+      zoomControl,
+    ]);
 
     // Study
     React.useEffect(() => {
@@ -447,17 +478,94 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             scenegraph.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
+            scenegraph.studyCrosshair.draw(ctx, xr, yr, [
+              crosshairXRef.current,
+              studyCrosshairYRef.current,
+            ]);
+            scenegraph.studyYAxisTooltip.draw(ctx, xr, volumeScaleRescaled, [
+              crosshairXRef.current,
+              studyCrosshairYRef.current,
+            ]);
           }
 
           ctx.restore();
         });
 
       container.call(zoomControl);
-    }, [xr, volumeScaleRescaled, zoomControl, scenegraph.studyYAxis]);
+    }, [
+      xr,
+      volumeScaleRescaled,
+      zoomControl,
+      scenegraph.studyYAxis,
+      scenegraph.studyCrosshair,
+      scenegraph.studyYAxisTooltip,
+      yr,
+    ]);
+
+    // Study crosshair
+    React.useEffect(() => {
+      select(studyYAxisRef.current)
+        .on(
+          "mousemove",
+          (event) => {
+            const { offsetX, offsetY } = event;
+            const timeAtMouseX = xr.invert(offsetX);
+
+            const index = bisector((d: CandleDetailsExtended) => d.date).left(
+              data,
+              timeAtMouseX
+            );
+
+            const firstCandle = data[index - 1];
+            const secondCandle = data[index];
+
+            let candle: CandleDetailsExtended;
+            if (firstCandle && secondCandle) {
+              // If we have two candles either side of mouse x find the one
+              // closest to it
+              const nearestCandleDates = [firstCandle.date, secondCandle.date];
+              candle = [firstCandle, secondCandle][
+                closestIndexTo(timeAtMouseX, nearestCandleDates)
+              ];
+            } else if (firstCandle) {
+              candle = firstCandle;
+            } else {
+              candle = secondCandle;
+            }
+
+            crosshairXRef.current = xr(candle.date);
+            studyCrosshairYRef.current = offsetY;
+
+            (xAxisRef.current as any).requestRedraw();
+            (plotYAxisRef.current as any).requestRedraw();
+            (studyYAxisRef.current as any).requestRedraw();
+
+            onMouseMove?.([offsetX, offsetY]);
+          },
+          { capture: true } // TODO: It would be preferable to still respond to this event while zooming
+        )
+        .on("mouseout", () => {
+          crosshairXRef.current = null;
+          studyCrosshairYRef.current = null;
+
+          (xAxisRef.current as any).requestRedraw();
+          (plotYAxisRef.current as any).requestRedraw();
+          (studyYAxisRef.current as any).requestRedraw();
+        });
+    }, [
+      data,
+      onMouseMove,
+      scenegraph.plotCrosshair,
+      x,
+      xr,
+      y,
+      yr,
+      zoomControl,
+    ]);
 
     // X axis
     React.useEffect(() => {
-      select(xAxisRef.current).on("draw", (event) => {
+      const container = select(xAxisRef.current).on("draw", (event) => {
         const canvas = select(xAxisRef.current)
           ?.select("canvas")
           ?.node() as HTMLCanvasElement;
@@ -467,9 +575,14 @@ export const CandlestickChart = React.forwardRef(
         if (ctx) {
           clearCanvas(canvas, ctx, Colors.BLACK);
           scenegraph.xAxis.draw(ctx, xr, y);
-          scenegraph.xAxisTooltip.draw(ctx, xr, y, crosshairRef.current);
+          scenegraph.xAxisTooltip.draw(ctx, xr, y, [
+            crosshairXRef.current,
+            null,
+          ]);
         }
       });
+
+      container.call(zoomControl);
     }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y]);
 
     // Chart container

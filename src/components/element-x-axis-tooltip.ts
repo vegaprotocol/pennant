@@ -6,11 +6,12 @@ export function addXAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: any,
   yScale: any,
-  position: [number, number] | null
+  position: [number | null, number | null]
 ) {
-  if (position) {
+  const x = position[0];
+
+  if (x) {
     const height = 24.5;
-    const x = position[0];
 
     ctx.font = `12px monospace`;
     ctx.textAlign = "center";
@@ -61,7 +62,7 @@ export class XAxisTooltipElement implements Element {
     ctx: CanvasRenderingContext2D,
     xScale: any,
     yScale: any,
-    position: [number, number] | null
+    position: [number | null, number | null]
   ) {
     addXAxisPath(ctx, xScale, yScale, position);
   }

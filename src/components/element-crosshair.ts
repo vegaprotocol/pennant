@@ -5,33 +5,36 @@ export function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
   xScale: any,
   yScale: any,
-  position: [number, number] | null
+  position: [number | null, number | null]
 ) {
-  if (position) {
-    const xRange = xScale.range().map(Math.round);
-    const yRange = yScale.range().map(Math.round);
-    const x = position[0];
-    const y = position[1];
+  const x = position[0];
+  const y = position[1];
 
-    ctx.save();
+  const xRange = xScale.range().map(Math.round);
+  const yRange = yScale.range().map(Math.round);
 
-    // Lines
-    ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = Colors.GRAY_LIGHT;
+  ctx.save();
+
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = Colors.GRAY_LIGHT;
+
+  if (x) {
     ctx.beginPath();
     ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
     ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
     ctx.stroke();
     ctx.closePath();
+  }
 
+  if (y) {
     ctx.beginPath();
     ctx.moveTo(xRange[0], Math.round(y) + 0.5);
     ctx.lineTo(xRange[1], Math.round(y) + 0.5);
     ctx.stroke();
     ctx.closePath();
-
-    ctx.restore();
   }
+
+  ctx.restore();
 }
 
 export class CrosshairElement implements Element {
@@ -39,7 +42,7 @@ export class CrosshairElement implements Element {
     ctx: CanvasRenderingContext2D,
     xScale: any,
     yScale: any,
-    position: [number, number] | null
+    position: [number | null, number | null]
   ) {
     addCrosshairPath(ctx, xScale, yScale, position);
   }
