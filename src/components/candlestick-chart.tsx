@@ -115,10 +115,11 @@ export const CandlestickChart = React.forwardRef(
               width: candleWidth * (1 - PADDING_INNER),
             })
         ),
-        grid: new GridElement(),
+        plotGrid: new GridElement(),
         plotYAxis: new YAxisElement(),
         plotCrosshair: new CrosshairElement(),
         plotYAxisTooltip: new YAxisTooltipElement(),
+        studyGrid: new GridElement(),
         studyYAxis: new YAxisElement(),
         studyCrosshair: new CrosshairElement(),
         studyYAxisTooltip: new YAxisTooltipElement(),
@@ -284,7 +285,7 @@ export const CandlestickChart = React.forwardRef(
               ctx.scale(pixelRatio, pixelRatio);
 
               clearCanvas(child, ctx, Colors.BLACK);
-              scenegraph.grid.draw(ctx, xr, yr);
+              scenegraph.plotGrid.draw(ctx, xr, yr);
 
               for (const candle of scenegraph.candles) {
                 candle.draw(ctx, xr, yr);
@@ -294,7 +295,7 @@ export const CandlestickChart = React.forwardRef(
             }
           }
         );
-    }, [scenegraph.candles, scenegraph.grid, x, xr, y, yr, zoomControl]);
+    }, [scenegraph.candles, scenegraph.plotGrid, x, xr, y, yr, zoomControl]);
 
     // Plot y axis
     React.useEffect(() => {
@@ -418,14 +419,14 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             clearCanvas(canvas, ctx, Colors.BLACK);
-            scenegraph.grid.draw(ctx, xr, volumeScaleRescaled);
+            scenegraph.studyGrid.draw(ctx, xr, volumeScaleRescaled);
 
             for (const bar of scenegraph.bars) {
               bar.draw(ctx, xr, volumeScaleRescaled);
             }
           }
         });
-    }, [xr, volumeScaleRescaled, scenegraph.bars, scenegraph.grid]);
+    }, [xr, volumeScaleRescaled, scenegraph.bars, scenegraph.studyGrid]);
 
     // Study y axis
     React.useEffect(() => {
