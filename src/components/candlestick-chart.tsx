@@ -14,6 +14,7 @@ import { CrosshairElement } from "./element-crosshair";
 import { GridElement } from "./element-grid";
 import { Interval } from "../data/globalTypes";
 import { XAxisElement } from "./element-x-axis";
+import { XAxisTooltipElement } from "./element-x-axis-tooltip";
 import { YAxisElement } from "./element-y-axis";
 import { YAxisTooltipElement } from "./element-y-axis-tooltip";
 import { clearCanvas } from "./helpers";
@@ -173,7 +174,7 @@ export const CandlestickChart = React.forwardRef(
         plotYAxisTooltip: new YAxisTooltipElement(),
         studyYAxis: new YAxisElement(),
         xAxis: new XAxisElement(),
-        xAxisTooltip: new YAxisTooltipElement(),
+        xAxisTooltip: new XAxisTooltipElement(),
       }),
       [candleWidth, data]
     );
@@ -346,7 +347,7 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             scenegraph.plotYAxis.draw(ctx, xr, yr);
-
+            scenegraph.crosshair.draw(ctx, xr, yr, crosshairRef.current);
             scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, crosshairRef.current);
           }
 
@@ -354,13 +355,7 @@ export const CandlestickChart = React.forwardRef(
         });
 
       container.call(zoomControl);
-    }, [
-      scenegraph.plotYAxis,
-      scenegraph.plotYAxisTooltip,
-      xr,
-      yr,
-      zoomControl,
-    ]);
+    }, [scenegraph.crosshair, scenegraph.plotYAxis, scenegraph.plotYAxisTooltip, xr, yr, zoomControl]);
 
     // Plot crosshair
     React.useEffect(() => {
@@ -393,19 +388,7 @@ export const CandlestickChart = React.forwardRef(
               candle = secondCandle;
             }
 
-            const canvas = select(plotYAxisRef.current)
-              ?.select("canvas")
-              ?.node() as HTMLCanvasElement;
-
-            const ctx = canvas.getContext("2d");
-
             crosshairRef.current = [xr(candle.date), offsetY];
-
-            if (ctx) {
-              clearCanvas(canvas, ctx, "#fff");
-              scenegraph.crosshair.draw(ctx, xr, yr, xr(candle.date), offsetY);
-            }
-
             (xAxisRef.current as any).requestRedraw();
             (plotYAxisRef.current as any).requestRedraw();
 

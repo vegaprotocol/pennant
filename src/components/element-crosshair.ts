@@ -5,30 +5,33 @@ export function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
   xScale: any,
   yScale: any,
-  x: any,
-  y: any
+  position: [number, number] | null
 ) {
-  const xRange = xScale.range().map(Math.round);
-  const yRange = yScale.range().map(Math.round);
+  if (position) {
+    const xRange = xScale.range().map(Math.round);
+    const yRange = yScale.range().map(Math.round);
+    const x = position[0];
+    const y = position[1];
 
-  ctx.save();
+    ctx.save();
 
-  // Lines
-  ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = Colors.GRAY_LIGHT;
-  ctx.beginPath();
-  ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
-  ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
-  ctx.stroke();
-  ctx.closePath();
+    // Lines
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = Colors.GRAY_LIGHT;
+    ctx.beginPath();
+    ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
+    ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
+    ctx.stroke();
+    ctx.closePath();
 
-  ctx.beginPath();
-  ctx.moveTo(xRange[0], Math.round(y) + 0.5);
-  ctx.lineTo(xRange[1], Math.round(y) + 0.5);
-  ctx.stroke();
-  ctx.closePath();
+    ctx.beginPath();
+    ctx.moveTo(xRange[0], Math.round(y) + 0.5);
+    ctx.lineTo(xRange[1], Math.round(y) + 0.5);
+    ctx.stroke();
+    ctx.closePath();
 
-  ctx.restore();
+    ctx.restore();
+  }
 }
 
 export class CrosshairElement implements Element {
@@ -36,9 +39,8 @@ export class CrosshairElement implements Element {
     ctx: CanvasRenderingContext2D,
     xScale: any,
     yScale: any,
-    x: number,
-    y: number
+    position: [number, number] | null
   ) {
-    addCrosshairPath(ctx, xScale, yScale, x, y);
+    addCrosshairPath(ctx, xScale, yScale, position);
   }
 }
