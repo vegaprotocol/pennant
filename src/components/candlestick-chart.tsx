@@ -59,7 +59,6 @@ const getCandleWidth = (interval: Interval) => {
   return ms;
 };
 
-const HEIGHT = 400;
 const PADDING_INNER = 0.4;
 
 export interface CandleDetailsExtended {
@@ -211,7 +210,7 @@ function drawXAxisTooltip(
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
@@ -249,7 +248,11 @@ function drawYAxis(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
     ctx.textBaseline = "middle";
     ctx.textAlign = "right";
     ctx.font = `12px monospace`;
-    ctx.fillText(String(Math.round(tick)), xScale.range()[1] - 5, yScale(tick));
+    ctx.fillText(
+      String(Math.round(tick)),
+      xScale.range()[1] - 5,
+      Math.round(yScale(tick))
+    );
     ctx.closePath();
   });
 }
@@ -476,14 +479,17 @@ export const CandlestickChart = ({
 
       // Volume scale
       const volumeDomain = [
-        min(filteredData, (d: CandleDetailsExtended) => d.volume),
+        Math.min(
+          0,
+          min(filteredData, (d: CandleDetailsExtended) => d.volume) as number
+        ),
         max(filteredData, (d: CandleDetailsExtended) => d.volume),
       ] as [number, number];
 
       const volumeDomainSize = Math.abs(volumeDomain[1] - volumeDomain[0]);
 
       volumeScaleRescaled.domain([
-        volumeDomain[0] - volumeDomainSize * 0.1,
+        volumeDomain[0],
         volumeDomain[1] + volumeDomainSize * 0.1,
       ]);
 
@@ -651,7 +657,7 @@ export const CandlestickChart = ({
       const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
 
       if (ctx) {
-        clearCanvas(canvas, ctx, "#121212");
+        clearCanvas(canvas, ctx, Colors.BLACK);
         drawXAxis(ctx, xr);
         drawXAxisTooltip(ctx, xr, y, crosshairRef.current);
       }
