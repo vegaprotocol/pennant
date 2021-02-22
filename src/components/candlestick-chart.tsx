@@ -19,7 +19,7 @@ import { YAxisElement } from "./element-y-axis";
 import { YAxisTooltipElement } from "./element-y-axis-tooltip";
 import { clearCanvas } from "./helpers";
 import { closestIndexTo } from "date-fns";
-import { parseInterval } from "../lib/interval";
+import { getCandleWidth } from "../lib/get-candle-width";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
 
@@ -37,32 +37,6 @@ declare global {
     }
   }
 }
-
-const minutesToMS = (mins: number): number => mins * 60 * 1000;
-const hoursToMS = (hours: number): number => hours * 60 * 60 * 1000;
-const daysToMS = (days: number): number => days * 24 * 60 * 60 * 1000;
-
-const getCandleWidth = (interval: Interval) => {
-  const [intervalValue, intervalUnit] = parseInterval(interval);
-
-  let ms: number;
-
-  switch (intervalUnit) {
-    case "M":
-      ms = minutesToMS(intervalValue);
-      break;
-    case "H":
-      ms = hoursToMS(intervalValue);
-      break;
-    case "D":
-      ms = daysToMS(intervalValue);
-      break;
-    default:
-      throw new Error("Invalid interval unit");
-  }
-
-  return ms;
-};
 
 const PADDING_INNER = 0.4;
 
@@ -117,16 +91,6 @@ export const CandlestickChart = React.forwardRef(
     React.useLayoutEffect(() => {
       (chartRef.current as any).requestRedraw();
     }, [height, width]);
-
-    const zoomControl = React.useMemo(
-      () =>
-        d3Zoom<HTMLElement, unknown>()
-          .scaleExtent([0, 1 << 4])
-          .on("zoom", (event) => {
-            render(event.transform);
-          }),
-      []
-    );
 
     const chartRef = React.useRef<HTMLElement>(null!);
     const plotAreaRef = React.useRef<HTMLElement>(null!);
@@ -227,6 +191,14 @@ export const CandlestickChart = React.forwardRef(
         ),
       [data]
     );
+
+    const zoomControl = React.useMemo(() => {
+      return d3Zoom<HTMLElement, unknown>()
+        .scaleExtent([0, 1 << 4])
+        .on("zoom", (event) => {
+          render(event.transform);
+        });
+    }, []);
 
     const render = React.useCallback(
       function render(transform: ZoomTransform) {
@@ -590,7 +562,7 @@ export const CandlestickChart = React.forwardRef(
       });
 
       container.call(zoomControl);
-    }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y]);
+    }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y, zoomControl]);
 
     // Chart container
     React.useEffect(() => {
