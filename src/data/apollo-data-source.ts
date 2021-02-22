@@ -4,7 +4,7 @@ import { candlesQuery, candlesQueryVariables } from "./candlesQuery";
 import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
 import { Interval } from "./globalTypes";
-import { addDecimal } from "../lib/decimal";
+import { addDecimal } from "../helpers/helpers-math";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {

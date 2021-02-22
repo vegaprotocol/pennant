@@ -1,3 +1,5 @@
+import { CandleDetailsExtended } from "../components/candlestick-chart";
+
 export const Colors = {
   BLACK: "#000",
   WHITE: "#fff",
@@ -45,3 +47,19 @@ export function colorByMarketMovement(bullish: boolean | null) {
 
   return Colors.WHITE;
 }
+
+export const isUp = (d: CandleDetailsExtended) => {
+  return d.close > d.open;
+};
+
+export const redIfDownGreenIfUp = (d: CandleDetailsExtended) => {
+  return isUp(d) ? Colors.GREEN : Colors.RED;
+};
+
+export const candleFill = (d: CandleDetailsExtended) => {
+  return isUp(d) ? Colors.GREEN_DARK : Colors.RED;
+};
+
+export const candleStroke = (d: CandleDetailsExtended) => {
+  return redIfDownGreenIfUp(d);
+};

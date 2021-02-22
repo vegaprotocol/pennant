@@ -1,6 +1,6 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { Colors } from "../lib/vega-colours";
+import { Colors } from "../helpers/helpers-color";
 import { Element } from "../types/element";
 
 export function addYAxisPath(

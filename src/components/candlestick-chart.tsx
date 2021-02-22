@@ -10,7 +10,7 @@ import { scaleLinear, scaleUtc } from "d3-scale";
 
 import { BarElement } from "../elements/element-bar";
 import { CandleElement } from "../elements/element-candle";
-import { Colors } from "../lib/vega-colours";
+import { Colors } from "../helpers/helpers-color";
 import { CrosshairElement } from "../elements/element-crosshair";
 import { GridElement } from "../elements/element-grid";
 import { Interval } from "../data/globalTypes";
@@ -20,7 +20,7 @@ import { YAxisElement } from "../elements/element-y-axis";
 import { YAxisTooltipElement } from "../elements/element-y-axis-tooltip";
 import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
-import { getCandleWidth } from "../lib/get-candle-width";
+import { getCandleWidth } from "../helpers/helpers-candle";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
 

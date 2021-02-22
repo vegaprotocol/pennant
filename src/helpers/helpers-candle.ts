@@ -1,5 +1,5 @@
 import { Interval } from "../data/globalTypes";
-import { parseInterval } from "./interval";
+import { parseInterval } from "./helpers-interval";
 
 const minutesToMS = (mins: number): number => mins * 60 * 1000;
 const hoursToMS = (hours: number): number => hours * 60 * 60 * 1000;
