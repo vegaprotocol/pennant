@@ -3,7 +3,7 @@ import "@d3fc/d3fc-element";
 
 import * as React from "react";
 
-import { ZoomTransform, zoom as d3Zoom, zoom, zoomIdentity } from "d3-zoom";
+import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { bisector, extent, max, min } from "d3-array";
 import { closestIndexTo, format } from "date-fns";
 import { scaleLinear, scaleUtc } from "d3-scale";
@@ -350,7 +350,7 @@ export const CandlestickChart = React.forwardRef(
 
     React.useLayoutEffect(() => {
       (chartRef.current as any).requestRedraw();
-    }, []);
+    }, [height, width]);
 
     const zoomControl = React.useMemo(
       () =>
@@ -520,14 +520,15 @@ export const CandlestickChart = React.forwardRef(
 
     const reset = React.useCallback(
       function reset() {
+        console.log(x.domain());
         select(plotYAxisRef.current)
           .transition()
-          .duration(750)
-          .call(zoomControl.transform, zoomIdentity);
+          .duration(200)
+          .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0]);
 
         (select(chartRef.current).node() as any).requestRedraw();
       },
-      [zoomControl.transform]
+      [x, zoomControl.translateTo]
     );
 
     // Plot area
