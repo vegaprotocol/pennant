@@ -337,19 +337,7 @@ export const CandlestickChart = React.forwardRef(
           ctx.restore();
         });
 
-      container.call(zoomControl);
-    }, [
-      scenegraph.plotCrosshair,
-      scenegraph.plotYAxis,
-      scenegraph.plotYAxisTooltip,
-      xr,
-      yr,
-      zoomControl,
-    ]);
-
-    // Plot crosshair
-    React.useEffect(() => {
-      select(plotYAxisRef.current)
+      container
         .on(
           "mousemove",
           (event) => {
@@ -399,14 +387,16 @@ export const CandlestickChart = React.forwardRef(
 
           onMouseOut?.();
         });
+
+      container.call(zoomControl);
     }, [
       data,
       onMouseMove,
       onMouseOut,
       scenegraph.plotCrosshair,
-      x,
+      scenegraph.plotYAxis,
+      scenegraph.plotYAxisTooltip,
       xr,
-      y,
       yr,
       zoomControl,
     ]);

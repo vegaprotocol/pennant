@@ -63,13 +63,11 @@ export const Chart = React.forwardRef(
     );
 
     const query = React.useCallback(
-      async (from: string, to: string) => {
+      async (from: string, to: string, merge = true) => {
         const newData = await dataSource.query(interval, from, to);
 
-        console.info("newest data", newData);
-
         // TODO: need convenience functions for calculating range, sorting and distinct values and merging
-        setData((data) => mergeData(data, newData));
+        setData((data) => mergeData(merge ? data : [], newData));
       },
       [dataSource, interval]
     );
@@ -83,7 +81,11 @@ export const Chart = React.forwardRef(
 
       const myDataSource = dataSource;
 
-      query(new Date(2021, 1, 17, 13).toISOString(), new Date().toISOString());
+      query(
+        new Date(2021, 1, 17, 13).toISOString(),
+        new Date().toISOString(),
+        false
+      );
       //subscribe();
 
       return () => {
@@ -91,9 +93,11 @@ export const Chart = React.forwardRef(
       };
     }, [dataSource, interval, query]);
 
-    const handleGetDataRange = (from: string, to: string) => {
+    const handleGetDataRange = React.useCallback((from: string, to: string) => {
       //query(from, to);
-    };
+    }, []);
+
+    const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
 
     return (
       <div>
@@ -121,7 +125,7 @@ export const Chart = React.forwardRef(
                   interval={interval}
                   onBoundsChanged={setBounds}
                   onMouseMove={setCandle}
-                  onMouseOut={() => setCandle(null)}
+                  onMouseOut={handleOnMouseOut}
                   onGetDataRange={handleGetDataRange}
                 />
               )}
