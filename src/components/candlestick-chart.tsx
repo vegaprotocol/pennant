@@ -83,9 +83,6 @@ function drawCrosshair(
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
 
-  const width = xScale.range()[1];
-  const height = yScale.range()[1];
-
   ctx.save();
 
   // Lines
@@ -100,39 +97,6 @@ function drawCrosshair(
   ctx.moveTo(xRange[0], Math.round(y) + 0.5);
   ctx.lineTo(xRange[1], Math.round(y) + 0.5);
   ctx.stroke();
-  ctx.closePath();
-
-  // x value
-  ctx.font = `12px monospace`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  const value = xScale.invert(x);
-  const xPad = 5;
-  const text = value.toString();
-  const textWidth = ctx.measureText(text).width;
-  const rectWidth = textWidth + xPad * 2;
-  const rectHeight = 19;
-
-  ctx.beginPath();
-  ctx.moveTo(x, height - rectHeight - 5);
-  ctx.lineTo(x + 5, height - rectHeight);
-  ctx.lineTo(x + rectWidth / 2, height - rectHeight);
-  ctx.lineTo(x + rectWidth / 2, height);
-  ctx.lineTo(x - rectWidth / 2, height);
-  ctx.lineTo(x - rectWidth / 2, height - rectHeight);
-  ctx.lineTo(x - 5, height - rectHeight);
-  ctx.closePath();
-
-  ctx.fillStyle = Colors.GRAY_DARK_1;
-  ctx.strokeStyle = "white";
-  ctx.fill();
-  ctx.stroke();
-  ctx.closePath();
-
-  ctx.beginPath();
-  ctx.fillStyle = Colors.WHITE;
-  ctx.fillText(text, x, height - rectHeight / 2);
   ctx.closePath();
 
   ctx.restore();
@@ -219,14 +183,24 @@ function drawXAxisTooltip(
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;
 
+    let xAdjusted = x;
+
+    if (x - rectWidth / 2 < 0) {
+      xAdjusted = rectWidth / 2;
+    }
+
+    if (x + rectWidth / 2 > xScale.range()[1]) {
+      xAdjusted = xScale.range()[1] - rectWidth / 2;
+    }
+
     ctx.beginPath();
-    ctx.moveTo(x, height - rectHeight - 5);
-    ctx.lineTo(x + 5, height - rectHeight);
-    ctx.lineTo(x + rectWidth / 2, height - rectHeight);
-    ctx.lineTo(x + rectWidth / 2, height);
-    ctx.lineTo(x - rectWidth / 2, height);
-    ctx.lineTo(x - rectWidth / 2, height - rectHeight);
-    ctx.lineTo(x - 5, height - rectHeight);
+    ctx.moveTo(xAdjusted, height - rectHeight - 5);
+    ctx.lineTo(xAdjusted + 5, height - rectHeight);
+    ctx.lineTo(xAdjusted + rectWidth / 2, height - rectHeight);
+    ctx.lineTo(xAdjusted + rectWidth / 2, height);
+    ctx.lineTo(xAdjusted - rectWidth / 2, height);
+    ctx.lineTo(xAdjusted - rectWidth / 2, height - rectHeight);
+    ctx.lineTo(xAdjusted - 5, height - rectHeight);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -237,7 +211,7 @@ function drawXAxisTooltip(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, x, height - rectHeight / 2);
+    ctx.fillText(text, xAdjusted, height - rectHeight / 2);
     ctx.closePath();
   }
 }
@@ -291,12 +265,22 @@ function drawYAxisTooltip(
     const rectWidth = textWidth + xPad;
     const rectHeight = 18;
 
+    let yAdjusted = y;
+
+    if (y - rectHeight / 2 < 0) {
+      yAdjusted = rectHeight / 2;
+    }
+
+    if (y + rectHeight / 2 > yScale.range()[0]) {
+      yAdjusted = yScale.range()[0] - rectHeight / 2;
+    }
+
     ctx.beginPath();
-    ctx.moveTo(width - rectWidth - 10, y);
-    ctx.lineTo(width - rectWidth, y - rectHeight / 2);
-    ctx.lineTo(width, y - rectHeight / 2);
-    ctx.lineTo(width, y + rectHeight / 2);
-    ctx.lineTo(width - rectWidth, y + rectHeight / 2);
+    ctx.moveTo(width - rectWidth - 10, yAdjusted);
+    ctx.lineTo(width - rectWidth, yAdjusted - rectHeight / 2);
+    ctx.lineTo(width, yAdjusted - rectHeight / 2);
+    ctx.lineTo(width, yAdjusted + rectHeight / 2);
+    ctx.lineTo(width - rectWidth, yAdjusted + rectHeight / 2);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -307,7 +291,7 @@ function drawYAxisTooltip(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, width - xPad, y);
+    ctx.fillText(text, width - xPad, yAdjusted);
     ctx.closePath();
   }
 }
@@ -422,8 +406,6 @@ export const CandlestickChart = ({
       const range = x.range().map(transform.invertX, transform);
       let diff = 0;
 
-      console.log(k, isPinnedRef.current);
-
       if (k === 1) {
         isPinnedRef.current = false;
       } else {
@@ -531,7 +513,7 @@ export const CandlestickChart = ({
         ctx.restore();
       });
 
-    container
+    select(plotYAxisRef.current)
       .on("mousemove", (event) => {
         const { offsetX, offsetY } = event;
 
