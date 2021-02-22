@@ -13,7 +13,6 @@ import { CandleElement } from "./element-candle";
 import { Colors } from "../lib/vega-colours";
 import { Interval } from "../data/globalTypes";
 import { clearCanvas } from "./helpers";
-import fcZoom from "../lib/zoom";
 import { format } from "date-fns";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
@@ -93,6 +92,7 @@ function drawCrosshair(
   ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
   ctx.stroke();
   ctx.closePath();
+
   ctx.beginPath();
   ctx.moveTo(xRange[0], Math.round(y) + 0.5);
   ctx.lineTo(xRange[1], Math.round(y) + 0.5);
@@ -103,11 +103,14 @@ function drawCrosshair(
 }
 
 function drawGrid(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
-  const xTicks = xScale.ticks();
-  const yTicks = yScale.ticks();
-
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
+
+  const numXTicks = (xRange[1] - xRange[0]) / 50;
+  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 50;
+
+  const xTicks = xScale.ticks(numXTicks);
+  const yTicks = yScale.ticks(numYTicks);
 
   for (const tick of xTicks) {
     ctx.save();
@@ -151,7 +154,11 @@ function drawXAxis(ctx: CanvasRenderingContext2D, xScale: any) {
 
   const tickFormat = xScale.tickFormat();
 
-  xScale.ticks().forEach((tick: number) => {
+  const xRange = xScale.range();
+  const numXTicks = (xRange[1] - xRange[0]) / 60;
+  const xTicks = xScale.ticks(numXTicks);
+
+  xTicks.forEach((tick: number) => {
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
@@ -219,7 +226,11 @@ function drawXAxisTooltip(
 function drawYAxis(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
   ctx.strokeStyle = "#fff";
 
-  yScale.ticks().forEach((tick: number) => {
+  const yRange = yScale.range();
+  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 60;
+  const yTicks = yScale.ticks(numYTicks);
+
+  yTicks.forEach((tick: number) => {
     const text = tick.toString();
     const textWidth = ctx.measureText(text).width;
 
@@ -301,7 +312,7 @@ export type CandleStickChartProps = {
   height: number;
   data: CandleDetailsExtended[];
   interval: Interval;
-  onBoundsChange?: (bounds: [Date, Date]) => void;
+  onBoundsChanged?: (bounds: [Date, Date]) => void;
   onMouseMove?: (position: [number, number]) => void;
   onMouseOut?: () => void;
   onMouseOver?: () => void;
@@ -314,7 +325,7 @@ export const CandlestickChart = ({
   height,
   data,
   interval,
-  onBoundsChange,
+  onBoundsChanged,
   onMouseMove,
   onMouseOut,
   onMouseOver,
@@ -330,9 +341,11 @@ export const CandlestickChart = ({
 
   const zoomControl = React.useMemo(
     () =>
-      d3Zoom<HTMLElement, unknown>().on("zoom", (event) => {
-        render(event.transform);
-      }),
+      d3Zoom<HTMLElement, unknown>()
+        .scaleExtent([0, 1 << 4])
+        .on("zoom", (event) => {
+          render(event.transform);
+        }),
     []
   );
 
@@ -401,17 +414,36 @@ export const CandlestickChart = ({
     [data]
   );
 
-  const volumeScale = scaleLinear()
-    .domain(
-      extent(data, (d: CandleDetailsExtended) => d.volume) as [number, number]
-    )
-    .range([HEIGHT / 2, 0]);
+  const yr = React.useMemo(
+    () =>
+      scaleLinear().domain([
+        min(data, (d: CandleDetailsExtended) => d.low),
+        max(data, (d) => d.high),
+      ] as [number, number]),
+    [data]
+  );
+
+  const volumeScale = React.useMemo(
+    () =>
+      scaleLinear().domain(
+        extent(data, (d: CandleDetailsExtended) => d.volume) as [number, number]
+      ),
+    [data]
+  );
+
+  const volumeScaleRescaled = React.useMemo(
+    () =>
+      scaleLinear().domain(
+        extent(data, (d: CandleDetailsExtended) => d.volume) as [number, number]
+      ),
+    [data]
+  );
 
   const render = React.useCallback(
     function render(transform: ZoomTransform) {
       const k = transform.k / previousZoomTransform.current.k;
-
       const range = x.range().map(transform.invertX, transform);
+
       let diff = 0;
 
       if (k === 1) {
@@ -424,11 +456,44 @@ export const CandlestickChart = ({
 
       xr.domain(domain);
 
+      // Filter data by new domain
+      const filteredData = data.filter(
+        (d) => d.date > domain[0] && d.date < domain[1]
+      );
+
+      // Price scale
+      const yDomain = [
+        min(filteredData, (d: CandleDetailsExtended) => d.low),
+        max(filteredData, (d: CandleDetailsExtended) => d.high),
+      ] as [number, number];
+
+      const yDomainSize = Math.abs(yDomain[1] - yDomain[0]);
+
+      yr.domain([
+        yDomain[0] - yDomainSize * 0.1,
+        yDomain[1] + yDomainSize * 0.1,
+      ]);
+
+      // Volume scale
+      const volumeDomain = [
+        min(filteredData, (d: CandleDetailsExtended) => d.volume),
+        max(filteredData, (d: CandleDetailsExtended) => d.volume),
+      ] as [number, number];
+
+      const volumeDomainSize = Math.abs(volumeDomain[1] - volumeDomain[0]);
+
+      volumeScaleRescaled.domain([
+        volumeDomain[0] - volumeDomainSize * 0.1,
+        volumeDomain[1] + volumeDomainSize * 0.1,
+      ]);
+
       previousZoomTransform.current = transform;
 
       (select(chartRef.current).node() as any).requestRedraw();
+
+      onBoundsChanged?.(domain as [Date, Date]);
     },
-    [x, xr]
+    [data, onBoundsChanged, volumeScaleRescaled, x, xr, yr]
   );
 
   const reset = React.useCallback(function reset() {
@@ -445,8 +510,10 @@ export const CandlestickChart = ({
     select(plotAreaRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
-        xr.range([0, width]);
+        x.range([0, width]);
         y.range([height, 0]);
+        xr.range([0, width]);
+        yr.range([height, 0]);
       })
       .on("draw", (event) => {
         const { child, pixelRatio } = event.detail;
@@ -457,24 +524,24 @@ export const CandlestickChart = ({
 
         if (ctx) {
           clearCanvas(child, ctx, Colors.BLACK);
-          drawGrid(ctx, xr, y);
+          drawGrid(ctx, xr, yr);
 
           for (const candle of candles) {
-            candle.draw(ctx, xr, y);
+            candle.draw(ctx, xr, yr);
           }
         }
 
         ctx.restore();
       });
-  }, [candles, xr, y, zoomControl]);
+  }, [candles, x, xr, y, yr, zoomControl]);
 
   // Plot y axis
   React.useEffect(() => {
     const container = select(plotYAxisRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
-        x.range([0, width]);
-        y.range([height, 0]);
+        xr.range([0, width]);
+        yr.range([height, 0]);
       })
       .on("draw", (event) => {
         const { child, pixelRatio } = event.detail;
@@ -484,38 +551,18 @@ export const CandlestickChart = ({
         ctx.scale(pixelRatio, pixelRatio);
 
         if (ctx) {
-          drawYAxis(ctx, x, y);
-          drawYAxisTooltip(ctx, xr, y, crosshairRef.current);
+          drawYAxis(ctx, xr, yr);
+          drawYAxisTooltip(ctx, xr, yr, crosshairRef.current);
         }
 
         ctx.restore();
       });
 
     container.call(zoomControl);
-  }, [x, y, zoomControl]);
+  }, [xr, yr, zoomControl]);
 
   // Plot crosshair
   React.useEffect(() => {
-    const container = select<Element, unknown>(plotCrosshairRef.current)
-      .on("measure", (event: any) => {
-        const { height, width } = event.detail;
-        x.range([0, width]);
-        y.range([height, 0]);
-      })
-      .on("draw", (event) => {
-        const { child, pixelRatio } = event.detail;
-        const ctx = child.getContext("2d");
-
-        ctx.save();
-        ctx.scale(pixelRatio, pixelRatio);
-
-        if (ctx) {
-          drawYAxis(ctx, x, y);
-        }
-
-        ctx.restore();
-      });
-
     select(plotYAxisRef.current)
       .on("mousemove", (event) => {
         const { offsetX, offsetY } = event;
@@ -528,8 +575,10 @@ export const CandlestickChart = ({
 
         crosshairRef.current = [offsetX, offsetY];
 
-        clearCanvas(canvas, ctx!);
-        drawCrosshair(ctx!, x, y, offsetX, offsetY);
+        if (ctx) {
+          clearCanvas(canvas, ctx, "#fff");
+          drawCrosshair(ctx, xr, y, offsetX, offsetY);
+        }
 
         (xAxisRef.current as any).requestRedraw();
         (plotYAxisRef.current as any).requestRedraw();
@@ -539,15 +588,15 @@ export const CandlestickChart = ({
       .on("mouseout", () => {
         crosshairRef.current = null;
       });
-  }, [onMouseMove, x, y, zoomControl]);
+  }, [onMouseMove, x, xr, y, zoomControl]);
 
   // Study
   React.useEffect(() => {
     select(studyAreaRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
-        x.range([0, width]);
-        volumeScale.range([height, 0]);
+        xr.range([0, width]);
+        volumeScaleRescaled.range([height, 0]);
       })
       .on("draw", (event) => {
         const canvas = select(studyAreaRef.current)
@@ -558,22 +607,22 @@ export const CandlestickChart = ({
 
         if (ctx) {
           clearCanvas(canvas, ctx, Colors.BLACK);
-          drawGrid(ctx, xr, volumeScale);
+          drawGrid(ctx, xr, volumeScaleRescaled);
 
           for (const bar of bars) {
-            bar.draw(ctx, xr, volumeScale);
+            bar.draw(ctx, xr, volumeScaleRescaled);
           }
         }
       });
-  }, [bars, xr, volumeScale, x]);
+  }, [bars, xr, volumeScaleRescaled]);
 
   // Study y axis
   React.useEffect(() => {
     const container = select(studyYAxisRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
-        x.range([0, width]);
-        volumeScale.range([height, 0]);
+        xr.range([0, width]);
+        volumeScaleRescaled.range([height, 0]);
       })
       .on("draw", (event) => {
         const { child, pixelRatio } = event.detail;
@@ -583,14 +632,14 @@ export const CandlestickChart = ({
         ctx.scale(pixelRatio, pixelRatio);
 
         if (ctx) {
-          drawYAxis(ctx, x, volumeScale);
+          drawYAxis(ctx, xr, volumeScaleRescaled);
         }
 
         ctx.restore();
       });
 
     container.call(zoomControl);
-  }, [x, volumeScale, zoomControl]);
+  }, [xr, volumeScaleRescaled, zoomControl]);
 
   // X axis
   React.useEffect(() => {
@@ -603,11 +652,11 @@ export const CandlestickChart = ({
 
       if (ctx) {
         clearCanvas(canvas, ctx, "#121212");
-        drawXAxis(ctx, x);
+        drawXAxis(ctx, xr);
         drawXAxisTooltip(ctx, xr, y, crosshairRef.current);
       }
     });
-  }, [x, xr, y]);
+  }, [xr, y]);
 
   // Chart container
   React.useEffect(() => {

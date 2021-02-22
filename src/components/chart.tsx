@@ -109,7 +109,7 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
                 height={height}
                 data={data}
                 interval={interval}
-                onBoundsChange={setBounds}
+                onBoundsChanged={setBounds}
                 onMouseMove={setPosition}
                 onGetDataRange={handleGetDataRange}
               />
