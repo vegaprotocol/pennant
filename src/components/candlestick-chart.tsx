@@ -285,11 +285,14 @@ export const CandlestickChart = React.forwardRef(
 
     const reset = React.useCallback(
       function reset() {
-        console.log(x.domain());
         select(plotYAxisRef.current)
           .transition()
-          .duration(1500)
-          .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0]);
+          .duration(750)
+          .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0])
+          .end()
+          .then(() => {
+            isPinnedRef.current = true;
+          });
 
         (select(chartRef.current).node() as any).requestRedraw();
       },
