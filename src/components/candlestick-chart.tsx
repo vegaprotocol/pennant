@@ -181,15 +181,6 @@ export const CandlestickChart = React.forwardRef(
       [data]
     );
 
-    // FIXME: Depends on render, but render depends on zoomControl?
-    const zoomControl = React.useMemo(() => {
-      return d3Zoom<HTMLElement, unknown>()
-        .scaleExtent([0, 1 << 4])
-        .on("zoom", (event) => {
-          render(event.transform);
-        });
-    }, []);
-
     const render = React.useCallback(
       function render(transform: ZoomTransform) {
         const k = transform.k / previousZoomTransform.current.k;
@@ -249,6 +240,14 @@ export const CandlestickChart = React.forwardRef(
       },
       [data, onBoundsChanged, volumeScaleRescaled, x, xr, yr]
     );
+
+    const zoomControl = React.useMemo(() => {
+      return d3Zoom<HTMLElement, unknown>()
+        .scaleExtent([0, 1 << 4])
+        .on("zoom", (event) => {
+          render(event.transform);
+        });
+    }, [render]);
 
     const reset = React.useCallback(
       function reset() {
