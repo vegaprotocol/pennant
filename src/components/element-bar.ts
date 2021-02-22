@@ -1,8 +1,5 @@
 import { Colors } from "../lib/vega-colours";
-
-interface Element {
-  draw(ctx: CanvasRenderingContext2D, xScale: any, yScale: any): void;
-}
+import { Element } from "../types/element";
 
 export class BarElement implements Element {
   readonly x: number;

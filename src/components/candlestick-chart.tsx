@@ -5,15 +5,19 @@ import * as React from "react";
 
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { bisector, extent, max, min } from "d3-array";
-import { closestIndexTo, format } from "date-fns";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
-// TODO: Rename element to shape
 import { BarElement } from "./element-bar";
 import { CandleElement } from "./element-candle";
 import { Colors } from "../lib/vega-colours";
+import { CrosshairElement } from "./element-crosshair";
+import { GridElement } from "./element-grid";
 import { Interval } from "../data/globalTypes";
+import { XAxisElement } from "./element-x-axis";
+import { YAxisElement } from "./element-y-axis";
+import { YAxisTooltipElement } from "./element-y-axis-tooltip";
 import { clearCanvas } from "./helpers";
+import { closestIndexTo } from "date-fns";
 import { parseInterval } from "../lib/interval";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
@@ -69,245 +73,6 @@ export interface CandleDetailsExtended {
   open: number;
   close: number;
   volume: number;
-}
-
-function drawCrosshair(
-  ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
-  x: any,
-  y: any
-) {
-  const xRange = xScale.range().map(Math.round);
-  const yRange = yScale.range().map(Math.round);
-
-  ctx.save();
-
-  // Lines
-  ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = Colors.GRAY_LIGHT;
-  ctx.beginPath();
-  ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
-  ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
-  ctx.stroke();
-  ctx.closePath();
-
-  ctx.beginPath();
-  ctx.moveTo(xRange[0], Math.round(y) + 0.5);
-  ctx.lineTo(xRange[1], Math.round(y) + 0.5);
-  ctx.stroke();
-  ctx.closePath();
-
-  ctx.restore();
-}
-
-function drawGrid(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
-  const xRange = xScale.range().map(Math.round);
-  const yRange = yScale.range().map(Math.round);
-
-  const numXTicks = (xRange[1] - xRange[0]) / 50;
-  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 50;
-
-  const xTicks = xScale.ticks(numXTicks);
-  const yTicks = yScale.ticks(numYTicks);
-
-  for (const tick of xTicks) {
-    ctx.save();
-    ctx.beginPath();
-
-    ctx.strokeStyle = "#484848";
-    ctx.fillStyle = "transparent";
-    ctx.lineWidth = 0.7;
-
-    ctx.moveTo(Math.round(xScale(tick)), yRange[0]);
-    ctx.lineTo(Math.round(xScale(tick)), yRange[1]);
-
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.closePath();
-    ctx.restore();
-  }
-
-  for (const tick of yTicks) {
-    ctx.save();
-    ctx.beginPath();
-
-    ctx.strokeStyle = "#484848";
-    ctx.fillStyle = "transparent";
-    ctx.lineWidth = 1;
-
-    ctx.moveTo(xRange[0], Math.round(yScale(tick)) + 0.5);
-    ctx.lineTo(xRange[1], Math.round(yScale(tick)) + 0.5);
-
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.closePath();
-    ctx.restore();
-  }
-}
-
-function drawXAxis(ctx: CanvasRenderingContext2D, xScale: any) {
-  ctx.strokeStyle = "#fff";
-
-  const tickFormat = xScale.tickFormat();
-
-  const xRange = xScale.range();
-  const numXTicks = (xRange[1] - xRange[0]) / 60;
-  const xTicks = xScale.ticks(numXTicks);
-
-  xTicks.forEach((tick: number) => {
-    ctx.beginPath();
-    ctx.fillStyle = Colors.GRAY_LIGHT;
-    ctx.textBaseline = "top";
-    ctx.textAlign = "center";
-    ctx.font = `12px monospace`;
-    ctx.fillText(tickFormat(tick), xScale(tick), 9);
-    ctx.closePath();
-  });
-}
-
-function drawXAxisTooltip(
-  ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
-  position: [number, number] | null
-) {
-  if (position) {
-    const height = 24.5;
-    const x = position[0];
-
-    ctx.font = `12px monospace`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    const value = xScale.invert(x);
-    const xPad = 5;
-    const text = format(value, "HH:mm");
-    const textWidth = ctx.measureText(text).width;
-    const rectWidth = textWidth + xPad * 2;
-    const rectHeight = 19;
-
-    let xAdjusted = x;
-
-    if (x - rectWidth / 2 < 0) {
-      xAdjusted = rectWidth / 2;
-    }
-
-    if (x + rectWidth / 2 > xScale.range()[1]) {
-      xAdjusted = xScale.range()[1] - rectWidth / 2;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(xAdjusted, height - rectHeight - 5);
-    ctx.lineTo(xAdjusted + 5, height - rectHeight);
-    ctx.lineTo(xAdjusted + rectWidth / 2, height - rectHeight);
-    ctx.lineTo(xAdjusted + rectWidth / 2, height);
-    ctx.lineTo(xAdjusted - rectWidth / 2, height);
-    ctx.lineTo(xAdjusted - rectWidth / 2, height - rectHeight);
-    ctx.lineTo(xAdjusted - 5, height - rectHeight);
-    ctx.closePath();
-
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, xAdjusted, height - rectHeight / 2);
-    ctx.closePath();
-  }
-}
-
-function drawYAxis(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
-  ctx.strokeStyle = "#fff";
-
-  const yRange = yScale.range();
-  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 60;
-  const yTicks = yScale.ticks(numYTicks);
-
-  yTicks.forEach((tick: number) => {
-    const text = tick.toString();
-    const textWidth = ctx.measureText(text).width;
-
-    ctx.beginPath();
-    ctx.fillStyle = "rgba(0,0,0,0.8)";
-    ctx.fillRect(
-      xScale.range()[1] - textWidth - 10,
-      yScale(tick) - 10,
-      textWidth + 10,
-      20
-    );
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.fillStyle = Colors.GRAY_LIGHT;
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "right";
-    ctx.font = `12px monospace`;
-    ctx.fillText(
-      String(Math.round(tick)),
-      xScale.range()[1] - 5,
-      Math.round(yScale(tick))
-    );
-    ctx.closePath();
-  });
-}
-
-function drawYAxisTooltip(
-  ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
-  position: [number, number] | null,
-  decimalPlaces = 5
-) {
-  if (position) {
-    const width = xScale.range()[1];
-    const y = position[1] + 0.5;
-
-    ctx.font = `12px monospace`;
-    ctx.textAlign = "right";
-    ctx.textBaseline = "middle";
-
-    const value = yScale.invert(y);
-    const xPad = 5;
-    const text = value.toFixed(decimalPlaces);
-    const textWidth = ctx.measureText(text).width;
-    const rectWidth = textWidth + xPad;
-    const rectHeight = 18;
-
-    let yAdjusted = y;
-
-    if (y - rectHeight / 2 < 0) {
-      yAdjusted = rectHeight / 2;
-    }
-
-    if (y + rectHeight / 2 > yScale.range()[0]) {
-      yAdjusted = yScale.range()[0] - rectHeight / 2;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(width - rectWidth - 10, yAdjusted);
-    ctx.lineTo(width - rectWidth, yAdjusted - rectHeight / 2);
-    ctx.lineTo(width, yAdjusted - rectHeight / 2);
-    ctx.lineTo(width, yAdjusted + rectHeight / 2);
-    ctx.lineTo(width - rectWidth, yAdjusted + rectHeight / 2);
-    ctx.closePath();
-
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = "white";
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, width - xPad, yAdjusted);
-    ctx.closePath();
-  }
 }
 
 export type CandleStickChartProps = {
@@ -383,23 +148,34 @@ export const CandlestickChart = React.forwardRef(
     // Everything is in domain space. This means this object should only change if the data changes
     // And ideally, we only need to update a small part of the object
     // Memoize obviously
-    const candles = data.map(
-      (candle) =>
-        new CandleElement({
-          ...candle,
-          x: candle.date,
-          width: candleWidth * (1 - PADDING_INNER),
-        })
-    );
-
-    const bars = data.map(
-      (bar) =>
-        new BarElement({
-          ...bar,
-          x: bar.date,
-          height: bar.volume,
-          width: candleWidth * (1 - PADDING_INNER),
-        })
+    const scenegraph = React.useMemo(
+      () => ({
+        candles: data.map(
+          (candle) =>
+            new CandleElement({
+              ...candle,
+              x: candle.date,
+              width: candleWidth * (1 - PADDING_INNER),
+            })
+        ),
+        bars: data.map(
+          (bar) =>
+            new BarElement({
+              ...bar,
+              x: bar.date,
+              height: bar.volume,
+              width: candleWidth * (1 - PADDING_INNER),
+            })
+        ),
+        grid: new GridElement(),
+        crosshair: new CrosshairElement(),
+        plotYAxis: new YAxisElement(),
+        plotYAxisTooltip: new YAxisTooltipElement(),
+        studyYAxis: new YAxisElement(),
+        xAxis: new XAxisElement(),
+        xAxisTooltip: new YAxisTooltipElement(),
+      }),
+      [candleWidth, data]
     );
 
     const x = React.useMemo(
@@ -433,17 +209,6 @@ export const CandlestickChart = React.forwardRef(
           min(data, (d: CandleDetailsExtended) => d.low),
           max(data, (d) => d.high),
         ] as [number, number]),
-      [data]
-    );
-
-    const volumeScale = React.useMemo(
-      () =>
-        scaleLinear().domain(
-          extent(data, (d: CandleDetailsExtended) => d.volume) as [
-            number,
-            number
-          ]
-        ),
       [data]
     );
 
@@ -523,7 +288,7 @@ export const CandlestickChart = React.forwardRef(
         console.log(x.domain());
         select(plotYAxisRef.current)
           .transition()
-          .duration(200)
+          .duration(1500)
           .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0]);
 
         (select(chartRef.current).node() as any).requestRedraw();
@@ -550,16 +315,16 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             clearCanvas(child, ctx, Colors.BLACK);
-            drawGrid(ctx, xr, yr);
+            scenegraph.grid.draw(ctx, xr, yr);
 
-            for (const candle of candles) {
+            for (const candle of scenegraph.candles) {
               candle.draw(ctx, xr, yr);
             }
           }
 
           ctx.restore();
         });
-    }, [candles, x, xr, y, yr, zoomControl]);
+    }, [scenegraph.candles, scenegraph.grid, x, xr, y, yr, zoomControl]);
 
     // Plot y axis
     React.useEffect(() => {
@@ -577,15 +342,22 @@ export const CandlestickChart = React.forwardRef(
           ctx.scale(pixelRatio, pixelRatio);
 
           if (ctx) {
-            drawYAxis(ctx, xr, yr);
-            drawYAxisTooltip(ctx, xr, yr, crosshairRef.current);
+            scenegraph.plotYAxis.draw(ctx, xr, yr);
+
+            scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, crosshairRef.current);
           }
 
           ctx.restore();
         });
 
       container.call(zoomControl);
-    }, [xr, yr, zoomControl]);
+    }, [
+      scenegraph.plotYAxis,
+      scenegraph.plotYAxisTooltip,
+      xr,
+      yr,
+      zoomControl,
+    ]);
 
     // Plot crosshair
     React.useEffect(() => {
@@ -593,7 +365,6 @@ export const CandlestickChart = React.forwardRef(
         .on(
           "mousemove",
           (event) => {
-            console.log("moving");
             const { offsetX, offsetY } = event;
             const timeAtMouseX = xr.invert(offsetX);
 
@@ -629,7 +400,7 @@ export const CandlestickChart = React.forwardRef(
 
             if (ctx) {
               clearCanvas(canvas, ctx, "#fff");
-              drawCrosshair(ctx, xr, yr, xr(candle.date), offsetY);
+              scenegraph.crosshair.draw(ctx, xr, yr, xr(candle.date), offsetY);
             }
 
             (xAxisRef.current as any).requestRedraw();
@@ -637,12 +408,15 @@ export const CandlestickChart = React.forwardRef(
 
             onMouseMove?.([offsetX, offsetY]);
           },
-          { capture: true }
+          { capture: true } // TODO: It would be preferable to still respond to this event while zooming
         )
         .on("mouseout", () => {
           crosshairRef.current = null;
+
+          (xAxisRef.current as any).requestRedraw();
+          (plotYAxisRef.current as any).requestRedraw();
         });
-    }, [data, onMouseMove, x, xr, y, yr, zoomControl]);
+    }, [data, onMouseMove, scenegraph.crosshair, x, xr, y, yr, zoomControl]);
 
     // Study
     React.useEffect(() => {
@@ -661,14 +435,14 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             clearCanvas(canvas, ctx, Colors.BLACK);
-            drawGrid(ctx, xr, volumeScaleRescaled);
+            scenegraph.grid.draw(ctx, xr, volumeScaleRescaled);
 
-            for (const bar of bars) {
+            for (const bar of scenegraph.bars) {
               bar.draw(ctx, xr, volumeScaleRescaled);
             }
           }
         });
-    }, [bars, xr, volumeScaleRescaled]);
+    }, [xr, volumeScaleRescaled, scenegraph.bars, scenegraph.grid]);
 
     // Study y axis
     React.useEffect(() => {
@@ -686,14 +460,14 @@ export const CandlestickChart = React.forwardRef(
           ctx.scale(pixelRatio, pixelRatio);
 
           if (ctx) {
-            drawYAxis(ctx, xr, volumeScaleRescaled);
+            scenegraph.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
           }
 
           ctx.restore();
         });
 
       container.call(zoomControl);
-    }, [xr, volumeScaleRescaled, zoomControl]);
+    }, [xr, volumeScaleRescaled, zoomControl, scenegraph.studyYAxis]);
 
     // X axis
     React.useEffect(() => {
@@ -706,11 +480,11 @@ export const CandlestickChart = React.forwardRef(
 
         if (ctx) {
           clearCanvas(canvas, ctx, Colors.BLACK);
-          drawXAxis(ctx, xr);
-          drawXAxisTooltip(ctx, xr, y, crosshairRef.current);
+          scenegraph.xAxis.draw(ctx, xr, y);
+          scenegraph.xAxisTooltip.draw(ctx, xr, y, crosshairRef.current);
         }
       });
-    }, [xr, y]);
+    }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y]);
 
     // Chart container
     React.useEffect(() => {
