@@ -1,10 +1,12 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 
 export function addGridPath(
   ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any
+  xScale: ScaleTime<number, number, never>,
+  yScale: ScaleLinear<number, number, never>
 ) {
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
@@ -53,7 +55,11 @@ export function addGridPath(
 }
 
 export class GridElement implements Element {
-  draw(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime<number, number, never>,
+    yScale: ScaleLinear<number, number, never>
+  ) {
     addGridPath(ctx, xScale, yScale);
   }
 }

@@ -1,3 +1,5 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 
@@ -17,15 +19,24 @@ export function addCandlePath(
   ctx.lineTo(x, low);
 }
 
+export type Candle = {
+  x: Date;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+  width: number;
+};
+
 export class CandleElement implements Element {
-  readonly x: number;
+  readonly x: Date;
   readonly open: number;
   readonly close: number;
   readonly high: number;
   readonly low: number;
   readonly width: number;
 
-  constructor(candle: any) {
+  constructor(candle: Candle) {
     const { x, open, close, high, low, width } = candle;
 
     this.x = x;
@@ -36,7 +47,11 @@ export class CandleElement implements Element {
     this.width = width;
   }
 
-  draw(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime<number, number, never>,
+    yScale: ScaleLinear<number, number, never>
+  ) {
     ctx.save();
     ctx.beginPath();
 

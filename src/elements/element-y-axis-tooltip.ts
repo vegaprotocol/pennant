@@ -1,10 +1,12 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 
 export function addYAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
+  xScale: ScaleTime<number, number, never>,
+  yScale: ScaleLinear<number, number, never>,
   position: [number | null, number | null],
   decimalPlaces = 5
 ) {
@@ -58,8 +60,8 @@ export function addYAxisPath(
 export class YAxisTooltipElement implements Element {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: any,
-    yScale: any,
+    xScale: ScaleTime<number, number, never>,
+    yScale: ScaleLinear<number, number, never>,
     position: [number | null, number | null]
   ) {
     addYAxisPath(ctx, xScale, yScale, position);

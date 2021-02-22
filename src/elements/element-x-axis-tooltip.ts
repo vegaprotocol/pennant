@@ -1,11 +1,13 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 import { format } from "date-fns";
 
 export function addXAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
+  xScale: ScaleTime<number, number, never>,
+  yScale: ScaleLinear<number, number, never>,
   position: [number | null, number | null]
 ) {
   const x = position[0];
@@ -60,8 +62,8 @@ export function addXAxisPath(
 export class XAxisTooltipElement implements Element {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: any,
-    yScale: any,
+    xScale: ScaleTime<number, number, never>,
+    yScale: ScaleLinear<number, number, never>,
     position: [number | null, number | null]
   ) {
     addXAxisPath(ctx, xScale, yScale, position);

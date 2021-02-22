@@ -1,7 +1,12 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 
-export function addXAxisPath(ctx: CanvasRenderingContext2D, xScale: any) {
+export function addXAxisPath(
+  ctx: CanvasRenderingContext2D,
+  xScale: ScaleTime<number, number, never>
+) {
   ctx.strokeStyle = "#fff";
 
   const tickFormat = xScale.tickFormat();
@@ -10,7 +15,7 @@ export function addXAxisPath(ctx: CanvasRenderingContext2D, xScale: any) {
   const numXTicks = (xRange[1] - xRange[0]) / 60;
   const xTicks = xScale.ticks(numXTicks);
 
-  xTicks.forEach((tick: number) => {
+  xTicks.forEach((tick) => {
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
@@ -22,7 +27,11 @@ export function addXAxisPath(ctx: CanvasRenderingContext2D, xScale: any) {
 }
 
 export class XAxisElement implements Element {
-  draw(ctx: CanvasRenderingContext2D, xScale: any, yScale: any) {
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime<number, number, never>,
+    _yScale: ScaleLinear<number, number, never>
+  ) {
     addXAxisPath(ctx, xScale);
   }
 }

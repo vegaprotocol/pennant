@@ -1,10 +1,12 @@
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Colors } from "../lib/vega-colours";
 import { Element } from "../types/element";
 
 export function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
-  xScale: any,
-  yScale: any,
+  xScale: ScaleTime<number, number, never>,
+  yScale: ScaleLinear<number, number, never>,
   position: [number | null, number | null]
 ) {
   const x = position[0];
@@ -40,8 +42,8 @@ export function addCrosshairPath(
 export class CrosshairElement implements Element {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: any,
-    yScale: any,
+    xScale: ScaleTime<number, number, never>,
+    yScale: ScaleLinear<number, number, never>,
     position: [number | null, number | null]
   ) {
     addCrosshairPath(ctx, xScale, yScale, position);
