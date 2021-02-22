@@ -1,4 +1,4 @@
-import { Interval } from "../data/globalTypes";
+import { Interval } from "../api/vega-graphql";
 
 export interface DataSource {
   query(interval: Interval, from: string, to: string): Promise<any>;

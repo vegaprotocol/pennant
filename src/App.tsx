@@ -7,7 +7,7 @@ import { ItemRenderer, Select } from "@blueprintjs/select";
 
 import { ApolloDataSource } from "./data/apollo-data-source";
 import { Chart } from "./components/chart";
-import { Interval } from "./data/globalTypes";
+import { Interval } from "./api/vega-graphql";
 import { useApolloClient } from "@apollo/client";
 import useSWR from "swr";
 

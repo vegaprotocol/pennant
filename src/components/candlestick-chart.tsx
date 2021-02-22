@@ -20,7 +20,7 @@ import { bisector, extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
 import { FcElement } from "../types/d3fc-types";
-import { Interval } from "../data/globalTypes";
+import { Interval } from "../api/vega-graphql";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
 

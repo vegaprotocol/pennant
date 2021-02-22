@@ -1,7 +1,7 @@
 import "./chart-info.scss";
 
 import { Button } from "@blueprintjs/core";
-import { Interval } from "../data/globalTypes";
+import { Interval } from "../api/vega-graphql";
 import { format } from "date-fns";
 
 export type ChartInfoProps = {

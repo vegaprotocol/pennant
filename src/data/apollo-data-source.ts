@@ -1,9 +1,13 @@
-import { candleQuery, candleSubscriptionQuery } from "./queries/candles";
-import { candlesQuery, candlesQueryVariables } from "./candlesQuery";
+import {
+  Interval,
+  candleQuery,
+  candleSubscriptionQuery,
+  candlesQuery,
+  candlesQueryVariables,
+} from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
-import { Interval } from "./globalTypes";
 import { addDecimal } from "../helpers";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {

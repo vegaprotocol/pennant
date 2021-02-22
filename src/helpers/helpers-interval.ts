@@ -6,7 +6,7 @@ import {
   subMinutes,
 } from "date-fns";
 
-import { Interval } from "../data/globalTypes";
+import { Interval } from "../api/vega-graphql";
 
 type IntervalUnit = "M" | "H" | "D";
 type ParsedInterval = [number, IntervalUnit];

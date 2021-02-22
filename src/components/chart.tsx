@@ -8,7 +8,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
-import { Interval } from "../data/globalTypes";
+import { Interval } from "../api/vega-graphql";
 
 function mergeData(
   a: { date: Date; datetime: string }[],
