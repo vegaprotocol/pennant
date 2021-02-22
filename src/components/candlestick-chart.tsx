@@ -606,7 +606,6 @@ export const CandlestickChart = React.forwardRef(
           gridTemplateRows: "2fr 1px 1fr auto",
           gridTemplateAreas: `"plot-area" "separator" "study-area" "x-axis"`,
           gap: "0",
-          paddingTop: "8px",
           width: "100%",
           height: "100%",
         }}

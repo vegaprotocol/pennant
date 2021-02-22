@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { Button, Colors } from "@blueprintjs/core";
+
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandlestickChart } from "./candlestick-chart";
 import { DataSource } from "../types/data-source";
@@ -93,14 +95,10 @@ export const Chart = React.forwardRef(
 
     return (
       <div>
-        <p>
-          {format(bounds[0], "MMM d HH:mm")} -{" "}
-          {format(bounds[1], "MMM d HH:mm")}
-        </p>
-        <p>{position && `${position[0]}, ${position[1]}`}</p>
         {data.length > 0 && (
           <div
             style={{
+              position: "relative",
               resize: "both",
               overflow: "auto",
               width: "800px",
@@ -125,6 +123,64 @@ export const Chart = React.forwardRef(
                 />
               )}
             </AutoSizer>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                //pointerEvents: "none",
+                padding: "8px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "8px",
+                  paddingBottom: "4px",
+                }}
+              >
+                <Button small text={interval} />
+                <div>
+                  <span>{`${format(bounds[0], "HH:mm dd MMM yyyy")}`}</span>
+                  <span className="bp3-text-muted"> to </span>
+                  <span>{`${format(bounds[1], "HH:mm dd MMM yyyy")}`}</span>
+                </div>
+              </div>
+              <div
+                style={{ display: "flex", flexDirection: "row", gap: "8px" }}
+              >
+                <div>
+                  <span className="bp3-text-muted">Candle: </span>
+                  <span className="bp3-monospace-text">{position?.[0]}</span>
+                </div>
+                <div>
+                  <span className="bp3-text-muted">O </span>
+                  <span className="bp3-monospace-text">{position?.[0]}</span>
+                </div>
+                <div>
+                  <span className="bp3-text-muted">H </span>
+                  <span className="bp3-monospace-text">{position?.[1]}</span>
+                </div>
+                <div>
+                  <span className="bp3-text-muted">L </span>
+                  <span className="bp3-monospace-text">{position?.[0]}</span>
+                </div>
+                <div>
+                  <span className="bp3-text-muted">C </span>
+                  <span className="bp3-monospace-text">{position?.[1]}</span>
+                </div>
+                <div>
+                  <span className="bp3-text-muted">Change </span>
+                  <span
+                    className="bp3-monospace-text"
+                    style={{ color: Colors.GREEN5 }}
+                  >
+                    +0.23%
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
