@@ -11,7 +11,7 @@ export type ChartInfoProps = {
 
 export const ChartInfo = ({ interval, bounds }: ChartInfoProps) => {
   return (
-    <div className=".chart-info-wrapper">
+    <div className="chart-info-wrapper">
       <Button small text={interval} />
       <div>
         <span>{`${format(bounds[0], "HH:mm dd MMM yyyy")}`}</span>
