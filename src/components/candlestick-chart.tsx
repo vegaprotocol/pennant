@@ -1,5 +1,6 @@
 import "d3-transition";
 import "@d3fc/d3fc-element";
+import "./candlestick-chart.scss";
 
 import * as React from "react";
 
@@ -23,17 +24,27 @@ import { getCandleWidth } from "../lib/get-candle-width";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
 
+interface D3fcGroupElement
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
+  > {
+  class?: string;
+}
+
+interface D3fcCanvasElement
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
+  > {
+  class?: string;
+}
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "d3fc-group": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
-      "d3fc-canvas": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      >;
+      "d3fc-group": D3fcGroupElement;
+      "d3fc-canvas": D3fcCanvasElement;
     }
   }
 }
@@ -604,74 +615,37 @@ export const CandlestickChart = React.forwardRef(
     return (
       <d3fc-group
         ref={chartRef}
+        class="d3fc-group"
         auto-resize
         use-device-pixel-ratio
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gridTemplateRows: "2fr 1px 1fr auto",
-          gridTemplateAreas: `"plot-area" "separator" "study-area" "x-axis"`,
-          gap: "0",
-          width: "100%",
-          height: "100%",
-        }}
       >
-        <div
-          style={{
-            gridArea: "plot-area",
-            position: "relative",
-          }}
-        >
+        <div className="plot-area">
           <d3fc-canvas
             ref={plotAreaRef}
-            style={{ position: "absolute", width: "100%", height: "100%" }}
+            class="d3fc-canvas-layer"
           ></d3fc-canvas>
           <d3fc-canvas
             ref={plotCrosshairRef}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-            }}
+            class="d3fc-canvas-layer"
           ></d3fc-canvas>
           <d3fc-canvas
             ref={plotYAxisRef}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              cursor: "crosshair",
-            }}
+            class="d3fc-canvas-layer crosshair"
           ></d3fc-canvas>
         </div>
-        <div
-          style={{ gridArea: "separator", backgroundColor: Colors.GRAY_LIGHT }}
-        ></div>
-        <div
-          style={{
-            gridArea: "study-area",
-            position: "relative",
-          }}
-        >
+        <div className="separator"></div>
+        <div className="study-area">
           <d3fc-canvas
             ref={studyAreaRef}
-            style={{ position: "absolute", width: "100%", height: "100%" }}
+            class="d3fc-canvas-layer"
           ></d3fc-canvas>
           <d3fc-canvas
             ref={studyYAxisRef}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              cursor: "crosshair",
-            }}
+            class="d3fc-canvas-layer crosshair"
           ></d3fc-canvas>
         </div>
-        <div style={{ gridArea: "x-axis", position: "relative" }}>
-          <d3fc-canvas
-            ref={xAxisRef}
-            style={{ width: "100%", height: "26px" }}
-          ></d3fc-canvas>
+        <div className="x-axis">
+          <d3fc-canvas ref={xAxisRef} class="time-axis"></d3fc-canvas>
         </div>
       </d3fc-group>
     );

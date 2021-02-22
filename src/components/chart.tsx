@@ -1,12 +1,14 @@
+import "./chart.scss";
+
 import * as React from "react";
 
-import { Button, Colors } from "@blueprintjs/core";
 import { CandleDetailsExtended, CandlestickChart } from "./candlestick-chart";
 
 import AutoSizer from "react-virtualized-auto-sizer";
+import { CandleInfo } from "./candle-info";
+import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../data/globalTypes";
-import { format } from "date-fns";
 
 function mergeData(
   a: { date: Date; datetime: string }[],
@@ -102,19 +104,11 @@ export const Chart = React.forwardRef(
     return (
       <div>
         {data.length > 0 && (
-          <div
-            style={{
-              position: "relative",
-              resize: "both",
-              overflow: "auto",
-              width: "800px",
-              height: "600px",
-            }}
-          >
+          <div className="chart-wrapper">
             <AutoSizer
               defaultHeight={150}
               defaultWidth={300}
-              style={{ height: "100%", width: "100%" }}
+              style={{ height: "100%", width: "100%" }} // TODO: Find a better method
             >
               {({ height, width }) => (
                 <CandlestickChart
@@ -130,72 +124,9 @@ export const Chart = React.forwardRef(
                 />
               )}
             </AutoSizer>
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                //pointerEvents: "none",
-                padding: "8px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "8px",
-                  paddingBottom: "4px",
-                }}
-              >
-                <Button small text={interval} />
-                <div>
-                  <span>{`${format(bounds[0], "HH:mm dd MMM yyyy")}`}</span>
-                  <span className="bp3-text-muted"> to </span>
-                  <span>{`${format(bounds[1], "HH:mm dd MMM yyyy")}`}</span>
-                </div>
-              </div>
-              {candle && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "8px",
-                    backgroundColor: "rgba(0,0,0,0.7)",
-                  }}
-                >
-                  <div>
-                    <span className="bp3-text-muted">Candle: </span>
-                    <span className="bp3-monospace-text">
-                      {candle?.date &&
-                        format(candle?.date, "HH:mm dd MMM yyyy")}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="bp3-text-muted">O </span>
-                    <span className="bp3-monospace-text">
-                      {candle?.open.toFixed(1)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="bp3-text-muted">H </span>
-                    <span className="bp3-monospace-text">
-                      {candle?.high.toFixed(1)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="bp3-text-muted">L </span>
-                    <span className="bp3-monospace-text">
-                      {candle?.low.toFixed(1)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="bp3-text-muted">C </span>
-                    <span className="bp3-monospace-text">
-                      {candle?.close.toFixed(1)}
-                    </span>
-                  </div>
-                </div>
-              )}
+            <div className="overlay">
+              <ChartInfo interval={interval} bounds={bounds} />
+              {candle && <CandleInfo candle={candle} />}
             </div>
           </div>
         )}

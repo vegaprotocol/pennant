@@ -1,0 +1,89 @@
+/* === BLUEPRINT COLOR OVERRIDES === */
+$black: #000000;
+$white: #ffffff;
+
+$dark-gray1: #1f1f1f;
+$dark-gray2: #2a2a2a;
+$dark-gray3: #363636;
+$dark-gray4: #3f3f3f;
+$dark-gray5: #494949;
+
+$gray1: #6e6e6e;
+$gray2: #848484;
+$gray3: #999999;
+$gray4: #b5b5b5;
+$gray5: #cbcbcb;
+
+$light-gray1: #d7d7d7;
+$light-gray2: #e0e0e0;
+$light-gray3: #e7e7e7;
+$light-gray4: #f0f0f0;
+$light-gray5: #f8f8f8;
+
+/* === VEGA COLORS === */
+
+/*
+Note: We follow blueprints color naming scheme. https://blueprintjs.com/docs/#core/colors EG:
+$color1 = Darkest
+$color2
+$color3 = Base color
+$color4
+$color5 = Lightest
+*/
+$vega-green3: #26ff8a;
+$vega-red3: #ff261a;
+$vega-blue3: #48aff0;
+$vega-yellow3: #daff0d;
+$vega-orange3: #d9822b;
+
+$vega-red1: darken($vega-red3, 38%);
+$vega-green1: darken($vega-green3, 38%);
+$vega-yellow1: darken($vega-yellow3, 38%);
+$vega-orange1: darken($vega-orange3, 38%);
+
+/* === TEXT COLORS === */
+$text-color: #f8f8f8;
+$text-color-inverse: #1a1821;
+$text-color-deemphasise: #8a9ba8;
+$text-color-emphasise: #f5f8fa;
+$text-color-error: $vega-red3;
+
+/* === BUY/SELL BUTTONS === */
+$button-sell-hover: #893939;
+$button-sell-active: #ff5e5e;
+$button-buy-hover: #0a4023;
+$button-buy-active: #00ffb2;
+
+/* === MISC BLUEPRINT COLOR OVERRIDES === */
+$pt-intent-danger: $vega-red3;
+
+$input-background: #3f3f3f;
+
+// App background
+$pt-dark-app-background-color: $dark-gray2;
+
+// Card
+$dark-card-background-color: $dark-gray2;
+
+// Menu
+$dark-menu-background-color: $dark-gray2;
+
+// Navbar
+$dark-navbar-background-color: $black;
+
+// Popover
+$dark-popover-background-color: $dark-gray2;
+
+//overlay-backdrop
+.bp3-overlay-backdrop {
+  background-color: rgba(73, 73, 73, 0.7);
+}
+
+// Text helpers
+.text-deemphasise {
+  color: $text-color-deemphasise;
+}
+
+.text-error {
+  color: $text-color-error;
+}

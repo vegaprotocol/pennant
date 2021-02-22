@@ -54,20 +54,9 @@ function App() {
   }
 
   return (
-    <div
-      className="container bp3-dark"
-      style={{ padding: "8px", height: "100%" }}
-    >
+    <div className="container bp3-dark">
       <h1>Console Charts</h1>
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "8px",
-          paddingBottom: "8px",
-        }}
-      >
+      <div className="content-wrapper">
         <MarketSelect
           items={data.markets}
           itemRenderer={renderMarket}

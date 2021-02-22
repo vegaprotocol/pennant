@@ -1,0 +1,45 @@
+@import "../styles/colors";
+
+.d3fc-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2fr 1px 1fr auto;
+  grid-template-areas: "plot-area" "separator" "study-area" "x-axis";
+  width: 100%;
+  height: 100%;
+}
+
+.plot-area {
+  grid-area: plot-area;
+  position: relative;
+}
+
+.study-area {
+  grid-area: study-area;
+  position: relative;
+}
+
+.x-axis {
+  grid-area: x-axis;
+  position: relative;
+}
+
+.d3fc-canvas-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.crosshair {
+  cursor: crosshair;
+}
+
+.separator {
+  grid-area: separator;
+  background-color: $light-gray1;
+}
+
+.time-axis {
+  width: 100%;
+  height: 26px;
+}

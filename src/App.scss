@@ -2,4 +2,13 @@
 
 .container {
   background-color: $pt-dark-app-background-color;
+  padding: 8px;
+  height: 100%;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding-bottom: 8px;
 }
