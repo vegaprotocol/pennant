@@ -1,6 +1,6 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { Colors } from "../helpers/helpers-color";
+import { Colors } from "../helpers";
 import { Element } from "../types/element";
 import { format } from "date-fns";
 

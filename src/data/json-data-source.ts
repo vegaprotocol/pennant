@@ -1,7 +1,7 @@
 import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
 import { Interval } from "./globalTypes";
-import { addDecimal } from "../helpers/helpers-math";
+import { addDecimal } from "../helpers";
 import { candleSubscriptionQuery } from "./queries/candles";
 import json from "../data.json";
 

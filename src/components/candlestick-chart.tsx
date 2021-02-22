@@ -14,16 +14,14 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
+import { Colors, clearCanvas, getCandleWidth } from "../helpers";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { bisector, extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
-import { Colors } from "../helpers/helpers-color";
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../data/globalTypes";
-import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
-import { getCandleWidth } from "../helpers/helpers-candle";
 import { select } from "d3-selection";
 
 const PADDING_INNER = 0.4;
