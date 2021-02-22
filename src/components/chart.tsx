@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import AutoSizer from "react-virtualized-auto-sizer";
 import { CandlestickChart } from "./candlestick-chart";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../data/globalTypes";
@@ -97,13 +98,23 @@ export const Chart = ({ dataSource, interval }: ChartProps) => {
             height: "600px",
           }}
         >
-          <CandlestickChart
-            data={data}
-            interval={interval}
-            onBoundsChange={setBounds}
-            onMouseMove={setPosition}
-            onGetDataRange={handleGetDataRange}
-          />
+          <AutoSizer
+            defaultHeight={150}
+            defaultWidth={300}
+            style={{ height: "100%", width: "100%" }}
+          >
+            {({ height, width }) => (
+              <CandlestickChart
+                width={width}
+                height={height}
+                data={data}
+                interval={interval}
+                onBoundsChange={setBounds}
+                onMouseMove={setPosition}
+                onGetDataRange={handleGetDataRange}
+              />
+            )}
+          </AutoSizer>
         </div>
       )}
     </div>

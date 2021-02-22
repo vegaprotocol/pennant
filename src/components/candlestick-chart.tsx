@@ -297,6 +297,8 @@ function drawYAxisTooltip(
 }
 
 export type CandleStickChartProps = {
+  width: number;
+  height: number;
   data: CandleDetailsExtended[];
   interval: Interval;
   onBoundsChange?: (bounds: [Date, Date]) => void;
@@ -308,6 +310,8 @@ export type CandleStickChartProps = {
 };
 
 export const CandlestickChart = ({
+  width,
+  height,
   data,
   interval,
   onBoundsChange,
@@ -320,9 +324,13 @@ export const CandlestickChart = ({
   const isPinnedRef = React.useRef(true);
   const previousZoomTransform = React.useRef(zoomIdentity);
 
-  const zoomControl2 = React.useMemo(
+  React.useLayoutEffect(() => {
+    (chartRef.current as any).requestRedraw();
+  });
+
+  const zoomControl = React.useMemo(
     () =>
-      d3Zoom().on("zoom", (event) => {
+      d3Zoom<HTMLElement, unknown>().on("zoom", (event) => {
         render(event.transform);
       }),
     []
@@ -423,11 +431,6 @@ export const CandlestickChart = ({
     [x, xr]
   );
 
-  const zoomControl = React.useMemo(
-    () => (fcZoom() as any).on("zoom", render),
-    [render]
-  );
-
   const reset = React.useCallback(function reset() {
     select(plotYAxisRef.current)
       .transition()
@@ -467,7 +470,7 @@ export const CandlestickChart = ({
 
   // Plot y axis
   React.useEffect(() => {
-    const container = select<Element, unknown>(plotYAxisRef.current)
+    const container = select(plotYAxisRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
         x.range([0, width]);
@@ -488,8 +491,8 @@ export const CandlestickChart = ({
         ctx.restore();
       });
 
-    container.call(zoomControl2);
-  }, [x, y, zoomControl2]);
+    container.call(zoomControl);
+  }, [x, y, zoomControl]);
 
   // Plot crosshair
   React.useEffect(() => {
@@ -536,7 +539,7 @@ export const CandlestickChart = ({
       .on("mouseout", () => {
         crosshairRef.current = null;
       });
-  }, [onMouseMove, x, y, zoomControl2]);
+  }, [onMouseMove, x, y, zoomControl]);
 
   // Study
   React.useEffect(() => {
@@ -555,18 +558,18 @@ export const CandlestickChart = ({
 
         if (ctx) {
           clearCanvas(canvas, ctx, Colors.BLACK);
-          drawGrid(ctx, x, volumeScale);
+          drawGrid(ctx, xr, volumeScale);
 
           for (const bar of bars) {
-            bar.draw(ctx, x, volumeScale);
+            bar.draw(ctx, xr, volumeScale);
           }
         }
       });
-  }, [bars, x, volumeScale]);
+  }, [bars, xr, volumeScale, x]);
 
   // Study y axis
   React.useEffect(() => {
-    select(studyYAxisRef.current)
+    const container = select(studyYAxisRef.current)
       .on("measure", (event: any) => {
         const { height, width } = event.detail;
         x.range([0, width]);
@@ -585,7 +588,9 @@ export const CandlestickChart = ({
 
         ctx.restore();
       });
-  }, [x, volumeScale]);
+
+    container.call(zoomControl);
+  }, [x, volumeScale, zoomControl]);
 
   // X axis
   React.useEffect(() => {
@@ -646,12 +651,16 @@ export const CandlestickChart = ({
             position: "absolute",
             width: "100%",
             height: "100%",
-            cursor: "crosshair",
           }}
         ></d3fc-canvas>
         <d3fc-canvas
           ref={plotYAxisRef}
-          style={{ position: "absolute", width: "100%", height: "100%" }}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            cursor: "crosshair",
+          }}
         ></d3fc-canvas>
       </div>
       <div
@@ -666,13 +675,18 @@ export const CandlestickChart = ({
         ></d3fc-canvas>
         <d3fc-canvas
           ref={studyYAxisRef}
-          style={{ position: "absolute", width: "100%", height: "100%" }}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            cursor: "crosshair",
+          }}
         ></d3fc-canvas>
       </div>
       <div
         style={{ gridArea: "x-axis", position: "relative" }}
         onClick={() => {
-          console.log("RESET");
+          console.log("reset");
           reset();
         }}
       >
