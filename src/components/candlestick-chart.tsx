@@ -19,41 +19,13 @@ import { bisector, extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
 import { Colors } from "../helpers/helpers-color";
+import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../data/globalTypes";
 import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
 import { getCandleWidth } from "../helpers/helpers-candle";
 import { select } from "d3-selection";
 import { throttle } from "lodash";
-
-interface D3fcGroupElement
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLElement>,
-    HTMLElement
-  > {
-  class?: string;
-}
-
-interface D3fcCanvasElement
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLElement>,
-    HTMLElement
-  > {
-  class?: string;
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "d3fc-group": D3fcGroupElement;
-      "d3fc-canvas": D3fcCanvasElement;
-    }
-  }
-}
-
-export interface FcElement extends HTMLElement {
-  requestRedraw(): void;
-}
 
 const PADDING_INNER = 0.4;
 
