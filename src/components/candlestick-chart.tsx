@@ -603,8 +603,8 @@ export const CandlestickChart = React.forwardRef(
         style={{
           display: "grid",
           gridTemplateColumns: "1fr",
-          gridTemplateRows: "2fr 1fr auto",
-          gridTemplateAreas: `"plot-area" "study-area" "x-axis"`,
+          gridTemplateRows: "2fr 1px 1fr auto",
+          gridTemplateAreas: `"plot-area" "separator" "study-area" "x-axis"`,
           gap: "0",
           paddingTop: "8px",
           width: "100%",
@@ -639,6 +639,9 @@ export const CandlestickChart = React.forwardRef(
             }}
           ></d3fc-canvas>
         </div>
+        <div
+          style={{ gridArea: "separator", backgroundColor: Colors.GRAY_LIGHT }}
+        ></div>
         <div
           style={{
             gridArea: "study-area",
