@@ -1,9 +1,9 @@
 import * as React from "react";
 
 import { Button, Colors } from "@blueprintjs/core";
+import { CandleDetailsExtended, CandlestickChart } from "./candlestick-chart";
 
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CandlestickChart } from "./candlestick-chart";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../data/globalTypes";
 import { format } from "date-fns";
@@ -58,7 +58,9 @@ export const Chart = React.forwardRef(
       new Date(),
       new Date(),
     ]);
-    const [position, setPosition] = React.useState<[number, number]>();
+    const [candle, setCandle] = React.useState<CandleDetailsExtended | null>(
+      null
+    );
 
     const query = React.useCallback(
       async (from: string, to: string) => {
@@ -118,7 +120,8 @@ export const Chart = React.forwardRef(
                   data={data}
                   interval={interval}
                   onBoundsChanged={setBounds}
-                  onMouseMove={setPosition}
+                  onMouseMove={setCandle}
+                  onMouseOut={() => setCandle(null)}
                   onGetDataRange={handleGetDataRange}
                 />
               )}
@@ -147,39 +150,48 @@ export const Chart = React.forwardRef(
                   <span>{`${format(bounds[1], "HH:mm dd MMM yyyy")}`}</span>
                 </div>
               </div>
-              <div
-                style={{ display: "flex", flexDirection: "row", gap: "8px" }}
-              >
-                <div>
-                  <span className="bp3-text-muted">Candle: </span>
-                  <span className="bp3-monospace-text">{position?.[0]}</span>
+              {candle && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "8px",
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                  }}
+                >
+                  <div>
+                    <span className="bp3-text-muted">Candle: </span>
+                    <span className="bp3-monospace-text">
+                      {candle?.date &&
+                        format(candle?.date, "HH:mm dd MMM yyyy")}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="bp3-text-muted">O </span>
+                    <span className="bp3-monospace-text">
+                      {candle?.open.toFixed(1)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="bp3-text-muted">H </span>
+                    <span className="bp3-monospace-text">
+                      {candle?.high.toFixed(1)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="bp3-text-muted">L </span>
+                    <span className="bp3-monospace-text">
+                      {candle?.low.toFixed(1)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="bp3-text-muted">C </span>
+                    <span className="bp3-monospace-text">
+                      {candle?.close.toFixed(1)}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="bp3-text-muted">O </span>
-                  <span className="bp3-monospace-text">{position?.[0]}</span>
-                </div>
-                <div>
-                  <span className="bp3-text-muted">H </span>
-                  <span className="bp3-monospace-text">{position?.[1]}</span>
-                </div>
-                <div>
-                  <span className="bp3-text-muted">L </span>
-                  <span className="bp3-monospace-text">{position?.[0]}</span>
-                </div>
-                <div>
-                  <span className="bp3-text-muted">C </span>
-                  <span className="bp3-monospace-text">{position?.[1]}</span>
-                </div>
-                <div>
-                  <span className="bp3-text-muted">Change </span>
-                  <span
-                    className="bp3-monospace-text"
-                    style={{ color: Colors.GREEN5 }}
-                  >
-                    +0.23%
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         )}

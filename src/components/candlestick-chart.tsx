@@ -82,7 +82,7 @@ export type CandleStickChartProps = {
   data: CandleDetailsExtended[];
   interval: Interval;
   onBoundsChanged?: (bounds: [Date, Date]) => void;
-  onMouseMove?: (position: [number, number]) => void;
+  onMouseMove?: (candle: CandleDetailsExtended) => void;
   onMouseOut?: () => void;
   onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
@@ -297,7 +297,8 @@ export const CandlestickChart = React.forwardRef(
           .end()
           .then(() => {
             isPinnedRef.current = true;
-          });
+          })
+          .catch((reason) => console.warn(reason));
 
         (select(chartRef.current).node() as any).requestRedraw();
       },
@@ -412,7 +413,7 @@ export const CandlestickChart = React.forwardRef(
             (plotYAxisRef.current as any).requestRedraw();
             (studyYAxisRef.current as any).requestRedraw();
 
-            onMouseMove?.([offsetX, offsetY]);
+            onMouseMove?.(candle);
           },
           { capture: true } // TODO: It would be preferable to still respond to this event while zooming
         )
@@ -423,10 +424,13 @@ export const CandlestickChart = React.forwardRef(
           (xAxisRef.current as any).requestRedraw();
           (plotYAxisRef.current as any).requestRedraw();
           (studyYAxisRef.current as any).requestRedraw();
+
+          onMouseOut?.();
         });
     }, [
       data,
       onMouseMove,
+      onMouseOut,
       scenegraph.plotCrosshair,
       x,
       xr,
@@ -540,7 +544,7 @@ export const CandlestickChart = React.forwardRef(
             (plotYAxisRef.current as any).requestRedraw();
             (studyYAxisRef.current as any).requestRedraw();
 
-            onMouseMove?.([offsetX, offsetY]);
+            onMouseMove?.(candle);
           },
           { capture: true } // TODO: It would be preferable to still respond to this event while zooming
         )
@@ -551,10 +555,13 @@ export const CandlestickChart = React.forwardRef(
           (xAxisRef.current as any).requestRedraw();
           (plotYAxisRef.current as any).requestRedraw();
           (studyYAxisRef.current as any).requestRedraw();
+
+          onMouseOut?.();
         });
     }, [
       data,
       onMouseMove,
+      onMouseOut,
       scenegraph.plotCrosshair,
       x,
       xr,
