@@ -42,81 +42,92 @@ export type ChartProps = {
   interval: Interval;
 };
 
-export const Chart = ({ dataSource, interval }: ChartProps) => {
-  const [data, setData] = React.useState<any[]>([]);
-  const [bounds, setBounds] = React.useState<[Date, Date]>([
-    new Date(),
-    new Date(),
-  ]);
-  const [position, setPosition] = React.useState<[number, number]>();
+export const Chart = React.forwardRef(
+  ({ dataSource, interval }: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+    React.useImperativeHandle(ref, () => ({
+      reset: () => {
+        chartRef.current.reset();
+      },
+    }));
 
-  const query = React.useCallback(
-    async (from: string, to: string) => {
-      const newData = await dataSource.query(interval, from, to);
+    const chartRef = React.useRef<{ reset(): void }>(null!);
+    const [data, setData] = React.useState<any[]>([]);
+    const [bounds, setBounds] = React.useState<[Date, Date]>([
+      new Date(),
+      new Date(),
+    ]);
+    const [position, setPosition] = React.useState<[number, number]>();
 
-      console.info("newest data", newData);
+    const query = React.useCallback(
+      async (from: string, to: string) => {
+        const newData = await dataSource.query(interval, from, to);
 
-      // TODO: need convenience functions for calculating range, sorting and distinct values and merging
-      setData((data) => mergeData(data, newData));
-    },
-    [dataSource, interval]
-  );
+        console.info("newest data", newData);
 
-  React.useEffect(() => {
-    function subscribe() {
-      dataSource.subscribe(interval, (datum) => {
-        setData((data) => mergeData(data, [datum]));
-      });
-    }
+        // TODO: need convenience functions for calculating range, sorting and distinct values and merging
+        setData((data) => mergeData(data, newData));
+      },
+      [dataSource, interval]
+    );
 
-    const myDataSource = dataSource;
+    React.useEffect(() => {
+      function subscribe() {
+        dataSource.subscribe(interval, (datum) => {
+          setData((data) => mergeData(data, [datum]));
+        });
+      }
 
-    query(new Date(2021, 1, 17, 13).toISOString(), new Date().toISOString());
-    //subscribe();
+      const myDataSource = dataSource;
 
-    return () => {
-      myDataSource.unsubscribe();
+      query(new Date(2021, 1, 17, 13).toISOString(), new Date().toISOString());
+      //subscribe();
+
+      return () => {
+        myDataSource.unsubscribe();
+      };
+    }, [dataSource, interval, query]);
+
+    const handleGetDataRange = (from: string, to: string) => {
+      //query(from, to);
     };
-  }, [dataSource, interval, query]);
 
-  const handleGetDataRange = (from: string, to: string) => {
-    //query(from, to);
-  };
-
-  return (
-    <div>
-      <p>
-        {format(bounds[0], "MMM d HH:mm")} - {format(bounds[1], "MMM d HH:mm")}
-      </p>
-      <p>{position && `${position[0]}, ${position[1]}`}</p>
-      {data.length > 0 && (
-        <div
-          style={{
-            resize: "both",
-            overflow: "auto",
-            width: "800px",
-            height: "600px",
-          }}
-        >
-          <AutoSizer
-            defaultHeight={150}
-            defaultWidth={300}
-            style={{ height: "100%", width: "100%" }}
+    return (
+      <div>
+        <p>
+          {format(bounds[0], "MMM d HH:mm")} -{" "}
+          {format(bounds[1], "MMM d HH:mm")}
+        </p>
+        <p>{position && `${position[0]}, ${position[1]}`}</p>
+        {data.length > 0 && (
+          <div
+            style={{
+              resize: "both",
+              overflow: "auto",
+              width: "800px",
+              height: "600px",
+            }}
           >
-            {({ height, width }) => (
-              <CandlestickChart
-                width={width}
-                height={height}
-                data={data}
-                interval={interval}
-                onBoundsChanged={setBounds}
-                onMouseMove={setPosition}
-                onGetDataRange={handleGetDataRange}
-              />
-            )}
-          </AutoSizer>
-        </div>
-      )}
-    </div>
-  );
-};
+            <AutoSizer
+              defaultHeight={150}
+              defaultWidth={300}
+              style={{ height: "100%", width: "100%" }}
+            >
+              {({ height, width }) => (
+                <CandlestickChart
+                  ref={chartRef}
+                  width={width}
+                  height={height}
+                  data={data}
+                  interval={interval}
+                  onBoundsChanged={setBounds}
+                  onMouseMove={setPosition}
+                  onGetDataRange={handleGetDataRange}
+                />
+              )}
+            </AutoSizer>
+          </div>
+        )}
+      </div>
+    );
+  }
+);

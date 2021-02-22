@@ -31,6 +31,7 @@ const renderMarket: ItemRenderer<any> = (
 };
 
 function App() {
+  const ref = React.useRef<{ reset(): void }>(null!);
   const client = useApolloClient();
   const [markets, setMarkets] = React.useState([]);
   const [market, setMarket] = React.useState<any | null>(null);
@@ -77,10 +78,17 @@ function App() {
             disabled={false}
           />
         </MarketSelect>
-        <Button icon="refresh" intent="primary" text="Reset" />
+        <Button
+          icon="refresh"
+          intent="primary"
+          text="Reset"
+          onClick={() => {
+            ref.current.reset();
+          }}
+        />
         <Button icon="random" intent="primary" text="Randomise" />
       </div>
-      <Chart dataSource={dataSource} interval={Interval.I5M} />
+      <Chart ref={ref} dataSource={dataSource} interval={Interval.I5M} />
     </div>
   );
 }
