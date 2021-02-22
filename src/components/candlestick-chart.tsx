@@ -38,6 +38,10 @@ declare global {
   }
 }
 
+export interface FcElement extends HTMLElement {
+  requestRedraw(): void;
+}
+
 const PADDING_INNER = 0.4;
 
 export interface CandleDetailsExtended {
@@ -89,16 +93,16 @@ export const CandlestickChart = React.forwardRef(
     const previousZoomTransform = React.useRef(zoomIdentity);
 
     React.useLayoutEffect(() => {
-      (chartRef.current as any).requestRedraw();
+      chartRef.current.requestRedraw();
     }, [height, width]);
 
-    const chartRef = React.useRef<HTMLElement>(null!);
-    const plotAreaRef = React.useRef<HTMLElement>(null!);
-    const plotYAxisRef = React.useRef<HTMLElement>(null!);
-    const plotCrosshairRef = React.useRef<HTMLElement>(null!);
-    const studyAreaRef = React.useRef<HTMLElement>(null!);
-    const studyYAxisRef = React.useRef<HTMLElement>(null!);
-    const xAxisRef = React.useRef<HTMLElement>(null!);
+    const chartRef = React.useRef<FcElement>(null!);
+    const plotAreaRef = React.useRef<FcElement>(null!);
+    const plotYAxisRef = React.useRef<FcElement>(null!);
+    const plotCrosshairRef = React.useRef<FcElement>(null!);
+    const studyAreaRef = React.useRef<FcElement>(null!);
+    const studyYAxisRef = React.useRef<FcElement>(null!);
+    const xAxisRef = React.useRef<FcElement>(null!);
 
     const crosshairXRef = React.useRef<number | null>(null);
     const plotCrosshairYRef = React.useRef<number | null>(null);
@@ -192,6 +196,7 @@ export const CandlestickChart = React.forwardRef(
       [data]
     );
 
+    // FIXME: Depends on render, but render depends on zoomControl?
     const zoomControl = React.useMemo(() => {
       return d3Zoom<HTMLElement, unknown>()
         .scaleExtent([0, 1 << 4])
@@ -253,7 +258,7 @@ export const CandlestickChart = React.forwardRef(
 
         previousZoomTransform.current = transform;
 
-        (select(chartRef.current).node() as any).requestRedraw();
+        select(chartRef.current).node()?.requestRedraw();
 
         onBoundsChanged?.(domain as [Date, Date]);
       },
@@ -262,7 +267,7 @@ export const CandlestickChart = React.forwardRef(
 
     const reset = React.useCallback(
       function reset() {
-        select(plotYAxisRef.current)
+        select<HTMLElement, unknown>(plotYAxisRef.current)
           .transition()
           .duration(750)
           .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0])
@@ -272,7 +277,7 @@ export const CandlestickChart = React.forwardRef(
           })
           .catch((reason) => console.warn(reason));
 
-        (select(chartRef.current).node() as any).requestRedraw();
+        select(chartRef.current).node()?.requestRedraw();
       },
       [x, zoomControl.translateTo]
     );
@@ -280,67 +285,83 @@ export const CandlestickChart = React.forwardRef(
     // Plot area
     React.useEffect(() => {
       select(plotAreaRef.current)
-        .on("measure", (event: any) => {
-          const { height, width } = event.detail;
-          x.range([0, width]);
-          y.range([height, 0]);
-          xr.range([0, width]);
-          yr.range([height, 0]);
-        })
-        .on("draw", (event) => {
-          const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
+        .on(
+          "measure",
+          (event: { detail: { height: number; width: number } }) => {
+            const { height, width } = event.detail;
+            x.range([0, width]);
+            y.range([height, 0]);
+            xr.range([0, width]);
+            yr.range([height, 0]);
+          }
+        )
+        .on(
+          "draw",
+          (event: {
+            detail: { child: HTMLCanvasElement; pixelRatio: number };
+          }) => {
+            const { child, pixelRatio } = event.detail;
+            const ctx = child.getContext("2d");
 
-          ctx.save();
-          ctx.scale(pixelRatio, pixelRatio);
+            if (ctx) {
+              ctx.save();
+              ctx.scale(pixelRatio, pixelRatio);
 
-          if (ctx) {
-            clearCanvas(child, ctx, Colors.BLACK);
-            scenegraph.grid.draw(ctx, xr, yr);
+              clearCanvas(child, ctx, Colors.BLACK);
+              scenegraph.grid.draw(ctx, xr, yr);
 
-            for (const candle of scenegraph.candles) {
-              candle.draw(ctx, xr, yr);
+              for (const candle of scenegraph.candles) {
+                candle.draw(ctx, xr, yr);
+              }
+
+              ctx.restore();
             }
           }
-
-          ctx.restore();
-        });
+        );
     }, [scenegraph.candles, scenegraph.grid, x, xr, y, yr, zoomControl]);
 
     // Plot y axis
     React.useEffect(() => {
-      const container = select(plotYAxisRef.current)
-        .on("measure", (event: any) => {
-          const { height, width } = event.detail;
-          xr.range([0, width]);
-          yr.range([height, 0]);
-        })
-        .on("draw", (event) => {
-          const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
-
-          ctx.save();
-          ctx.scale(pixelRatio, pixelRatio);
-
-          if (ctx) {
-            scenegraph.plotYAxis.draw(ctx, xr, yr);
-            scenegraph.plotCrosshair.draw(ctx, xr, yr, [
-              crosshairXRef.current,
-              plotCrosshairYRef.current,
-            ]);
-            scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, [
-              crosshairXRef.current,
-              plotCrosshairYRef.current,
-            ]);
+      const container = select<HTMLElement, unknown>(plotYAxisRef.current)
+        .on(
+          "measure",
+          (event: { detail: { height: number; width: number } }) => {
+            const { height, width } = event.detail;
+            xr.range([0, width]);
+            yr.range([height, 0]);
           }
+        )
+        .on(
+          "draw",
+          (event: {
+            detail: { child: HTMLCanvasElement; pixelRatio: number };
+          }) => {
+            const { child, pixelRatio } = event.detail;
+            const ctx = child.getContext("2d");
 
-          ctx.restore();
-        });
+            if (ctx) {
+              ctx.save();
+              ctx.scale(pixelRatio, pixelRatio);
+
+              scenegraph.plotYAxis.draw(ctx, xr, yr);
+              scenegraph.plotCrosshair.draw(ctx, xr, yr, [
+                crosshairXRef.current,
+                plotCrosshairYRef.current,
+              ]);
+              scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, [
+                crosshairXRef.current,
+                plotCrosshairYRef.current,
+              ]);
+
+              ctx.restore();
+            }
+          }
+        );
 
       container
         .on(
           "mousemove",
-          (event) => {
+          (event: { offsetX: number; offsetY: number }) => {
             const { offsetX, offsetY } = event;
             const timeAtMouseX = xr.invert(offsetX);
 
@@ -369,9 +390,9 @@ export const CandlestickChart = React.forwardRef(
             crosshairXRef.current = xr(candle.date);
             plotCrosshairYRef.current = offsetY;
 
-            (xAxisRef.current as any).requestRedraw();
-            (plotYAxisRef.current as any).requestRedraw();
-            (studyYAxisRef.current as any).requestRedraw();
+            xAxisRef.current.requestRedraw();
+            plotYAxisRef.current.requestRedraw();
+            studyYAxisRef.current.requestRedraw();
 
             onMouseMove?.(candle);
           },
@@ -381,9 +402,9 @@ export const CandlestickChart = React.forwardRef(
           crosshairXRef.current = null;
           plotCrosshairYRef.current = null;
 
-          (xAxisRef.current as any).requestRedraw();
-          (plotYAxisRef.current as any).requestRedraw();
-          (studyYAxisRef.current as any).requestRedraw();
+          xAxisRef.current.requestRedraw();
+          plotYAxisRef.current.requestRedraw();
+          studyYAxisRef.current.requestRedraw();
 
           onMouseOut?.();
         });
@@ -404,12 +425,15 @@ export const CandlestickChart = React.forwardRef(
     // Study
     React.useEffect(() => {
       select(studyAreaRef.current)
-        .on("measure", (event: any) => {
-          const { height, width } = event.detail;
-          xr.range([0, width]);
-          volumeScaleRescaled.range([height, 0]);
-        })
-        .on("draw", (event) => {
+        .on(
+          "measure",
+          (event: { detail: { height: number; width: number } }) => {
+            const { height, width } = event.detail;
+            xr.range([0, width]);
+            volumeScaleRescaled.range([height, 0]);
+          }
+        )
+        .on("draw", (_event) => {
           const canvas = select(studyAreaRef.current)
             ?.select("canvas")
             ?.node() as HTMLCanvasElement;
@@ -429,33 +453,41 @@ export const CandlestickChart = React.forwardRef(
 
     // Study y axis
     React.useEffect(() => {
-      const container = select(studyYAxisRef.current)
-        .on("measure", (event: any) => {
-          const { height, width } = event.detail;
-          xr.range([0, width]);
-          volumeScaleRescaled.range([height, 0]);
-        })
-        .on("draw", (event) => {
-          const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
-
-          ctx.save();
-          ctx.scale(pixelRatio, pixelRatio);
-
-          if (ctx) {
-            scenegraph.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
-            scenegraph.studyCrosshair.draw(ctx, xr, yr, [
-              crosshairXRef.current,
-              studyCrosshairYRef.current,
-            ]);
-            scenegraph.studyYAxisTooltip.draw(ctx, xr, volumeScaleRescaled, [
-              crosshairXRef.current,
-              studyCrosshairYRef.current,
-            ]);
+      const container = select<HTMLElement, unknown>(studyYAxisRef.current)
+        .on(
+          "measure",
+          (event: { detail: { height: number; width: number } }) => {
+            const { height, width } = event.detail;
+            xr.range([0, width]);
+            volumeScaleRescaled.range([height, 0]);
           }
+        )
+        .on(
+          "draw",
+          (event: {
+            detail: { child: HTMLCanvasElement; pixelRatio: number };
+          }) => {
+            const { child, pixelRatio } = event.detail;
+            const ctx = child.getContext("2d");
 
-          ctx.restore();
-        });
+            if (ctx) {
+              ctx.save();
+              ctx.scale(pixelRatio, pixelRatio);
+
+              scenegraph.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
+              scenegraph.studyCrosshair.draw(ctx, xr, yr, [
+                crosshairXRef.current,
+                studyCrosshairYRef.current,
+              ]);
+              scenegraph.studyYAxisTooltip.draw(ctx, xr, volumeScaleRescaled, [
+                crosshairXRef.current,
+                studyCrosshairYRef.current,
+              ]);
+
+              ctx.restore();
+            }
+          }
+        );
 
       container.call(zoomControl);
     }, [
@@ -502,9 +534,9 @@ export const CandlestickChart = React.forwardRef(
             crosshairXRef.current = xr(candle.date);
             studyCrosshairYRef.current = offsetY;
 
-            (xAxisRef.current as any).requestRedraw();
-            (plotYAxisRef.current as any).requestRedraw();
-            (studyYAxisRef.current as any).requestRedraw();
+            xAxisRef.current.requestRedraw();
+            plotYAxisRef.current.requestRedraw();
+            studyYAxisRef.current.requestRedraw();
 
             onMouseMove?.(candle);
           },
@@ -514,9 +546,9 @@ export const CandlestickChart = React.forwardRef(
           crosshairXRef.current = null;
           studyCrosshairYRef.current = null;
 
-          (xAxisRef.current as any).requestRedraw();
-          (plotYAxisRef.current as any).requestRedraw();
-          (studyYAxisRef.current as any).requestRedraw();
+          xAxisRef.current.requestRedraw();
+          plotYAxisRef.current.requestRedraw();
+          studyYAxisRef.current.requestRedraw();
 
           onMouseOut?.();
         });
@@ -534,22 +566,25 @@ export const CandlestickChart = React.forwardRef(
 
     // X axis
     React.useEffect(() => {
-      const container = select(xAxisRef.current).on("draw", (event) => {
-        const canvas = select(xAxisRef.current)
-          ?.select("canvas")
-          ?.node() as HTMLCanvasElement;
+      const container = select<HTMLElement, unknown>(xAxisRef.current).on(
+        "draw",
+        (event) => {
+          const canvas = select(xAxisRef.current)
+            ?.select("canvas")
+            ?.node() as HTMLCanvasElement;
 
-        const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
+          const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
 
-        if (ctx) {
-          clearCanvas(canvas, ctx, Colors.BLACK);
-          scenegraph.xAxis.draw(ctx, xr, y);
-          scenegraph.xAxisTooltip.draw(ctx, xr, y, [
-            crosshairXRef.current,
-            null,
-          ]);
+          if (ctx) {
+            clearCanvas(canvas, ctx, Colors.BLACK);
+            scenegraph.xAxis.draw(ctx, xr, y);
+            scenegraph.xAxisTooltip.draw(ctx, xr, y, [
+              crosshairXRef.current,
+              null,
+            ]);
+          }
         }
-      });
+      );
 
       container.call(zoomControl);
     }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y, zoomControl]);
@@ -561,7 +596,9 @@ export const CandlestickChart = React.forwardRef(
         // any of the elements are drawn (draw events are dispatched in document order).
       });
 
-      (chartContainer?.node() as any).requestRedraw();
+      if (chartContainer) {
+        chartContainer.node()?.requestRedraw();
+      }
     }, [data, x, y]);
 
     return (
