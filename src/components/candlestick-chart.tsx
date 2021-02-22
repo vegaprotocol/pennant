@@ -25,7 +25,6 @@ import { clearCanvas } from "../helpers/helpers-canvas";
 import { closestIndexTo } from "date-fns";
 import { getCandleWidth } from "../helpers/helpers-candle";
 import { select } from "d3-selection";
-import { throttle } from "lodash";
 
 const PADDING_INNER = 0.4;
 
@@ -92,11 +91,6 @@ export const CandlestickChart = React.forwardRef(
     const crosshairXRef = React.useRef<number | null>(null);
     const plotCrosshairYRef = React.useRef<number | null>(null);
     const studyCrosshairYRef = React.useRef<number | null>(null);
-
-    const throttledOnGetDataRange = React.useMemo(
-      () => throttle(onGetDataRange, 5000),
-      [onGetDataRange]
-    );
 
     const candleWidth = getCandleWidth(interval);
 

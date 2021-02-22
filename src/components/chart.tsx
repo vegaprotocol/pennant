@@ -88,16 +88,20 @@ export const Chart = React.forwardRef(
         new Date().toISOString(),
         false
       );
-      //subscribe();
+
+      subscribe();
 
       return () => {
         myDataSource.unsubscribe();
       };
     }, [dataSource, interval, query]);
 
-    const handleGetDataRange = React.useCallback((from: string, to: string) => {
-      //query(from, to);
-    }, []);
+    const handleGetDataRange = React.useCallback(
+      (from: string, to: string) => {
+        query(from, to);
+      },
+      [query]
+    );
 
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
 
