@@ -165,6 +165,7 @@ export const PlotArea = ({
     onMouseMove,
     onMouseOut,
     requestRedraw,
+    scenegraph.annotations,
     scenegraph.crosshair,
     scenegraph.data,
     scenegraph.yAxis,
