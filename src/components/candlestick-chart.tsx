@@ -5,6 +5,7 @@ import "./candlestick-chart.scss";
 import * as React from "react";
 
 import {
+  AnnotationElement,
   BarElement,
   CandleElement,
   CrosshairElement,
@@ -104,6 +105,9 @@ export const CandlestickChart = React.forwardRef(
           yAxis: new YAxisElement(),
           crosshair: new CrosshairElement(),
           yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
+          annotations: [
+            new AnnotationElement(decimalPlaces, data[data.length - 1].close),
+          ],
         },
         study: {
           data: data.map(
@@ -119,6 +123,7 @@ export const CandlestickChart = React.forwardRef(
           yAxis: new YAxisElement(),
           crosshair: new CrosshairElement(),
           yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
+          annotations: [],
         },
         xAxis: {
           data: data.map(
