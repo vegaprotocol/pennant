@@ -133,7 +133,7 @@ export const CandlestickChart = React.forwardRef(
           tooltip: new XAxisTooltipElement(),
         },
       }),
-      [candleWidth, data]
+      [candleWidth, data, decimalPlaces]
     );
 
     const x = React.useMemo(
