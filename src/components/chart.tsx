@@ -9,6 +9,7 @@ import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../api/vega-graphql";
+import { NonIdealState } from "@blueprintjs/core";
 
 function mergeData(
   a: { date: Date; datetime: string }[],
@@ -84,7 +85,7 @@ export const Chart = React.forwardRef(
       const myDataSource = dataSource;
 
       query(
-        new Date(2021, 1, 17, 13).toISOString(),
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
         new Date().toISOString(),
         false
       );
@@ -107,7 +108,7 @@ export const Chart = React.forwardRef(
 
     return (
       <div>
-        {data.length > 0 && (
+        {data.length > 0 ? (
           <div className="chart-wrapper">
             <AutoSizer
               defaultHeight={150}
@@ -133,6 +134,12 @@ export const Chart = React.forwardRef(
               {candle && <CandleInfo candle={candle} />}
             </div>
           </div>
+        ) : (
+          <NonIdealState
+            icon="timeline-line-chart"
+            title="No data found"
+            description="Try a different market"
+          />
         )}
       </div>
     );
