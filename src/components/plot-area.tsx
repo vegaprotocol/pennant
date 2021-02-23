@@ -16,6 +16,7 @@ export type PlotAreaProps = {
     grid: Element;
     yAxis: Element;
     yAxisTooltip: Element;
+    annotations: Element[];
   };
   x: any;
   y: any;
@@ -94,6 +95,10 @@ export const PlotArea = ({
 
             scenegraph.yAxis.draw(ctx, x, y);
 
+            for (const annotation of scenegraph.annotations) {
+              annotation.draw(ctx, x, y);
+            }
+
             scenegraph.crosshair.draw(ctx, x, y, [
               crosshairXRef.current,
               crosshairYRef.current,
@@ -160,6 +165,7 @@ export const PlotArea = ({
     onMouseMove,
     onMouseOut,
     requestRedraw,
+    scenegraph.annotations,
     scenegraph.crosshair,
     scenegraph.data,
     scenegraph.yAxis,
