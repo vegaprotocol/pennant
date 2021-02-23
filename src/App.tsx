@@ -8,6 +8,7 @@ import { ItemRenderer, Select } from "@blueprintjs/select";
 import { ApolloDataSource } from "./data/apollo-data-source";
 import { Chart } from "./components/chart";
 import { Interval } from "./api/vega-graphql";
+import { JsonDataSource } from "./data/json-data-source";
 import { useApolloClient } from "@apollo/client";
 import useSWR from "swr";
 
@@ -37,8 +38,8 @@ function App() {
   const [market, setMarket] = React.useState<any | null>(null);
 
   const dataSource = React.useMemo(
-    () => new ApolloDataSource(client, market?.id ?? "076BB86A5AA41E3E"),
-    [client, market]
+    () => new JsonDataSource(market),
+    [market]
   );
 
   const { data, error } = useSWR("https://n04.d.vega.xyz/markets", (url) =>

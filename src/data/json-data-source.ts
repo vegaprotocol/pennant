@@ -18,17 +18,16 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
 }
 
 export class JsonDataSource implements DataSource {
-  client: ApolloClient<any>;
   sub: any = null;
   marketId: string;
 
-  constructor(client: ApolloClient<any>, marketId: string) {
-    this.client = client;
+  constructor(marketId: string) {
     this.marketId = marketId;
   }
 
   async query(interval: Interval, from: string, to: string) {
     const decimalPlaces = json.data.market.decimalPlaces;
+
     const candles = json.data.market.candles?.map((d) =>
       extendCandle(d, decimalPlaces)
     );
@@ -36,22 +35,7 @@ export class JsonDataSource implements DataSource {
     return Promise.resolve(candles);
   }
 
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
-    const res = this.client.subscribe({
-      query: candleSubscriptionQuery,
-      variables: { marketId: this.marketId, interval },
-    });
+  subscribe(_interval: Interval, _onSubscriptionData: (data: any) => void) {}
 
-    this.sub = res.subscribe(({ data }) => {
-      const candle = extendCandle(data.candles, 5); // FIXME: Get from subscription
-
-      onSubscriptionData(candle);
-    });
-
-    return this.sub;
-  }
-
-  unsubscribe() {
-    return this.sub && this.sub.unsubscribe();
-  }
+  unsubscribe() {}
 }

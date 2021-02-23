@@ -14,14 +14,15 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
-import { Colors, clearCanvas, getCandleWidth } from "../helpers";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
-import { bisector, extent, max, min } from "d3-array";
+import { extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
 
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
-import { closestIndexTo } from "date-fns";
+import { PlotArea } from "./plot-area";
+import { XAxis } from "./x-axis";
+import { getCandleWidth } from "../helpers";
 import { select } from "d3-selection";
 
 const PADDING_INNER = 0.4;
@@ -42,7 +43,7 @@ export type CandleStickChartProps = {
   data: CandleDetailsExtended[];
   interval: Interval;
   onBoundsChanged?: (bounds: [Date, Date]) => void;
-  onMouseMove?: (candle: CandleDetailsExtended) => void;
+  onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
   onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
@@ -79,12 +80,6 @@ export const CandlestickChart = React.forwardRef(
     }, [height, width]);
 
     const chartRef = React.useRef<FcElement>(null!);
-    const plotAreaRef = React.useRef<FcElement>(null!);
-    const plotYAxisRef = React.useRef<FcElement>(null!);
-    const plotCrosshairRef = React.useRef<FcElement>(null!);
-    const studyAreaRef = React.useRef<FcElement>(null!);
-    const studyYAxisRef = React.useRef<FcElement>(null!);
-    const xAxisRef = React.useRef<FcElement>(null!);
 
     const crosshairXRef = React.useRef<number | null>(null);
     const plotCrosshairYRef = React.useRef<number | null>(null);
@@ -92,14 +87,10 @@ export const CandlestickChart = React.forwardRef(
 
     const candleWidth = getCandleWidth(interval);
 
-    // Transform data to our intermediate representation. Think of it as a scenegraph
-    // Everything is in domain space. This means this object should only change if the data changes
-    // And ideally, we only need to update a small part of the object
-    // Memoize obviously
     const scenegraph = React.useMemo(
       () => ({
         plot: {
-          candles: data.map(
+          data: data.map(
             (candle) =>
               new CandleElement({
                 ...candle,
@@ -107,13 +98,13 @@ export const CandlestickChart = React.forwardRef(
                 width: candleWidth * (1 - PADDING_INNER),
               })
           ),
-          plotGrid: new GridElement(),
-          plotYAxis: new YAxisElement(),
-          plotCrosshair: new CrosshairElement(),
-          plotYAxisTooltip: new YAxisTooltipElement(),
+          grid: new GridElement(),
+          yAxis: new YAxisElement(),
+          crosshair: new CrosshairElement(),
+          yAxisTooltip: new YAxisTooltipElement(),
         },
         study: {
-          bars: data.map(
+          data: data.map(
             (bar) =>
               new BarElement({
                 ...bar,
@@ -122,14 +113,22 @@ export const CandlestickChart = React.forwardRef(
                 width: candleWidth * (1 - PADDING_INNER),
               })
           ),
-          studyGrid: new GridElement(),
-          studyYAxis: new YAxisElement(),
-          studyCrosshair: new CrosshairElement(),
-          studyYAxisTooltip: new YAxisTooltipElement(),
+          grid: new GridElement(),
+          yAxis: new YAxisElement(),
+          crosshair: new CrosshairElement(),
+          yAxisTooltip: new YAxisTooltipElement(),
         },
         xAxis: {
-          xAxis: new XAxisElement(),
-          xAxisTooltip: new XAxisTooltipElement(),
+          data: data.map(
+            (candle) =>
+              new CandleElement({
+                ...candle,
+                x: candle.date,
+                width: candleWidth * (1 - PADDING_INNER),
+              })
+          ),
+          axis: new XAxisElement(),
+          tooltip: new XAxisTooltipElement(),
         },
       }),
       [candleWidth, data]
@@ -151,16 +150,7 @@ export const CandlestickChart = React.forwardRef(
       [data]
     );
 
-    const y = React.useMemo(
-      () =>
-        scaleLinear().domain([
-          min(data, (d: CandleDetailsExtended) => d.low),
-          max(data, (d) => d.high),
-        ] as [number, number]),
-      [data]
-    );
-
-    const yr = React.useMemo(
+    const priceScaleRescaled = React.useMemo(
       () =>
         scaleLinear().domain([
           min(data, (d: CandleDetailsExtended) => d.low),
@@ -180,6 +170,10 @@ export const CandlestickChart = React.forwardRef(
       [data]
     );
 
+    const requestRedraw = React.useCallback(function reuqestRedraw() {
+      select(chartRef.current).node()?.requestRedraw();
+    }, []);
+
     const render = React.useCallback(
       function render(transform: ZoomTransform) {
         const k = transform.k / previousZoomTransform.current.k;
@@ -197,12 +191,10 @@ export const CandlestickChart = React.forwardRef(
 
         xr.domain(domain);
 
-        // Filter data by new domain
         const filteredData = data.filter(
           (d) => d.date > domain[0] && d.date < domain[1]
         );
 
-        // Price scale
         const yDomain = [
           min(filteredData, (d: CandleDetailsExtended) => d.low),
           max(filteredData, (d: CandleDetailsExtended) => d.high),
@@ -210,12 +202,11 @@ export const CandlestickChart = React.forwardRef(
 
         const yDomainSize = Math.abs(yDomain[1] - yDomain[0]);
 
-        yr.domain([
+        priceScaleRescaled.domain([
           yDomain[0] - yDomainSize * 0.1,
           yDomain[1] + yDomainSize * 0.1,
         ]);
 
-        // Volume scale
         const volumeDomain = [
           Math.min(
             0,
@@ -233,15 +224,23 @@ export const CandlestickChart = React.forwardRef(
 
         previousZoomTransform.current = transform;
 
-        select(chartRef.current).node()?.requestRedraw();
+        requestRedraw();
 
         onBoundsChanged?.(domain as [Date, Date]);
       },
-      [data, onBoundsChanged, volumeScaleRescaled, x, xr, yr]
+      [
+        x,
+        xr,
+        data,
+        priceScaleRescaled,
+        volumeScaleRescaled,
+        requestRedraw,
+        onBoundsChanged,
+      ]
     );
 
     const zoomControl = React.useMemo(() => {
-      return d3Zoom<HTMLElement, unknown>()
+      return d3Zoom<FcElement, unknown>()
         .scaleExtent([0, 1 << 4])
         .on("zoom", (event) => {
           render(event.transform);
@@ -250,342 +249,47 @@ export const CandlestickChart = React.forwardRef(
 
     const reset = React.useCallback(
       function reset() {
-        select<HTMLElement, unknown>(plotYAxisRef.current)
+        select(chartRef.current)
           .transition()
           .duration(750)
-          .call(zoomControl.translateTo, x.range()[1], 0, [x.range()[1], 0])
+          .call(zoomControl.translateTo, x.range()[1] + 50, 0, [
+            x.range()[1],
+            0,
+          ])
           .end()
           .then(() => {
             isPinnedRef.current = true;
           })
-          .catch((reason) => console.warn(reason));
+          .catch((reason) =>
+            console.warn(`Transition end promise failed: ${reason}`)
+          );
 
         select(chartRef.current).node()?.requestRedraw();
       },
       [x, zoomControl.translateTo]
     );
 
-    // Plot area
     React.useEffect(() => {
-      select(plotAreaRef.current)
-        .on(
-          "measure",
-          (event: { detail: { height: number; width: number } }) => {
-            const { height, width } = event.detail;
-            x.range([0, width]);
-            y.range([height, 0]);
-            xr.range([0, width]);
-            yr.range([height, 0]);
-          }
-        )
-        .on(
-          "draw",
-          (event: {
-            detail: { child: HTMLCanvasElement; pixelRatio: number };
-          }) => {
-            const { child, pixelRatio } = event.detail;
-            const ctx = child.getContext("2d");
+      const chartContainer = select(chartRef.current)
+        .on("measure", (event: { detail: { width: number } }) => {
+          const { width } = event.detail;
 
-            if (ctx) {
-              ctx.save();
-              ctx.scale(pixelRatio, pixelRatio);
-
-              clearCanvas(child, ctx, Colors.BLACK);
-              scenegraph.plot.plotGrid.draw(ctx, xr, yr);
-
-              for (const candle of scenegraph.plot.candles) {
-                candle.draw(ctx, xr, yr);
-              }
-
-              ctx.restore();
-            }
-          }
-        );
-    }, [scenegraph.plot.candles, scenegraph.plot.plotGrid, x, xr, y, yr]);
-
-    // Plot y axis
-    React.useEffect(() => {
-      const container = select<HTMLElement, unknown>(plotYAxisRef.current)
-        .on(
-          "measure",
-          (event: { detail: { height: number; width: number } }) => {
-            const { height, width } = event.detail;
-            xr.range([0, width]);
-            yr.range([height, 0]);
-          }
-        )
-        .on(
-          "draw",
-          (event: {
-            detail: { child: HTMLCanvasElement; pixelRatio: number };
-          }) => {
-            const { child, pixelRatio } = event.detail;
-            const ctx = child.getContext("2d");
-
-            if (ctx) {
-              ctx.save();
-              ctx.scale(pixelRatio, pixelRatio);
-
-              scenegraph.plot.plotYAxis.draw(ctx, xr, yr);
-              scenegraph.plot.plotCrosshair.draw(ctx, xr, yr, [
-                crosshairXRef.current,
-                plotCrosshairYRef.current,
-              ]);
-              scenegraph.plot.plotYAxisTooltip.draw(ctx, xr, yr, [
-                crosshairXRef.current,
-                plotCrosshairYRef.current,
-              ]);
-
-              ctx.restore();
-            }
-          }
-        );
-
-      container
-        .on(
-          "mousemove",
-          (event: { offsetX: number; offsetY: number }) => {
-            const { offsetX, offsetY } = event;
-            const timeAtMouseX = xr.invert(offsetX);
-
-            const index = bisector((d: CandleDetailsExtended) => d.date).left(
-              data,
-              timeAtMouseX
-            );
-
-            const firstCandle = data[index - 1];
-            const secondCandle = data[index];
-
-            let candle: CandleDetailsExtended;
-            if (firstCandle && secondCandle) {
-              // If we have two candles either side of mouse x find the one
-              // closest to it
-              const nearestCandleDates = [firstCandle.date, secondCandle.date];
-              candle = [firstCandle, secondCandle][
-                closestIndexTo(timeAtMouseX, nearestCandleDates)
-              ];
-            } else if (firstCandle) {
-              candle = firstCandle;
-            } else {
-              candle = secondCandle;
-            }
-
-            crosshairXRef.current = xr(candle.date);
-            plotCrosshairYRef.current = offsetY;
-
-            xAxisRef.current.requestRedraw();
-            plotYAxisRef.current.requestRedraw();
-            studyYAxisRef.current.requestRedraw();
-
-            onMouseMove?.(candle);
-          },
-          { capture: true } // TODO: It would be preferable to still respond to this event while zooming
-        )
-        .on("mouseout", () => {
-          crosshairXRef.current = null;
-          plotCrosshairYRef.current = null;
-
-          xAxisRef.current.requestRedraw();
-          plotYAxisRef.current.requestRedraw();
-          studyYAxisRef.current.requestRedraw();
-
-          onMouseOut?.();
+          x.range([0, width]);
+        })
+        .on("draw", () => {
+          // Use group draw event to ensure scales have their domain updated before
+          // any of the elements are drawn (draw events are dispatched in document order).
+          x.domain(
+            extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
+          );
         });
 
-      container.call(zoomControl);
-    }, [
-      data,
-      onMouseMove,
-      onMouseOut,
-      scenegraph.plot.plotCrosshair,
-      scenegraph.plot.plotYAxis,
-      scenegraph.plot.plotYAxisTooltip,
-      xr,
-      yr,
-      zoomControl,
-    ]);
-
-    // Study
-    React.useEffect(() => {
-      select(studyAreaRef.current)
-        .on(
-          "measure",
-          (event: { detail: { height: number; width: number } }) => {
-            const { height, width } = event.detail;
-            xr.range([0, width]);
-            volumeScaleRescaled.range([height, 0]);
-          }
-        )
-        .on("draw", (_event) => {
-          const canvas = select(studyAreaRef.current)
-            ?.select("canvas")
-            ?.node() as HTMLCanvasElement;
-
-          const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
-
-          if (ctx) {
-            clearCanvas(canvas, ctx, Colors.BLACK);
-            scenegraph.study.studyGrid.draw(ctx, xr, volumeScaleRescaled);
-
-            for (const bar of scenegraph.study.bars) {
-              bar.draw(ctx, xr, volumeScaleRescaled);
-            }
-          }
-        });
-    }, [
-      scenegraph.study.bars,
-      scenegraph.study.studyGrid,
-      volumeScaleRescaled,
-      xr,
-    ]);
-
-    // Study y axis
-    React.useEffect(() => {
-      const container = select<HTMLElement, unknown>(studyYAxisRef.current)
-        .on(
-          "measure",
-          (event: { detail: { height: number; width: number } }) => {
-            const { height, width } = event.detail;
-            xr.range([0, width]);
-            volumeScaleRescaled.range([height, 0]);
-          }
-        )
-        .on(
-          "draw",
-          (event: {
-            detail: { child: HTMLCanvasElement; pixelRatio: number };
-          }) => {
-            const { child, pixelRatio } = event.detail;
-            const ctx = child.getContext("2d");
-
-            if (ctx) {
-              ctx.save();
-              ctx.scale(pixelRatio, pixelRatio);
-
-              scenegraph.study.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
-              scenegraph.study.studyCrosshair.draw(ctx, xr, yr, [
-                crosshairXRef.current,
-                studyCrosshairYRef.current,
-              ]);
-              scenegraph.study.studyYAxisTooltip.draw(
-                ctx,
-                xr,
-                volumeScaleRescaled,
-                [crosshairXRef.current, studyCrosshairYRef.current]
-              );
-
-              ctx.restore();
-            }
-          }
-        );
-
-      container.call(zoomControl);
-    }, [
-      scenegraph.study.studyCrosshair,
-      scenegraph.study.studyYAxis,
-      scenegraph.study.studyYAxisTooltip,
-      volumeScaleRescaled,
-      xr,
-      yr,
-      zoomControl,
-    ]);
-
-    // Study crosshair
-    React.useEffect(() => {
-      select(studyYAxisRef.current)
-        .on(
-          "mousemove",
-          (event) => {
-            const { offsetX, offsetY } = event;
-            const timeAtMouseX = xr.invert(offsetX);
-
-            const index = bisector((d: CandleDetailsExtended) => d.date).left(
-              data,
-              timeAtMouseX
-            );
-
-            const firstCandle = data[index - 1];
-            const secondCandle = data[index];
-
-            let candle: CandleDetailsExtended;
-            if (firstCandle && secondCandle) {
-              // If we have two candles either side of mouse x find the one
-              // closest to it
-              const nearestCandleDates = [firstCandle.date, secondCandle.date];
-              candle = [firstCandle, secondCandle][
-                closestIndexTo(timeAtMouseX, nearestCandleDates)
-              ];
-            } else if (firstCandle) {
-              candle = firstCandle;
-            } else {
-              candle = secondCandle;
-            }
-
-            crosshairXRef.current = xr(candle.date);
-            studyCrosshairYRef.current = offsetY;
-
-            xAxisRef.current.requestRedraw();
-            plotYAxisRef.current.requestRedraw();
-            studyYAxisRef.current.requestRedraw();
-
-            onMouseMove?.(candle);
-          },
-          { capture: true } // TODO: It would be preferable to still respond to this event while zooming
-        )
-        .on("mouseout", () => {
-          crosshairXRef.current = null;
-          studyCrosshairYRef.current = null;
-
-          xAxisRef.current.requestRedraw();
-          plotYAxisRef.current.requestRedraw();
-          studyYAxisRef.current.requestRedraw();
-
-          onMouseOut?.();
-        });
-    }, [data, onMouseMove, onMouseOut, xr]);
-
-    // X axis
-    React.useEffect(() => {
-      const container = select<HTMLElement, unknown>(xAxisRef.current).on(
-        "draw",
-        (event) => {
-          const canvas = select(xAxisRef.current)
-            ?.select("canvas")
-            ?.node() as HTMLCanvasElement;
-
-          const ctx: CanvasRenderingContext2D | null = canvas?.getContext("2d");
-
-          if (ctx) {
-            clearCanvas(canvas, ctx, Colors.BLACK);
-            scenegraph.xAxis.xAxis.draw(ctx, xr, y);
-            scenegraph.xAxis.xAxisTooltip.draw(ctx, xr, y, [
-              crosshairXRef.current,
-              null,
-            ]);
-          }
-        }
-      );
-
-      container.call(zoomControl);
-    }, [
-      scenegraph.xAxis.xAxis,
-      scenegraph.xAxis.xAxisTooltip,
-      xr,
-      y,
-      zoomControl,
-    ]);
-
-    // Chart container
-    React.useEffect(() => {
-      const chartContainer = select(chartRef.current).on("draw", () => {
-        // Use group draw event to ensure scales have their domain updated before
-        // any of the elements are drawn (draw events are dispatched in document order).
-      });
+      chartContainer.call(zoomControl);
 
       if (chartContainer) {
         chartContainer.node()?.requestRedraw();
       }
-    }, [data, x, y]);
+    }, [data, x, zoomControl]);
 
     return (
       <d3fc-group
@@ -595,32 +299,42 @@ export const CandlestickChart = React.forwardRef(
         use-device-pixel-ratio
       >
         <div className="plot-area">
-          <d3fc-canvas
-            ref={plotAreaRef}
-            class="d3fc-canvas-layer"
-          ></d3fc-canvas>
-          <d3fc-canvas
-            ref={plotCrosshairRef}
-            class="d3fc-canvas-layer"
-          ></d3fc-canvas>
-          <d3fc-canvas
-            ref={plotYAxisRef}
-            class="d3fc-canvas-layer crosshair"
-          ></d3fc-canvas>
+          <PlotArea
+            scenegraph={scenegraph.plot}
+            x={xr}
+            y={priceScaleRescaled}
+            crosshairXRef={crosshairXRef}
+            crosshairYRef={plotCrosshairYRef}
+            requestRedraw={requestRedraw}
+            onMouseMove={onMouseMove}
+            onMouseOut={onMouseOut}
+          />
         </div>
-        <div className="separator"></div>
+        <div className="separator-1"></div>
         <div className="study-area">
-          <d3fc-canvas
-            ref={studyAreaRef}
-            class="d3fc-canvas-layer"
-          ></d3fc-canvas>
-          <d3fc-canvas
-            ref={studyYAxisRef}
-            class="d3fc-canvas-layer crosshair"
-          ></d3fc-canvas>
+          <PlotArea
+            scenegraph={scenegraph.study}
+            x={xr}
+            y={volumeScaleRescaled}
+            crosshairXRef={crosshairXRef}
+            crosshairYRef={studyCrosshairYRef}
+            requestRedraw={requestRedraw}
+            onMouseMove={onMouseMove}
+            onMouseOut={onMouseOut}
+          />
         </div>
+        <div className="separator-2"></div>
         <div className="x-axis">
-          <d3fc-canvas ref={xAxisRef} class="time-axis"></d3fc-canvas>
+          <XAxis
+            scenegraph={scenegraph.xAxis}
+            x={xr}
+            y={priceScaleRescaled}
+            crosshairXRef={crosshairXRef}
+            crosshairYRef={studyCrosshairYRef}
+            requestRedraw={requestRedraw}
+            onMouseMove={onMouseMove}
+            onMouseOut={onMouseOut}
+          />
         </div>
       </d3fc-group>
     );

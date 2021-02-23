@@ -61,9 +61,7 @@ export const Chart = React.forwardRef(
       new Date(),
       new Date(),
     ]);
-    const [candle, setCandle] = React.useState<CandleDetailsExtended | null>(
-      null
-    );
+    const [selectedIndex, setCandle] = React.useState<number | null>(null);
 
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
@@ -131,7 +129,7 @@ export const Chart = React.forwardRef(
             </AutoSizer>
             <div className="overlay">
               <ChartInfo interval={interval} bounds={bounds} />
-              {candle && <CandleInfo candle={candle} />}
+              {selectedIndex && <CandleInfo candle={data[selectedIndex]} />}
             </div>
           </div>
         ) : (
