@@ -96,7 +96,7 @@ export const PlotArea = ({
             scenegraph.yAxis.draw(ctx, x, y);
 
             for (const annotation of scenegraph.annotations) {
-                annotation.draw(ctx, x, y, 200)
+              annotation.draw(ctx, x, y);
             }
 
             scenegraph.crosshair.draw(ctx, x, y, [
