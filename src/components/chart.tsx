@@ -2,10 +2,9 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { CandleDetailsExtended, CandlestickChart } from "./candlestick-chart";
-
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
+import { CandlestickChart } from "./candlestick-chart";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../api/vega-graphql";
