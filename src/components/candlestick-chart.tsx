@@ -98,33 +98,39 @@ export const CandlestickChart = React.forwardRef(
     // Memoize obviously
     const scenegraph = React.useMemo(
       () => ({
-        candles: data.map(
-          (candle) =>
-            new CandleElement({
-              ...candle,
-              x: candle.date,
-              width: candleWidth * (1 - PADDING_INNER),
-            })
-        ),
-        bars: data.map(
-          (bar) =>
-            new BarElement({
-              ...bar,
-              x: bar.date,
-              height: bar.volume,
-              width: candleWidth * (1 - PADDING_INNER),
-            })
-        ),
-        plotGrid: new GridElement(),
-        plotYAxis: new YAxisElement(),
-        plotCrosshair: new CrosshairElement(),
-        plotYAxisTooltip: new YAxisTooltipElement(),
-        studyGrid: new GridElement(),
-        studyYAxis: new YAxisElement(),
-        studyCrosshair: new CrosshairElement(),
-        studyYAxisTooltip: new YAxisTooltipElement(),
-        xAxis: new XAxisElement(),
-        xAxisTooltip: new XAxisTooltipElement(),
+        plot: {
+          candles: data.map(
+            (candle) =>
+              new CandleElement({
+                ...candle,
+                x: candle.date,
+                width: candleWidth * (1 - PADDING_INNER),
+              })
+          ),
+          plotGrid: new GridElement(),
+          plotYAxis: new YAxisElement(),
+          plotCrosshair: new CrosshairElement(),
+          plotYAxisTooltip: new YAxisTooltipElement(),
+        },
+        study: {
+          bars: data.map(
+            (bar) =>
+              new BarElement({
+                ...bar,
+                x: bar.date,
+                height: bar.volume,
+                width: candleWidth * (1 - PADDING_INNER),
+              })
+          ),
+          studyGrid: new GridElement(),
+          studyYAxis: new YAxisElement(),
+          studyCrosshair: new CrosshairElement(),
+          studyYAxisTooltip: new YAxisTooltipElement(),
+        },
+        xAxis: {
+          xAxis: new XAxisElement(),
+          xAxisTooltip: new XAxisTooltipElement(),
+        },
       }),
       [candleWidth, data]
     );
@@ -285,9 +291,9 @@ export const CandlestickChart = React.forwardRef(
               ctx.scale(pixelRatio, pixelRatio);
 
               clearCanvas(child, ctx, Colors.BLACK);
-              scenegraph.plotGrid.draw(ctx, xr, yr);
+              scenegraph.plot.plotGrid.draw(ctx, xr, yr);
 
-              for (const candle of scenegraph.candles) {
+              for (const candle of scenegraph.plot.candles) {
                 candle.draw(ctx, xr, yr);
               }
 
@@ -295,7 +301,7 @@ export const CandlestickChart = React.forwardRef(
             }
           }
         );
-    }, [scenegraph.candles, scenegraph.plotGrid, x, xr, y, yr, zoomControl]);
+    }, [scenegraph.plot.candles, scenegraph.plot.plotGrid, x, xr, y, yr]);
 
     // Plot y axis
     React.useEffect(() => {
@@ -320,12 +326,12 @@ export const CandlestickChart = React.forwardRef(
               ctx.save();
               ctx.scale(pixelRatio, pixelRatio);
 
-              scenegraph.plotYAxis.draw(ctx, xr, yr);
-              scenegraph.plotCrosshair.draw(ctx, xr, yr, [
+              scenegraph.plot.plotYAxis.draw(ctx, xr, yr);
+              scenegraph.plot.plotCrosshair.draw(ctx, xr, yr, [
                 crosshairXRef.current,
                 plotCrosshairYRef.current,
               ]);
-              scenegraph.plotYAxisTooltip.draw(ctx, xr, yr, [
+              scenegraph.plot.plotYAxisTooltip.draw(ctx, xr, yr, [
                 crosshairXRef.current,
                 plotCrosshairYRef.current,
               ]);
@@ -391,9 +397,9 @@ export const CandlestickChart = React.forwardRef(
       data,
       onMouseMove,
       onMouseOut,
-      scenegraph.plotCrosshair,
-      scenegraph.plotYAxis,
-      scenegraph.plotYAxisTooltip,
+      scenegraph.plot.plotCrosshair,
+      scenegraph.plot.plotYAxis,
+      scenegraph.plot.plotYAxisTooltip,
       xr,
       yr,
       zoomControl,
@@ -419,14 +425,19 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             clearCanvas(canvas, ctx, Colors.BLACK);
-            scenegraph.studyGrid.draw(ctx, xr, volumeScaleRescaled);
+            scenegraph.study.studyGrid.draw(ctx, xr, volumeScaleRescaled);
 
-            for (const bar of scenegraph.bars) {
+            for (const bar of scenegraph.study.bars) {
               bar.draw(ctx, xr, volumeScaleRescaled);
             }
           }
         });
-    }, [xr, volumeScaleRescaled, scenegraph.bars, scenegraph.studyGrid]);
+    }, [
+      scenegraph.study.bars,
+      scenegraph.study.studyGrid,
+      volumeScaleRescaled,
+      xr,
+    ]);
 
     // Study y axis
     React.useEffect(() => {
@@ -451,15 +462,17 @@ export const CandlestickChart = React.forwardRef(
               ctx.save();
               ctx.scale(pixelRatio, pixelRatio);
 
-              scenegraph.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
-              scenegraph.studyCrosshair.draw(ctx, xr, yr, [
+              scenegraph.study.studyYAxis.draw(ctx, xr, volumeScaleRescaled);
+              scenegraph.study.studyCrosshair.draw(ctx, xr, yr, [
                 crosshairXRef.current,
                 studyCrosshairYRef.current,
               ]);
-              scenegraph.studyYAxisTooltip.draw(ctx, xr, volumeScaleRescaled, [
-                crosshairXRef.current,
-                studyCrosshairYRef.current,
-              ]);
+              scenegraph.study.studyYAxisTooltip.draw(
+                ctx,
+                xr,
+                volumeScaleRescaled,
+                [crosshairXRef.current, studyCrosshairYRef.current]
+              );
 
               ctx.restore();
             }
@@ -468,13 +481,13 @@ export const CandlestickChart = React.forwardRef(
 
       container.call(zoomControl);
     }, [
-      xr,
+      scenegraph.study.studyCrosshair,
+      scenegraph.study.studyYAxis,
+      scenegraph.study.studyYAxisTooltip,
       volumeScaleRescaled,
-      zoomControl,
-      scenegraph.studyYAxis,
-      scenegraph.studyCrosshair,
-      scenegraph.studyYAxisTooltip,
+      xr,
       yr,
+      zoomControl,
     ]);
 
     // Study crosshair
@@ -529,17 +542,7 @@ export const CandlestickChart = React.forwardRef(
 
           onMouseOut?.();
         });
-    }, [
-      data,
-      onMouseMove,
-      onMouseOut,
-      scenegraph.plotCrosshair,
-      x,
-      xr,
-      y,
-      yr,
-      zoomControl,
-    ]);
+    }, [data, onMouseMove, onMouseOut, xr]);
 
     // X axis
     React.useEffect(() => {
@@ -554,8 +557,8 @@ export const CandlestickChart = React.forwardRef(
 
           if (ctx) {
             clearCanvas(canvas, ctx, Colors.BLACK);
-            scenegraph.xAxis.draw(ctx, xr, y);
-            scenegraph.xAxisTooltip.draw(ctx, xr, y, [
+            scenegraph.xAxis.xAxis.draw(ctx, xr, y);
+            scenegraph.xAxis.xAxisTooltip.draw(ctx, xr, y, [
               crosshairXRef.current,
               null,
             ]);
@@ -564,7 +567,13 @@ export const CandlestickChart = React.forwardRef(
       );
 
       container.call(zoomControl);
-    }, [scenegraph.xAxis, scenegraph.xAxisTooltip, xr, y, zoomControl]);
+    }, [
+      scenegraph.xAxis.xAxis,
+      scenegraph.xAxis.xAxisTooltip,
+      xr,
+      y,
+      zoomControl,
+    ]);
 
     // Chart container
     React.useEffect(() => {
