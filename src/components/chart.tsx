@@ -89,6 +89,7 @@ export const Chart = React.forwardRef(
                   height={height}
                   data={data}
                   interval={interval}
+                  decimalPlaces={dataSource.decimalPlaces}
                   onBoundsChanged={setBounds}
                   onMouseMove={setCandle}
                   onMouseOut={handleOnMouseOut}
@@ -98,7 +99,12 @@ export const Chart = React.forwardRef(
             </AutoSizer>
             <div className="overlay">
               <ChartInfo interval={interval} bounds={bounds} />
-              {selectedIndex && <CandleInfo candle={data[selectedIndex]} />}
+              {selectedIndex && (
+                <CandleInfo
+                  candle={data[selectedIndex]}
+                  decimalPlaces={dataSource.decimalPlaces}
+                />
+              )}
             </div>
           </div>
         ) : (

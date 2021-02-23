@@ -1,7 +1,5 @@
-import { Interval, candleSubscriptionQuery } from "../api/vega-graphql";
-
-import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
+import { Interval } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
 import json from "./data.json";
 
@@ -20,16 +18,20 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
 export class JsonDataSource implements DataSource {
   sub: any = null;
   marketId: string;
+  _decimalPlaces: number;
 
-  constructor(marketId: string) {
-    this.marketId = marketId;
+  get decimalPlaces(): number {
+    return this._decimalPlaces;
   }
 
-  async query(interval: Interval, from: string, to: string) {
-    const decimalPlaces = json.data.market.decimalPlaces;
+  constructor(marketId: string, decimalPlaces: number) {
+    this.marketId = marketId;
+    this._decimalPlaces = decimalPlaces;
+  }
 
+  async query(_interval: Interval, _from: string, _to: string) {
     const candles = json.data.market.candles?.map((d) =>
-      extendCandle(d, decimalPlaces)
+      extendCandle(d, this.decimalPlaces)
     );
 
     return Promise.resolve(candles);

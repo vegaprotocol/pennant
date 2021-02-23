@@ -15,6 +15,7 @@ function addYAxisPath(
   const yRange = yScale.range();
   const numYTicks = Math.abs(yRange[1] - yRange[0]) / 60;
   const yTicks = yScale.ticks(numYTicks);
+  const tickFormat = yScale.tickFormat(numYTicks);
 
   ctx.beginPath();
   ctx.fillStyle = "rgba(0,0,0,0.6)";
@@ -45,7 +46,7 @@ function addYAxisPath(
     ctx.beginPath();
 
     ctx.fillText(
-      String(Math.round(tick)),
+      tickFormat(tick),
       xRange[1] - WIDTH + MARGIN,
       Math.round(yScale(tick))
     );

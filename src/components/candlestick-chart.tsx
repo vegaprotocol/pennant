@@ -42,6 +42,7 @@ export type CandleStickChartProps = {
   height: number;
   data: CandleDetailsExtended[];
   interval: Interval;
+  decimalPlaces: number;
   onBoundsChanged?: (bounds: [Date, Date]) => void;
   onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
@@ -57,6 +58,7 @@ export const CandlestickChart = React.forwardRef(
       height,
       data,
       interval,
+      decimalPlaces,
       onBoundsChanged,
       onMouseMove,
       onMouseOut,
@@ -101,7 +103,7 @@ export const CandlestickChart = React.forwardRef(
           grid: new GridElement(),
           yAxis: new YAxisElement(),
           crosshair: new CrosshairElement(),
-          yAxisTooltip: new YAxisTooltipElement(),
+          yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
         },
         study: {
           data: data.map(
@@ -116,7 +118,7 @@ export const CandlestickChart = React.forwardRef(
           grid: new GridElement(),
           yAxis: new YAxisElement(),
           crosshair: new CrosshairElement(),
-          yAxisTooltip: new YAxisTooltipElement(),
+          yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
         },
         xAxis: {
           data: data.map(

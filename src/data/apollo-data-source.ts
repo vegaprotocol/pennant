@@ -26,10 +26,20 @@ export class ApolloDataSource implements DataSource {
   client: ApolloClient<any>;
   sub: any = null;
   marketId: string;
+  _decimalPlaces: number;
 
-  constructor(client: ApolloClient<any>, marketId: string) {
+  get decimalPlaces(): number {
+    return this._decimalPlaces;
+  }
+
+  constructor(
+    client: ApolloClient<any>,
+    marketId: string,
+    decimalPlaces: number
+  ) {
     this.client = client;
     this.marketId = marketId;
+    this._decimalPlaces = decimalPlaces;
   }
 
   async query(interval: Interval, from: string, to: string) {

@@ -8,7 +8,7 @@ function addYAxisPath(
   xScale: ScaleTime<number, number, never>,
   yScale: ScaleLinear<number, number, never>,
   position: [number | null, number | null],
-  decimalPlaces = 5
+  decimalPlaces: number
 ) {
   const y = position[1];
 
@@ -58,12 +58,17 @@ function addYAxisPath(
 }
 
 export class YAxisTooltipElement implements Element {
+  readonly decimalPlaces: number;
+
+  constructor(decimalPlaces: number) {
+    this.decimalPlaces = decimalPlaces;
+  }
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>,
     position: [number | null, number | null]
   ) {
-    addYAxisPath(ctx, xScale, yScale, position);
+    addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces);
   }
 }

@@ -37,14 +37,13 @@ function App() {
   const client = useApolloClient();
   const [market, setMarket] = React.useState<any | null>(null);
 
-  const dataSource = React.useMemo(
-    () => new JsonDataSource(market),
-    [market]
-  );
-
   const { data, error } = useSWR("https://n04.d.vega.xyz/markets", (url) =>
     fetch(url).then((r) => r.json())
   );
+
+  const dataSource = React.useMemo(() => new JsonDataSource(market, 5), [
+    market,
+  ]);
 
   if (error) {
     return <div>failed to load</div>;
