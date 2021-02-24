@@ -1,7 +1,7 @@
 import { DataSource } from "../types/data-source";
 import { Interval } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
-import json from "./data.json";
+import json from "../stories/data.json";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
@@ -29,8 +29,8 @@ export class JsonDataSource implements DataSource {
     this._decimalPlaces = decimalPlaces;
   }
 
-  async query(_interval: Interval, _from: string, _to: string) {
-    const candles = json.data.market.candles?.map((d) =>
+  async query(interval: Interval, _from: string, _to: string) {
+    const candles = json[interval].candles.map((d) =>
       extendCandle(d, this.decimalPlaces)
     );
 

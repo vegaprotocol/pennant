@@ -89,6 +89,7 @@ export const CandlestickChart = React.forwardRef(
     const studyCrosshairYRef = React.useRef<number | null>(null);
 
     const candleWidth = getCandleWidth(interval);
+    const lastPrice = data.length > 0 ? data[data.length - 1].close : null;
 
     const scenegraph = React.useMemo(
       () => ({
@@ -105,9 +106,7 @@ export const CandlestickChart = React.forwardRef(
           yAxis: new YAxisElement(),
           crosshair: new CrosshairElement(),
           yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
-          annotations: [
-            new AnnotationElement(decimalPlaces, data[data.length - 1].close),
-          ],
+          annotations: [new AnnotationElement(decimalPlaces, lastPrice)],
         },
         study: {
           data: data.map(
@@ -138,7 +137,7 @@ export const CandlestickChart = React.forwardRef(
           tooltip: new XAxisTooltipElement(),
         },
       }),
-      [candleWidth, data, decimalPlaces]
+      [candleWidth, data, decimalPlaces, lastPrice]
     );
 
     const x = React.useMemo(

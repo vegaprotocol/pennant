@@ -118,37 +118,39 @@ export const PlotArea = ({
       .on(
         "mousemove",
         (event: { offsetX: number; offsetY: number }) => {
-          const { offsetX, offsetY } = event;
-          const timeAtMouseX = x.invert(offsetX);
-
           const data = scenegraph.data as CandleElement[];
 
-          const index = bisector((d: CandleElement) => d.x).left(
-            data,
-            timeAtMouseX
-          );
+          if (data.length > 0) {
+            const { offsetX, offsetY } = event;
+            const timeAtMouseX = x.invert(offsetX);
 
-          const firstCandle = data[index - 1];
-          const secondCandle = data[index];
+            const index = bisector((d: CandleElement) => d.x).left(
+              data,
+              timeAtMouseX
+            );
 
-          let candle: CandleElement;
-          let indexOffset = 0;
+            const firstCandle = data[index - 1];
+            const secondCandle = data[index];
 
-          if (firstCandle && secondCandle) {
-            const nearestCandleDates = [firstCandle.x, secondCandle.x];
-            indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-            candle = [firstCandle, secondCandle][indexOffset];
-          } else if (firstCandle) {
-            candle = firstCandle;
-          } else {
-            candle = secondCandle;
+            let candle: CandleElement;
+            let indexOffset = 0;
+
+            if (firstCandle && secondCandle) {
+              const nearestCandleDates = [firstCandle.x, secondCandle.x];
+              indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+              candle = [firstCandle, secondCandle][indexOffset];
+            } else if (firstCandle) {
+              candle = firstCandle;
+            } else {
+              candle = secondCandle;
+            }
+
+            crosshairXRef.current = x(candle.x);
+            crosshairYRef.current = offsetY;
+
+            requestRedraw();
+            onMouseMove(index + indexOffset - 1);
           }
-
-          crosshairXRef.current = x(candle.x);
-          crosshairYRef.current = offsetY;
-
-          requestRedraw();
-          onMouseMove(index + indexOffset - 1);
         },
         { capture: true } // TODO: It would be preferable to still respond to this event while zooming
       )
