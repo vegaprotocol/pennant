@@ -1,29 +1,23 @@
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../helpers";
+import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { CandleElement } from "../elements";
-import { Element } from "../types/element";
 import { FcElement } from "../types/d3fc-types";
+import { Panel } from "../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
 
 export type PlotAreaProps = {
-  scenegraph: {
-    crosshair: Element;
-    data: Element[];
-    grid: Element;
-    yAxis: Element;
-    yAxisTooltip: Element;
-    annotations: Element[];
-  };
-  x: any;
-  y: any;
+  scenegraph: Panel;
+  x: ScaleTime<number, number, never>;
+  y: ScaleLinear<number, number, never>;
   crosshairXRef: any;
   crosshairYRef: any;
   requestRedraw: () => void;
-  onMouseMove: any;
+  onMouseMove?: (index: number) => void;
   onMouseOut: any;
 };
 
@@ -54,17 +48,22 @@ export const PlotArea = ({
           detail: { child: HTMLCanvasElement; pixelRatio: number };
         }) => {
           const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
+          const ctx = child.getContext("2d", { alpha: false });
 
           if (ctx) {
             ctx.save();
             ctx.scale(pixelRatio, pixelRatio);
 
             clearCanvas(child, ctx, Colors.BLACK);
-            scenegraph.grid.draw(ctx, x, y);
 
-            for (const datum of scenegraph.data) {
-              datum.draw(ctx, x, y);
+            if (scenegraph.grid) {
+              scenegraph.grid.draw(ctx, x, y);
+            }
+
+            if (scenegraph.data) {
+              for (const datum of scenegraph.data) {
+                datum.draw(ctx, x, y);
+              }
             }
 
             ctx.restore();
@@ -93,21 +92,29 @@ export const PlotArea = ({
             ctx.save();
             ctx.scale(pixelRatio, pixelRatio);
 
-            scenegraph.yAxis.draw(ctx, x, y);
-
-            for (const annotation of scenegraph.annotations) {
-              annotation.draw(ctx, x, y);
+            if (scenegraph.axis) {
+              scenegraph.axis.draw(ctx, x, y);
             }
 
-            scenegraph.crosshair.draw(ctx, x, y, [
-              crosshairXRef.current,
-              crosshairYRef.current,
-            ]);
+            if (scenegraph.annotations) {
+              for (const annotation of scenegraph.annotations) {
+                annotation.draw(ctx, x, y);
+              }
+            }
 
-            scenegraph.yAxisTooltip.draw(ctx, x, y, [
-              crosshairXRef.current,
-              crosshairYRef.current,
-            ]);
+            if (scenegraph.crosshair) {
+              scenegraph.crosshair.draw(ctx, x, y, [
+                crosshairXRef.current,
+                crosshairYRef.current,
+              ]);
+            }
+
+            if (scenegraph.axisTooltip) {
+              scenegraph.axisTooltip.draw(ctx, x, y, [
+                crosshairXRef.current,
+                crosshairYRef.current,
+              ]);
+            }
 
             ctx.restore();
           }
@@ -118,37 +125,39 @@ export const PlotArea = ({
       .on(
         "mousemove",
         (event: { offsetX: number; offsetY: number }) => {
-          const { offsetX, offsetY } = event;
-          const timeAtMouseX = x.invert(offsetX);
-
           const data = scenegraph.data as CandleElement[];
 
-          const index = bisector((d: CandleElement) => d.x).left(
-            data,
-            timeAtMouseX
-          );
+          if (data.length > 0) {
+            const { offsetX, offsetY } = event;
+            const timeAtMouseX = x.invert(offsetX);
 
-          const firstCandle = data[index - 1];
-          const secondCandle = data[index];
+            const index = bisector((d: CandleElement) => d.x).left(
+              data,
+              timeAtMouseX
+            );
 
-          let candle: CandleElement;
-          let indexOffset = 0;
+            const firstCandle = data[index - 1];
+            const secondCandle = data[index];
 
-          if (firstCandle && secondCandle) {
-            const nearestCandleDates = [firstCandle.x, secondCandle.x];
-            indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-            candle = [firstCandle, secondCandle][indexOffset];
-          } else if (firstCandle) {
-            candle = firstCandle;
-          } else {
-            candle = secondCandle;
+            let candle: CandleElement;
+            let indexOffset = 0;
+
+            if (firstCandle && secondCandle) {
+              const nearestCandleDates = [firstCandle.x, secondCandle.x];
+              indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+              candle = [firstCandle, secondCandle][indexOffset];
+            } else if (firstCandle) {
+              candle = firstCandle;
+            } else {
+              candle = secondCandle;
+            }
+
+            crosshairXRef.current = x(candle.x);
+            crosshairYRef.current = offsetY;
+
+            requestRedraw();
+            onMouseMove?.(index + indexOffset - 1);
           }
-
-          crosshairXRef.current = x(candle.x);
-          crosshairYRef.current = offsetY;
-
-          requestRedraw();
-          onMouseMove(index + indexOffset - 1);
         },
         { capture: true } // TODO: It would be preferable to still respond to this event while zooming
       )
@@ -166,10 +175,10 @@ export const PlotArea = ({
     onMouseOut,
     requestRedraw,
     scenegraph.annotations,
+    scenegraph.axis,
+    scenegraph.axisTooltip,
     scenegraph.crosshair,
     scenegraph.data,
-    scenegraph.yAxis,
-    scenegraph.yAxisTooltip,
     x,
     y,
   ]);
@@ -179,10 +188,12 @@ export const PlotArea = ({
       <d3fc-canvas
         ref={visualizationRef}
         class="d3fc-canvas-layer"
+        use-device-pixel-ratio
       ></d3fc-canvas>
       <d3fc-canvas
         ref={foregroundRef}
         class="d3fc-canvas-layer crosshair"
+        use-device-pixel-ratio
       ></d3fc-canvas>
     </>
   );

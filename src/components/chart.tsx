@@ -74,7 +74,7 @@ export const Chart = React.forwardRef(
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
 
     return (
-      <div>
+      <div style={{ height: "100%" }}>
         {data.length > 0 ? (
           <div className="chart-wrapper">
             <AutoSizer

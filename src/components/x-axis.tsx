@@ -1,26 +1,23 @@
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../helpers";
+import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { CandleElement } from "../elements";
-import { Element } from "../types/element";
 import { FcElement } from "../types/d3fc-types";
+import { Panel } from "../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
 
 export type XAxisProps = {
-  scenegraph: {
-    data: Element[];
-    axis: Element;
-    tooltip: Element;
-  };
-  x: any;
-  y: any;
+  scenegraph: Panel;
+  x: ScaleTime<number, number, never>;
+  y: ScaleLinear<number, number, never>;
   crosshairXRef: any;
   crosshairYRef: any;
   requestRedraw: () => void;
-  onMouseMove: any;
+  onMouseMove?: (index: number) => void;
   onMouseOut: any;
 };
 
@@ -42,13 +39,24 @@ export const XAxis = ({
       "draw",
       (event: { detail: { child: HTMLCanvasElement; pixelRatio: number } }) => {
         const { child, pixelRatio } = event.detail;
-        const ctx = child.getContext("2d");
+        const ctx = child.getContext("2d", { alpha: false });
         if (ctx) {
           ctx.save();
           ctx.scale(pixelRatio, pixelRatio);
+
           clearCanvas(child, ctx, Colors.BLACK);
-          scenegraph.axis.draw(ctx, x, y);
-          scenegraph.tooltip.draw(ctx, x, y, [crosshairXRef.current, null]);
+
+          if (scenegraph.axis) {
+            scenegraph.axis.draw(ctx, x, y);
+          }
+
+          if (scenegraph.axisTooltip) {
+            scenegraph.axisTooltip.draw(ctx, x, y, [
+              crosshairXRef.current,
+              null,
+            ]);
+          }
+
           ctx.restore();
         }
       }
@@ -58,37 +66,39 @@ export const XAxis = ({
       .on(
         "mousemove",
         (event: { offsetX: number }) => {
-          const { offsetX } = event;
-          const timeAtMouseX = x.invert(offsetX);
-
           const data = scenegraph.data as CandleElement[];
 
-          const index = bisector((d: CandleElement) => d.x).left(
-            data,
-            timeAtMouseX
-          );
+          if (data.length > 0) {
+            const { offsetX } = event;
+            const timeAtMouseX = x.invert(offsetX);
 
-          const firstCandle = data[index - 1];
-          const secondCandle = data[index];
+            const index = bisector((d: CandleElement) => d.x).left(
+              data,
+              timeAtMouseX
+            );
 
-          let candle: CandleElement;
-          let indexOffset = 0;
+            const firstCandle = data[index - 1];
+            const secondCandle = data[index];
 
-          if (firstCandle && secondCandle) {
-            const nearestCandleDates = [firstCandle.x, secondCandle.x];
-            indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-            candle = [firstCandle, secondCandle][indexOffset];
-          } else if (firstCandle) {
-            candle = firstCandle;
-          } else {
-            candle = secondCandle;
+            let candle: CandleElement;
+            let indexOffset = 0;
+
+            if (firstCandle && secondCandle) {
+              const nearestCandleDates = [firstCandle.x, secondCandle.x];
+              indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+              candle = [firstCandle, secondCandle][indexOffset];
+            } else if (firstCandle) {
+              candle = firstCandle;
+            } else {
+              candle = secondCandle;
+            }
+
+            crosshairXRef.current = x(candle.x);
+            crosshairYRef.current = null;
+
+            requestRedraw();
+            onMouseMove?.(index + indexOffset - 1);
           }
-
-          crosshairXRef.current = x(candle.x);
-          crosshairYRef.current = null;
-
-          requestRedraw();
-          onMouseMove(index + indexOffset - 1);
         },
         { capture: true } // TODO: It would be preferable to still respond to this event while zooming
       )
@@ -106,15 +116,19 @@ export const XAxis = ({
     onMouseOut,
     requestRedraw,
     scenegraph.axis,
+    scenegraph.axisTooltip,
     scenegraph.data,
-    scenegraph.tooltip,
     x,
     y,
   ]);
 
   return (
     <>
-      <d3fc-canvas ref={visualizationRef} class="time-axis"></d3fc-canvas>
+      <d3fc-canvas
+        ref={visualizationRef}
+        class="time-axis"
+        use-device-pixel-ratio
+      ></d3fc-canvas>
     </>
   );
 };

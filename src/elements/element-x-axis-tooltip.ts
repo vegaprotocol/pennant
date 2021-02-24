@@ -4,7 +4,7 @@ import { Colors } from "../helpers";
 import { Element } from "../types/element";
 import { format } from "date-fns";
 
-function addXAxisPath(
+function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime<number, number, never>,
   yScale: ScaleLinear<number, number, never>,
@@ -37,13 +37,13 @@ function addXAxisPath(
     }
 
     ctx.beginPath();
-    ctx.moveTo(xAdjusted, height - rectHeight - 5);
-    ctx.lineTo(xAdjusted + 5, height - rectHeight);
+    ctx.moveTo(x, height - rectHeight - 5);
+    ctx.lineTo(x + 5, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height - rectHeight);
-    ctx.lineTo(xAdjusted - 5, height - rectHeight);
+    ctx.lineTo(x - 5, height - rectHeight);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -66,6 +66,6 @@ export class XAxisTooltipElement implements Element {
     yScale: ScaleLinear<number, number, never>,
     position: [number | null, number | null]
   ) {
-    addXAxisPath(ctx, xScale, yScale, position);
+    addXAxisTooltipPath(ctx, xScale, yScale, position);
   }
 }

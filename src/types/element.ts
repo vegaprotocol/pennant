@@ -8,3 +8,28 @@ export interface Element {
     ...rest: any[]
   ): void;
 }
+
+export interface CandleDetailsExtended {
+  datetime: string;
+  date: Date;
+  high: number;
+  low: number;
+  open: number;
+  close: number;
+  volume: number;
+}
+
+export interface Panel {
+  data?: Element[];
+  grid?: Element;
+  axis?: Element;
+  axisTooltip?: Element;
+  crosshair?: Element;
+  annotations?: Element[];
+}
+
+export interface Scenegraph {
+  plot: Panel;
+  study: Panel;
+  xAxis: Panel;
+}

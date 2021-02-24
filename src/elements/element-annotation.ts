@@ -63,9 +63,9 @@ function addAnnotationPath(
 
 export class AnnotationElement implements Element {
   readonly decimalPlaces: number;
-  readonly position: number;
+  readonly position: number | null;
 
-  constructor(decimalPlaces: number, position: number) {
+  constructor(decimalPlaces: number, position: number | null) {
     this.decimalPlaces = decimalPlaces;
     this.position = position;
   }
