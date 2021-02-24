@@ -14,11 +14,12 @@ export type XAxisProps = {
   scenegraph: Panel;
   x: ScaleTime<number, number, never>;
   y: ScaleLinear<number, number, never>;
-  crosshairXRef: any;
-  crosshairYRef: any;
+  crosshairXRef: React.MutableRefObject<number | null>;
+  crosshairYRef: React.MutableRefObject<number | null>;
   requestRedraw: () => void;
   onMouseMove?: (index: number) => void;
-  onMouseOut: any;
+  onMouseOut?: () => void;
+  onMouseOver?: (index: number) => void;
 };
 
 export const XAxis = ({
@@ -30,6 +31,7 @@ export const XAxis = ({
   requestRedraw,
   onMouseMove,
   onMouseOut,
+  onMouseOver,
 }: XAxisProps) => {
   const visualizationRef = React.useRef<FcElement>(null!);
 
@@ -62,43 +64,53 @@ export const XAxis = ({
       }
     );
 
+    function handleMouse(
+      event: { offsetX: number; offsetY: number },
+      callback?: (index: number) => void
+    ) {
+      const data = scenegraph.data as CandleElement[];
+
+      if (data.length > 0) {
+        const { offsetX, offsetY } = event;
+        const timeAtMouseX = x.invert(offsetX);
+
+        const index = bisector((d: CandleElement) => d.x).left(
+          data,
+          timeAtMouseX
+        );
+
+        const firstCandle = data[index - 1];
+        const secondCandle = data[index];
+
+        let candle: CandleElement;
+        let indexOffset = 0;
+
+        if (firstCandle && secondCandle) {
+          const nearestCandleDates = [firstCandle.x, secondCandle.x];
+          indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+          candle = [firstCandle, secondCandle][indexOffset];
+        } else if (firstCandle) {
+          candle = firstCandle;
+        } else {
+          candle = secondCandle;
+        }
+
+        crosshairXRef.current = x(candle.x);
+        crosshairYRef.current = offsetY;
+
+        requestRedraw();
+        callback?.(index + indexOffset - 1);
+      }
+    }
+
     container
+      .on("mouseover", (event: { offsetX: number; offsetY: number }) => {
+        handleMouse(event, onMouseOver);
+      })
       .on(
         "mousemove",
-        (event: { offsetX: number }) => {
-          const data = scenegraph.data as CandleElement[];
-
-          if (data.length > 0) {
-            const { offsetX } = event;
-            const timeAtMouseX = x.invert(offsetX);
-
-            const index = bisector((d: CandleElement) => d.x).left(
-              data,
-              timeAtMouseX
-            );
-
-            const firstCandle = data[index - 1];
-            const secondCandle = data[index];
-
-            let candle: CandleElement;
-            let indexOffset = 0;
-
-            if (firstCandle && secondCandle) {
-              const nearestCandleDates = [firstCandle.x, secondCandle.x];
-              indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-              candle = [firstCandle, secondCandle][indexOffset];
-            } else if (firstCandle) {
-              candle = firstCandle;
-            } else {
-              candle = secondCandle;
-            }
-
-            crosshairXRef.current = x(candle.x);
-            crosshairYRef.current = null;
-
-            requestRedraw();
-            onMouseMove?.(index + indexOffset - 1);
-          }
+        (event: { offsetX: number; offsetY: number }) => {
+          handleMouse(event, onMouseMove);
         },
         { capture: true } // TODO: It would be preferable to still respond to this event while zooming
       )
@@ -107,13 +119,14 @@ export const XAxis = ({
         crosshairYRef.current = null;
 
         requestRedraw();
-        onMouseOut();
+        onMouseOut?.();
       });
   }, [
     crosshairXRef,
     crosshairYRef,
     onMouseMove,
     onMouseOut,
+    onMouseOver,
     requestRedraw,
     scenegraph.axis,
     scenegraph.axisTooltip,

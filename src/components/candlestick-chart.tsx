@@ -300,6 +300,7 @@ export const CandlestickChart = React.forwardRef(
             requestRedraw={requestRedraw}
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
+            onMouseOver={onMouseOver}
           />
         </div>
         <div className="separator-1"></div>
@@ -313,6 +314,7 @@ export const CandlestickChart = React.forwardRef(
             requestRedraw={requestRedraw}
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
+            onMouseOver={onMouseOver}
           />
         </div>
         <div className="separator-2"></div>
@@ -326,6 +328,7 @@ export const CandlestickChart = React.forwardRef(
             requestRedraw={requestRedraw}
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
+            onMouseOver={onMouseOver}
           />
         </div>
       </d3fc-group>
