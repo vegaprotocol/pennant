@@ -15,6 +15,7 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
+import { CandleDetailsExtended, Scenegraph } from "../types/element";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { extent, max, min } from "d3-array";
 import { scaleLinear, scaleUtc } from "d3-scale";
@@ -27,16 +28,6 @@ import { getCandleWidth } from "../helpers";
 import { select } from "d3-selection";
 
 const PADDING_INNER = 0.4;
-
-export interface CandleDetailsExtended {
-  datetime: string;
-  date: Date;
-  high: number;
-  low: number;
-  open: number;
-  close: number;
-  volume: number;
-}
 
 export type CandleStickChartProps = {
   width: number;
@@ -91,7 +82,7 @@ export const CandlestickChart = React.forwardRef(
     const candleWidth = getCandleWidth(interval);
     const lastPrice = data.length > 0 ? data[data.length - 1].close : null;
 
-    const scenegraph = React.useMemo(
+    const scenegraph: Scenegraph = React.useMemo(
       () => ({
         plot: {
           data: data.map(
@@ -103,9 +94,9 @@ export const CandlestickChart = React.forwardRef(
               })
           ),
           grid: new GridElement(),
-          yAxis: new YAxisElement(),
+          axis: new YAxisElement(),
           crosshair: new CrosshairElement(),
-          yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
+          axisTooltip: new YAxisTooltipElement(decimalPlaces),
           annotations: [new AnnotationElement(decimalPlaces, lastPrice)],
         },
         study: {
@@ -119,9 +110,9 @@ export const CandlestickChart = React.forwardRef(
               })
           ),
           grid: new GridElement(),
-          yAxis: new YAxisElement(),
+          axis: new YAxisElement(),
           crosshair: new CrosshairElement(),
-          yAxisTooltip: new YAxisTooltipElement(decimalPlaces),
+          axisTooltip: new YAxisTooltipElement(decimalPlaces),
           annotations: [],
         },
         xAxis: {
@@ -134,7 +125,7 @@ export const CandlestickChart = React.forwardRef(
               })
           ),
           axis: new XAxisElement(),
-          tooltip: new XAxisTooltipElement(),
+          axisTooltip: new XAxisTooltipElement(),
         },
       }),
       [candleWidth, data, decimalPlaces, lastPrice]
@@ -298,12 +289,7 @@ export const CandlestickChart = React.forwardRef(
     }, [data, x, zoomControl]);
 
     return (
-      <d3fc-group
-        ref={chartRef}
-        class="d3fc-group"
-        auto-resize
-        use-device-pixel-ratio
-      >
+      <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
         <div className="plot-area">
           <PlotArea
             scenegraph={scenegraph.plot}

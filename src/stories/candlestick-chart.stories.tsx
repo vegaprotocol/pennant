@@ -4,7 +4,7 @@ import {
   CandleStickChartProps,
   CandlestickChart,
 } from "../components/candlestick-chart";
-import { Meta, Story } from "@storybook/react";
+import { Meta, Story } from "@storybook/react/types-6-0";
 
 import { Interval } from "../api/vega-graphql";
 import React from "react";
