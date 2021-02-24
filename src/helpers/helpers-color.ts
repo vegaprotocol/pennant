@@ -1,4 +1,4 @@
-import { CandleDetailsExtended } from "../components/candlestick-chart";
+import { CandleDetailsExtended } from "../types/element";
 
 export const Colors = {
   BLACK: "#000",
