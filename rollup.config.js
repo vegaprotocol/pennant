@@ -2,7 +2,7 @@ import scss from "rollup-plugin-scss";
 import typescript from "@rollup/plugin-typescript";
 
 const config = {
-  input: "src/index.ts",
+  input: "src/main.ts",
   output: {
     dir: "dist",
     format: "cjs",

@@ -2,6 +2,22 @@
   "name": "console-charts",
   "version": "0.1.0",
   "private": true,
+  "exports": "./dist/modern.js",
+  "main": "./dist/legacy.cjs",
+  "module": "./dist/module.js",
+  "types": "./dist/chart.d.ts",
+  "keywords": [
+    "vega",
+    "charts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vegaprotocol/console-charts.git"
+  },
+  "files": [
+    "./dist/*.js",
+    "./dist/*.d.ts"
+  ],
   "dependencies": {
     "@apollo/client": "^3.3.11",
     "@blueprintjs/core": "^3.38.2",
