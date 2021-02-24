@@ -5,11 +5,9 @@ import * as React from "react";
 import { Button, MenuItem } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 
-import { ApolloDataSource } from "./data/apollo-data-source";
 import { Chart } from "./components/chart";
 import { Interval } from "./api/vega-graphql";
 import { JsonDataSource } from "./data/json-data-source";
-import { useApolloClient } from "@apollo/client";
 import useSWR from "swr";
 
 const MarketSelect = Select.ofType<any>();
@@ -34,7 +32,6 @@ const renderMarket: ItemRenderer<any> = (
 
 function App() {
   const ref = React.useRef<{ reset(): void }>(null!);
-  const client = useApolloClient();
   const [market, setMarket] = React.useState<any | null>(null);
 
   const { data, error } = useSWR("https://n04.d.vega.xyz/markets", (url) =>
