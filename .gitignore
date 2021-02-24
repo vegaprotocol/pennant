@@ -1,3 +1,6 @@
+# Rollup build dir
+dist/
+
 # Logs
 logs
 *.log
