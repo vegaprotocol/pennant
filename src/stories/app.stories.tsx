@@ -11,7 +11,7 @@ import React from "react";
 import data from "./app.stories.json";
 
 export default {
-  title: "Example/App",
+  title: "Example/Application",
   component: Chart,
 } as Meta;
 
@@ -35,13 +35,15 @@ const renderMarket: ItemRenderer<any> = (
   );
 };
 
-const Template: Story<ChartProps> = (args) => {
+export const SimpleWebpage: Story = () => {
   const ref = React.useRef<{ reset(): void }>(null!);
   const [market, setMarket] = React.useState(data.markets[0].id);
+  const [interval, setInterval] = React.useState(Interval.I15M);
 
   const dataSource = React.useMemo(() => new JsonDataSource(market, 5), [
     market,
   ]);
+
   return (
     <div className="container bp3-dark">
       <h1>Console Charts</h1>
@@ -73,11 +75,13 @@ const Template: Story<ChartProps> = (args) => {
         />
       </div>
       <div style={{ height: "60vh" }}>
-        <Chart ref={ref} dataSource={dataSource} interval={Interval.I5M} />
+        <Chart
+          ref={ref}
+          dataSource={dataSource}
+          interval={interval}
+          onSetInterval={setInterval}
+        />
       </div>
     </div>
   );
 };
-
-export const Simple = Template.bind({});
-Simple.args = { dataSource: new JsonDataSource("", 5), interval: Interval.I5M };

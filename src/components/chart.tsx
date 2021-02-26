@@ -8,10 +8,13 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
+import { FocusStyleManager } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
 import { PlotContainer } from "./plot-container";
 import { View } from "../types/vega-spec-types";
+
+FocusStyleManager.onlyShowFocusOnTabs();
 
 const topLevelViewSpec: View[] = [
   {
@@ -76,10 +79,14 @@ const topLevelViewSpec: View[] = [
 export type ChartProps = {
   dataSource: DataSource;
   interval: Interval;
+  onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
-  ({ dataSource, interval }: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+  (
+    { dataSource, interval, onSetInterval }: ChartProps,
+    ref: React.Ref<{ reset(): void }>
+  ) => {
     React.useImperativeHandle(ref, () => ({
       reset: () => {
         chartRef.current.reset();
@@ -161,7 +168,11 @@ export const Chart = React.forwardRef(
               )}
             </AutoSizer>
             <div className="overlay">
-              <ChartInfo interval={interval} bounds={bounds} />
+              <ChartInfo
+                interval={interval}
+                bounds={bounds}
+                onSetInterval={onSetInterval}
+              />
               {selectedIndex !== null && (
                 <CandleInfo
                   candle={data[selectedIndex]}
