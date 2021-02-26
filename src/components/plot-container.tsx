@@ -6,13 +6,14 @@ import * as React from "react";
 
 import { CandleDetailsExtended, Scenegraph } from "../types/element";
 import { ScaleLinear, scaleLinear, scaleUtc } from "d3-scale";
-import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
 import { PlotArea } from "./plot-area";
 import { View } from "../types/vega-spec-types";
 import { XAxis } from "./x-axis";
+import { drawChart } from "../render";
 import { extent } from "d3-array";
 import { getCandleWidth } from "../helpers";
 import { parse } from "../scenegraph/parse";
@@ -57,31 +58,26 @@ export const PlotContainer = React.forwardRef(
       },
     }));
 
+    // Everything is a ref because we are managing this state ourselves
+    // This means we might make this a vanilla JavaScript object in the future
     const isPinnedRef = React.useRef(true);
     const previousZoomTransform = React.useRef(zoomIdentity);
-
-    React.useLayoutEffect(() => {
-      chartRef.current.requestRedraw();
-    }, [height, width]);
-
     const chartRef = React.useRef<FcElement>(null!);
-
     const crosshairXRef = React.useRef<number | null>(null);
-
+    const crosshairsRef = React.useRef<(number | null)[]>(view.map(() => null));
     const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>(
       view.map(() => scaleLinear())
     );
 
-    const crosshairsRef = React.useRef<(number | null)[]>(view.map(() => null));
-
     const candleWidth = getCandleWidth(interval);
 
+    // Compile data and view specification into scenegraph ready for rendering
     const scenegraph: Scenegraph = React.useMemo(
       () => parse(data, view, candleWidth, decimalPlaces),
       [candleWidth, data, decimalPlaces, view]
     );
 
-    const x = React.useMemo(
+    const timeScale = React.useMemo(
       () =>
         scaleUtc().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
@@ -89,7 +85,8 @@ export const PlotContainer = React.forwardRef(
       [data]
     );
 
-    const xr = React.useMemo(
+    // A rescaled copy of the time scale which reflects the user panning and scaling
+    const timeScaleRescaled = React.useMemo(
       () =>
         scaleUtc().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
@@ -101,86 +98,32 @@ export const PlotContainer = React.forwardRef(
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
-    const render = React.useCallback(
-      function render(transform: ZoomTransform) {
-        const k = transform.k / previousZoomTransform.current.k;
-        const range = x.range().map(transform.invertX, transform);
-
-        let diff = 0;
-
-        if (k === 1) {
-          isPinnedRef.current = false;
-        } else {
-          diff = isPinnedRef.current ? range[1] - x.range()[1] : 0;
-        }
-
-        const domain = [range[0] - diff, range[1] - diff].map(x.invert, x);
-
-        xr.domain(domain);
-
-        const filteredData = data.filter(
-          (d) => d.date > domain[0] && d.date < domain[1]
-        );
-
-        // Update scale domains
-        view.forEach((panel, i) => {
-          const yEncodingFields = [];
-
-          if (panel.layer) {
-            panel.layer.forEach((layer) => {
-              yEncodingFields.push(layer.encoding.y);
-
-              if (layer.encoding.y2) {
-                yEncodingFields.push(layer.encoding.y2.field);
-              }
-            });
-          } else {
-            yEncodingFields.push(panel.encoding.y.field);
-
-            if (panel.encoding.y2) {
-              yEncodingFields.push(panel.encoding.y2.field);
-            }
-          }
-
-          const mappedData = yEncodingFields.flatMap(
-            (field) =>
-              (filteredData.map(
-                (d) => d[field as keyof CandleDetailsExtended]
-              ) as unknown) as number
-          );
-
-          const domain = extent(mappedData) as [number, number];
-          const domainSize = Math.abs(domain[1] - domain[0]);
-
-          scalesRef.current![i].domain([
-            panel.encoding.y?.scale?.zero ? 0 : domain[0] - domainSize * 0.1,
-            domain[1] + domainSize * 0.1,
-          ]);
-        });
-
-        previousZoomTransform.current = transform;
-
-        requestRedraw();
-        onBoundsChanged?.(domain as [Date, Date]);
-      },
-      [data, onBoundsChanged, requestRedraw, view, x, xr]
-    );
-
     const zoomControl = React.useMemo(() => {
       return d3Zoom<FcElement, unknown>()
         .scaleExtent([0, 1 << 4])
         .on("zoom", (event) => {
-          render(event.transform);
+          drawChart(
+            event.transform,
+            previousZoomTransform,
+            timeScale,
+            isPinnedRef,
+            timeScaleRescaled,
+            data,
+            view,
+            scalesRef,
+            requestRedraw,
+            onBoundsChanged
+          );
         });
-    }, [render]);
+    }, [data, onBoundsChanged, requestRedraw, view, timeScale, timeScaleRescaled]);
 
     const reset = React.useCallback(
       function reset() {
         select(chartRef.current)
           .transition()
           .duration(750)
-          .call(zoomControl.translateTo, x.range()[1] + 50, 0, [
-            x.range()[1],
+          .call(zoomControl.translateTo, timeScale.range()[1] + 50, 0, [
+            timeScale.range()[1],
             0,
           ])
           .end()
@@ -193,7 +136,7 @@ export const PlotContainer = React.forwardRef(
 
         select(chartRef.current).node()?.requestRedraw();
       },
-      [x, zoomControl.translateTo]
+      [timeScale, zoomControl.translateTo]
     );
 
     React.useEffect(() => {
@@ -201,7 +144,7 @@ export const PlotContainer = React.forwardRef(
         .on("measure", (event: { detail: { width: number } }) => {
           const { width } = event.detail;
 
-          x.range([0, width]);
+          timeScale.range([0, width]);
         })
         .on("draw", () => {
           // Use group draw event to ensure scales have their domain updated before
@@ -214,7 +157,7 @@ export const PlotContainer = React.forwardRef(
         chartContainer.node()?.requestRedraw();
         chartContainer.call(zoomControl.transform, zoomIdentity);
       }
-    }, [data, x, xr, zoomControl]);
+    }, [data, timeScale, timeScaleRescaled, zoomControl]);
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
@@ -223,7 +166,7 @@ export const PlotContainer = React.forwardRef(
             <div className="plot-area">
               <PlotArea
                 scenegraph={panel}
-                x={xr}
+                x={timeScaleRescaled}
                 y={scalesRef.current![i]}
                 crosshairXRef={crosshairXRef}
                 index={i}
@@ -240,7 +183,7 @@ export const PlotContainer = React.forwardRef(
         <div className="x-axis">
           <XAxis
             scenegraph={scenegraph.xAxis}
-            x={xr}
+            x={timeScaleRescaled}
             y={scalesRef.current![0]} // FIXME: Shouldn't need to pass a y scale for the x-axis
             crosshairXRef={crosshairXRef} // FIXME: If this was an array of objects we wouldn't need to pass in the ref itself and index into it
             requestRedraw={requestRedraw}
