@@ -32,6 +32,8 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 Builds the example app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## License
+## Deploy Previews
+https://distracted-lamarr-c30618.netlify.app/
 
+## License
 Console Charts is available under the [MIT license](https://opensource.org/licenses/MIT).
