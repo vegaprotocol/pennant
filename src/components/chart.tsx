@@ -99,7 +99,7 @@ export const Chart = React.forwardRef(
             </AutoSizer>
             <div className="overlay">
               <ChartInfo interval={interval} bounds={bounds} />
-              {selectedIndex && (
+              {selectedIndex !== null && (
                 <CandleInfo
                   candle={data[selectedIndex]}
                   decimalPlaces={dataSource.decimalPlaces}
