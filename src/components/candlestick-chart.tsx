@@ -18,7 +18,7 @@ import {
 import { CandleDetailsExtended, Scenegraph } from "../types/element";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { extent, max, min } from "d3-array";
-import { scaleLinear, scaleUtc } from "d3-scale";
+import { scaleLinear, scaleTime } from "d3-scale";
 
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
@@ -133,7 +133,7 @@ export const CandlestickChart = React.forwardRef(
 
     const x = React.useMemo(
       () =>
-        scaleUtc().domain(
+        scaleTime().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
         ),
       [data]
@@ -141,7 +141,7 @@ export const CandlestickChart = React.forwardRef(
 
     const xr = React.useMemo(
       () =>
-        scaleUtc().domain(
+        scaleTime().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
         ),
       [data]
