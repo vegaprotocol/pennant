@@ -2,14 +2,76 @@ import "./chart.scss";
 
 import * as React from "react";
 
+import { Colors, mergeData } from "../helpers";
+
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
-import { CandlestickChart } from "./candlestick-chart";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
-import { mergeData } from "../helpers";
+import { PlotContainer } from "./plot-container";
+import { View } from "../types/vega-spec-types";
+
+const topLevelViewSpec: View[] = [
+  {
+    name: "main",
+    encoding: {
+      x: {
+        field: "date",
+        type: "temporal",
+      },
+      y: {
+        type: "quantitative",
+        scale: { zero: false },
+      },
+      color: {
+        condition: {
+          test: ["lt", "open", "close"],
+          value: Colors.GREEN,
+        },
+        value: Colors.RED,
+      },
+    },
+    layer: [
+      {
+        name: "wick",
+        mark: "rule",
+        encoding: { y: { field: "low" }, y2: { field: "high" } },
+      },
+      {
+        name: "candle",
+        mark: "bar",
+        encoding: {
+          y: { field: "open" },
+          y2: { field: "close" },
+          fill: {
+            condition: {
+              test: ["lt", "open", "close"],
+              value: Colors.GREEN_DARK,
+            },
+            value: Colors.RED,
+          },
+          stroke: {
+            condition: {
+              test: ["lt", "open", "close"],
+              value: Colors.GREEN,
+            },
+            value: Colors.RED,
+          },
+        },
+      },
+    ],
+  },
+  {
+    name: "study",
+    mark: "bar",
+    encoding: {
+      x: { field: "date", type: "temporal" },
+      y: { field: "volume", type: "quantitative", scale: { zero: true } },
+    },
+  },
+];
 
 export type ChartProps = {
   dataSource: DataSource;
@@ -83,11 +145,12 @@ export const Chart = React.forwardRef(
               style={{ height: "100%", width: "100%" }} // TODO: Find a better method
             >
               {({ height, width }) => (
-                <CandlestickChart
+                <PlotContainer
                   ref={chartRef}
                   width={width}
                   height={height}
                   data={data}
+                  view={topLevelViewSpec}
                   interval={interval}
                   decimalPlaces={dataSource.decimalPlaces}
                   onBoundsChanged={setBounds}

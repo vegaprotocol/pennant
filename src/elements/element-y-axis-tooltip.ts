@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
@@ -57,7 +57,7 @@ function addYAxisPath(
   }
 }
 
-export class YAxisTooltipElement implements Element {
+export class YAxisTooltipElement implements RenderableElement {
   readonly decimalPlaces: number;
 
   constructor(decimalPlaces: number) {

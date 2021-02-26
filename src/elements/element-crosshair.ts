@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
@@ -39,7 +39,7 @@ function addCrosshairPath(
   ctx.restore();
 }
 
-export class CrosshairElement implements Element {
+export class CrosshairElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,

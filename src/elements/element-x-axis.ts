@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,
@@ -26,7 +26,7 @@ function addXAxisPath(
   });
 }
 
-export class XAxisElement implements Element {
+export class XAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,

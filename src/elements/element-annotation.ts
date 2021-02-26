@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addAnnotationPath(
   ctx: CanvasRenderingContext2D,
@@ -61,7 +61,7 @@ function addAnnotationPath(
   }
 }
 
-export class AnnotationElement implements Element {
+export class AnnotationElement implements RenderableElement {
   readonly decimalPlaces: number;
   readonly position: number | null;
 

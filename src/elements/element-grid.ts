@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,
@@ -54,7 +54,7 @@ function addGridPath(
   }
 }
 
-export class GridElement implements Element {
+export class GridElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
