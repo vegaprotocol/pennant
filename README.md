@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/754fddcc-e010-4b27-913e-83c7b8ebdcf8/deploy-status)](https://app.netlify.com/sites/distracted-lamarr-c30618/deploys)
+
 # Console Charts
 
 Console Charts is a Javascript library for visualising financial data.
