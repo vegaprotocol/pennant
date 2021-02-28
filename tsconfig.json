@@ -13,11 +13,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": "src",
-    "outDir": "dist/ts",
-    "declaration": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "dist/types"
   },
   "include": ["src"]
 }
