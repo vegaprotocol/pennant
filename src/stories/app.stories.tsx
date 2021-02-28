@@ -1,10 +1,10 @@
 import "./app.stories.scss";
 
 import { Button, MenuItem } from "@blueprintjs/core";
-import { Chart, ChartProps } from "../components/chart";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react/types-6-0";
 
+import { Chart } from "../components/chart";
 import { Interval } from "../api/vega-graphql";
 import { JsonDataSource } from "../data/json-data-source";
 import React from "react";
@@ -12,7 +12,6 @@ import data from "./app.stories.json";
 
 export default {
   title: "Example/Application",
-  component: Chart,
 } as Meta;
 
 const MarketSelect = Select.ofType<any>();
