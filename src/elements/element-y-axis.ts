@@ -2,8 +2,8 @@ import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
 import { RenderableElement } from "../types/element";
+import { WIDTH } from "../constants";
 
-const WIDTH = 50;
 const MARGIN = 6;
 
 function addYAxisPath(

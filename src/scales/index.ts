@@ -6,7 +6,7 @@ import { extent } from "d3-array";
 export function recalculateScales(
   view: View[],
   data: CandleDetailsExtended[],
-  scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>
+  scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
 ) {
   view.forEach((panel, i) => {
     const yEncodingFields = [];

@@ -13,12 +13,16 @@ import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
 import { PlotArea } from "./plot-area";
 import { View } from "../types/vega-spec-types";
+import { WIDTH } from "../constants";
 import { XAxis } from "./x-axis";
 import { drawChart } from "../render";
 import { extent } from "d3-array";
 import { getCandleWidth } from "../helpers";
 import { parse } from "../scenegraph/parse";
 import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
+
+const timeScale = scaleTime();
+const timeScaleRescaled = scaleTime(); // A rescaled copy of the time scale which reflects the user panning and scaling
 
 export type PlotContainerProps = {
   width: number;
@@ -40,6 +44,7 @@ export const PlotContainer = React.forwardRef(
     useWhyDidYouUpdate("PlotContainer", props);
 
     const {
+      width,
       data,
       view,
       interval,
@@ -75,23 +80,6 @@ export const PlotContainer = React.forwardRef(
       [candleWidth, data, decimalPlaces, view]
     );
 
-    const timeScale = React.useMemo(
-      () =>
-        scaleTime().domain(
-          extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
-        ),
-      []
-    );
-
-    // A rescaled copy of the time scale which reflects the user panning and scaling
-    const timeScaleRescaled = React.useMemo(
-      () =>
-        scaleTime().domain(
-          extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
-        ),
-      []
-    );
-
     const requestRedraw = React.useCallback(function reuqestRedraw() {
       select(chartRef.current).node()?.requestRedraw();
     }, []);
@@ -113,25 +101,22 @@ export const PlotContainer = React.forwardRef(
             onBoundsChanged
           );
         })
-        .on("start", (event) => {})
+        .on("start", (event) => {
+          console.log("starting zoom");
+        })
         .on("end", (event) => {
           selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", false);
         });
-    }, [
-      data,
-      onBoundsChanged,
-      requestRedraw,
-      view,
-      timeScale,
-      timeScaleRescaled,
-    ]);
+    }, [data, onBoundsChanged, requestRedraw, view]);
 
     const reset = React.useCallback(
       function reset() {
+        console.log(candleWidth, timeScale(candleWidth) - timeScale(0));
+        
         select(chartRef.current)
           .transition()
           .duration(750)
-          .call(zoomControl.translateTo, timeScale.range()[1] + 50, 0, [
+          .call(zoomControl.translateTo, timeScale.range()[1] + WIDTH, 0, [
             timeScale.range()[1],
             0,
           ])
@@ -145,7 +130,7 @@ export const PlotContainer = React.forwardRef(
 
         select(chartRef.current).node()?.requestRedraw();
       },
-      [timeScale, zoomControl.translateTo]
+      [zoomControl.translateTo]
     );
 
     React.useEffect(() => {
@@ -156,17 +141,44 @@ export const PlotContainer = React.forwardRef(
           timeScale.range([0, width]);
         })
         .on("draw", () => {
+          console.log("chartRef draw");
+
+          const lastDate = width - WIDTH;
+
+          timeScale.domain(
+            extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
+          );
           // Use group draw event to ensure scales have their domain updated before
           // any of the elements are drawn (draw events are dispatched in document order).
         });
 
       chartContainer.call(zoomControl);
+    }, [zoomControl]);
+
+    // Initial draw
+    React.useEffect(() => {
+      const chartContainer = select(chartRef.current);
 
       if (chartContainer) {
         chartContainer.node()?.requestRedraw();
-        chartContainer.call(zoomControl.transform, zoomIdentity);
+        chartContainer.call(
+          zoomControl.transform,
+          zoomIdentity.translate(-WIDTH, 0)
+        );
       }
-    }, [data, timeScale, timeScaleRescaled, zoomControl]);
+
+      if (isPinnedRef.current) {
+        const domain = timeScale.domain();
+        const domainWidth = domain[1].getTime() - domain[0].getTime();
+
+        const latestDate = data[data.length - 1].date;
+
+        timeScale.domain([
+          new Date(latestDate.getTime() - domainWidth),
+          latestDate,
+        ]);
+      }
+    }, [data, zoomControl.transform]);
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
