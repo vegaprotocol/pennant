@@ -170,15 +170,15 @@ export const PlotContainer = React.forwardRef(
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
-        {scenegraph.panels.map((panel: Panel, i: number) => (
+        {scenegraph.panels.map((panel: Panel, panelIndex: number) => (
           <React.Fragment key={panel.id}>
             <div className="plot-area">
               <PlotArea
                 scenegraph={panel}
                 x={timeScaleRescaled}
-                y={scalesRef.current![i]}
+                y={scalesRef.current![panelIndex]}
                 crosshairXRef={crosshairXRef}
-                index={i}
+                index={panelIndex}
                 crosshairYRef={crosshairsRef}
                 requestRedraw={requestRedraw}
                 onMouseMove={onMouseMove}
@@ -186,7 +186,7 @@ export const PlotContainer = React.forwardRef(
                 onMouseOver={onMouseOver}
               />
             </div>
-            {i < scenegraph.panels.length - 1 && (
+            {panelIndex < scenegraph.panels.length - 1 && (
               <div className="separator">
                 <div className="handle"></div>
               </div>
