@@ -4,6 +4,7 @@ import { CandleDetailsExtended } from "../types/element";
 import { View } from "../types/vega-spec-types";
 import { ZoomTransform } from "d3-zoom";
 import { recalculateScales } from "../scales";
+import { selectAll } from "d3-selection";
 
 export function drawChart(
   transform: ZoomTransform,
@@ -24,6 +25,7 @@ export function drawChart(
 
   if (k === 1) {
     isPinnedRef.current = false;
+    selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", true);
   } else {
     diff = isPinnedRef.current ? range[1] - x.range()[1] : 0;
   }

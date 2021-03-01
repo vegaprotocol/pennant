@@ -13,6 +13,7 @@ import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
 import { PlotContainer } from "./plot-container";
 import { View } from "../types/vega-spec-types";
+import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -83,13 +84,16 @@ export type ChartProps = {
 };
 
 export const Chart = React.forwardRef(
-  (
-    { dataSource, interval, onSetInterval }: ChartProps,
-    ref: React.Ref<{ reset(): void }>
-  ) => {
+  (props: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+    useWhyDidYouUpdate("Chart", props);
+
+    const { dataSource, interval, onSetInterval } = props;
+
     React.useImperativeHandle(ref, () => ({
       reset: () => {
-        chartRef.current.reset();
+        if (chartRef.current) {
+          chartRef.current.reset();
+        }
       },
     }));
 
@@ -114,6 +118,7 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
+          console.log("new streaming data has arrived");
           setData((data) => mergeData(data, [datum]));
         });
       }

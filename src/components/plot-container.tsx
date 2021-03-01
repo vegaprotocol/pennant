@@ -4,9 +4,10 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { CandleDetailsExtended, Scenegraph } from "../types/element";
-import { ScaleLinear, scaleLinear, scaleUtc } from "d3-scale";
+import { CandleDetailsExtended, Panel, Scenegraph } from "../types/element";
+import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { select, selectAll } from "d3-selection";
 
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
@@ -17,7 +18,7 @@ import { drawChart } from "../render";
 import { extent } from "d3-array";
 import { getCandleWidth } from "../helpers";
 import { parse } from "../scenegraph/parse";
-import { select } from "d3-selection";
+import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
 export type PlotContainerProps = {
   width: number;
@@ -35,10 +36,10 @@ export type PlotContainerProps = {
 };
 
 export const PlotContainer = React.forwardRef(
-  (
-    {
-      width,
-      height,
+  (props: PlotContainerProps, ref: React.Ref<{ reset(): void }>) => {
+    useWhyDidYouUpdate("PlotContainer", props);
+
+    const {
       data,
       view,
       interval,
@@ -47,11 +48,8 @@ export const PlotContainer = React.forwardRef(
       onMouseMove,
       onMouseOut,
       onMouseOver,
-      onRightClick,
-      onGetDataRange,
-    }: PlotContainerProps,
-    ref: React.Ref<{ reset(): void }>
-  ) => {
+    } = props;
+
     React.useImperativeHandle(ref, () => ({
       reset: () => {
         reset();
@@ -79,19 +77,19 @@ export const PlotContainer = React.forwardRef(
 
     const timeScale = React.useMemo(
       () =>
-        scaleUtc().domain(
+        scaleTime().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
         ),
-      [data]
+      []
     );
 
     // A rescaled copy of the time scale which reflects the user panning and scaling
     const timeScaleRescaled = React.useMemo(
       () =>
-        scaleUtc().domain(
+        scaleTime().domain(
           extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
         ),
-      [data]
+      []
     );
 
     const requestRedraw = React.useCallback(function reuqestRedraw() {
@@ -114,8 +112,19 @@ export const PlotContainer = React.forwardRef(
             requestRedraw,
             onBoundsChanged
           );
+        })
+        .on("start", (event) => {})
+        .on("end", (event) => {
+          selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", false);
         });
-    }, [data, onBoundsChanged, requestRedraw, view, timeScale, timeScaleRescaled]);
+    }, [
+      data,
+      onBoundsChanged,
+      requestRedraw,
+      view,
+      timeScale,
+      timeScaleRescaled,
+    ]);
 
     const reset = React.useCallback(
       function reset() {
@@ -161,7 +170,7 @@ export const PlotContainer = React.forwardRef(
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
-        {scenegraph.panels.map((panel, i) => (
+        {scenegraph.panels.map((panel: Panel, i: number) => (
           <React.Fragment key={panel.id}>
             <div className="plot-area">
               <PlotArea
@@ -177,9 +186,13 @@ export const PlotContainer = React.forwardRef(
                 onMouseOver={onMouseOver}
               />
             </div>
+            {i < scenegraph.panels.length - 1 && (
+              <div className="separator">
+                <div className="handle"></div>
+              </div>
+            )}
           </React.Fragment>
         ))}
-        <div className="separator"></div>
         <div className="x-axis">
           <XAxis
             scenegraph={scenegraph.xAxis}

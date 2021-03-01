@@ -5,7 +5,7 @@ import { extent } from "d3-array";
 
 export function recalculateScales(
   view: View[],
-  filteredData: CandleDetailsExtended[],
+  data: CandleDetailsExtended[],
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>
 ) {
   view.forEach((panel, i) => {
@@ -29,7 +29,7 @@ export function recalculateScales(
 
     const mappedData = yEncodingFields.flatMap(
       (field) =>
-        (filteredData.map(
+        (data.map(
           (d) => d[field as keyof CandleDetailsExtended]
         ) as unknown) as number
     );
@@ -39,7 +39,7 @@ export function recalculateScales(
 
     scalesRef.current![i].domain([
       panel.encoding.y?.scale?.zero ? 0 : domain[0] - domainSize * 0.1,
-      domain[1] + domainSize * 0.1,
+      domain[1] + domainSize * 0.2,
     ]);
   });
 }
