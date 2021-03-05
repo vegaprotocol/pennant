@@ -45,12 +45,17 @@ export const PlotArea = (props: PlotAreaProps) => {
 
   React.useEffect(() => {
     select(visualizationRef.current)
-      .on("measure", (event: { detail: { height: number; width: number } }) => {
-        const { height, width } = event.detail;
+      .on(
+        "measure",
+        (event: {
+          detail: { height: number; width: number; pixelRatio: number };
+        }) => {
+          const { height, width, pixelRatio } = event.detail;
 
-        x.range([0, width]);
-        y.range([height, 0]);
-      })
+          x.range([0, width / pixelRatio]);
+          y.range([height / pixelRatio, 0]);
+        }
+      )
       .on(
         "draw",
         (event: {
@@ -83,53 +88,44 @@ export const PlotArea = (props: PlotAreaProps) => {
   }, [scenegraph.data, scenegraph.grid, x, y]);
 
   React.useEffect(() => {
-    const container = select<HTMLElement, unknown>(foregroundRef.current)
-      .on("measure", (event: { detail: { height: number; width: number } }) => {
-        const { height, width } = event.detail;
+    const container = select<HTMLElement, unknown>(foregroundRef.current).on(
+      "draw",
+      (event: { detail: { child: HTMLCanvasElement; pixelRatio: number } }) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
 
-        x.range([0, width]);
-        y.range([height, 0]);
-      })
-      .on(
-        "draw",
-        (event: {
-          detail: { child: HTMLCanvasElement; pixelRatio: number };
-        }) => {
-          const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
+        if (ctx) {
+          ctx.save();
+          ctx.scale(pixelRatio, pixelRatio);
 
-          if (ctx) {
-            ctx.save();
-            ctx.scale(pixelRatio, pixelRatio);
-
-            if (scenegraph.axis) {
-              scenegraph.axis.draw(ctx, x, y);
-            }
-
-            if (scenegraph.annotations) {
-              for (const annotation of scenegraph.annotations) {
-                annotation.draw(ctx, x, y);
-              }
-            }
-
-            if (scenegraph.crosshair) {
-              scenegraph.crosshair.draw(ctx, x, y, [
-                crosshairXRef.current,
-                crosshairYRef.current[panelIndex],
-              ]);
-            }
-
-            if (scenegraph.axisTooltip) {
-              scenegraph.axisTooltip.draw(ctx, x, y, [
-                crosshairXRef.current,
-                crosshairYRef.current,
-              ]);
-            }
-
-            ctx.restore();
+          if (scenegraph.axis) {
+            scenegraph.axis.draw(ctx, x, y);
           }
+
+          if (scenegraph.annotations) {
+            for (const annotation of scenegraph.annotations) {
+              annotation.draw(ctx, x, y);
+            }
+          }
+
+          if (scenegraph.crosshair) {
+            scenegraph.crosshair.draw(ctx, x, y, [
+              crosshairXRef.current,
+              crosshairYRef.current[panelIndex],
+            ]);
+          }
+
+          if (scenegraph.axisTooltip) {
+            scenegraph.axisTooltip.draw(ctx, x, y, [
+              crosshairXRef.current,
+              crosshairYRef.current,
+            ]);
+          }
+
+          ctx.restore();
         }
-      );
+      }
+    );
 
     function handleMouse(
       event: { offsetX: number; offsetY: number },

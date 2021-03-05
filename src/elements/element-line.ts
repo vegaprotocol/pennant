@@ -40,7 +40,7 @@ export class LineElement implements PositionalElement {
 
       ctx.strokeStyle = this.color;
       ctx.stroke();
-      ctx.restore();
+      ctx.closePath();
     }
 
     ctx.restore();

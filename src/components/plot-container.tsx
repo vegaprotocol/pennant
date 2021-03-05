@@ -18,6 +18,7 @@ import { XAxis } from "./x-axis";
 import { drawChart } from "../render";
 import { extent } from "d3-array";
 import { getCandleWidth } from "../helpers";
+import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../scenegraph/parse";
 import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
@@ -72,6 +73,8 @@ export const PlotContainer = React.forwardRef(
       view.map(() => scaleLinear())
     );
 
+    const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
+
     const candleWidth = getCandleWidth(interval);
 
     // Compile data and view specification into scenegraph ready for rendering
@@ -85,39 +88,77 @@ export const PlotContainer = React.forwardRef(
     }, []);
 
     const zoomControl = React.useMemo(() => {
-      return d3Zoom<FcElement, unknown>()
-        .scaleExtent([0, 1 << 4])
-        .on("zoom", (event) => {
-          drawChart(
-            event.transform,
-            previousZoomTransform,
-            timeScale,
-            isPinnedRef,
-            timeScaleRescaled,
-            data,
-            view,
-            scalesRef,
-            requestRedraw,
-            onBoundsChanged
-          );
-        })
-        .on("start", (event) => {
-          console.log("starting zoom");
-        })
-        .on("end", (event) => {
-          selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", false);
-        });
+      return (
+        d3Zoom<FcElement, unknown>()
+          // @ts-ignore
+          .interpolate(interpolateZoom.rho(0))
+          .scaleExtent([1 / (1 << 2), 1 << 2])
+          .translateExtent([
+            [0, 0],
+            [0, 800],
+          ])
+          .constrain(function constrain(transform, extent, translateExtent) {
+            if (isPinnedRef.current) {
+              const gap =
+                transform.invertX(extent[1][0] - WIDTH) -
+                (extent[1][0] - WIDTH);
+
+              return transform.translate(gap, 0);
+            } else {
+              const dx0 =
+                transform.invertX(extent[0][0]) - translateExtent[0][0];
+              const dx1 =
+                transform.invertX(extent[1][0]) - translateExtent[1][0];
+              const dy0 =
+                transform.invertY(extent[0][1]) - translateExtent[0][1];
+              const dy1 =
+                transform.invertY(extent[1][1]) - translateExtent[1][1];
+
+              console.log(dx0, dx1, dy0, dy1);
+
+              return transform.translate(
+                dx1 > dx0
+                  ? (dx0 + dx1) / 2
+                  : Math.min(0, dx0) || Math.max(0, dx1),
+                dy1 > dy0
+                  ? (dy0 + dy1) / 2
+                  : Math.min(0, dy0) || Math.max(0, dy1)
+              );
+            }
+          })
+          .on("zoom", (event) => {
+            drawChart(
+              event,
+              previousZoomTransform,
+              timeScale,
+              isPinnedRef,
+              timeScaleRescaled,
+              data,
+              view,
+              scalesRef,
+              requestRedraw,
+              onBoundsChanged
+            );
+          })
+          .on("start", (event) => {
+            console.log("starting zoom");
+          })
+          .on("end", (event) => {
+            selectAll(".d3fc-canvas-layer.crosshair").classed(
+              "grabbing",
+              false
+            );
+          })
+      );
     }, [data, onBoundsChanged, requestRedraw, view]);
 
     const reset = React.useCallback(
       function reset() {
-        console.log(candleWidth, timeScale(candleWidth) - timeScale(0));
-        
         select(chartRef.current)
           .transition()
           .duration(750)
-          .call(zoomControl.translateTo, timeScale.range()[1] + WIDTH, 0, [
-            timeScale.range()[1],
+          .call(zoomControl.translateTo, timeScaleRescaled.range()[1], 0, [
+            timeScaleRescaled.range()[1] - WIDTH,
             0,
           ])
           .end()
@@ -135,39 +176,34 @@ export const PlotContainer = React.forwardRef(
 
     React.useEffect(() => {
       const chartContainer = select(chartRef.current)
-        .on("measure", (event: { detail: { width: number } }) => {
-          const { width } = event.detail;
+        .on(
+          "measure",
+          (event: { detail: { width: number; pixelRatio: number } }) => {
+            const { width, pixelRatio } = event.detail;
 
-          timeScale.range([0, width]);
-        })
+            timeScale.range([0, width / pixelRatio]);
+          }
+        )
         .on("draw", () => {
-          console.log("chartRef draw");
-
-          const lastDate = width - WIDTH;
-
-          timeScale.domain(
-            extent(data, (d: CandleDetailsExtended) => d.date) as [Date, Date]
-          );
-          // Use group draw event to ensure scales have their domain updated before
-          // any of the elements are drawn (draw events are dispatched in document order).
+          timeScale.domain(domainRef.current);
         });
 
       chartContainer.call(zoomControl);
     }, [zoomControl]);
 
-    // Initial draw
     React.useEffect(() => {
       const chartContainer = select(chartRef.current);
 
       if (chartContainer) {
         chartContainer.node()?.requestRedraw();
+
         chartContainer.call(
           zoomControl.transform,
-          zoomIdentity.translate(-WIDTH, 0)
+          zoomIdentity.translate(0, 0)
         );
       }
 
-      if (isPinnedRef.current) {
+      if (false && isPinnedRef.current) {
         const domain = timeScale.domain();
         const domainWidth = domain[1].getTime() - domain[0].getTime();
 
