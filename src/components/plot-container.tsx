@@ -45,7 +45,6 @@ export const PlotContainer = React.forwardRef(
     useWhyDidYouUpdate("PlotContainer", props);
 
     const {
-      width,
       data,
       view,
       interval,
