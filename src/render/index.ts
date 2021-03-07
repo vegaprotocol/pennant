@@ -19,22 +19,9 @@ export function drawChart(
   onBoundsChanged: ((bounds: [Date, Date]) => void) | undefined
 ) {
   const transform: ZoomTransform = event.transform;
-  const k = transform.k / previousZoomTransform.current.k;
   const range = timeScale.range().map(transform.invertX, transform);
 
-  let diff = 0;
-
-  console.info(isPinnedRef.current, transform);
-
-  if (k === 1 && previousZoomTransform.current.x !== transform.x) {
-    isPinnedRef.current = false;
-    selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", true);
-  }
-
-  const domain = [range[0] - diff, range[1] - diff].map(
-    timeScale.invert,
-    timeScale
-  );
+  const domain = range.map(timeScale.invert, timeScale);
 
   timeScaleRescaled.domain(domain);
 
@@ -43,8 +30,6 @@ export function drawChart(
   );
 
   recalculateScales(view, filteredData, scalesRef);
-
-  previousZoomTransform.current = transform;
 
   requestRedraw();
   onBoundsChanged?.(domain as [Date, Date]);

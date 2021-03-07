@@ -97,33 +97,28 @@ export const PlotContainer = React.forwardRef(
             [0, 800],
           ])
           .constrain(function constrain(transform, extent, translateExtent) {
-            if (isPinnedRef.current) {
+            const k = transform.k / previousZoomTransform.current.k;
+            const x = transform.x - previousZoomTransform.current.x;
+
+            let newTransform = transform;
+
+            if (isPinnedRef.current && k === 1 && x !== 0) {
+              isPinnedRef.current = false;
+              selectAll(".d3fc-canvas-layer.crosshair").classed(
+                "grabbing",
+                true
+              );
+            } else if (isPinnedRef.current) {
               const gap =
                 transform.invertX(extent[1][0] - WIDTH) -
                 (extent[1][0] - WIDTH);
 
-              return transform.translate(gap, 0);
-            } else {
-              const dx0 =
-                transform.invertX(extent[0][0]) - translateExtent[0][0];
-              const dx1 =
-                transform.invertX(extent[1][0]) - translateExtent[1][0];
-              const dy0 =
-                transform.invertY(extent[0][1]) - translateExtent[0][1];
-              const dy1 =
-                transform.invertY(extent[1][1]) - translateExtent[1][1];
-
-              console.log(dx0, dx1, dy0, dy1);
-
-              return transform.translate(
-                dx1 > dx0
-                  ? (dx0 + dx1) / 2
-                  : Math.min(0, dx0) || Math.max(0, dx1),
-                dy1 > dy0
-                  ? (dy0 + dy1) / 2
-                  : Math.min(0, dy0) || Math.max(0, dy1)
-              );
+              newTransform = transform.translate(gap, 0);
             }
+
+            previousZoomTransform.current = transform;
+
+            return newTransform;
           })
           .on("zoom", (event) => {
             drawChart(
