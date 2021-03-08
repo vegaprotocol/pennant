@@ -118,7 +118,7 @@ export const PlotArea = (props: PlotAreaProps) => {
           if (scenegraph.axisTooltip) {
             scenegraph.axisTooltip.draw(ctx, x, y, [
               crosshairXRef.current,
-              crosshairYRef.current,
+              crosshairYRef.current[panelIndex],
             ]);
           }
 

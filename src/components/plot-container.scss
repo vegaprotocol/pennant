@@ -9,6 +9,10 @@
 
 .plot-area {
   position: relative;
+  flex: 0 0 80px;
+}
+
+.plot-area:first-child {
   flex: 1 1 0;
 }
 

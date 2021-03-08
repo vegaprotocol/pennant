@@ -149,7 +149,7 @@ export const Chart = React.forwardRef(
 
     return (
       <div style={{ height: "100%" }}>
-        {data.length > 0 ? (
+        {data.length > 10 ? (
           <div className="chart-wrapper">
             <AutoSizer
               defaultHeight={150}

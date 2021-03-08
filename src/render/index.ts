@@ -4,13 +4,10 @@ import { CandleDetailsExtended } from "../types/element";
 import { View } from "../types/vega-spec-types";
 import { ZoomTransform } from "d3-zoom";
 import { recalculateScales } from "../scales";
-import { selectAll } from "d3-selection";
 
 export function drawChart(
   event: any,
-  previousZoomTransform: React.MutableRefObject<ZoomTransform>,
   timeScale: ScaleTime<number, number, never>,
-  isPinnedRef: React.MutableRefObject<boolean>,
   timeScaleRescaled: ScaleTime<number, number, never>,
   data: CandleDetailsExtended[],
   view: View[],
@@ -20,7 +17,6 @@ export function drawChart(
 ) {
   const transform: ZoomTransform = event.transform;
   const range = timeScale.range().map(transform.invertX, transform);
-
   const domain = range.map(timeScale.invert, timeScale);
 
   timeScaleRescaled.domain(domain);

@@ -73,7 +73,6 @@ export const PlotContainer = React.forwardRef(
     );
 
     const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
-
     const candleWidth = getCandleWidth(interval);
 
     // Compile data and view specification into scenegraph ready for rendering
@@ -123,9 +122,7 @@ export const PlotContainer = React.forwardRef(
           .on("zoom", (event) => {
             drawChart(
               event,
-              previousZoomTransform,
               timeScale,
-              isPinnedRef,
               timeScaleRescaled,
               data,
               view,
@@ -150,7 +147,7 @@ export const PlotContainer = React.forwardRef(
       function reset() {
         select(chartRef.current)
           .transition()
-          .duration(750)
+          .duration(400)
           .call(zoomControl.translateTo, timeScaleRescaled.range()[1], 0, [
             timeScaleRescaled.range()[1] - WIDTH,
             0,
