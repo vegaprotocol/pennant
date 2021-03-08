@@ -2,25 +2,98 @@ import "./chart.scss";
 
 import * as React from "react";
 
+import { Colors, mergeData } from "../helpers";
+
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
-import { CandlestickChart } from "./candlestick-chart";
 import { ChartInfo } from "./chart-info";
 import { DataSource } from "../types/data-source";
+import { FocusStyleManager } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
-import { mergeData } from "../helpers";
+import { PlotContainer } from "./plot-container";
+import { View } from "../types/vega-spec-types";
+import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
+
+FocusStyleManager.onlyShowFocusOnTabs();
+
+const topLevelViewSpec: View[] = [
+  {
+    name: "main",
+    encoding: {
+      x: {
+        field: "date",
+        type: "temporal",
+      },
+      y: {
+        type: "quantitative",
+        scale: { zero: false },
+      },
+      color: {
+        condition: {
+          test: ["lt", "open", "close"],
+          value: Colors.GREEN,
+        },
+        value: Colors.RED,
+      },
+    },
+    layer: [
+      {
+        name: "wick",
+        mark: "rule",
+        encoding: { y: { field: "low" }, y2: { field: "high" } },
+      },
+      {
+        name: "candle",
+        mark: "bar",
+        encoding: {
+          y: { field: "open" },
+          y2: { field: "close" },
+          fill: {
+            condition: {
+              test: ["lt", "open", "close"],
+              value: Colors.GREEN_DARK,
+            },
+            value: Colors.RED,
+          },
+          stroke: {
+            condition: {
+              test: ["lt", "open", "close"],
+              value: Colors.GREEN,
+            },
+            value: Colors.RED,
+          },
+        },
+      },
+    ],
+  },
+  {
+    name: "study",
+    mark: "bar",
+    encoding: {
+      x: { field: "date", type: "temporal" },
+      y: { field: "volume", type: "quantitative", scale: { zero: true } },
+    },
+  },
+];
 
 export type ChartProps = {
   dataSource: DataSource;
   interval: Interval;
+  onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
-  ({ dataSource, interval }: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+  (props: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+    useWhyDidYouUpdate("Chart", props);
+
+    const { dataSource, interval, onSetInterval } = props;
+
     React.useImperativeHandle(ref, () => ({
       reset: () => {
-        chartRef.current.reset();
+        if (chartRef.current) {
+          chartRef.current.reset();
+        }
       },
     }));
 
@@ -45,7 +118,8 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
-          setData((data) => mergeData(data, [datum]));
+          //console.log("new streaming data has arrived");
+          //setData((data) => mergeData(data, [datum]));
         });
       }
 
@@ -75,7 +149,7 @@ export const Chart = React.forwardRef(
 
     return (
       <div style={{ height: "100%" }}>
-        {data.length > 0 ? (
+        {data.length > 10 ? (
           <div className="chart-wrapper">
             <AutoSizer
               defaultHeight={150}
@@ -83,11 +157,12 @@ export const Chart = React.forwardRef(
               style={{ height: "100%", width: "100%" }} // TODO: Find a better method
             >
               {({ height, width }) => (
-                <CandlestickChart
+                <PlotContainer
                   ref={chartRef}
                   width={width}
                   height={height}
                   data={data}
+                  view={topLevelViewSpec}
                   interval={interval}
                   decimalPlaces={dataSource.decimalPlaces}
                   onBoundsChanged={setBounds}
@@ -98,7 +173,11 @@ export const Chart = React.forwardRef(
               )}
             </AutoSizer>
             <div className="overlay">
-              <ChartInfo interval={interval} bounds={bounds} />
+              <ChartInfo
+                interval={interval}
+                bounds={bounds}
+                onSetInterval={onSetInterval}
+              />
               {selectedIndex !== null && (
                 <CandleInfo
                   candle={data[selectedIndex]}

@@ -1,12 +1,16 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-export interface Element {
+export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    yScale?: ScaleLinear<number, number, never>,
     ...rest: any[]
   ): void;
+}
+
+export interface PositionalElement extends RenderableElement {
+  readonly x: Date;
 }
 
 export interface CandleDetailsExtended {
@@ -20,16 +24,16 @@ export interface CandleDetailsExtended {
 }
 
 export interface Panel {
-  data?: Element[];
-  grid?: Element;
-  axis?: Element;
-  axisTooltip?: Element;
-  crosshair?: Element;
-  annotations?: Element[];
+  id: string;
+  data: PositionalElement[][];
+  grid?: RenderableElement;
+  axis?: RenderableElement;
+  axisTooltip?: RenderableElement;
+  crosshair?: RenderableElement;
+  annotations?: RenderableElement[];
 }
 
 export interface Scenegraph {
-  plot: Panel;
-  study: Panel;
+  panels: Panel[];
   xAxis: Panel;
 }

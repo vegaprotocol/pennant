@@ -3,47 +3,59 @@ import * as React from "react";
 import { Colors, clearCanvas } from "../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { CandleElement } from "../elements";
 import { FcElement } from "../types/d3fc-types";
 import { Panel } from "../types/element";
+import { PositionalElement } from "../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
+import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
 export type PlotAreaProps = {
   scenegraph: Panel;
   x: ScaleTime<number, number, never>;
   y: ScaleLinear<number, number, never>;
   crosshairXRef: React.MutableRefObject<number | null>;
-  crosshairYRef: React.MutableRefObject<number | null>;
+  index: number;
+  crosshairYRef: React.MutableRefObject<(number | null)[]>;
   requestRedraw: () => void;
   onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
   onMouseOver?: (index: number) => void;
 };
 
-export const PlotArea = ({
-  scenegraph,
-  x,
-  y,
-  crosshairXRef,
-  crosshairYRef,
-  requestRedraw,
-  onMouseMove,
-  onMouseOut,
-  onMouseOver,
-}: PlotAreaProps) => {
+export const PlotArea = (props: PlotAreaProps) => {
+  useWhyDidYouUpdate("PlotArea", props);
+
+  const {
+    scenegraph,
+    x,
+    y,
+    crosshairXRef,
+    index: panelIndex,
+    crosshairYRef,
+    requestRedraw,
+    onMouseMove,
+    onMouseOut,
+    onMouseOver,
+  } = props;
+
   const visualizationRef = React.useRef<FcElement>(null!);
   const foregroundRef = React.useRef<FcElement>(null!);
 
   React.useEffect(() => {
     select(visualizationRef.current)
-      .on("measure", (event: { detail: { height: number; width: number } }) => {
-        const { height, width } = event.detail;
+      .on(
+        "measure",
+        (event: {
+          detail: { height: number; width: number; pixelRatio: number };
+        }) => {
+          const { height, width, pixelRatio } = event.detail;
 
-        x.range([0, width]);
-        y.range([height, 0]);
-      })
+          x.range([0, width / pixelRatio]);
+          y.range([height / pixelRatio, 0]);
+        }
+      )
       .on(
         "draw",
         (event: {
@@ -63,9 +75,10 @@ export const PlotArea = ({
             }
 
             if (scenegraph.data) {
-              for (const datum of scenegraph.data) {
-                datum.draw(ctx, x, y);
-              }
+              for (const layer of scenegraph.data)
+                for (const datum of layer) {
+                  datum.draw(ctx, x, y);
+                }
             }
 
             ctx.restore();
@@ -75,87 +88,80 @@ export const PlotArea = ({
   }, [scenegraph.data, scenegraph.grid, x, y]);
 
   React.useEffect(() => {
-    const container = select<HTMLElement, unknown>(foregroundRef.current)
-      .on("measure", (event: { detail: { height: number; width: number } }) => {
-        const { height, width } = event.detail;
+    const container = select<HTMLElement, unknown>(foregroundRef.current).on(
+      "draw",
+      (event: { detail: { child: HTMLCanvasElement; pixelRatio: number } }) => {
+        const { child, pixelRatio } = event.detail;
+        const ctx = child.getContext("2d");
 
-        x.range([0, width]);
-        y.range([height, 0]);
-      })
-      .on(
-        "draw",
-        (event: {
-          detail: { child: HTMLCanvasElement; pixelRatio: number };
-        }) => {
-          const { child, pixelRatio } = event.detail;
-          const ctx = child.getContext("2d");
+        if (ctx) {
+          ctx.save();
+          ctx.scale(pixelRatio, pixelRatio);
 
-          if (ctx) {
-            ctx.save();
-            ctx.scale(pixelRatio, pixelRatio);
-
-            if (scenegraph.axis) {
-              scenegraph.axis.draw(ctx, x, y);
-            }
-
-            if (scenegraph.annotations) {
-              for (const annotation of scenegraph.annotations) {
-                annotation.draw(ctx, x, y);
-              }
-            }
-
-            if (scenegraph.crosshair) {
-              scenegraph.crosshair.draw(ctx, x, y, [
-                crosshairXRef.current,
-                crosshairYRef.current,
-              ]);
-            }
-
-            if (scenegraph.axisTooltip) {
-              scenegraph.axisTooltip.draw(ctx, x, y, [
-                crosshairXRef.current,
-                crosshairYRef.current,
-              ]);
-            }
-
-            ctx.restore();
+          if (scenegraph.axis) {
+            scenegraph.axis.draw(ctx, x, y);
           }
+
+          if (scenegraph.annotations) {
+            for (const annotation of scenegraph.annotations) {
+              annotation.draw(ctx, x, y);
+            }
+          }
+
+          if (scenegraph.crosshair) {
+            scenegraph.crosshair.draw(ctx, x, y, [
+              crosshairXRef.current,
+              crosshairYRef.current[panelIndex],
+            ]);
+          }
+
+          if (scenegraph.axisTooltip) {
+            scenegraph.axisTooltip.draw(ctx, x, y, [
+              crosshairXRef.current,
+              crosshairYRef.current[panelIndex],
+            ]);
+          }
+
+          ctx.restore();
         }
-      );
+      }
+    );
 
     function handleMouse(
       event: { offsetX: number; offsetY: number },
       callback?: (index: number) => void
     ) {
-      const data = scenegraph.data as CandleElement[];
+      const data = scenegraph.data[0];
 
       if (data.length > 0) {
         const { offsetX, offsetY } = event;
         const timeAtMouseX = x.invert(offsetX);
 
-        const index = bisector((d: CandleElement) => d.x).left(
+        const index = bisector((d: PositionalElement) => d.x).left(
           data,
           timeAtMouseX
         );
 
-        const firstCandle = data[index - 1];
-        const secondCandle = data[index];
+        const firstElement = data[index - 1];
+        const secondElement = data[index];
 
-        let candle: CandleElement;
+        let element: PositionalElement;
         let indexOffset = 0;
 
-        if (firstCandle && secondCandle) {
-          const nearestCandleDates = [firstCandle.x, secondCandle.x];
+        if (firstElement && secondElement) {
+          const nearestCandleDates = [firstElement.x, secondElement.x];
           indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-          candle = [firstCandle, secondCandle][indexOffset];
-        } else if (firstCandle) {
-          candle = firstCandle;
+          element = [firstElement, secondElement][indexOffset];
+        } else if (firstElement) {
+          indexOffset = 0;
+          element = firstElement;
         } else {
-          candle = secondCandle;
+          indexOffset = 1;
+          element = secondElement;
         }
 
-        crosshairXRef.current = x(candle.x);
-        crosshairYRef.current = offsetY;
+        crosshairXRef.current = x(element.x);
+        crosshairYRef.current[panelIndex] = offsetY;
 
         requestRedraw();
         callback?.(index + indexOffset - 1);
@@ -175,7 +181,7 @@ export const PlotArea = ({
       )
       .on("mouseout", () => {
         crosshairXRef.current = null;
-        crosshairYRef.current = null;
+        crosshairYRef.current[panelIndex] = null;
 
         requestRedraw();
         onMouseOut?.();
@@ -183,6 +189,7 @@ export const PlotArea = ({
   }, [
     crosshairXRef,
     crosshairYRef,
+    panelIndex,
     onMouseMove,
     onMouseOut,
     onMouseOver,
@@ -208,6 +215,7 @@ export const PlotArea = ({
         class="d3fc-canvas-layer crosshair"
         use-device-pixel-ratio
       ></d3fc-canvas>
+      <div className="annotation-layer"></div>
     </>
   );
 };

@@ -6,12 +6,12 @@ import { JsonDataSource } from "../data/json-data-source";
 import React from "react";
 
 export default {
-  title: "Example/Chart",
+  title: "Components/Chart",
   component: Chart,
 } as Meta;
 
 const Template: Story<ChartProps> = (args) => (
-  <div style={{ height: "400px" }}>
+  <div style={{ height: "800px" }}>
     <Chart {...args} />
   </div>
 );

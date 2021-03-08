@@ -3,36 +3,39 @@ import * as React from "react";
 import { Colors, clearCanvas } from "../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { CandleElement } from "../elements";
 import { FcElement } from "../types/d3fc-types";
 import { Panel } from "../types/element";
+import { PositionalElement } from "../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
+import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
 export type XAxisProps = {
   scenegraph: Panel;
   x: ScaleTime<number, number, never>;
   y: ScaleLinear<number, number, never>;
   crosshairXRef: React.MutableRefObject<number | null>;
-  crosshairYRef: React.MutableRefObject<number | null>;
   requestRedraw: () => void;
   onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
   onMouseOver?: (index: number) => void;
 };
 
-export const XAxis = ({
-  scenegraph,
-  x,
-  y,
-  crosshairXRef,
-  crosshairYRef,
-  requestRedraw,
-  onMouseMove,
-  onMouseOut,
-  onMouseOver,
-}: XAxisProps) => {
+export const XAxis = (props: XAxisProps) => {
+  useWhyDidYouUpdate("XAxis", props);
+
+  const {
+    scenegraph,
+    x,
+    y,
+    crosshairXRef,
+    requestRedraw,
+    onMouseMove,
+    onMouseOut,
+    onMouseOver,
+  } = props;
+
   const visualizationRef = React.useRef<FcElement>(null!);
 
   // X axis
@@ -68,35 +71,36 @@ export const XAxis = ({
       event: { offsetX: number; offsetY: number },
       callback?: (index: number) => void
     ) {
-      const data = scenegraph.data as CandleElement[];
+      const data = scenegraph.data[0];
 
       if (data.length > 0) {
-        const { offsetX, offsetY } = event;
+        const { offsetX } = event;
         const timeAtMouseX = x.invert(offsetX);
 
-        const index = bisector((d: CandleElement) => d.x).left(
+        const index = bisector((d: PositionalElement) => d.x).left(
           data,
           timeAtMouseX
         );
 
-        const firstCandle = data[index - 1];
-        const secondCandle = data[index];
+        const firstElement = data[index - 1];
+        const secondElement = data[index];
 
-        let candle: CandleElement;
+        let element: PositionalElement;
         let indexOffset = 0;
 
-        if (firstCandle && secondCandle) {
-          const nearestCandleDates = [firstCandle.x, secondCandle.x];
+        if (firstElement && secondElement) {
+          const nearestCandleDates = [firstElement.x, secondElement.x];
           indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-          candle = [firstCandle, secondCandle][indexOffset];
-        } else if (firstCandle) {
-          candle = firstCandle;
+          element = [firstElement, secondElement][indexOffset];
+        } else if (firstElement) {
+          indexOffset = 0;
+          element = firstElement;
         } else {
-          candle = secondCandle;
+          indexOffset = 1;
+          element = secondElement;
         }
 
-        crosshairXRef.current = x(candle.x);
-        crosshairYRef.current = offsetY;
+        crosshairXRef.current = x(element.x);
 
         requestRedraw();
         callback?.(index + indexOffset - 1);
@@ -116,14 +120,12 @@ export const XAxis = ({
       )
       .on("mouseout", () => {
         crosshairXRef.current = null;
-        crosshairYRef.current = null;
 
         requestRedraw();
         onMouseOut?.();
       });
   }, [
     crosshairXRef,
-    crosshairYRef,
     onMouseMove,
     onMouseOut,
     onMouseOver,

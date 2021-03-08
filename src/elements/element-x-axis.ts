@@ -1,7 +1,8 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
+import { getNumXTicks } from "../helpers/helpers-axis";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,
@@ -12,7 +13,7 @@ function addXAxisPath(
   const tickFormat = xScale.tickFormat();
 
   const xRange = xScale.range();
-  const numXTicks = (xRange[1] - xRange[0]) / 60;
+  const numXTicks = getNumXTicks(xRange[1] - xRange[0]);
   const xTicks = xScale.ticks(numXTicks);
 
   xTicks.forEach((tick) => {
@@ -26,7 +27,7 @@ function addXAxisPath(
   });
 }
 
-export class XAxisElement implements Element {
+export class XAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
