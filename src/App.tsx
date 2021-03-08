@@ -33,6 +33,7 @@ const renderMarket: ItemRenderer<any> = (
 function App() {
   const ref = React.useRef<{ reset(): void }>(null!);
   const [market, setMarket] = React.useState<any | null>(null);
+  const [interval, setInterval] = React.useState(Interval.I15M);
 
   const { data, error } = useSWR("https://n04.d.vega.xyz/markets", (url) =>
     fetch(url).then((r) => r.json())
@@ -80,7 +81,12 @@ function App() {
           }}
         />
       </div>
-      <Chart ref={ref} dataSource={dataSource} interval={Interval.I5M} />
+      <Chart
+        ref={ref}
+        dataSource={dataSource}
+        interval={interval}
+        onSetInterval={setInterval}
+      />
     </div>
   );
 }

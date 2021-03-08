@@ -8,6 +8,73 @@ import {
 
 import { Interval } from "../api/vega-graphql";
 
+export type GQLInterval = keyof typeof Interval;
+
+export interface IntervalOption {
+  label: string;
+  interval: Interval;
+}
+
+const unitMap = {
+  M: 0,
+  H: 1,
+  D: 2,
+};
+
+/**
+ * Creates an array of {interval,label} objects sorted by interval length
+ * with translations from i18n/index.ts
+ */
+export function createIntervalOptions(
+  intervals: GQLInterval[]
+): IntervalOption[] {
+  return (
+    intervals
+      .map((interval: GQLInterval) => ({
+        interval: interval as Interval,
+        label: INTERVALS[interval],
+      }))
+
+      // Remove any intervals which dont have a translation string
+      .filter((interval) => !!interval.label)
+
+      // Sort by interval length
+      .sort((a, b) => {
+        const [aValue, aUnit] = parseInterval(a.interval);
+        const [bValue, bUnit] = parseInterval(b.interval);
+
+        // Sort by unit first
+        if (unitMap[aUnit] < unitMap[bUnit]) {
+          return -1;
+        }
+
+        if (unitMap[aUnit] > unitMap[bUnit]) {
+          return 1;
+        }
+
+        // The unit is the same, sort by value
+        if (aValue < bValue) {
+          return -1;
+        }
+
+        if (aValue > bValue) {
+          return 1;
+        }
+
+        return 0;
+      })
+  );
+}
+
+export const INTERVALS: { [I in Interval]: string } = {
+  I1M: "1m",
+  I5M: "5m",
+  I15M: "15m",
+  I1H: "1h",
+  I6H: "6h",
+  I1D: "1d",
+};
+
 type IntervalUnit = "M" | "H" | "D";
 type ParsedInterval = [number, IntervalUnit];
 
@@ -23,8 +90,6 @@ export function parseInterval(interval: Interval): ParsedInterval {
   // so that match[2] doesnt have to be cast
   return [parseInt(match[1], 10), match[2] as IntervalUnit];
 }
-
-export type GQLInterval = keyof typeof Interval;
 
 export const DEFAULT_CANDLES = 110;
 export const CANDLE_BUFFER = 20;

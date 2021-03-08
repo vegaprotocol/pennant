@@ -1,0 +1,83 @@
+@import "../styles/colors";
+
+.annotation {
+  display: inline-flex;
+  flex-direction: row;
+  border-width: 2px;
+  border-style: solid;
+  border-color: grey;
+  color: white;
+  background-color: black;
+}
+
+.cell {
+  padding: 0 4px;
+  border-right-style: solid;
+  border-right-width: 2px;
+}
+
+.annotation.intent-primary {
+  border-color: #137cbd;
+}
+
+.annotation.intent-primary > .cell {
+  border-color: #137cbd;
+}
+
+.annotation.intent-primary > .cell.fill {
+  color: black;
+  background-color: #137cbd;
+}
+
+.annotation.intent-success {
+  border-color: $vega-green3;
+}
+
+.annotation.intent-success > .cell {
+  border-color: $vega-green3;
+}
+
+.annotation.intent-success > .cell.fill {
+  color: black;
+  background-color: $vega-green3;
+}
+
+.annotation.intent-success > .cell.stroke {
+  color: $vega-green3;
+}
+
+.annotation.intent-warning {
+  border-color: #d9822b;
+}
+
+.annotation.intent-warning > .cell {
+  border-color: #d9822b;
+}
+
+.annotation.intent-danger {
+  border-color: $vega-red3;
+}
+
+.annotation.intent-danger > .cell {
+  border-color: $vega-red3;
+}
+
+.annotation.intent-danger > .cell.fill {
+  color: black;
+  background-color: $vega-red3;
+}
+
+.annotation.intent-danger > .cell.stroke {
+  color: $vega-red3;
+}
+
+.cell > button {
+  background: none;
+  border: none;
+  padding: 0 4px;
+}
+
+.cell:last-child {
+  border-right: none;
+  padding: 0;
+}
