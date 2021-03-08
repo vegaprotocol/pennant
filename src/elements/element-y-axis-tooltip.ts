@@ -23,8 +23,6 @@ function addYAxisPath(
     const value = yScale.invert(y);
     const xPad = 5;
     const text = value.toFixed(decimalPlaces);
-    const textWidth = ctx.measureText(text).width;
-    const rectWidth = textWidth + xPad;
     const rectHeight = 18;
 
     let yAdjusted = y;
