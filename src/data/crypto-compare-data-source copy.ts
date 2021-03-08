@@ -59,7 +59,6 @@ export class CryptoCompareDataSource implements DataSource {
 
     socket.onmessage = function onStreamMessage(message) {
       const data = JSON.parse(message.data);
-      console.log(data);
 
       if (data.TYPE === "24") {
         const tick = {
@@ -69,8 +68,6 @@ export class CryptoCompareDataSource implements DataSource {
           low: data.LOW,
           close: data.CLOSE,
         };
-
-        console.log(tick);
 
         onSubscriptionData(tick);
       }

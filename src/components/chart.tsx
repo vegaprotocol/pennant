@@ -118,8 +118,8 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
-          console.log("new streaming data has arrived");
-          setData((data) => mergeData(data, [datum]));
+          //console.log("new streaming data has arrived");
+          //setData((data) => mergeData(data, [datum]));
         });
       }
 

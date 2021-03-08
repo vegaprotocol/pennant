@@ -63,6 +63,7 @@ export const PlotContainer = React.forwardRef(
 
     // Everything is a ref because we are managing this state ourselves
     // This means we might make this a vanilla JavaScript object in the future
+    const isFirstRun = React.useRef(true);
     const isPinnedRef = React.useRef(true);
     const previousZoomTransform = React.useRef(zoomIdentity);
     const chartRef = React.useRef<FcElement>(null!);
@@ -85,8 +86,8 @@ export const PlotContainer = React.forwardRef(
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
-    const zoomControl = React.useMemo(() => {
-      return (
+    const zoomControl = React.useMemo(
+      () =>
         d3Zoom<FcElement, unknown>()
           // @ts-ignore
           .interpolate(interpolateZoom.rho(0))
@@ -103,16 +104,18 @@ export const PlotContainer = React.forwardRef(
 
             if (isPinnedRef.current && k === 1 && x !== 0) {
               isPinnedRef.current = false;
+            } else if (isPinnedRef.current) {
+              const gap =
+                transform.invertX(extent[1][0] - WIDTH) - (extent[1][0] - 0);
+
+              newTransform = transform.translate(gap, 0);
+            }
+
+            if (x !== 0) {
               selectAll(".d3fc-canvas-layer.crosshair").classed(
                 "grabbing",
                 true
               );
-            } else if (isPinnedRef.current) {
-              const gap =
-                transform.invertX(extent[1][0] - WIDTH) -
-                (extent[1][0] - WIDTH);
-
-              newTransform = transform.translate(gap, 0);
             }
 
             previousZoomTransform.current = transform;
@@ -131,25 +134,25 @@ export const PlotContainer = React.forwardRef(
               onBoundsChanged
             );
           })
-          .on("start", (event) => {
-            console.log("starting zoom");
-          })
+          .on("start", (event) => {})
           .on("end", (event) => {
             selectAll(".d3fc-canvas-layer.crosshair").classed(
               "grabbing",
               false
             );
-          })
-      );
-    }, [data, onBoundsChanged, requestRedraw, view]);
+          }),
+      [data, onBoundsChanged, requestRedraw, view]
+    );
 
     const reset = React.useCallback(
       function reset() {
+        const latestData = data[data.length - 1].date;
+
         select(chartRef.current)
           .transition()
-          .duration(400)
-          .call(zoomControl.translateTo, timeScaleRescaled.range()[1], 0, [
-            timeScaleRescaled.range()[1] - WIDTH,
+          .duration(200)
+          .call(zoomControl.translateTo, timeScale.range()[1], 0, [
+            timeScale(latestData) - WIDTH,
             0,
           ])
           .end()
@@ -162,7 +165,7 @@ export const PlotContainer = React.forwardRef(
 
         select(chartRef.current).node()?.requestRedraw();
       },
-      [zoomControl.translateTo]
+      [data, zoomControl.translateTo]
     );
 
     React.useEffect(() => {
@@ -171,41 +174,46 @@ export const PlotContainer = React.forwardRef(
           "measure",
           (event: { detail: { width: number; pixelRatio: number } }) => {
             const { width, pixelRatio } = event.detail;
-
             timeScale.range([0, width / pixelRatio]);
+
+            if (isFirstRun.current) {
+              select(chartRef.current).call(
+                zoomControl.transform,
+                zoomIdentity.translate(
+                  timeScale(domainRef.current[1]) -
+                    timeScale.range()[1] -
+                    WIDTH,
+                  0
+                )
+              );
+
+              isFirstRun.current = false;
+            }
           }
         )
         .on("draw", () => {
+          //console.log(domainRef.current);
           timeScale.domain(domainRef.current);
         });
 
       chartContainer.call(zoomControl);
+      chartContainer.node()?.requestRedraw();
     }, [zoomControl]);
 
     React.useEffect(() => {
-      const chartContainer = select(chartRef.current);
+      if (isPinnedRef.current) {
+        const latestData = data[data.length - 1];
 
-      if (chartContainer) {
-        chartContainer.node()?.requestRedraw();
-
-        chartContainer.call(
-          zoomControl.transform,
-          zoomIdentity.translate(0, 0)
-        );
+        if (latestData.date > domainRef.current[1]) {
+          domainRef.current = [domainRef.current[0], latestData.date];
+        }
       }
+    }, [data]);
 
-      if (false && isPinnedRef.current) {
-        const domain = timeScale.domain();
-        const domainWidth = domain[1].getTime() - domain[0].getTime();
-
-        const latestDate = data[data.length - 1].date;
-
-        timeScale.domain([
-          new Date(latestDate.getTime() - domainWidth),
-          latestDate,
-        ]);
-      }
-    }, [data, zoomControl.transform]);
+    React.useEffect(() => {
+      timeScale.domain(domainRef.current);
+      select(chartRef.current).node()?.requestRedraw();
+    }, []);
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
@@ -236,8 +244,8 @@ export const PlotContainer = React.forwardRef(
           <XAxis
             scenegraph={scenegraph.xAxis}
             x={timeScaleRescaled}
-            y={scalesRef.current![0]} // FIXME: Shouldn't need to pass a y scale for the x-axis
-            crosshairXRef={crosshairXRef} // FIXME: If this was an array of objects we wouldn't need to pass in the ref itself and index into it
+            y={scalesRef.current![0]}
+            crosshairXRef={crosshairXRef}
             requestRedraw={requestRedraw}
             onMouseMove={onMouseMove}
             onMouseOut={onMouseOut}
