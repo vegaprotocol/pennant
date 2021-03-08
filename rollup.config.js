@@ -11,10 +11,12 @@ const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
 const globals = {
   react: "React",
+  "react-dom": "ReactDOM",
 };
 
 const config = {
   input: "src/main.ts",
+  external: Object.keys(globals),
   output: [
     {
       file: meta.exports,
@@ -34,7 +36,6 @@ const config = {
           ],
         }),
       ],
-      globals,
     },
     {
       file: meta.module,
@@ -54,7 +55,6 @@ const config = {
           ],
         }),
       ],
-      globals,
     },
     {
       file: meta.main,
@@ -78,7 +78,6 @@ const config = {
     }),
     terser(),
   ],
-  external: Object.keys(globals),
 };
 
 export default config;
