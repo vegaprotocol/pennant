@@ -29,8 +29,21 @@ export class JsonDataSource implements DataSource {
     this._decimalPlaces = decimalPlaces;
   }
 
-  async query(_interval: Interval, _from: string, _to: string) {
-    const candles = json.data.market.candles?.map((d) =>
+  async onReady() {
+    return Promise.resolve({
+      supportedIntervals: [
+        Interval.I1D,
+        Interval.I6H,
+        Interval.I1H,
+        Interval.I15M,
+        Interval.I5M,
+        Interval.I1M,
+      ],
+    });
+  }
+
+  async query(interval: Interval, _from: string, _to: string) {
+    const candles = json[interval].candles.map((d) =>
       extendCandle(d, this.decimalPlaces)
     );
 

@@ -1,6 +1,9 @@
 # Rollup build dir
 dist/
 
+# Storybook
+storybook-static
+
 # Logs
 logs
 *.log

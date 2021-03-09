@@ -1,6 +1,17 @@
 .candle-info-wrapper {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   gap: 8px;
+  padding: 4px;
+  color: #f5f8fa;
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+.text-muted {
+  color: #a7b6c2;
+}
+
+.monospace-text {
+  font-family: monospace;
+  text-transform: none;
 }

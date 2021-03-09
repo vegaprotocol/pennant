@@ -24,7 +24,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
 
 export class ApolloDataSource implements DataSource {
   client: ApolloClient<any>;
-  sub: any = null;
+  sub: ZenObservable.Subscription | null = null;
   marketId: string;
   _decimalPlaces: number;
 
@@ -40,6 +40,19 @@ export class ApolloDataSource implements DataSource {
     this.client = client;
     this.marketId = marketId;
     this._decimalPlaces = decimalPlaces;
+  }
+
+  async onReady() {
+    return Promise.resolve({
+      supportedIntervals: [
+        Interval.I1D,
+        Interval.I6H,
+        Interval.I1H,
+        Interval.I15M,
+        Interval.I5M,
+        Interval.I1M,
+      ],
+    });
   }
 
   async query(interval: Interval, from: string, to: string) {
@@ -72,7 +85,7 @@ export class ApolloDataSource implements DataSource {
     });
 
     this.sub = res.subscribe(({ data }) => {
-      const candle = extendCandle(data.candles, 5); // FIXME: Get from subscription
+      const candle = extendCandle(data.candles, this.decimalPlaces); // FIXME: Get from subscription
 
       onSubscriptionData(candle);
     });

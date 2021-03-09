@@ -1,9 +1,9 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
+import { WIDTH } from "../constants";
 
-const WIDTH = 50;
 const MARGIN = 6;
 
 function addYAxisPath(
@@ -55,7 +55,7 @@ function addYAxisPath(
   });
 }
 
-export class YAxisElement implements Element {
+export class YAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,

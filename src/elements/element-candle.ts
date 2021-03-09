@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { Element } from "../types/element";
+import { RenderableElement } from "../types/element";
 
 function addCandlePath(
   ctx: CanvasRenderingContext2D,
@@ -28,7 +28,7 @@ export type Candle = {
   width: number;
 };
 
-export class CandleElement implements Element {
+export class CandleElement implements RenderableElement {
   readonly x: Date;
   readonly open: number;
   readonly close: number;
@@ -36,8 +36,8 @@ export class CandleElement implements Element {
   readonly low: number;
   readonly width: number;
 
-  constructor(candle: Candle) {
-    const { x, open, close, high, low, width } = candle;
+  constructor(cfg: any) {
+    const { x, open, close, high, low, width } = cfg;
 
     this.x = x;
     this.open = open;
