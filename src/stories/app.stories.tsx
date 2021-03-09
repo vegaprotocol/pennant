@@ -7,6 +7,7 @@ import { Meta, Story } from "@storybook/react";
 
 import { ApolloDataSource } from "../data/apollo-data-source";
 import { Chart } from "../components/chart";
+import { ChartInterface } from "../types";
 import { CryptoCompareDataSource } from "../data/crypto-compare-data-source copy";
 import { Interval } from "../api/vega-graphql";
 import React from "react";
@@ -67,7 +68,7 @@ const renderMarket: ItemRenderer<any> = (
 };
 
 export const SimpleWebpage: Story = () => {
-  const ref = React.useRef<{ reset(): void }>(null!);
+  const ref = React.useRef<ChartInterface>(null!);
   const [market, setMarket] = React.useState(data.markets[1].id);
   const [interval, setInterval] = React.useState(Interval.I15M);
 
@@ -119,7 +120,7 @@ export const SimpleWebpage: Story = () => {
 };
 
 export const CryptoCompareExample: Story = () => {
-  const ref = React.useRef<{ reset(): void }>(null!);
+  const ref = React.useRef<ChartInterface>(null!);
   const [interval, setInterval] = React.useState(Interval.I1M);
 
   const dataSource = React.useMemo(() => new CryptoCompareDataSource(), []);
