@@ -63,7 +63,7 @@ export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
             key={annotation.id}
             x1={widths?.[annotation.id] ?? 0}
             y1={shiftedAnnotations[i]}
-            x2={600}
+            x2="100%"
             y2={annotation.y}
             stroke={annotation.intent === "success" ? "#26ff8a" : "#ff261a"}
             strokeWidth={2}
