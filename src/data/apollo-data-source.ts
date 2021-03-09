@@ -42,6 +42,19 @@ export class ApolloDataSource implements DataSource {
     this._decimalPlaces = decimalPlaces;
   }
 
+  async onReady() {
+    return Promise.resolve({
+      supportedIntervals: [
+        Interval.I1D,
+        Interval.I6H,
+        Interval.I1H,
+        Interval.I15M,
+        Interval.I5M,
+        Interval.I1M,
+      ],
+    });
+  }
+
   async query(interval: Interval, from: string, to: string) {
     const res = await this.client.query<candlesQuery, candlesQueryVariables>({
       query: candleQuery,

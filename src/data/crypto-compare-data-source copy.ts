@@ -27,12 +27,33 @@ export class CryptoCompareDataSource implements DataSource {
     return 2;
   }
 
+  async onReady() {
+    return Promise.resolve({
+      supportedIntervals: [Interval.I1D, Interval.I1H, Interval.I1M],
+    });
+  }
+
   async query(interval: Interval, from: string, to: string) {
     const limit = 100;
     const toTs = Math.floor(new Date(to).getTime() / 1000);
+    let resolution; // day hour minute
+
+    switch (interval) {
+      case Interval.I1D:
+        resolution = "day";
+        break;
+      case Interval.I1H:
+        resolution = "hour";
+        break;
+      case Interval.I1M:
+        resolution = "minute";
+        break;
+      default:
+        resolution = "minute";
+    }
 
     const res = await fetch(
-      `https://min-api.cryptocompare.com/data/v2/histominute?fsym=BTC&tsym=USD&limit=${limit}&=${toTs}&api_key=${API_KEY}`
+      `https://min-api.cryptocompare.com/data/v2/histo${resolution}?fsym=BTC&tsym=USD&limit=${limit}&=${toTs}&api_key=${API_KEY}`
     );
 
     const data = await res.json();
