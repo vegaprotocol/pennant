@@ -7,8 +7,10 @@ import * as React from "react";
 import { CandleDetailsExtended, Panel, Scenegraph } from "../types/element";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { getCandleWidth, getSubMinutes } from "../helpers";
 import { select, selectAll } from "d3-selection";
 
+import { ChartInterface } from "../types";
 import { FcElement } from "../types/d3fc-types";
 import { Interval } from "../api/vega-graphql";
 import { PlotArea } from "./plot-area";
@@ -17,7 +19,6 @@ import { WIDTH } from "../constants";
 import { XAxis } from "./x-axis";
 import { drawChart } from "../render";
 import { extent } from "d3-array";
-import { getCandleWidth } from "../helpers";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../scenegraph/parse";
 import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
@@ -41,7 +42,7 @@ export type PlotContainerProps = {
 };
 
 export const PlotContainer = React.forwardRef(
-  (props: PlotContainerProps, ref: React.Ref<{ reset(): void }>) => {
+  (props: PlotContainerProps, ref: React.Ref<ChartInterface>) => {
     useWhyDidYouUpdate("PlotContainer", props);
 
     const {
@@ -56,6 +57,15 @@ export const PlotContainer = React.forwardRef(
     } = props;
 
     React.useImperativeHandle(ref, () => ({
+      fitBounds: (bounds: [Date, Date]) => {
+        reset();
+      },
+      panBy: (n: number) => {
+        panBy(n);
+      },
+      panTo: (x: Date) => {
+        reset();
+      },
       reset: () => {
         reset();
       },
@@ -72,7 +82,6 @@ export const PlotContainer = React.forwardRef(
     const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>(
       view.map(() => scaleLinear())
     );
-
     const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
     const candleWidth = getCandleWidth(interval);
 
@@ -106,7 +115,8 @@ export const PlotContainer = React.forwardRef(
               isPinnedRef.current = false;
             } else if (isPinnedRef.current) {
               const gap =
-                transform.invertX(extent[1][0] - WIDTH) - (extent[1][0] - 0);
+                transform.invertX(extent[1][0] - (WIDTH + 26)) -
+                (extent[1][0] - 0);
 
               newTransform = transform.translate(gap, 0);
             }
@@ -152,7 +162,7 @@ export const PlotContainer = React.forwardRef(
           .transition()
           .duration(200)
           .call(zoomControl.translateTo, timeScale.range()[1], 0, [
-            timeScale(latestData) - WIDTH,
+            timeScale(latestData) - (WIDTH + 26),
             0,
           ])
           .end()
@@ -166,6 +176,17 @@ export const PlotContainer = React.forwardRef(
         select(chartRef.current).node()?.requestRedraw();
       },
       [data, zoomControl.translateTo]
+    );
+
+    const panBy = React.useCallback(
+      function panBy(n: number) {
+        const ms = 1000 * 60 * getSubMinutes(interval, n);
+        const offset = -(timeScale(ms) - timeScale(0));
+
+        select(chartRef.current).call(zoomControl.translateBy, offset, 0);
+        select(chartRef.current).node()?.requestRedraw();
+      },
+      [interval, zoomControl.translateBy]
     );
 
     React.useEffect(() => {

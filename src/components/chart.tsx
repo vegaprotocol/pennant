@@ -3,15 +3,18 @@ import "./chart.scss";
 import * as React from "react";
 
 import { Colors, mergeData } from "../helpers";
+import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
+import { ChartInterface } from "../types";
 import { DataSource } from "../types/data-source";
-import { FocusStyleManager } from "@blueprintjs/core";
+import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
 import { PlotContainer } from "./plot-container";
+import { ResetButton } from "./reset-button";
 import { View } from "../types/vega-spec-types";
 import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
@@ -84,26 +87,65 @@ export type ChartProps = {
 };
 
 export const Chart = React.forwardRef(
-  (props: ChartProps, ref: React.Ref<{ reset(): void }>) => {
+  (props: ChartProps, ref: React.Ref<ChartInterface>) => {
     useWhyDidYouUpdate("Chart", props);
 
     const { dataSource, interval, onSetInterval } = props;
 
     React.useImperativeHandle(ref, () => ({
+      fitBounds: (bounds: [Date, Date]) => {
+        chartRef.current.fitBounds(bounds);
+      },
+      panBy: (n: number) => {
+        chartRef.current.reset();
+      },
+      panTo: (x: Date) => {
+        chartRef.current.reset();
+      },
       reset: () => {
-        if (chartRef.current) {
-          chartRef.current.reset();
-        }
+        chartRef.current.reset();
       },
     }));
 
-    const chartRef = React.useRef<{ reset(): void }>(null!);
+    const chartRef = React.useRef<ChartInterface>(null!);
     const [data, setData] = React.useState<any[]>([]);
     const [bounds, setBounds] = React.useState<[Date, Date]>([
       new Date(),
       new Date(),
     ]);
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
+
+    const hotkeys = React.useMemo(
+      () => [
+        {
+          combo: "r",
+          global: true,
+          label: "Reset",
+          onKeyDown: () => {
+            chartRef.current.reset();
+          },
+        },
+        {
+          combo: "left",
+          global: true,
+          label: "Refresh data",
+          onKeyDown: () => {
+            chartRef.current.panBy(-1);
+          },
+        },
+        {
+          combo: "right",
+          global: true,
+          label: "Focus text input",
+          onKeyDown: () => {
+            chartRef.current.panBy(1);
+          },
+        },
+      ],
+      []
+    );
+
+    const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
@@ -124,6 +166,8 @@ export const Chart = React.forwardRef(
       }
 
       const myDataSource = dataSource;
+
+      console.log("looking for new data");
 
       query(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
@@ -148,52 +192,63 @@ export const Chart = React.forwardRef(
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
 
     return (
-      <div style={{ height: "100%" }}>
-        {data.length > 10 ? (
-          <div className="chart-wrapper">
-            <AutoSizer
-              defaultHeight={150}
-              defaultWidth={300}
-              style={{ height: "100%", width: "100%" }} // TODO: Find a better method
-            >
-              {({ height, width }) => (
-                <PlotContainer
-                  ref={chartRef}
-                  width={width}
-                  height={height}
-                  data={data}
-                  view={topLevelViewSpec}
+      <HotkeysProvider>
+        <div
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
+          style={{ height: "100%" }}
+        >
+          {data.length > 10 ? (
+            <div className="chart-wrapper">
+              <AutoSizer
+                defaultHeight={150}
+                defaultWidth={300}
+                style={{ height: "100%", width: "100%" }} // TODO: Find a better method
+              >
+                {({ height, width }) => (
+                  <PlotContainer
+                    ref={chartRef}
+                    width={width}
+                    height={height}
+                    data={data}
+                    view={topLevelViewSpec}
+                    interval={interval}
+                    decimalPlaces={dataSource.decimalPlaces}
+                    onBoundsChanged={setBounds}
+                    onMouseMove={setCandle}
+                    onMouseOut={handleOnMouseOut}
+                    onGetDataRange={handleGetDataRange}
+                  />
+                )}
+              </AutoSizer>
+              <div className="overlay">
+                <ChartInfo
                   interval={interval}
-                  decimalPlaces={dataSource.decimalPlaces}
-                  onBoundsChanged={setBounds}
-                  onMouseMove={setCandle}
-                  onMouseOut={handleOnMouseOut}
-                  onGetDataRange={handleGetDataRange}
+                  bounds={bounds}
+                  onSetInterval={onSetInterval}
                 />
-              )}
-            </AutoSizer>
-            <div className="overlay">
-              <ChartInfo
-                interval={interval}
-                bounds={bounds}
-                onSetInterval={onSetInterval}
-              />
-              {selectedIndex !== null && (
-                <CandleInfo
-                  candle={data[selectedIndex]}
-                  decimalPlaces={dataSource.decimalPlaces}
+                {selectedIndex !== null && (
+                  <CandleInfo
+                    candle={data[selectedIndex]}
+                    decimalPlaces={dataSource.decimalPlaces}
+                  />
+                )}
+                <ResetButton
+                  onClick={() => {
+                    chartRef.current.reset();
+                  }}
                 />
-              )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <NonIdealState
-            icon="timeline-line-chart"
-            title="No data found"
-            description="Try a different market"
-          />
-        )}
-      </div>
+          ) : (
+            <NonIdealState
+              icon="timeline-line-chart"
+              title="No data found"
+              description="Try a different market"
+            />
+          )}
+        </div>
+      </HotkeysProvider>
     );
   }
 );
