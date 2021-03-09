@@ -22,7 +22,7 @@ const renderInterval: ItemRenderer<IntervalOption> = (
   if (!modifiers.matchesPredicate) {
     return null;
   }
-  
+
   return (
     <MenuItem
       active={modifiers.active}

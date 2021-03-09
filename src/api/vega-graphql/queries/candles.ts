@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from "graphql-tag";
 
 export const candleFragment = gql`
   fragment CandleDetails on Candle {
@@ -9,7 +9,7 @@ export const candleFragment = gql`
     close
     volume
   }
-`
+`;
 
 export const candleQuery = gql`
   query candlesQuery(
@@ -33,7 +33,7 @@ export const candleQuery = gql`
     }
   }
   ${candleFragment}
-`
+`;
 
 export const candleSubscriptionQuery = gql`
   subscription candleSubscription($marketId: String!, $interval: Interval!) {
@@ -42,4 +42,4 @@ export const candleSubscriptionQuery = gql`
     }
   }
   ${candleFragment}
-`
+`;
