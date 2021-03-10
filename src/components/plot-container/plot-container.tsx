@@ -4,24 +4,24 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { CandleDetailsExtended, Panel, Scenegraph } from "../types/element";
+import { CandleDetailsExtended, Panel, Scenegraph } from "../../types/element";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
-import { getCandleWidth, getSubMinutes } from "../helpers";
+import { getCandleWidth, getSubMinutes } from "../../helpers";
 import { select, selectAll } from "d3-selection";
 
-import { ChartInterface } from "../types";
-import { FcElement } from "../types/d3fc-types";
-import { Interval } from "../api/vega-graphql";
-import { PlotArea } from "./plot-area";
-import { View } from "../types/vega-spec-types";
-import { WIDTH } from "../constants";
-import { XAxis } from "./x-axis";
-import { drawChart } from "../render";
+import { ChartInterface } from "../../types";
+import { FcElement } from "../../types/d3fc-types";
+import { Interval } from "../../api/vega-graphql";
+import { PlotArea } from "../plot-area";
+import { View } from "../../types/vega-spec-types";
+import { WIDTH } from "../../constants";
+import { XAxis } from "../x-axis";
+import { drawChart } from "../../render";
 import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
-import { parse } from "../scenegraph/parse";
-import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
+import { parse } from "../../scenegraph/parse";
+import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 const timeScale = scaleTime();
 const timeScaleRescaled = scaleTime(); // A rescaled copy of the time scale which reflects the user panning and scaling
