@@ -1,4 +1,4 @@
-import * as AnnotationStories from "./annotation.stories";
+import * as AnnotationStories from "./annotation/annotation.stories";
 import * as React from "react";
 
 import { AnnotationLayer, AnnotationLayerProps } from "./annotation-layer";
