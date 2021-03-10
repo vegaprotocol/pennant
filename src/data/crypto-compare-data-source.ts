@@ -34,7 +34,7 @@ export class CryptoCompareDataSource implements DataSource {
   }
 
   async query(interval: Interval, from: string, to: string) {
-    const limit = 100;
+    const limit = 500;
     const toTs = Math.floor(new Date(to).getTime() / 1000);
     let resolution; // day hour minute
 
@@ -57,6 +57,8 @@ export class CryptoCompareDataSource implements DataSource {
     );
 
     const data = await res.json();
+
+    console.info(`fetched ${data.Data.Data.length} data points`);
 
     return data.Data.Data.map((d: any) => ({
       date: new Date(d.time * 1000),

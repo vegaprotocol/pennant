@@ -8,7 +8,7 @@ import { Meta, Story } from "@storybook/react";
 import { ApolloDataSource } from "../data/apollo-data-source";
 import { Chart } from "../components/chart";
 import { ChartInterface } from "../types";
-import { CryptoCompareDataSource } from "../data/crypto-compare-data-source copy";
+import { CryptoCompareDataSource } from "../data/crypto-compare-data-source";
 import { Interval } from "../api/vega-graphql";
 import React from "react";
 import { WebSocketLink } from "@apollo/client/link/ws";
