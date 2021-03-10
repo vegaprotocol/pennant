@@ -1,10 +1,10 @@
-import * as AnnotationStories from "./annotation/annotation.stories";
+import * as AnnotationStories from "../annotation/annotation.stories";
 import * as React from "react";
 
 import { AnnotationLayer, AnnotationLayerProps } from "./annotation-layer";
 import { Meta, Story } from "@storybook/react";
 
-import { AnnotationProps } from "./annotation";
+import { AnnotationProps } from "../annotation";
 
 export default {
   title: "Components/AnnotationLayer",

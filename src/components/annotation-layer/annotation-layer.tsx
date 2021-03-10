@@ -2,7 +2,7 @@ import "./annotation-layer.scss";
 
 import * as React from "react";
 
-import { Annotation, Intent } from "./annotation";
+import { Annotation, Intent } from "../annotation";
 
 export type AnnotationLayerProps = {
   annotations: { id: string; cells?: any; intent: Intent; y: number }[];
