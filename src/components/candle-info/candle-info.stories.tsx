@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { CandleInfo, CandleInfoProps } from "./candle-info";
 import { Meta, Story } from "@storybook/react";
 
@@ -14,8 +12,8 @@ const Template: Story<CandleInfoProps> = (args) => (
   </div>
 );
 
-export const Position = Template.bind({});
-Position.args = {
+export const Primary = Template.bind({});
+Primary.args = {
   candle: {
     date: new Date(2021, 2, 1),
     datetime: new Date(2021, 2, 1).toISOString(),
