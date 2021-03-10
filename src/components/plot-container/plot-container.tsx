@@ -16,7 +16,7 @@ import { Interval } from "../../api/vega-graphql";
 import { PlotArea } from "../plot-area";
 import { View } from "../../types/vega-spec-types";
 import { WIDTH } from "../../constants";
-import { XAxis } from "../x-axis";
+import { XAxis } from "../x-axis/x-axis";
 import { drawChart } from "../../render";
 import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
