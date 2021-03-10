@@ -20,11 +20,11 @@ export default {
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://n04.d.vega.xyz/query",
+  uri: "https://lb.testnet.vega.xyz/query",
 });
 
 const wsLink = new WebSocketLink({
-  uri: "wss://n04.d.vega.xyz/query",
+  uri: "wss://lb.testnet.vega.xyz/query",
   options: {
     reconnect: true,
   },
