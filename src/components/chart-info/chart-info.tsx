@@ -2,9 +2,13 @@ import "./chart-info.scss";
 
 import { Button, MenuItem } from "@blueprintjs/core";
 import { IItemModifiers, ItemRenderer, Select } from "@blueprintjs/select";
-import { INTERVALS, IntervalOption, createIntervalOptions } from "../helpers";
+import {
+  INTERVALS,
+  IntervalOption,
+  createIntervalOptions,
+} from "../../helpers";
 
-import { Interval } from "../api/vega-graphql";
+import { Interval } from "../../api/vega-graphql";
 import { format } from "date-fns";
 
 const IntervalSelect = Select.ofType<IntervalOption>();
