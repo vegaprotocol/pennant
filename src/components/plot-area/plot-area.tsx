@@ -3,7 +3,6 @@ import * as React from "react";
 import { Colors, clearCanvas } from "../../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { AnnotationLayer } from "../annotation-layer";
 import { FcElement } from "../../types/d3fc-types";
 import { Panel } from "../../types/element";
 import { PositionalElement } from "../../types/element";
@@ -218,23 +217,7 @@ export const PlotArea = (props: PlotAreaProps) => {
         class="d3fc-canvas-layer crosshair"
         use-device-pixel-ratio
       ></d3fc-canvas>
-      <div className="annotation-layer">
-        <AnnotationLayer
-          annotations={[
-            {
-              id: "1",
-              y: y(54_605),
-              cells: [
-                { label: "Limit GT16:00", stroke: true },
-                { label: "54,605.00" },
-                { label: "-50", stroke: true },
-                { label: "Cancel", onClick: console.log },
-              ],
-              intent: "danger",
-            },
-          ]}
-        />
-      </div>
+      <div className="annotation-layer"></div>
     </>
   );
 };
