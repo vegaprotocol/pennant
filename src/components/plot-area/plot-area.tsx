@@ -59,9 +59,9 @@ export const PlotArea = (props: PlotAreaProps) => {
       )
       .on(
         "draw",
-        (event: {
+        function drawPlotAreaVisualization(event: {
           detail: { child: HTMLCanvasElement; pixelRatio: number };
-        }) => {
+        }) {
           const { child, pixelRatio } = event.detail;
           const ctx = child.getContext("2d", { alpha: false });
 
@@ -91,7 +91,9 @@ export const PlotArea = (props: PlotAreaProps) => {
   React.useEffect(() => {
     const container = select<HTMLElement, unknown>(foregroundRef.current).on(
       "draw",
-      (event: { detail: { child: HTMLCanvasElement; pixelRatio: number } }) => {
+      function drawPlotAreaForeground(event: {
+        detail: { child: HTMLCanvasElement; pixelRatio: number };
+      }) {
         const { child, pixelRatio } = event.detail;
         const ctx = child.getContext("2d");
 

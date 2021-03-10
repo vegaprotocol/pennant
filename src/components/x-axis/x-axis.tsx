@@ -41,7 +41,9 @@ export const XAxis = (props: XAxisProps) => {
   React.useEffect(() => {
     const container = select<HTMLElement, unknown>(visualizationRef.current).on(
       "draw",
-      (event: { detail: { child: HTMLCanvasElement; pixelRatio: number } }) => {
+      function drawXAxis(event: {
+        detail: { child: HTMLCanvasElement; pixelRatio: number };
+      }) {
         const { child, pixelRatio } = event.detail;
         const ctx = child.getContext("2d", { alpha: false });
         if (ctx) {

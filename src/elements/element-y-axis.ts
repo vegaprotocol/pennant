@@ -42,7 +42,7 @@ function addYAxisPath(
   ctx.textAlign = "left";
   ctx.font = `12px monospace`;
 
-  yTicks.forEach((tick: number) => {
+  yTicks.forEach(function drawTick(tick: number) {
     ctx.beginPath();
 
     ctx.fillText(

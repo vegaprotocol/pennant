@@ -16,7 +16,7 @@ function addXAxisPath(
   const numXTicks = getNumXTicks(xRange[1] - xRange[0]);
   const xTicks = xScale.ticks(numXTicks);
 
-  xTicks.forEach((tick) => {
+  xTicks.forEach(function drawTick(tick) {
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
