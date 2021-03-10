@@ -1,16 +1,16 @@
 import * as React from "react";
 
-import { Colors, clearCanvas } from "../helpers";
+import { Colors, clearCanvas } from "../../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { AnnotationLayer } from "./annotation-layer";
-import { FcElement } from "../types/d3fc-types";
-import { Panel } from "../types/element";
-import { PositionalElement } from "../types/element";
+import { AnnotationLayer } from "../annotation-layer";
+import { FcElement } from "../../types/d3fc-types";
+import { Panel } from "../../types/element";
+import { PositionalElement } from "../../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
-import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
+import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 export type PlotAreaProps = {
   scenegraph: Panel;
@@ -224,7 +224,7 @@ export const PlotArea = (props: PlotAreaProps) => {
               y: y(54_605),
               cells: [
                 { label: "Limit GT16:00", stroke: true },
-                { label: "41,100.00" },
+                { label: "54,605.00" },
                 { label: "-50", stroke: true },
                 { label: "Cancel", onClick: console.log },
               ],

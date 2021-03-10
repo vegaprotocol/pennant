@@ -1,15 +1,15 @@
 import * as React from "react";
 
-import { Colors, clearCanvas } from "../helpers";
+import { Colors, clearCanvas } from "../../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { FcElement } from "../types/d3fc-types";
-import { Panel } from "../types/element";
-import { PositionalElement } from "../types/element";
+import { FcElement } from "../../types/d3fc-types";
+import { Panel } from "../../types/element";
+import { PositionalElement } from "../../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
-import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
+import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 export type XAxisProps = {
   scenegraph: Panel;
@@ -38,7 +38,6 @@ export const XAxis = (props: XAxisProps) => {
 
   const visualizationRef = React.useRef<FcElement>(null!);
 
-  // X axis
   React.useEffect(() => {
     const container = select<HTMLElement, unknown>(visualizationRef.current).on(
       "draw",
@@ -138,12 +137,10 @@ export const XAxis = (props: XAxisProps) => {
   ]);
 
   return (
-    <>
-      <d3fc-canvas
-        ref={visualizationRef}
-        class="time-axis"
-        use-device-pixel-ratio
-      ></d3fc-canvas>
-    </>
+    <d3fc-canvas
+      ref={visualizationRef}
+      class="time-axis"
+      use-device-pixel-ratio
+    />
   );
 };
