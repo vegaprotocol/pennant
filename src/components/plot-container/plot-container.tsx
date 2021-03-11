@@ -6,7 +6,7 @@ import * as React from "react";
 
 import { CandleDetailsExtended, Panel, Scenegraph } from "../../types/element";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
-import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { getCandleWidth, getSubMinutes } from "../../helpers";
 import { select, selectAll } from "d3-selection";
 
@@ -21,6 +21,7 @@ import { drawChart } from "../../render";
 import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
+import { throttle } from "lodash";
 import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 const timeScale = scaleTime();
@@ -50,10 +51,11 @@ export const PlotContainer = React.forwardRef(
       view,
       interval,
       decimalPlaces,
-      onBoundsChanged,
+      onBoundsChanged = () => {},
       onMouseMove,
       onMouseOut,
       onMouseOver,
+      onGetDataRange,
     } = props;
 
     React.useImperativeHandle(ref, () => ({
@@ -91,7 +93,13 @@ export const PlotContainer = React.forwardRef(
       [candleWidth, data, decimalPlaces, view]
     );
 
-    const requestRedraw = React.useCallback(function reuqestRedraw() {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const onBoundsChangedThrottled = React.useCallback(
+      throttle(onBoundsChanged, 200),
+      []
+    );
+
+    const requestRedraw = React.useCallback(function requestRedraw() {
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
@@ -141,8 +149,23 @@ export const PlotContainer = React.forwardRef(
               view,
               scalesRef,
               requestRedraw,
-              onBoundsChanged
+              onBoundsChangedThrottled
             );
+
+            const transform: ZoomTransform = event.transform;
+            const range = timeScale.range().map(transform.invertX, transform);
+            const domain = range.map(timeScale.invert, timeScale);
+
+            const domainWidth = domain[1].getTime() - domain[0].getTime();
+
+            if (data[0].date.getTime() + domainWidth > domain[0].getTime()) {
+              const to = data[0].date.toISOString();
+              const from = new Date(
+                data[0].date.getTime() - domainWidth
+              ).toISOString();
+
+              onGetDataRange(from, to);
+            }
           })
           .on("start", (event) => {})
           .on("end", (event) => {
@@ -151,7 +174,7 @@ export const PlotContainer = React.forwardRef(
               false
             );
           }),
-      [data, onBoundsChanged, requestRedraw, view]
+      [data, onBoundsChangedThrottled, onGetDataRange, requestRedraw, view]
     );
 
     const reset = React.useCallback(
