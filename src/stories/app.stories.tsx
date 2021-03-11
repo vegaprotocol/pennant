@@ -16,7 +16,7 @@ import data from "./app.stories.json";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 export default {
-  title: "Example/Application",
+  title: "Overview/Application",
 } as Meta;
 
 const httpLink = new HttpLink({
