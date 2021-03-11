@@ -36,7 +36,6 @@ export class BarElement implements PositionalElement {
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>
   ) {
-    ctx.save();
     ctx.beginPath();
 
     ctx.rect(
@@ -50,6 +49,5 @@ export class BarElement implements PositionalElement {
     ctx.strokeStyle = this.stroke ?? Colors.GRAY;
     ctx.fill();
     ctx.stroke();
-    ctx.restore();
   }
 }

@@ -27,8 +27,6 @@ export class LineElement implements PositionalElement {
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>
   ) {
-    ctx.save();
-
     if (this.points.length > 1) {
       ctx.beginPath();
 
@@ -42,7 +40,5 @@ export class LineElement implements PositionalElement {
       ctx.stroke();
       ctx.closePath();
     }
-
-    ctx.restore();
   }
 }
