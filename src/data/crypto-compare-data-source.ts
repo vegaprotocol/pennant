@@ -36,7 +36,7 @@ export class CryptoCompareDataSource implements DataSource {
   async query(interval: Interval, from: string, to: string) {
     const limit = 500;
     const toTs = Math.floor(new Date(to).getTime() / 1000);
-    let resolution; // day hour minute
+    let resolution;
 
     switch (interval) {
       case Interval.I1D:
@@ -53,12 +53,10 @@ export class CryptoCompareDataSource implements DataSource {
     }
 
     const res = await fetch(
-      `https://min-api.cryptocompare.com/data/v2/histo${resolution}?fsym=BTC&tsym=USD&limit=${limit}&=${toTs}&api_key=${API_KEY}`
+      `https://min-api.cryptocompare.com/data/v2/histo${resolution}?fsym=BTC&tsym=USD&limit=${limit}&toTs=${toTs}&api_key=${API_KEY}`
     );
 
     const data = await res.json();
-
-    console.info(`fetched ${data.Data.Data.length} data points`);
 
     return data.Data.Data.map((d: any) => ({
       date: new Date(d.time * 1000),
