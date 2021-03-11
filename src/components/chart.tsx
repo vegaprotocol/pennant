@@ -114,6 +114,7 @@ export const Chart = React.forwardRef(
       new Date(),
     ]);
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const hotkeys = React.useMemo(
       () => [
@@ -160,7 +161,7 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
-          //console.log("new streaming data has arrived");
+          console.log("new streaming data has arrived");
           //setData((data) => mergeData(data, [datum]));
         });
       }
@@ -175,12 +176,21 @@ export const Chart = React.forwardRef(
         false
       );
 
-      subscribe();
+      //subscribe();
 
       return () => {
         myDataSource.unsubscribe();
       };
     }, [dataSource, interval, query]);
+
+    React.useEffect(() => {
+      setIsLoading(true);
+
+      dataSource.onReady().then((configuration) => {
+        console.log(configuration);
+        setIsLoading(false);
+      });
+    }, [dataSource]);
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
@@ -198,7 +208,7 @@ export const Chart = React.forwardRef(
           onKeyUp={handleKeyUp}
           style={{ height: "100%" }}
         >
-          {data.length > 10 ? (
+          {!isLoading && data.length > 1 ? (
             <div className="chart-wrapper">
               <AutoSizer
                 defaultHeight={150}

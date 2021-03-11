@@ -9,6 +9,7 @@ import {
 import { ApolloClient } from "@apollo/client";
 import { DataSource } from "../types/data-source";
 import { addDecimal } from "../helpers";
+import { marketQuery } from "../api/vega-graphql/queries/markets";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
@@ -43,7 +44,35 @@ export class ApolloDataSource implements DataSource {
   }
 
   async onReady() {
-    return Promise.resolve({
+    const res = await this.client.query({
+      query: marketQuery,
+      variables: {
+        marketId: this.marketId,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    if (!res?.data?.market?.data) {
+      return {
+        decimalPlaces: 5,
+        supportedIntervals: [
+          Interval.I1D,
+          Interval.I6H,
+          Interval.I1H,
+          Interval.I15M,
+          Interval.I5M,
+          Interval.I1M,
+        ],
+        priceMonitoringBounds: {},
+      };
+    }
+
+    console.info(res.data);
+
+    const decimalPlaces = res.data.market.decimalPlaces;
+
+    return {
+      decimalPlaces: decimalPlaces,
       supportedIntervals: [
         Interval.I1D,
         Interval.I6H,
@@ -52,7 +81,8 @@ export class ApolloDataSource implements DataSource {
         Interval.I5M,
         Interval.I1M,
       ],
-    });
+      priceMonitoringBounds: res.data.market.data.priceMonitoringBounds,
+    };
   }
 
   async query(interval: Interval, from: string, to: string) {
@@ -70,6 +100,8 @@ export class ApolloDataSource implements DataSource {
       return [];
     }
 
+    console.info(res.data);
+
     const decimalPlaces = res.data.market.decimalPlaces;
     const candles = res.data.market.candles?.map((d) =>
       extendCandle(d, decimalPlaces)
@@ -85,7 +117,9 @@ export class ApolloDataSource implements DataSource {
     });
 
     this.sub = res.subscribe(({ data }) => {
-      const candle = extendCandle(data.candles, this.decimalPlaces); // FIXME: Get from subscription
+      const candle = extendCandle(data.candles, this.decimalPlaces);
+
+      console.warn(data);
 
       onSubscriptionData(candle);
     });

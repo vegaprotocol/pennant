@@ -31,14 +31,9 @@ export class JsonDataSource implements DataSource {
 
   async onReady() {
     return Promise.resolve({
-      supportedIntervals: [
-        Interval.I1D,
-        Interval.I6H,
-        Interval.I1H,
-        Interval.I15M,
-        Interval.I5M,
-        Interval.I1M,
-      ],
+      decimalPlaces: this.decimalPlaces,
+      supportedIntervals: [Interval.I1D, Interval.I1H, Interval.I1M],
+      priceMonitoringBounds: {},
     });
   }
 

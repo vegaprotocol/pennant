@@ -20,7 +20,7 @@ export function useWhyDidYouUpdate(
         }
       });
 
-      if (Object.keys(changesObj).length) {
+      if (false && Object.keys(changesObj).length) {
         console.log("[why-did-you-update]", name, changesObj);
       }
     }

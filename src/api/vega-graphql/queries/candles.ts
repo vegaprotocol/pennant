@@ -20,6 +20,13 @@ export const candleQuery = gql`
     market(id: $marketId) {
       id
       decimalPlaces
+      data {
+        priceMonitoringBounds {
+          minValidPrice
+          maxValidPrice
+          referencePrice
+        }
+      }
       tradableInstrument {
         instrument {
           id
