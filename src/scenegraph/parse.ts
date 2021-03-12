@@ -87,7 +87,7 @@ export function parse(
   return {
     panels: specification.map((panel) => {
       return {
-        id: panel.name,
+        id: panel.name ?? "",
         data: panel.layer
           ? panel.layer.map((layer) => {
               return data.map((d) => {
@@ -96,9 +96,9 @@ export function parse(
                 if (layer.mark === "bar") {
                   cfg = getBarConfig(
                     d,
-                    panel.encoding.x.field,
-                    layer.encoding.y.field,
-                    layer.encoding.y2.field,
+                    panel.encoding.x?.field ?? "",
+                    layer.encoding.y?.field ?? "",
+                    layer.encoding.y2?.field ?? "",
                     candleWidth,
                     getConditionalColor(layer.encoding?.fill)(d),
                     getConditionalColor(layer.encoding?.stroke)(d)
@@ -106,9 +106,9 @@ export function parse(
                 } else if (layer.mark === "rule") {
                   cfg = getLineConfig(
                     d,
-                    panel.encoding.x.field,
-                    layer.encoding.y.field,
-                    layer.encoding.y2.field,
+                    panel.encoding.x?.field ?? "",
+                    layer.encoding.y?.field ?? "",
+                    layer.encoding.y2?.field ?? "",
                     getConditionalColor(panel.encoding?.color)(d)
                   );
                 }
@@ -123,9 +123,9 @@ export function parse(
                 if (panel.mark === "bar") {
                   cfg = getBarConfig(
                     d,
-                    panel.encoding.x.field,
-                    panel.encoding.y.field,
-                    panel.encoding.y2?.field,
+                    panel.encoding.x?.field ?? "",
+                    panel.encoding.y?.field ?? "",
+                    panel.encoding.y2?.field ?? "",
                     candleWidth,
                     getConditionalColor(panel.encoding?.fill)(d),
                     getConditionalColor(panel.encoding?.stroke)(d)

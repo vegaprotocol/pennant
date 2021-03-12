@@ -30,7 +30,12 @@ export interface EncodeEntry {
   stroke?: ColorDef;
 }
 
+export interface Data {
+  values?: any;
+}
+
 export type View = {
+  data?: Data;
   name?: string;
   mark?: Mark;
   encoding: EncodeEntry;

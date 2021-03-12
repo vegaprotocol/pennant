@@ -67,6 +67,13 @@ const topLevelViewSpec: View[] = [
           },
         },
       },
+      /*       {
+        data: {
+          values: [{}],
+        },
+        encoding: { y: { field: { datum: 300 } } },
+        layer: [{ mark: "rule" }],
+      }, */
     ],
   },
   {
@@ -159,14 +166,11 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
-          console.log("new streaming data has arrived");
-          //setData((data) => mergeData(data, [datum]));
+          setData((data) => mergeData(data, [datum]));
         });
       }
 
       const myDataSource = dataSource;
-
-      console.log("looking for new data");
 
       query(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
@@ -174,7 +178,7 @@ export const Chart = React.forwardRef(
         false
       );
 
-      //subscribe();
+      subscribe();
 
       return () => {
         myDataSource.unsubscribe();
