@@ -4,7 +4,6 @@ import { range } from "d3-array";
 type Datum = { date: Date; datetime: string };
 
 const arrayA = range(10).map((d) => new Date(2021, 1, d));
-const arrayB = range(10).map((d) => new Date(2021, 2, d));
 const arrayC = range(10).map((d) => new Date(2021, 1, d + 5));
 
 describe("mergeData", () => {
