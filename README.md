@@ -12,14 +12,14 @@ yarn add console-charts
 
 ## Documentation
 
-```javascript
-import React from 'react';
-import { Chart } from 'console-charts;
+```jsx
+import React from "react";
+import { Chart } from "console-charts";
 
 const dataSource = new ExampleDataSource();
 
 export const App = () => {
-  const [interval, setInterval] = React.useState('I1M');
+  const [interval, setInterval] = React.useState("I1M");
 
   return <Chart dataSource={dataSource} interval={interval} onSetInterval={setInterval} />
 }
