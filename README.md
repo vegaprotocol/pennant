@@ -2,15 +2,28 @@
 
 # Console Charts
 
-Console Charts is a Javascript library for visualising financial data.
+Console Charts is a React component library for visualising financial data.
 
 ## Installing
 
-Coming soon.
+```bash
+yarn add console-charts
+```
 
 ## Documentation
 
-Coming soon.
+```javascript
+import React from 'react';
+import { Chart } from 'console-charts;
+
+const dataSource = new ExampleDataSource();
+
+export const App = () => {
+  const [interval, setInterval] = React.useState('I1M');
+
+  return <Chart dataSource={dataSource} interval={interval} onSetInterval={setInterval} />
+}
+```
 
 ## Contributing
 
