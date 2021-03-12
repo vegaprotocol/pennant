@@ -9,7 +9,6 @@ import { PositionalElement } from "../../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
-import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 export type PlotAreaProps = {
   scenegraph: Panel;
@@ -24,22 +23,18 @@ export type PlotAreaProps = {
   onMouseOver?: (index: number) => void;
 };
 
-export const PlotArea = (props: PlotAreaProps) => {
-  useWhyDidYouUpdate("PlotArea", props);
-
-  const {
-    scenegraph,
-    x,
-    y,
-    crosshairXRef,
-    index: panelIndex,
-    crosshairYRef,
-    requestRedraw,
-    onMouseMove,
-    onMouseOut,
-    onMouseOver,
-  } = props;
-
+export const PlotArea = ({
+  scenegraph,
+  x,
+  y,
+  crosshairXRef,
+  index: panelIndex,
+  crosshairYRef,
+  requestRedraw,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+}: PlotAreaProps) => {
   const visualizationRef = React.useRef<FcElement>(null!);
   const foregroundRef = React.useRef<FcElement>(null!);
 

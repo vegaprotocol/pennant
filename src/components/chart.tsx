@@ -16,7 +16,6 @@ import { NonIdealState } from "@blueprintjs/core";
 import { PlotContainer } from "./plot-container";
 import { ResetButton } from "./reset-button";
 import { View } from "../types/vega-spec-types";
-import { useWhyDidYouUpdate } from "../hooks/useWhyDidYouUpdate";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -87,11 +86,10 @@ export type ChartProps = {
 };
 
 export const Chart = React.forwardRef(
-  (props: ChartProps, ref: React.Ref<ChartInterface>) => {
-    useWhyDidYouUpdate("Chart", props);
-
-    const { dataSource, interval, onSetInterval } = props;
-
+  (
+    { dataSource, interval, onSetInterval }: ChartProps,
+    ref: React.Ref<ChartInterface>
+  ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {
         chartRef.current.fitBounds(bounds);
