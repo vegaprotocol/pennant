@@ -9,7 +9,6 @@ import { PositionalElement } from "../../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
-import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 export type XAxisProps = {
   scenegraph: Panel;
@@ -22,20 +21,16 @@ export type XAxisProps = {
   onMouseOver?: (index: number) => void;
 };
 
-export const XAxis = (props: XAxisProps) => {
-  useWhyDidYouUpdate("XAxis", props);
-
-  const {
-    scenegraph,
-    x,
-    y,
-    crosshairXRef,
-    requestRedraw,
-    onMouseMove,
-    onMouseOut,
-    onMouseOver,
-  } = props;
-
+export const XAxis = ({
+  scenegraph,
+  x,
+  y,
+  crosshairXRef,
+  requestRedraw,
+  onMouseMove,
+  onMouseOut,
+  onMouseOver,
+}: XAxisProps) => {
   const visualizationRef = React.useRef<FcElement>(null!);
 
   React.useEffect(() => {

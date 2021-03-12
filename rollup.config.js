@@ -10,13 +10,15 @@ import { terser } from "rollup-plugin-terser";
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
 const globals = {
+  "@blueprintjs/core": "blueprint",
+  "@blueprintjs/select": "blueprint",
   react: "React",
   "react-dom": "ReactDOM",
 };
 
 const config = {
   input: "src/main.ts",
-  external: Object.keys(globals),
+  external: [/@babel\/runtime/, ...Object.keys(globals)],
   output: [
     {
       file: meta.exports,
@@ -59,7 +61,6 @@ const config = {
     {
       file: meta.main,
       format: "cjs",
-      plugins: [getBabelOutputPlugin({ presets: ["@babel/preset-env"] })],
       globals,
     },
   ],

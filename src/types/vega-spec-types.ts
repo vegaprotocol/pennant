@@ -13,18 +13,26 @@ export type ColorDef = {
   value: string;
 };
 
-export type Encoding = {
-  x?: any;
-  y?: any;
-  y2?: any;
+export interface ValueRef {
+  field?: string;
+  scale?: {
+    zero: boolean;
+  };
+  type?: "ordinal" | "temporal" | "quantitative";
+}
+
+export interface EncodeEntry {
+  x?: ValueRef;
+  y?: ValueRef;
+  y2?: ValueRef;
   color?: ColorDef;
   fill?: ColorDef;
   stroke?: ColorDef;
-};
+}
 
 export type View = {
-  name: string;
+  name?: string;
   mark?: Mark;
-  encoding: Encoding;
+  encoding: EncodeEntry;
   layer?: View[];
 };

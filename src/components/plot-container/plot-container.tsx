@@ -22,7 +22,6 @@ import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
 import { throttle } from "lodash";
-import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 
 const timeScale = scaleTime();
 const timeScaleRescaled = scaleTime(); // A rescaled copy of the time scale which reflects the user panning and scaling
@@ -43,10 +42,8 @@ export type PlotContainerProps = {
 };
 
 export const PlotContainer = React.forwardRef(
-  (props: PlotContainerProps, ref: React.Ref<ChartInterface>) => {
-    useWhyDidYouUpdate("PlotContainer", props);
-
-    const {
+  (
+    {
       data,
       view,
       interval,
@@ -56,8 +53,9 @@ export const PlotContainer = React.forwardRef(
       onMouseOut,
       onMouseOver,
       onGetDataRange,
-    } = props;
-
+    }: PlotContainerProps,
+    ref: React.Ref<ChartInterface>
+  ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {
         reset();
