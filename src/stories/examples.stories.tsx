@@ -63,20 +63,7 @@ PriceMonitoringBounds.args = {
               value: "#ff2641",
             },
           },
-        },
-        {
-          data: {
-            values: [{}],
-          },
-          encoding: {
-            y: { datum: 596.91323 },
-          },
-          layer: [
-            {
-              mark: "rule",
-            },
-          ],
-        },
+        }
       ],
     },
     {

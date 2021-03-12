@@ -20,7 +20,7 @@ export function recalculateScales(
         }
       });
     } else {
-      yEncodingFields.push(panel.encoding.y.field);
+      yEncodingFields.push(panel.encoding.y?.field);
 
       if (panel.encoding.y2) {
         yEncodingFields.push(panel.encoding.y2.field);
