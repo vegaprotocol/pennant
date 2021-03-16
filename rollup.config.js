@@ -17,7 +17,7 @@ const globals = {
 };
 
 const config = {
-  input: "src/main.ts",
+  input: "src/index.ts",
   external: [/@babel\/runtime/, ...Object.keys(globals)],
   output: [
     {

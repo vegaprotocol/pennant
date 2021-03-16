@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "exports": "./dist/modern.js",
-  "main": "./dist/legacy.cjs.js",
+  "main": "./dist/legacy.js",
   "module": "./dist/module.js",
-  "types": "./dist/types/main.d.ts",
+  "types": "./dist/types/index.d.ts",
   "keywords": [
     "vega",
     "charts"
@@ -15,8 +15,8 @@
     "url": "https://github.com/vegaprotocol/console-charts.git"
   },
   "files": [
-    "./dist/*.js",
-    "./dist/*.d.ts"
+    "dist/*.js",
+    "dist/**/*.d.ts"
   ],
   "dependencies": {
     "@babel/runtime": "^7.13.10",
@@ -70,7 +70,6 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "size": "yarn build && size-limit",
     "prepare": "husky install"
   },
   "eslintConfig": {
