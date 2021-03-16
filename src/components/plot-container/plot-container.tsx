@@ -95,8 +95,6 @@ export const PlotContainer = React.forwardRef(
       [candleWidth, data, decimalPlaces, view]
     );
 
-    console.log(scenegraph);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
       throttle(onBoundsChanged, 200),
@@ -240,7 +238,6 @@ export const PlotContainer = React.forwardRef(
           }
         )
         .on("draw", () => {
-          //console.log(domainRef.current);
           timeScale.domain(domainRef.current);
         });
 

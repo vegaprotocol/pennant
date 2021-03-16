@@ -126,9 +126,6 @@ export class ApolloDataSource implements DataSource {
 
     this.sub = res.subscribe(({ data }) => {
       const candle = extendCandle(data.candles, this.decimalPlaces);
-
-      console.warn(data);
-
       onSubscriptionData(candle);
     });
 
