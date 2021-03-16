@@ -188,7 +188,10 @@ export const Chart = React.forwardRef(
         console.info(`Data Source ready:`, configuration);
         setIsLoading(false);
 
-        if (configuration.priceMonitoringBounds && topLevelViewSpec[0].layer) {
+        if (
+          configuration.priceMonitoringBounds.length > 0 &&
+          topLevelViewSpec[0].layer
+        ) {
           topLevelViewSpec[0].layer[1] = {
             data: {
               values: [

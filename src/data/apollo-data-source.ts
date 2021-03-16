@@ -63,7 +63,7 @@ export class ApolloDataSource implements DataSource {
           Interval.I5M,
           Interval.I1M,
         ],
-        priceMonitoringBounds: {},
+        priceMonitoringBounds: [],
       };
     }
 
