@@ -85,7 +85,7 @@ export const SimpleWebpage: Story = () => {
           items={data.markets}
           itemRenderer={renderMarket}
           onItemSelect={(item: any) => {
-            setMarket(item);
+            setMarket(item.id);
           }}
           noResults={<MenuItem disabled={true} text="No results." />}
           filterable={false}
