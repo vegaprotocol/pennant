@@ -1,0 +1,21 @@
+.non-ideal-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.heading {
+  color: #f5f8fa;
+}
+
+h4.heading {
+  font-size: 18px;
+  line-height: 21px;
+}
+
+.non-ideal-state-visual {
+  color: rgba(167, 182, 194, 0.6);
+  font-size: 60px;
+}

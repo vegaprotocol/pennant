@@ -1,0 +1,20 @@
+import { Meta, Story } from "@storybook/react";
+import { NonIdealState, NonIdealStateProps } from "./non-ideal-state";
+
+export default {
+  title: "Components/NonIdealState",
+  component: NonIdealState,
+} as Meta;
+
+const Template: Story<NonIdealStateProps> = (args) => (
+  <div style={{ backgroundColor: "black", padding: "24px 24px" }}>
+    <NonIdealState {...args} />
+  </div>
+);
+
+export const Primary = Template.bind({});
+Primary.args = {
+  icon: "timeline-line-chart",
+  title: "No data found",
+  description: "Try a different market",
+};

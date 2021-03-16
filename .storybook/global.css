@@ -2,6 +2,10 @@ html {
   box-sizing: border-box;
 }
 
+#root {
+  color: #f5f8fa;
+}
+
 *,
 *:before,
 *:after {

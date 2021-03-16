@@ -12,7 +12,7 @@ import { ChartInfo } from "./chart-info";
 import { ChartInterface } from "../types";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
-import { NonIdealState } from "@blueprintjs/core";
+import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { ResetButton } from "./reset-button";
 
@@ -233,6 +233,10 @@ export const Chart = React.forwardRef(
     );
 
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
+
+    if (isLoading) {
+      return <NonIdealState icon="timeline-line-chart" title="Loading" />;
+    }
 
     return (
       <HotkeysProvider>
