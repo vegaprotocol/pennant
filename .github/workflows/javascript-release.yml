@@ -10,7 +10,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Use Node.js 12.x
         uses: actions/setup-node@v2
@@ -25,7 +25,7 @@ jobs:
         run: yarn test
 
       - name: Push release to npm (public)
+        run: yarn publish --access public .
+        if: false
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: 
-          yarn publish --access public .
