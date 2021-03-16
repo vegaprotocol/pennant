@@ -1,0 +1,31 @@
+name: Javascript Release to npm (public)
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-pre[0-9]+"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Test
+        run: yarn test
+
+      - name: Push release to npm (public)
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: 
+          yarn publish --access public .
