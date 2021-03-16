@@ -1,7 +1,6 @@
+import { CandleDetailsExtended, Scenegraph } from "../types";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { CandleDetailsExtended } from "../types/element";
-import { View } from "../types/vega-spec-types";
 import { ZoomTransform } from "d3-zoom";
 import { recalculateScales } from "../scales";
 
@@ -10,7 +9,7 @@ export function drawChart(
   timeScale: ScaleTime<number, number, never>,
   timeScaleRescaled: ScaleTime<number, number, never>,
   data: CandleDetailsExtended[],
-  view: View[],
+  scenegraph: Scenegraph,
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
   requestRedraw: () => void,
   onBoundsChanged: ((bounds: [Date, Date]) => void) | undefined
@@ -25,7 +24,7 @@ export function drawChart(
     (d) => d.date > domain[0] && d.date < domain[1]
   );
 
-  recalculateScales(view, filteredData, scalesRef);
+  recalculateScales(scenegraph, filteredData, scalesRef);
 
   requestRedraw();
   onBoundsChanged?.(domain as [Date, Date]);

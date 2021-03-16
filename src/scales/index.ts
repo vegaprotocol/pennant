@@ -1,45 +1,32 @@
-import { CandleDetailsExtended } from "../types/element";
+import { CandleDetailsExtended, Scenegraph } from "../types";
+
 import { ScaleLinear } from "d3-scale";
-import { View } from "../types/vega-spec-types";
 import { extent } from "d3-array";
 
 export function recalculateScales(
-  view: View[],
+  scenegraph: Scenegraph,
   data: CandleDetailsExtended[],
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>
 ) {
-  view.forEach((panel, i) => {
-    const yEncodingFields = [];
+  scenegraph.panels.forEach((panel, i) => {
+    const yEncodingFields = panel.yEncodingFields;
 
-    if (panel.layer) {
-      panel.layer.forEach((layer) => {
-        yEncodingFields.push(layer.encoding.y);
+    if (yEncodingFields) {
+      const mappedData = yEncodingFields.flatMap(
+        (field: any) =>
+          (data.map(
+            (d) => d[field as keyof CandleDetailsExtended]
+          ) as unknown) as number
+      );
 
-        if (layer.encoding.y2) {
-          yEncodingFields.push(layer.encoding.y2.field);
-        }
-      });
-    } else {
-      yEncodingFields.push(panel.encoding.y?.field);
+      const domain = extent(mappedData) as [number, number];
+      const domainSize = Math.abs(domain[1] - domain[0]);
 
-      if (panel.encoding.y2) {
-        yEncodingFields.push(panel.encoding.y2.field);
-      }
+      // TO DO: Include zero if specified in specification
+      scalesRef.current![i].domain([
+        domain[0] - domainSize * 0.1,
+        domain[1] + domainSize * 0.2,
+      ]);
     }
-
-    const mappedData = yEncodingFields.flatMap(
-      (field) =>
-        (data.map(
-          (d) => d[field as keyof CandleDetailsExtended]
-        ) as unknown) as number
-    );
-
-    const domain = extent(mappedData) as [number, number];
-    const domainSize = Math.abs(domain[1] - domain[0]);
-
-    scalesRef.current![i].domain([
-      panel.encoding.y?.scale?.zero ? 0 : domain[0] - domainSize * 0.1,
-      domain[1] + domainSize * 0.2,
-    ]);
   });
 }

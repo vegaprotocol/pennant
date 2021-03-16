@@ -1,4 +1,4 @@
-import { CandleDetailsExtended } from "../types/element";
+import { CandleDetailsExtended } from "../types";
 
 export const Colors = {
   BLACK: "#000",

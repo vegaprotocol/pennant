@@ -4,17 +4,21 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { CandleDetailsExtended, Panel, Scenegraph } from "../../types/element";
+import {
+  CandleDetailsExtended,
+  ChartInterface,
+  Panel,
+  Scenegraph,
+  View,
+} from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { getCandleWidth, getSubMinutes } from "../../helpers";
 import { select, selectAll } from "d3-selection";
 
-import { ChartInterface } from "../../types";
-import { FcElement } from "../../types/d3fc-types";
+import { FcElement } from "../../types";
 import { Interval } from "../../api/vega-graphql";
 import { PlotArea } from "../plot-area";
-import { View } from "../../types/vega-spec-types";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
 import { drawChart } from "../../render";
@@ -91,6 +95,8 @@ export const PlotContainer = React.forwardRef(
       [candleWidth, data, decimalPlaces, view]
     );
 
+    console.log(scenegraph);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
       throttle(onBoundsChanged, 200),
@@ -144,7 +150,7 @@ export const PlotContainer = React.forwardRef(
               timeScale,
               timeScaleRescaled,
               data,
-              view,
+              scenegraph,
               scalesRef,
               requestRedraw,
               onBoundsChangedThrottled
@@ -172,7 +178,7 @@ export const PlotContainer = React.forwardRef(
               false
             );
           }),
-      [data, onBoundsChangedThrottled, onGetDataRange, requestRedraw, view]
+      [data, onBoundsChangedThrottled, onGetDataRange, requestRedraw, scenegraph]
     );
 
     const reset = React.useCallback(

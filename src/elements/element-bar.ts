@@ -1,7 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Colors } from "../helpers";
-import { PositionalElement } from "../types/element";
+import { PositionalElement } from "../types";
 
 export type Bar = {
   x: Date;

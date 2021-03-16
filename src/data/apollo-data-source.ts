@@ -7,7 +7,7 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { DataSource } from "../types/data-source";
+import { DataSource } from "../types";
 import { addDecimal } from "../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
 
@@ -67,8 +67,6 @@ export class ApolloDataSource implements DataSource {
       };
     }
 
-    console.info(res.data);
-
     const decimalPlaces = res.data.market.decimalPlaces;
 
     return {
@@ -81,7 +79,19 @@ export class ApolloDataSource implements DataSource {
         Interval.I5M,
         Interval.I1M,
       ],
-      priceMonitoringBounds: res.data.market.data.priceMonitoringBounds,
+      priceMonitoringBounds: res.data.market.data.priceMonitoringBounds.map(
+        (bounds: any) => ({
+          maxValidPrice: Number(
+            addDecimal(bounds.maxValidPrice, decimalPlaces)
+          ),
+          minValidPrice: Number(
+            addDecimal(bounds.minValidPrice, decimalPlaces)
+          ),
+          referencePrice: Number(
+            addDecimal(bounds.referencePrice, decimalPlaces)
+          ),
+        })
+      ),
     };
   }
 
@@ -99,8 +109,6 @@ export class ApolloDataSource implements DataSource {
     if (!res?.data?.market?.candles) {
       return [];
     }
-
-    console.info(res.data);
 
     const decimalPlaces = res.data.market.decimalPlaces;
     const candles = res.data.market.candles?.map((d) =>

@@ -1,11 +1,9 @@
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../../helpers";
+import { FcElement, Panel, PositionalElement } from "../../types";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { FcElement } from "../../types/d3fc-types";
-import { Panel } from "../../types/element";
-import { PositionalElement } from "../../types/element";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";

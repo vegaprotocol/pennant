@@ -3,62 +3,36 @@ import "./chart.scss";
 import * as React from "react";
 
 import { Colors, mergeData } from "../helpers";
+import { DataSource, View } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { ChartInterface } from "../types";
-import { DataSource } from "../types/data-source";
 import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "@blueprintjs/core";
 import { PlotContainer } from "./plot-container";
 import { ResetButton } from "./reset-button";
-import { View } from "../types/vega-spec-types";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const topLevelViewSpec: View[] = [
   {
     name: "main",
-    encoding: {
-      x: {
-        field: "date",
-        type: "temporal",
-      },
-      y: {
-        type: "quantitative",
-        scale: { zero: false },
-      },
-      color: {
-        condition: {
-          test: ["lt", "open", "close"],
-          value: Colors.GREEN,
-        },
-        value: Colors.RED,
-      },
-    },
     layer: [
       {
-        name: "wick",
-        mark: "rule",
-        encoding: { y: { field: "low" }, y2: { field: "high" } },
-      },
-      {
-        name: "candle",
-        mark: "bar",
         encoding: {
-          y: { field: "open" },
-          y2: { field: "close" },
-          fill: {
-            condition: {
-              test: ["lt", "open", "close"],
-              value: Colors.GREEN_DARK,
-            },
-            value: Colors.RED,
+          x: {
+            field: "date",
+            type: "temporal",
           },
-          stroke: {
+          y: {
+            type: "quantitative",
+            scale: { zero: false },
+          },
+          color: {
             condition: {
               test: ["lt", "open", "close"],
               value: Colors.GREEN,
@@ -66,14 +40,36 @@ const topLevelViewSpec: View[] = [
             value: Colors.RED,
           },
         },
+        layer: [
+          {
+            name: "wick",
+            mark: "rule",
+            encoding: { y: { field: "low" }, y2: { field: "high" } },
+          },
+          {
+            name: "candle",
+            mark: "bar",
+            encoding: {
+              y: { field: "open" },
+              y2: { field: "close" },
+              fill: {
+                condition: {
+                  test: ["lt", "open", "close"],
+                  value: Colors.GREEN_DARK,
+                },
+                value: Colors.RED,
+              },
+              stroke: {
+                condition: {
+                  test: ["lt", "open", "close"],
+                  value: Colors.GREEN,
+                },
+                value: Colors.RED,
+              },
+            },
+          },
+        ],
       },
-      /*       {
-        data: {
-          values: [{}],
-        },
-        encoding: { y: { field: { datum: 300 } } },
-        layer: [{ mark: "rule" }],
-      }, */
     ],
   },
   {
@@ -189,8 +185,40 @@ export const Chart = React.forwardRef(
       setIsLoading(true);
 
       dataSource.onReady().then((configuration) => {
-        console.log(configuration);
+        console.info(`Data Source ready:`, configuration);
         setIsLoading(false);
+
+        if (configuration.priceMonitoringBounds && topLevelViewSpec[0].layer) {
+          topLevelViewSpec[0].layer[1] = {
+            data: {
+              values: [
+                {
+                  max: configuration.priceMonitoringBounds[0].maxValidPrice,
+                  min: configuration.priceMonitoringBounds[0].minValidPrice,
+                  reference:
+                    configuration.priceMonitoringBounds[0].referencePrice,
+                },
+              ],
+            },
+            layer: [
+              {
+                encoding: { y: { field: "max" }, color: { value: "green" } },
+                mark: "rule",
+              },
+              {
+                encoding: { y: { field: "min" }, color: { value: "red" } },
+                mark: "rule",
+              },
+              {
+                encoding: {
+                  y: { field: "reference" },
+                  color: { value: Colors.VEGA_YELLOW },
+                },
+                mark: "rule",
+              },
+            ],
+          };
+        }
       });
     }, [dataSource]);
 

@@ -31,6 +31,7 @@ export interface Panel {
   axisTooltip?: RenderableElement;
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
+  yEncodingFields?: string[];
 }
 
 export interface Scenegraph {

@@ -9,14 +9,16 @@ import {
   YAxisTooltipElement,
 } from "../elements";
 import {
-  CandleDetailsExtended,
+  Data,
+  EncodeEntry,
+  Mark,
   PositionalElement,
   Scenegraph,
-} from "../types/element";
+  View,
+} from "../types";
 
 import { Colors } from "../helpers";
-import { LineElement } from "../elements/element-line";
-import { View } from "../types/vega-spec-types";
+import { LineElement } from "../elements";
 
 const PADDING_INNER = 0.4;
 
@@ -62,6 +64,16 @@ function getLineConfig(
   y2: string,
   color: string
 ) {
+  if (!x && !y2) {
+    return {
+      points: [
+        [null, d[y]],
+        [null, d[y]],
+      ],
+      color: color,
+    };
+  }
+
   return {
     points: [
       [d[x], d[y]],
@@ -69,6 +81,96 @@ function getLineConfig(
     ],
     color: color,
   };
+}
+
+export function compileLayer(
+  data: Data,
+  encoding: EncodeEntry,
+  mark: Mark,
+  candleWidth: number
+) {
+  return data?.values?.map((d) => {
+    let cfg = {};
+
+    if (mark === "bar") {
+      cfg = getBarConfig(
+        d,
+        encoding.x?.field!,
+        encoding.y?.field!,
+        encoding.y2?.field!,
+        candleWidth,
+        getConditionalColor(encoding.fill)(d),
+        getConditionalColor(encoding.stroke)(d)
+      );
+    } else if (mark === "rule") {
+      cfg = getLineConfig(
+        d,
+        encoding.x?.field!,
+        encoding.y?.field!,
+        encoding.y2?.field!,
+        getConditionalColor(encoding?.color)(d)
+      );
+    }
+
+    return createElement(mark ?? "bar", cfg);
+  });
+}
+
+export function parseLayer(
+  layer: View,
+  data: Data,
+  encoding: EncodeEntry,
+  candleWidth: number
+) {
+  const series: any[] = [];
+  let layerData = data;
+  let layerEncoding = encoding;
+
+  if (layer?.data) {
+    layerData = layer.data;
+  }
+
+  if (layer?.encoding) {
+    layerEncoding = { ...encoding, ...layer.encoding };
+  }
+
+  if (layer?.mark) {
+    series.push(
+      compileLayer(layerData, layerEncoding, layer.mark, candleWidth)
+    );
+  }
+
+  if (layer?.layer) {
+    for (const subLayer of layer.layer) {
+      series.push(
+        ...parseLayer(subLayer, layerData, layerEncoding, candleWidth)
+      );
+    }
+  }
+
+  return series;
+}
+
+function extractYEncodingFields(layer: View) {
+  const yEncodingFields: string[] = [];
+
+  if (layer?.encoding) {
+    if (layer.encoding.y?.field) {
+      yEncodingFields.push(layer.encoding.y.field);
+    }
+
+    if (layer.encoding.y2?.field) {
+      yEncodingFields.push(layer.encoding.y2.field);
+    }
+  }
+
+  if (layer?.layer) {
+    for (const subLayer of layer.layer) {
+      yEncodingFields.push(...extractYEncodingFields(subLayer));
+    }
+  }
+
+  return yEncodingFields;
 }
 
 /**
@@ -79,7 +181,7 @@ function getLineConfig(
  * @param decimalPlaces
  */
 export function parse(
-  data: CandleDetailsExtended[],
+  data: any[],
   specification: View[],
   candleWidth: number,
   decimalPlaces: number
@@ -88,57 +190,12 @@ export function parse(
     panels: specification.map((panel) => {
       return {
         id: panel.name ?? "",
-        data: panel.layer
-          ? panel.layer.map((layer) => {
-              return data.map((d) => {
-                let cfg = {};
-
-                if (layer.mark === "bar") {
-                  cfg = getBarConfig(
-                    d,
-                    panel.encoding.x?.field ?? "",
-                    layer.encoding.y?.field ?? "",
-                    layer.encoding.y2?.field ?? "",
-                    candleWidth,
-                    getConditionalColor(layer.encoding?.fill)(d),
-                    getConditionalColor(layer.encoding?.stroke)(d)
-                  );
-                } else if (layer.mark === "rule") {
-                  cfg = getLineConfig(
-                    d,
-                    panel.encoding.x?.field ?? "",
-                    layer.encoding.y?.field ?? "",
-                    layer.encoding.y2?.field ?? "",
-                    getConditionalColor(panel.encoding?.color)(d)
-                  );
-                }
-
-                return createElement(layer.mark ?? panel.mark ?? "bar", cfg);
-              });
-            })
-          : [
-              data.map((d) => {
-                let cfg = {};
-
-                if (panel.mark === "bar") {
-                  cfg = getBarConfig(
-                    d,
-                    panel.encoding.x?.field ?? "",
-                    panel.encoding.y?.field ?? "",
-                    panel.encoding.y2?.field ?? "",
-                    candleWidth,
-                    getConditionalColor(panel.encoding?.fill)(d),
-                    getConditionalColor(panel.encoding?.stroke)(d)
-                  );
-                }
-
-                return createElement(panel?.mark ?? "bar", cfg);
-              }),
-            ],
+        data: parseLayer(panel, { values: data }, {}, candleWidth),
         grid: new GridElement(),
         axis: new YAxisElement(),
         crosshair: new CrosshairElement(),
         axisTooltip: new YAxisTooltipElement(decimalPlaces),
+        yEncodingFields: extractYEncodingFields(panel),
       };
     }),
     xAxis: {
@@ -161,7 +218,7 @@ export function parse(
 
 function getConditionalColor(
   encoding:
-    | { condition: { test: string[]; value: string }; value: string }
+    | { condition?: { test: string[]; value: string }; value: string }
     | undefined
 ) {
   let color: (datum: any) => string;
@@ -177,18 +234,20 @@ function getConditionalColor(
       case "lt":
         color = (datum) =>
           datum[operand1] < datum[operand2]
-            ? encoding?.condition.value
+            ? encoding?.condition?.value ?? Colors.GRAY
             : encoding?.value ?? Colors.GRAY;
         break;
       case "gt":
         color = (datum) =>
           datum[operand1] > datum[operand2]
-            ? encoding?.condition.value
+            ? encoding?.condition?.value ?? Colors.GRAY
             : encoding?.value ?? Colors.GRAY;
         break;
       default:
         throw new Error(`Unrecognized condition operator: ${operator}`);
     }
+  } else if (encoding?.value) {
+    color = () => encoding.value;
   } else {
     color = () => Colors.GRAY;
   }

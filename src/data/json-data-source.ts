@@ -1,4 +1,4 @@
-import { DataSource } from "../types/data-source";
+import { DataSource } from "../types";
 import { Interval } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
 import json from "./data.json";
