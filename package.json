@@ -1,7 +1,7 @@
 {
-  "name": "console-charts",
+  "name": "@vegaprotocol/console-charts",
   "version": "0.1.0",
-  "private": true,
+  "description": "React component library for visualising financial data",
   "exports": "./dist/modern.js",
   "main": "./dist/legacy.js",
   "module": "./dist/module.js",
@@ -14,6 +14,12 @@
     "type": "git",
     "url": "https://github.com/vegaprotocol/console-charts.git"
   },
+  "author": "Vega <hi@vega.xyz>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vegaprotocol/console-charts/issues"
+  },
+  "homepage": "https://github.com/vegaprotocol/console-charts",
   "files": [
     "dist/*.js",
     "dist/**/*.d.ts"
