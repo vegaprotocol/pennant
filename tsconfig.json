@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,10 +16,7 @@
     "jsx": "react-jsx",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "dist/types",
-    "noEmit": true
+    "declarationDir": "dist/types"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

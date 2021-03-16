@@ -64,7 +64,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rollup -c",
+    "build": "rollup -c && yarn build:types",
     "build:types": "tsc",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
