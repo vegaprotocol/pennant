@@ -35,8 +35,6 @@ export interface Data {
   values?: any[];
 }
 
-export interface Layer {}
-
 export type View = {
   data?: Data;
   name?: string;
