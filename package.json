@@ -1,5 +1,5 @@
 {
-  "name": "@vegaprotocol/console-charts",
+  "name": "pennant",
   "version": "0.1.0",
   "description": "React component library for visualising financial data",
   "exports": "./dist/modern.js",
@@ -12,14 +12,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vegaprotocol/console-charts.git"
+    "url": "https://github.com/vegaprotocol/pennant.git"
   },
   "author": "Vega <hi@vega.xyz>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vegaprotocol/console-charts/issues"
+    "url": "https://github.com/vegaprotocol/pennant/issues"
   },
-  "homepage": "https://github.com/vegaprotocol/console-charts",
+  "homepage": "https://github.com/vegaprotocol/pennant",
   "files": [
     "dist/*.js",
     "dist/**/*.d.ts"
