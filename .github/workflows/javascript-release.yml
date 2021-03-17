@@ -1,4 +1,4 @@
-name: Javascript Release to npm (public)
+name: publish
 
 on:
   push:
@@ -25,7 +25,6 @@ jobs:
         run: yarn test
 
       - name: Push release to npm (public)
-        run: yarn publish --access public .
-        if: false
+        run: npm publish --access public --tag alpha .
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
