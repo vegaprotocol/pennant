@@ -4,7 +4,7 @@
 
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/vegaprotocol/pennant">
     <img src="https://user-images.githubusercontent.com/981531/111454723-e0742f00-870c-11eb-8030-49edb8f05bc3.png" alt="Logo" width="256" height="128" style="image-rendering: pixelated;">
   </a>
 
