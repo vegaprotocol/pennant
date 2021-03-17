@@ -9,8 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install modules
+      - name: Install
         run: yarn install --frozen-lockfile
 
-      - name: Run tests
+      - name: Test
         run: yarn test

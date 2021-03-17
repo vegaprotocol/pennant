@@ -1,7 +1,7 @@
 {
-  "name": "console-charts",
-  "version": "0.1.0",
-  "private": true,
+  "name": "pennant",
+  "version": "0.1.0-alpha.2",
+  "description": "React component library for visualising financial data",
   "exports": "./dist/modern.js",
   "main": "./dist/legacy.js",
   "module": "./dist/module.js",
@@ -12,8 +12,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vegaprotocol/console-charts.git"
+    "url": "https://github.com/vegaprotocol/pennant.git"
   },
+  "author": "Vega <hi@vega.xyz>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vegaprotocol/pennant/issues"
+  },
+  "homepage": "https://github.com/vegaprotocol/pennant",
   "files": [
     "dist/*.js",
     "dist/**/*.d.ts"
@@ -53,13 +59,10 @@
     "d3-transition": "^2.0.0",
     "d3-zoom": "^2.0.0",
     "date-fns": "^2.17.0",
-    "graphql": "^15.5.0",
     "lodash": "^4.17.20",
     "node-sass": "^5.0.0",
     "react-scripts": "4.0.3",
     "react-virtualized-auto-sizer": "^1.0.4",
-    "subscriptions-transport-ws": "^0.9.18",
-    "swr": "^0.4.2",
     "typescript": "^4.1.2"
   },
   "scripts": {
@@ -111,6 +114,7 @@
     "@storybook/preset-scss": "1.0.3",
     "@storybook/react": "6.1.21",
     "@storybook/theming": "6.1.21",
+    "graphql": "15.5.0",
     "husky": "5.1.3",
     "prettier": "2.2.1",
     "pretty-quick": "3.1.0",
