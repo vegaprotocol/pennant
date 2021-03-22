@@ -45,7 +45,7 @@ function getAreaConfig(
   x: string,
   y: string,
   y2: string,
-  color: string
+  color: string | null
 ) {
   return {
     points: data.map((d: any) => [d[x], d[y]]),
@@ -59,8 +59,8 @@ function getBarConfig(
   y: string,
   y2: string,
   width: number,
-  fill: string,
-  stroke: string
+  fill: string | null,
+  stroke: string | null
 ) {
   let base = 0;
 
@@ -78,7 +78,7 @@ function getBarConfig(
   };
 }
 
-function getLineConfig(data: any, x: string, y: string, color: string) {
+function getLineConfig(data: any, x: string, y: string, color: string | null) {
   return {
     points: data.map((d: any) => [d[x], d[y]]),
     color: color,
@@ -91,7 +91,7 @@ function getRuleConfig(
   x2: string,
   y: string,
   y2: string,
-  color: string
+  color: string | null
 ) {
   if (x === undefined) {
     return {
@@ -318,7 +318,7 @@ function getConditionalColor(
     | { condition?: { test: string[]; value: string }; value: string }
     | undefined
 ) {
-  let color: (datum: any) => string;
+  let color: (datum: any) => string | null;
 
   if (encoding?.condition?.test.length === 3) {
     const test = encoding?.condition?.test;
@@ -346,7 +346,7 @@ function getConditionalColor(
   } else if (encoding?.value) {
     color = () => encoding.value;
   } else {
-    color = () => Colors.GRAY;
+    color = () => null;
   }
 
   return color;

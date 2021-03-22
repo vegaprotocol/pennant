@@ -52,7 +52,7 @@ type Market = {
   tradableInstrument: { instrument: { name: string } };
 };
 
-type Study = { id: "macd" | "none" | "volume"; label: string };
+type Study = { id: "bollinger" | "macd" | "none" | "volume"; label: string };
 
 const MarketSelect = Select.ofType<Market>();
 const StudySelect = Select.ofType<Study>();
@@ -86,7 +86,6 @@ const renderStudy: ItemRenderer<Study> = (
     <MenuItem
       active={modifiers.active}
       key={study.id}
-      label={study.label}
       onClick={handleClick}
       text={study.label}
     />
@@ -97,6 +96,7 @@ const studies: Study[] = [
   { id: "none", label: "None" },
   { id: "volume", label: "Volume" },
   { id: "macd", label: "Macd" },
+  { id: "bollinger", label: "Bollinger Bands" },
 ];
 
 export const VegaProtocol: Story = () => {
@@ -156,7 +156,7 @@ export const VegaProtocol: Story = () => {
           }}
         />
       </div>
-      <div style={{ height: "60vh" }}>
+      <div style={{ height: "40vh" }}>
         <Chart
           ref={ref}
           dataSource={dataSource}
@@ -205,7 +205,7 @@ export const CryptoCompare: Story = () => {
           }}
         />
       </div>
-      <div style={{ height: "60vh" }}>
+      <div style={{ height: "40vh" }}>
         <Chart
           ref={ref}
           dataSource={dataSource}

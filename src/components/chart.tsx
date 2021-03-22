@@ -5,6 +5,10 @@ import * as React from "react";
 import { Colors, mergeData } from "../helpers";
 import { DataSource, PriceMonitoringBounds, View } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
+import {
+  indicatorBollingerBands,
+  indicatorMacd,
+} from "@d3fc/d3fc-technical-indicator";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
@@ -16,7 +20,6 @@ import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
-import { indicatorMacd } from "@d3fc/d3fc-technical-indicator";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -42,7 +45,17 @@ let topLevelViewSpec: View[] = [
           {
             name: "wick",
             mark: "rule",
-            encoding: { y: { field: "low" }, y2: { field: "high" } },
+            encoding: {
+              y: { field: "low" },
+              y2: { field: "high" },
+              color: {
+                condition: {
+                  test: ["lt", "open", "close"],
+                  value: Colors.GREEN,
+                },
+                value: Colors.RED,
+              },
+            },
           },
           {
             name: "candle",
@@ -74,7 +87,7 @@ let topLevelViewSpec: View[] = [
 
 export type ChartProps = {
   dataSource: DataSource;
-  study?: "volume" | "macd";
+  study?: "bollinger" | "volume" | "macd";
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
@@ -118,17 +131,75 @@ export const Chart = React.forwardRef(
       };
 
       switch (study) {
+        case "bollinger":
+          topLevelViewSpec[1] = {
+            name: "study",
+            data: {
+              values: indicatorBollingerBands()(data.map((d) => d.open)).map(
+                (d, i) => ({
+                  ...data[i],
+                  ...d,
+                })
+              ),
+            },
+            encoding: {
+              x: { field: "date", type: "temporal" },
+            },
+            layer: [
+              {
+                mark: "line",
+                encoding: {
+                  y: {
+                    field: "average",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  color: { value: Colors.GRAY_LIGHT_1 },
+                },
+              },
+              {
+                mark: "line",
+                encoding: {
+                  y: {
+                    field: "upper",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  color: { value: "red" },
+                },
+              },
+              {
+                mark: "line",
+                encoding: {
+                  y: {
+                    field: "lower",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  color: { value: "green" },
+                },
+              },
+            ],
+          };
+          break;
         case "volume":
           topLevelViewSpec[1] = {
             name: "study",
             data: { values: data },
-            mark: "area",
+            mark: "bar",
             encoding: {
               x: { field: "date", type: "temporal" },
               y: {
                 field: "volume",
                 type: "quantitative",
                 scale: { zero: true },
+              },
+              fill: {
+                condition: {
+                  test: ["lt", "open", "close"],
+                  value: Colors.GREEN_DARK,
+                },
+                value: Colors.RED,
               },
             },
           };
@@ -165,7 +236,7 @@ export const Chart = React.forwardRef(
                     type: "quantitative",
                     scale: { zero: true },
                   },
-                  color: { value: "red" },
+                  color: { value: Colors.VEGA_YELLOW },
                 },
               },
               {
@@ -176,7 +247,7 @@ export const Chart = React.forwardRef(
                     type: "quantitative",
                     scale: { zero: true },
                   },
-                  color: { value: "green" },
+                  color: { value: Colors.VEGA_ORANGE },
                 },
               },
             ],
@@ -300,7 +371,7 @@ export const Chart = React.forwardRef(
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
-        query(from, to);
+        //query(from, to);
       },
       [query]
     );
