@@ -1,6 +1,6 @@
 {
   "name": "pennant",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "React component library for visualising financial data",
   "exports": "./dist/modern.js",
   "main": "./dist/legacy.js",
@@ -68,7 +68,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "rollup -c && yarn build:types",
-    "build:types": "tsc",
+    "build:types": "tsc --project tsconfig.build.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
