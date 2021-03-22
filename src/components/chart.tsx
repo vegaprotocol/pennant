@@ -371,7 +371,7 @@ export const Chart = React.forwardRef(
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
-        //query(from, to);
+        query(from, to);
       },
       [query]
     );
