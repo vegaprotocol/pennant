@@ -1,4 +1,5 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+import { curveBasis, line as d3Line } from "d3-shape";
 
 import { PositionalElement } from "../types";
 
@@ -27,35 +28,22 @@ export class LineElement implements PositionalElement {
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>
   ) {
-    // No x values provided, draw full width of chart
-    if (this.points.length === 2 && this.points[0][0] === null) {
-      ctx.beginPath();
+    // TODO: Instantiate on construction
+    const line = d3Line<[Date, number]>()
+      .curve(curveBasis)
+      .x((d) => xScale(d[0]))
+      .y((d) => yScale(d[1]));
 
-      ctx.moveTo(
-        xScale.range()[0],
-        Math.floor(yScale(this.points[0][1])) + 0.5
-      );
-      ctx.lineTo(
-        xScale.range()[1],
-        Math.floor(yScale(this.points[1][1])) + 0.5
-      );
-
-      ctx.strokeStyle = this.color;
-      ctx.stroke();
-      ctx.closePath();
-    }
+    line.context(ctx);
 
     if (this.points.length > 1) {
       ctx.beginPath();
 
-      ctx.moveTo(xScale(this.points[0][0]), yScale(this.points[0][1]));
-
-      for (let i = 1; i < this.points.length; i++) {
-        ctx.lineTo(xScale(this.points[i][0]), yScale(this.points[i][1]));
-      }
+      line(this.points);
 
       ctx.strokeStyle = this.color;
       ctx.stroke();
+
       ctx.closePath();
     }
   }

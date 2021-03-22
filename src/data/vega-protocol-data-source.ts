@@ -25,7 +25,8 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
 
 export class ApolloDataSource implements DataSource {
   client: ApolloClient<any>;
-  sub: ZenObservable.Subscription | null = null;
+  candlesSub: ZenObservable.Subscription | null = null;
+  marketDataSub: ZenObservable.Subscription | null = null;
   marketId: string;
   _decimalPlaces: number;
 
@@ -119,20 +120,18 @@ export class ApolloDataSource implements DataSource {
   }
 
   subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
-    const res = this.client.subscribe({
+    const candlesObervable = this.client.subscribe({
       query: candleSubscriptionQuery,
       variables: { marketId: this.marketId, interval },
     });
 
-    this.sub = res.subscribe(({ data }) => {
+    this.candlesSub = candlesObervable.subscribe(({ data }) => {
       const candle = extendCandle(data.candles, this.decimalPlaces);
       onSubscriptionData(candle);
     });
-
-    return this.sub;
   }
 
   unsubscribe() {
-    return this.sub && this.sub.unsubscribe();
+    return this.candlesSub && this.candlesSub.unsubscribe();
   }
 }

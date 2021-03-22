@@ -46,8 +46,11 @@ export class BarElement implements PositionalElement {
     );
 
     ctx.fillStyle = this.fill ?? Colors.GRAY;
-    ctx.strokeStyle = this.stroke ?? Colors.GRAY;
     ctx.fill();
-    ctx.stroke();
+
+    if (this.stroke) {
+      ctx.strokeStyle = this.stroke ?? Colors.GRAY;
+      ctx.stroke();
+    }
   }
 }

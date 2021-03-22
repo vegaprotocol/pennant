@@ -1,4 +1,6 @@
-export type Mark = "bar" | "line" | "rule";
+export type Mark = "area" | "bar" | "line" | "rule";
+
+export type MarkDef = Mark | { type: "area"; line?: boolean };
 
 export type Channel = {
   field: string;
@@ -24,6 +26,7 @@ export interface ValueRef {
 
 export interface EncodeEntry {
   x?: ValueRef;
+  x2?: ValueRef;
   y?: ValueRef;
   y2?: ValueRef;
   color?: ColorDef;
@@ -38,7 +41,7 @@ export interface Data {
 export type View = {
   data?: Data;
   name?: string;
-  mark?: Mark;
+  mark?: MarkDef;
   encoding?: EncodeEntry;
   layer?: View[];
 };

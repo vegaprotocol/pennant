@@ -28,6 +28,7 @@
     "@babel/runtime": "^7.13.10",
     "@d3fc/d3fc-element": "^6.1.2",
     "@d3fc/d3fc-rebind": "^6.0.1",
+    "@d3fc/d3fc-technical-indicator": "^8.0.1",
     "@d3fc/d3fc-zoom": "^1.1.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

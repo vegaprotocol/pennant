@@ -7,3 +7,9 @@ export interface CandleDetailsExtended {
   close: number;
   volume: number;
 }
+
+export interface PriceMonitoringBounds {
+  minValidPrice: number;
+  maxValidPrice: number;
+  referencePrice: number;
+}

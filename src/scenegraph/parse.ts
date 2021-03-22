@@ -3,6 +3,7 @@ import {
   CandleElement,
   CrosshairElement,
   GridElement,
+  LineElement,
   XAxisElement,
   XAxisTooltipElement,
   YAxisElement,
@@ -12,24 +13,44 @@ import {
   Data,
   EncodeEntry,
   Mark,
+  MarkDef,
   PositionalElement,
   Scenegraph,
   View,
 } from "../types";
 
+import { AreaElement } from "../elements/element-area";
 import { Colors } from "../helpers";
-import { LineElement } from "../elements";
+import { RuleElement } from "../elements";
+import { extent } from "d3-array";
 
 const PADDING_INNER = 0.4;
 
-function createElement(type: string, options: any): PositionalElement {
-  if (type === "bar") {
+function createElement(type: Mark, options: any): PositionalElement {
+  if (type === "area") {
+    return new AreaElement(options);
+  } else if (type === "bar") {
     return new BarElement(options);
-  } else if (type === "rule") {
+  } else if (type === "line") {
     return new LineElement(options);
+  } else if (type === "rule") {
+    return new RuleElement(options);
   }
 
   throw new Error(`Element type not recognized: ${type}`);
+}
+
+function getAreaConfig(
+  data: any,
+  x: string,
+  y: string,
+  y2: string,
+  color: string
+) {
+  return {
+    points: data.map((d: any) => [d[x], d[y]]),
+    color: color,
+  };
 }
 
 function getBarConfig(
@@ -57,63 +78,114 @@ function getBarConfig(
   };
 }
 
-function getLineConfig(
+function getLineConfig(data: any, x: string, y: string, color: string) {
+  return {
+    points: data.map((d: any) => [d[x], d[y]]),
+    color: color,
+  };
+}
+
+function getRuleConfig(
   d: any,
   x: string,
+  x2: string,
   y: string,
   y2: string,
   color: string
 ) {
-  if (!x && !y2) {
+  if (x === undefined) {
     return {
-      points: [
-        [null, d[y]],
-        [null, d[y]],
-      ],
+      x: null,
+      x2: null,
+      y: d[y],
+      y2: y2 !== undefined ? d[y2] : null,
+      color: color,
+    };
+  }
+
+  if (y === undefined) {
+    return {
+      x: d[x],
+      x2: x2 !== undefined ? d[x2] : null,
+      y: null,
+      y2: null,
       color: color,
     };
   }
 
   return {
-    points: [
-      [d[x], d[y]],
-      [d[x], d[y2]],
-    ],
-    color: color,
+    x: d[x],
+    x2: x2 !== undefined ? d[x2] : null,
+    y: d[y],
+    y2: d[y2],
+    color,
   };
 }
 
 export function compileLayer(
   data: Data,
   encoding: EncodeEntry,
-  mark: Mark,
+  mark: MarkDef,
   candleWidth: number
 ) {
-  return data?.values?.map((d) => {
-    let cfg = {};
+  let markType: Mark;
+  let cfg = {};
 
-    if (mark === "bar") {
-      cfg = getBarConfig(
-        d,
-        encoding.x?.field!,
-        encoding.y?.field!,
-        encoding.y2?.field!,
-        candleWidth,
-        getConditionalColor(encoding.fill)(d),
-        getConditionalColor(encoding.stroke)(d)
-      );
-    } else if (mark === "rule") {
-      cfg = getLineConfig(
-        d,
-        encoding.x?.field!,
-        encoding.y?.field!,
-        encoding.y2?.field!,
-        getConditionalColor(encoding?.color)(d)
-      );
-    }
+  if (typeof mark === "object") {
+    markType = mark.type;
+  } else {
+    markType = mark;
+  }
 
-    return createElement(mark ?? "bar", cfg);
-  });
+  if (markType === "area") {
+    cfg = getAreaConfig(
+      data?.values,
+      encoding.x?.field!,
+      encoding.y?.field!,
+      encoding.y2?.field!,
+      getConditionalColor(encoding?.color)(null)
+    );
+
+    return [createElement("area", cfg)];
+  } else if (markType === "line") {
+    cfg = getLineConfig(
+      data?.values,
+      encoding.x?.field!,
+      encoding.y?.field!,
+      getConditionalColor(encoding?.color)(null)
+    );
+
+    return [createElement("line", cfg)];
+  }
+
+  return data?.values
+    ?.map((d) => {
+      let cfg = {};
+
+      if (markType === "bar") {
+        cfg = getBarConfig(
+          d,
+          encoding.x?.field!,
+          encoding.y?.field!,
+          encoding.y2?.field!,
+          candleWidth,
+          getConditionalColor(encoding.fill)(d),
+          getConditionalColor(encoding.stroke)(d)
+        );
+      } else if (markType === "rule") {
+        cfg = getRuleConfig(
+          d,
+          encoding.x?.field!,
+          encoding.x2?.field!,
+          encoding.y?.field!,
+          encoding.y2?.field!,
+          getConditionalColor(encoding?.color)(d)
+        );
+      }
+
+      return createElement(markType ?? "bar", cfg);
+    })
+    .filter((d) => d.x !== undefined);
 }
 
 export function parseLayer(
@@ -151,6 +223,22 @@ export function parseLayer(
   return series;
 }
 
+function extractYDomain(layer: View) {
+  const mappedData = extractYEncodingFields(layer).flatMap(
+    (field: any) =>
+      (layer.data?.values?.map((d) => d[field]) as unknown) as number
+  );
+
+  const domain = extent(mappedData) as [number, number];
+  const domainSize = Math.abs(domain[1] - domain[0]);
+
+  // TO DO: Include zero if specified in specification
+  return [domain[0] - domainSize * 0.1, domain[1] + domainSize * 0.2] as [
+    number,
+    number
+  ];
+}
+
 function extractYEncodingFields(layer: View) {
   const yEncodingFields: string[] = [];
 
@@ -186,20 +274,29 @@ export function parse(
   candleWidth: number,
   decimalPlaces: number
 ): Scenegraph {
+  if (specification.length > 2) {
+    console.warn(
+      `Expected no more than 2 panels. Received ${specification.length}`
+    );
+  }
+
   return {
     panels: specification.map((panel) => {
       return {
         id: panel.name ?? "",
         data: parseLayer(panel, { values: data }, {}, candleWidth),
+        originalData: panel.data?.values ?? [],
         grid: new GridElement(),
         axis: new YAxisElement(),
         crosshair: new CrosshairElement(),
         axisTooltip: new YAxisTooltipElement(decimalPlaces),
         yEncodingFields: extractYEncodingFields(panel),
+        yDomain: extractYDomain(panel),
       };
     }),
     xAxis: {
       id: "x-axis",
+      originalData: data,
       data: [
         data.map(
           (candle) =>

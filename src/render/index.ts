@@ -1,6 +1,6 @@
-import { CandleDetailsExtended, Scenegraph } from "../types";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
+import { Scenegraph } from "../types";
 import { ZoomTransform } from "d3-zoom";
 import { recalculateScales } from "../scales";
 
@@ -8,7 +8,7 @@ export function drawChart(
   event: any,
   timeScale: ScaleTime<number, number, never>,
   timeScaleRescaled: ScaleTime<number, number, never>,
-  data: CandleDetailsExtended[],
+  data: any[],
   scenegraph: Scenegraph,
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
   requestRedraw: () => void,
@@ -20,8 +20,8 @@ export function drawChart(
 
   timeScaleRescaled.domain(domain);
 
-  const filteredData = data.filter(
-    (d) => d.date > domain[0] && d.date < domain[1]
+  const filteredData = scenegraph.panels.map((panel) =>
+    panel.originalData.filter((d) => d.date > domain[0] && d.date < domain[1])
   );
 
   recalculateScales(scenegraph, filteredData, scalesRef);

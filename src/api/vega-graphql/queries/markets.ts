@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const marketQuery = gql`
-  query marketQuery($marketId: String!) {
+  query marketQuery($marketId: ID!) {
     market(id: $marketId) {
       id
       decimalPlaces

@@ -16,14 +16,46 @@ export default {
   component: PlotContainer,
 } as Meta;
 
-const Template: Story<PlotContainerProps> = (args) => {
+const Template: Story<PlotContainerProps> = ({ view, ...args }) => {
   const data = json[args.interval].candles.map((candle) =>
     extendCandle(candle, args.decimalPlaces)
   );
 
+  view.push({
+    name: "study",
+    data: { values: data },
+    encoding: {
+      x: { field: "date", type: "temporal" },
+    },
+    layer: [
+      {
+        mark: "area",
+        encoding: {
+          y: { field: "macd", type: "quantitative", scale: { zero: true } },
+        },
+      },
+      {
+        mark: "area",
+        encoding: {
+          y: { field: "signal", type: "quantitative", scale: { zero: true } },
+        },
+      },
+      {
+        mark: "area",
+        encoding: {
+          y: {
+            field: "divergence",
+            type: "quantitative",
+            scale: { zero: true },
+          },
+        },
+      },
+    ],
+  });
+
   return (
     <div className="candlestick-chart-wrapper">
-      <PlotContainer {...args} data={data} />
+      <PlotContainer {...args} view={view} data={data} />
     </div>
   );
 };
@@ -83,14 +115,14 @@ PriceMonitoringBounds.args = {
             {
               encoding: {
                 y: { field: "max" },
-                color: { value: Colors.VEGA_GREEN },
+                color: { value: Colors.WHITE },
               },
               mark: "rule",
             },
             {
               encoding: {
                 y: { field: "min" },
-                color: { value: Colors.VEGA_RED },
+                color: { value: Colors.WHITE },
               },
               mark: "rule",
             },
@@ -104,14 +136,6 @@ PriceMonitoringBounds.args = {
           ],
         },
       ],
-    },
-    {
-      name: "study",
-      mark: "bar",
-      encoding: {
-        x: { field: "date", type: "temporal" },
-        y: { field: "volume", type: "quantitative", scale: { zero: true } },
-      },
     },
   ],
 };

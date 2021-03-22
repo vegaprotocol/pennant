@@ -3,7 +3,7 @@ import "./chart.scss";
 import * as React from "react";
 
 import { Colors, mergeData } from "../helpers";
-import { DataSource, View } from "../types";
+import { DataSource, PriceMonitoringBounds, View } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -14,11 +14,13 @@ import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
+import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
+import { indicatorMacd } from "@d3fc/d3fc-technical-indicator";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const topLevelViewSpec: View[] = [
+let topLevelViewSpec: View[] = [
   {
     name: "main",
     layer: [
@@ -33,10 +35,6 @@ const topLevelViewSpec: View[] = [
             scale: { zero: false },
           },
           color: {
-            condition: {
-              test: ["lt", "open", "close"],
-              value: Colors.GREEN,
-            },
             value: Colors.RED,
           },
         },
@@ -72,25 +70,18 @@ const topLevelViewSpec: View[] = [
       },
     ],
   },
-  {
-    name: "study",
-    mark: "bar",
-    encoding: {
-      x: { field: "date", type: "temporal" },
-      y: { field: "volume", type: "quantitative", scale: { zero: true } },
-    },
-  },
 ];
 
 export type ChartProps = {
   dataSource: DataSource;
+  study?: "volume" | "macd";
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
   (
-    { dataSource, interval, onSetInterval }: ChartProps,
+    { dataSource, study, interval, onSetInterval }: ChartProps,
     ref: React.Ref<ChartInterface>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -110,12 +101,93 @@ export const Chart = React.forwardRef(
 
     const chartRef = React.useRef<ChartInterface>(null!);
     const [data, setData] = React.useState<any[]>([]);
+    const [
+      priceMonitoringBounds,
+      setPriceMonitoringBounds,
+    ] = React.useState<PriceMonitoringBounds | null>(null);
     const [bounds, setBounds] = React.useState<[Date, Date]>([
       new Date(),
       new Date(),
     ]);
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
     const [isLoading, setIsLoading] = React.useState(true);
+
+    const view = React.useMemo(() => {
+      topLevelViewSpec[0].data = {
+        values: data,
+      };
+
+      switch (study) {
+        case "volume":
+          topLevelViewSpec[1] = {
+            name: "study",
+            data: { values: data },
+            mark: "area",
+            encoding: {
+              x: { field: "date", type: "temporal" },
+              y: {
+                field: "volume",
+                type: "quantitative",
+                scale: { zero: true },
+              },
+            },
+          };
+          break;
+        case "macd":
+          topLevelViewSpec[1] = {
+            name: "study",
+            data: {
+              values: indicatorMacd()(data.map((d) => d.open)).map((d, i) => ({
+                ...data[i],
+                ...d,
+              })),
+            },
+            encoding: {
+              x: { field: "date", type: "temporal" },
+            },
+            layer: [
+              {
+                mark: "bar",
+                encoding: {
+                  y: {
+                    field: "divergence",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  fill: { value: Colors.GRAY_LIGHT_1 },
+                },
+              },
+              {
+                mark: "line",
+                encoding: {
+                  y: {
+                    field: "macd",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  color: { value: "red" },
+                },
+              },
+              {
+                mark: "line",
+                encoding: {
+                  y: {
+                    field: "signal",
+                    type: "quantitative",
+                    scale: { zero: true },
+                  },
+                  color: { value: "green" },
+                },
+              },
+            ],
+          };
+          break;
+        default:
+          topLevelViewSpec = [topLevelViewSpec[0]];
+      }
+
+      return topLevelViewSpec;
+    }, [data, study]);
 
     const hotkeys = React.useMemo(
       () => [
@@ -192,6 +264,8 @@ export const Chart = React.forwardRef(
           configuration.priceMonitoringBounds.length > 0 &&
           topLevelViewSpec[0].layer
         ) {
+          setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
+
           topLevelViewSpec[0].layer[1] = {
             data: {
               values: [
@@ -205,17 +279,16 @@ export const Chart = React.forwardRef(
             },
             layer: [
               {
-                encoding: { y: { field: "max" }, color: { value: "green" } },
-                mark: "rule",
-              },
-              {
-                encoding: { y: { field: "min" }, color: { value: "red" } },
+                encoding: {
+                  y: { field: "max" },
+                  color: { value: Colors.WHITE },
+                },
                 mark: "rule",
               },
               {
                 encoding: {
-                  y: { field: "reference" },
-                  color: { value: Colors.VEGA_YELLOW },
+                  y: { field: "min" },
+                  color: { value: Colors.WHITE },
                 },
                 mark: "rule",
               },
@@ -223,7 +296,7 @@ export const Chart = React.forwardRef(
           };
         }
       });
-    }, [dataSource]);
+    }, [dataSource, study]);
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
@@ -258,7 +331,7 @@ export const Chart = React.forwardRef(
                     width={width}
                     height={height}
                     data={data}
-                    view={topLevelViewSpec}
+                    view={view}
                     interval={interval}
                     decimalPlaces={dataSource.decimalPlaces}
                     onBoundsChanged={setBounds}
@@ -274,6 +347,12 @@ export const Chart = React.forwardRef(
                   bounds={bounds}
                   onSetInterval={onSetInterval}
                 />
+                {priceMonitoringBounds && (
+                  <PriceMonitoringInfo
+                    priceMonitoringBounds={priceMonitoringBounds}
+                    decimalPlaces={dataSource.decimalPlaces}
+                  />
+                )}
                 {selectedIndex !== null && (
                   <CandleInfo
                     candle={data[selectedIndex]}
