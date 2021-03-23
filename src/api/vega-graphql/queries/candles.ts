@@ -12,11 +12,7 @@ export const candleFragment = gql`
 `;
 
 export const candleQuery = gql`
-  query candlesQuery(
-    $marketId: ID!
-    $interval: Interval!
-    $since: String!
-  ) {
+  query candlesQuery($marketId: ID!, $interval: Interval!, $since: String!) {
     market(id: $marketId) {
       id
       decimalPlaces

@@ -82,9 +82,10 @@ export const PlotContainer = React.forwardRef(
     const chartRef = React.useRef<FcElement>(null!);
     const crosshairXRef = React.useRef<number | null>(null);
     const crosshairsRef = React.useRef<(number | null)[]>(view.map(() => null));
-    const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>(
-      view.map(() => scaleLinear())
-    );
+    const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>([
+      scaleLinear(),
+      scaleLinear(),
+    ]);
     const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
     const candleWidth = getCandleWidth(interval);
 

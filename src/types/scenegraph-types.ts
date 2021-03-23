@@ -15,6 +15,7 @@ export interface PositionalElement extends RenderableElement {
 
 export interface Panel {
   id: string;
+  originalData: any[];
   data: PositionalElement[][];
   grid?: RenderableElement;
   axis?: RenderableElement;
@@ -26,6 +27,7 @@ export interface Panel {
    * Fields to use to determine y axis extent
    */
   yEncodingFields?: string[];
+  yDomain?: [number, number];
 }
 
 export interface Scenegraph {

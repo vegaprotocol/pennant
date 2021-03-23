@@ -5,7 +5,7 @@ import { Button, MenuItem } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 
-import { ApolloDataSource } from "../data/apollo-data-source";
+import { ApolloDataSource } from "../data/vega-protocol-data-source";
 import { Chart } from "../components/chart";
 import { ChartInterface } from "../types";
 import { CryptoCompareDataSource } from "../data/crypto-compare-data-source";
@@ -16,15 +16,15 @@ import data from "./app.stories.json";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 export default {
-  title: "Overview/Application",
+  title: "Overview/Application Examples",
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: "https://n04.d.vega.xyz/query",
 });
 
 const wsLink = new WebSocketLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
+  uri: "wss://n04.d.vega.xyz/query",
   options: {
     reconnect: true,
   },
@@ -47,10 +47,18 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const MarketSelect = Select.ofType<any>();
+type Market = {
+  id: string;
+  tradableInstrument: { instrument: { name: string } };
+};
+
+type Study = { id: "bollinger" | "macd" | "none" | "volume"; label: string };
+
+const MarketSelect = Select.ofType<Market>();
+const StudySelect = Select.ofType<Study>();
 
 const renderMarket: ItemRenderer<any> = (
-  market: any,
+  market: Market,
   { handleClick, modifiers }: any
 ) => {
   if (!modifiers.matchesPredicate) {
@@ -67,9 +75,34 @@ const renderMarket: ItemRenderer<any> = (
   );
 };
 
-export const SimpleWebpage: Story = () => {
+const renderStudy: ItemRenderer<Study> = (
+  study: Study,
+  { handleClick, modifiers }: any
+) => {
+  if (!modifiers.matchesPredicate) {
+    return null;
+  }
+  return (
+    <MenuItem
+      active={modifiers.active}
+      key={study.id}
+      onClick={handleClick}
+      text={study.label}
+    />
+  );
+};
+
+const studies: Study[] = [
+  { id: "none", label: "None" },
+  { id: "volume", label: "Volume" },
+  { id: "macd", label: "Macd" },
+  { id: "bollinger", label: "Bollinger Bands" },
+];
+
+export const VegaProtocol: Story = () => {
   const ref = React.useRef<ChartInterface>(null!);
   const [market, setMarket] = React.useState(data.markets[1].id);
+  const [study, setStudy] = React.useState(studies[0].id);
   const [interval, setInterval] = React.useState(Interval.I15M);
 
   const dataSource = React.useMemo(
@@ -79,12 +112,12 @@ export const SimpleWebpage: Story = () => {
 
   return (
     <div className="container bp3-dark">
-      <h1>Console Charts</h1>
+      <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
           items={data.markets}
           itemRenderer={renderMarket}
-          onItemSelect={(item: any) => {
+          onItemSelect={(item: Market) => {
             setMarket(item.id);
           }}
           noResults={<MenuItem disabled={true} text="No results." />}
@@ -92,12 +125,28 @@ export const SimpleWebpage: Story = () => {
         >
           <Button
             text={
-              data.markets[0].tradableInstrument.instrument.name ??
-              "No market selected"
+              data.markets.find((s) => s.id === market)?.tradableInstrument
+                .instrument.name ?? "No market selected"
             }
             disabled={false}
           />
         </MarketSelect>
+        <StudySelect
+          items={studies}
+          itemRenderer={renderStudy}
+          onItemSelect={(item: Study) => {
+            setStudy(item.id);
+          }}
+          noResults={<MenuItem disabled={true} text="No results." />}
+          filterable={false}
+        >
+          <Button
+            text={
+              studies.find((s) => s.id === study)?.label ?? "No study selected"
+            }
+            disabled={false}
+          />
+        </StudySelect>
         <Button
           icon="refresh"
           intent="primary"
@@ -107,10 +156,11 @@ export const SimpleWebpage: Story = () => {
           }}
         />
       </div>
-      <div style={{ height: "60vh" }}>
+      <div style={{ height: "40vh" }}>
         <Chart
           ref={ref}
           dataSource={dataSource}
+          study={study === "none" ? undefined : study}
           interval={interval}
           onSetInterval={setInterval}
         />
@@ -119,16 +169,33 @@ export const SimpleWebpage: Story = () => {
   );
 };
 
-export const CryptoCompareExample: Story = () => {
+export const CryptoCompare: Story = () => {
   const ref = React.useRef<ChartInterface>(null!);
+  const [study, setStudy] = React.useState(studies[0].id);
   const [interval, setInterval] = React.useState(Interval.I1M);
 
   const dataSource = React.useMemo(() => new CryptoCompareDataSource(), []);
 
   return (
     <div className="container bp3-dark">
-      <h1>Console Charts</h1>
+      <h1>Crypto Compare Charts</h1>
       <div className="content-wrapper">
+        <StudySelect
+          items={studies}
+          itemRenderer={renderStudy}
+          onItemSelect={(item: Study) => {
+            setStudy(item.id);
+          }}
+          noResults={<MenuItem disabled={true} text="No results." />}
+          filterable={false}
+        >
+          <Button
+            text={
+              studies.find((s) => s.id === study)?.label ?? "No study selected"
+            }
+            disabled={false}
+          />
+        </StudySelect>
         <Button
           icon="refresh"
           intent="primary"
@@ -138,10 +205,11 @@ export const CryptoCompareExample: Story = () => {
           }}
         />
       </div>
-      <div style={{ height: "60vh" }}>
+      <div style={{ height: "40vh" }}>
         <Chart
           ref={ref}
           dataSource={dataSource}
+          study={study === "none" ? undefined : study}
           interval={interval}
           onSetInterval={setInterval}
         />

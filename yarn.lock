@@ -1357,6 +1357,13 @@
   resolved "https://registry.yarnpkg.com/@d3fc/d3fc-rebind/-/d3fc-rebind-6.0.1.tgz#b66e21d938893a92dd939e55e3147f24f46b652e"
   integrity sha512-+ryBZ53ALMffbADwnFAtTYQJcT7PE5BwpducGYS0X6Jux6ESnp+fP+cDQvBGbDBOVqaziGnfeLeJXjtMnZujmQ==
 
+"@d3fc/d3fc-technical-indicator@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-technical-indicator/-/d3fc-technical-indicator-8.0.1.tgz#88255f4420302f45e517df198df3e711514b7cc8"
+  integrity sha512-0VEDHtcAGDTOVOrVdfPzk5I57H/eXF2O3DpzRn2nzWptg8OiOALdCiahKhZyX42wvlJjopuLCqZfTfJZGna6bw==
+  dependencies:
+    "@d3fc/d3fc-rebind" "^6.0.1"
+
 "@d3fc/d3fc-zoom@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@d3fc/d3fc-zoom/-/d3fc-zoom-1.1.1.tgz#1edbfadafdaef675c802330c93c37627277fd599"
