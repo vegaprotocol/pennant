@@ -1,3 +1,9 @@
+/**
+ * Merges two arrays
+ * @param a First array. Takes precedence
+ * @param b Second array
+ * @returns Merged array
+ */
 export function mergeData(
   a: { date: Date; datetime: string }[],
   b: { date: Date; datetime: string }[]

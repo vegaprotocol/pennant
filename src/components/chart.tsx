@@ -371,7 +371,7 @@ export const Chart = React.forwardRef(
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
-        query(from, to);
+        //query(from, to);
       },
       [query]
     );
@@ -418,12 +418,7 @@ export const Chart = React.forwardRef(
                   bounds={bounds}
                   onSetInterval={onSetInterval}
                 />
-                {priceMonitoringBounds && (
-                  <PriceMonitoringInfo
-                    priceMonitoringBounds={priceMonitoringBounds}
-                    decimalPlaces={dataSource.decimalPlaces}
-                  />
-                )}
+
                 {selectedIndex !== null && (
                   <CandleInfo
                     candle={data[selectedIndex]}
