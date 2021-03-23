@@ -154,7 +154,7 @@ export const Chart = React.forwardRef(
         const newData = await dataSource.query(interval, from, to);
 
         // TODO: need convenience functions for calculating range, sorting and distinct values and merging
-        setData((data) => mergeData(merge ? data : [], newData));
+        setData((data) => mergeData(newData, merge ? data : []));
       },
       [dataSource, interval]
     );
@@ -162,7 +162,7 @@ export const Chart = React.forwardRef(
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribe(interval, (datum) => {
-          setData((data) => mergeData(data, [datum]));
+          setData((data) => mergeData([datum], data));
         });
       }
 
@@ -288,10 +288,7 @@ export const Chart = React.forwardRef(
               </div>
             </div>
           ) : (
-            <NonIdealState
-              icon="timeline-line-chart"
-              title="No data found"
-            />
+            <NonIdealState icon="timeline-line-chart" title="No data found" />
           )}
         </div>
       </HotkeysProvider>
