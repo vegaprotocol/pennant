@@ -27,9 +27,6 @@ import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
 import { throttle } from "lodash";
 
-const timeScale = scaleTime();
-const timeScaleRescaled = scaleTime(); // A rescaled copy of the time scale which reflects the user panning and scaling
-
 export type PlotContainerProps = {
   width: number;
   height: number;
@@ -80,6 +77,8 @@ export const PlotContainer = React.forwardRef(
     const isFirstRun = React.useRef(true);
     const isPinnedRef = React.useRef(true);
     const previousZoomTransform = React.useRef(zoomIdentity);
+    const timeScaleRef = React.useRef(scaleTime());
+    const timeScaleRescaledRef = React.useRef(scaleTime()); // A rescaled copy of the time scale which reflects the user panning and scaling
     const chartRef = React.useRef<FcElement>(null!);
     const crosshairXRef = React.useRef<number | null>(null);
     const crosshairsRef = React.useRef<(number | null)[]>(view.map(() => null));
@@ -105,12 +104,23 @@ export const PlotContainer = React.forwardRef(
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
-    const zoomControl = React.useMemo(
-      () =>
+    const zoomControl = React.useMemo(() => {
+      const transform: ZoomTransform = zoomIdentity;
+      const range = timeScaleRef.current
+        .range()
+        .map(transform.invertX, transform);
+      const domain = range.map(
+        timeScaleRef.current.invert,
+        timeScaleRef.current
+      );
+
+      const domainWidth = domain[1].getTime() - domain[0].getTime();
+
+      return (
         d3Zoom<FcElement, unknown>()
           // @ts-ignore
           .interpolate(interpolateZoom.rho(0))
-          .scaleExtent([1 / (1 << 2), 1 << 2])
+          .scaleExtent([1 / (1 << 2), domainWidth / (candleWidth * 10)])
           .translateExtent([
             [0, 0],
             [0, 800],
@@ -145,8 +155,8 @@ export const PlotContainer = React.forwardRef(
           .on("zoom", (event) => {
             drawChart(
               event,
-              timeScale,
-              timeScaleRescaled,
+              timeScaleRef.current,
+              timeScaleRescaledRef.current,
               data,
               scenegraph,
               scalesRef,
@@ -155,8 +165,13 @@ export const PlotContainer = React.forwardRef(
             );
 
             const transform: ZoomTransform = event.transform;
-            const range = timeScale.range().map(transform.invertX, transform);
-            const domain = range.map(timeScale.invert, timeScale);
+            const range = timeScaleRef.current
+              .range()
+              .map(transform.invertX, transform);
+            const domain = range.map(
+              timeScaleRef.current.invert,
+              timeScaleRef.current
+            );
 
             const domainWidth = domain[1].getTime() - domain[0].getTime();
 
@@ -175,9 +190,16 @@ export const PlotContainer = React.forwardRef(
               "grabbing",
               false
             );
-          }),
-      [data, onBoundsChangedThrottled, onGetDataRange, requestRedraw, scenegraph]
-    );
+          })
+      );
+    }, [
+      candleWidth,
+      data,
+      onBoundsChangedThrottled,
+      onGetDataRange,
+      requestRedraw,
+      scenegraph,
+    ]);
 
     const reset = React.useCallback(
       function reset() {
@@ -186,8 +208,8 @@ export const PlotContainer = React.forwardRef(
         select(chartRef.current)
           .transition()
           .duration(200)
-          .call(zoomControl.translateTo, timeScale.range()[1], 0, [
-            timeScale(latestData) - (WIDTH + 26),
+          .call(zoomControl.translateTo, timeScaleRef.current.range()[1], 0, [
+            timeScaleRef.current(latestData) - (WIDTH + 26),
             0,
           ])
           .end()
@@ -206,7 +228,7 @@ export const PlotContainer = React.forwardRef(
     const panBy = React.useCallback(
       function panBy(n: number) {
         const ms = 1000 * 60 * getSubMinutes(interval, n);
-        const offset = -(timeScale(ms) - timeScale(0));
+        const offset = -(timeScaleRef.current(ms) - timeScaleRef.current(0));
 
         select(chartRef.current).call(zoomControl.translateBy, offset, 0);
         select(chartRef.current).node()?.requestRedraw();
@@ -220,14 +242,14 @@ export const PlotContainer = React.forwardRef(
           "measure",
           (event: { detail: { width: number; pixelRatio: number } }) => {
             const { width, pixelRatio } = event.detail;
-            timeScale.range([0, width / pixelRatio]);
+            timeScaleRef.current.range([0, width / pixelRatio]);
 
             if (isFirstRun.current) {
               select(chartRef.current).call(
                 zoomControl.transform,
                 zoomIdentity.translate(
-                  timeScale(domainRef.current[1]) -
-                    timeScale.range()[1] -
+                  timeScaleRef.current(domainRef.current[1]) -
+                    timeScaleRef.current.range()[1] -
                     WIDTH,
                   0
                 )
@@ -238,7 +260,7 @@ export const PlotContainer = React.forwardRef(
           }
         )
         .on("draw", () => {
-          timeScale.domain(domainRef.current);
+          timeScaleRef.current.domain(domainRef.current);
         });
 
       chartContainer.call(zoomControl);
@@ -256,7 +278,7 @@ export const PlotContainer = React.forwardRef(
     }, [data]);
 
     React.useEffect(() => {
-      timeScale.domain(domainRef.current);
+      timeScaleRef.current.domain(domainRef.current);
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
@@ -267,7 +289,7 @@ export const PlotContainer = React.forwardRef(
             <div className="plot-area">
               <PlotArea
                 scenegraph={panel}
-                x={timeScaleRescaled}
+                x={timeScaleRescaledRef.current}
                 y={scalesRef.current![panelIndex]}
                 crosshairXRef={crosshairXRef}
                 index={panelIndex}
@@ -288,7 +310,7 @@ export const PlotContainer = React.forwardRef(
         <div className="x-axis">
           <XAxis
             scenegraph={scenegraph.xAxis}
-            x={timeScaleRescaled}
+            x={timeScaleRescaledRef.current}
             y={scalesRef.current![0]}
             crosshairXRef={crosshairXRef}
             requestRedraw={requestRedraw}

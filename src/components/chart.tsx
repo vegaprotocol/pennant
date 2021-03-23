@@ -291,7 +291,6 @@ export const Chart = React.forwardRef(
             <NonIdealState
               icon="timeline-line-chart"
               title="No data found"
-              description="Try a different market"
             />
           )}
         </div>
