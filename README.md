@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/npm/l/pennant?style=plastic)](https://github.com/vegaprotocol/pennant/blob/main/LICENSE)
 [![CI status](https://github.com/vegaprotocol/pennant/actions/workflows/test.yml/badge.svg)](https://github.com/vegaprotocol/pennant/actions/workflows/test.yml)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/754fddcc-e010-4b27-913e-83c7b8ebdcf8/deploy-status)](https://app.netlify.com/sites/distracted-lamarr-c30618/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/754fddcc-e010-4b27-913e-83c7b8ebdcf8/deploy-status)](https://app.netlify.com/sites/pennant/deploys)
 
 <br />
 <p align="center">
