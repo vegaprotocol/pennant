@@ -1,47 +1,15 @@
-export type Mark = "area" | "bar" | "line" | "rule";
+import { Mark, MarkDef } from "../mark";
 
-export type MarkDef = Mark | { type: "area"; line?: boolean };
-
-export type Channel = {
-  field: string;
-  type: string;
-};
-
-export type ColorDef = {
-  condition?: {
-    test: string[];
-    value: string;
-  };
-  value: string;
-};
-
-export interface ValueRef {
-  datum?: any;
-  field?: string;
-  scale?: {
-    zero: boolean;
-  };
-  type?: "ordinal" | "temporal" | "quantitative";
-}
-
-export interface EncodeEntry {
-  x?: ValueRef;
-  x2?: ValueRef;
-  y?: ValueRef;
-  y2?: ValueRef;
-  color?: ColorDef;
-  fill?: ColorDef;
-  stroke?: ColorDef;
-}
-
-export interface Data {
-  values?: any[];
-}
+import { Data } from "../data";
+import { Encoding } from "../encoding";
+import { Field } from "../channeldef";
+import { Transform } from "../transform";
 
 export type View = {
   data?: Data;
   name?: string;
-  mark?: MarkDef;
-  encoding?: EncodeEntry;
+  mark?: Mark | MarkDef;
+  encoding?: Encoding<Field>;
   layer?: View[];
+  transform?: Transform[];
 };

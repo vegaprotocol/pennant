@@ -7,6 +7,7 @@ import { DataSource, PriceMonitoringBounds, View } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 import {
   indicatorBollingerBands,
+  indicatorElderRay,
   indicatorMacd,
 } from "@d3fc/d3fc-technical-indicator";
 
@@ -26,6 +27,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 let topLevelViewSpec: View[] = [
   {
     name: "main",
+    transform: [{ indicator: "bollinger", on: "open" }],
     layer: [
       {
         encoding: {
@@ -35,47 +37,30 @@ let topLevelViewSpec: View[] = [
           },
           y: {
             type: "quantitative",
-            scale: { zero: false },
-          },
-          color: {
-            value: Colors.RED,
           },
         },
         layer: [
           {
-            name: "wick",
-            mark: "rule",
-            encoding: {
-              y: { field: "low" },
-              y2: { field: "high" },
+            mark: {
+              type: "area",
+              line: {
+                color: "#009cff",
+              },
               color: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN,
-                },
-                value: Colors.RED,
+                gradient: "linear",
+                stops: [
+                  { offset: 0, color: "#044e80" },
+                  { offset: 1, color: "#000000" },
+                ],
               },
             },
-          },
-          {
-            name: "candle",
-            mark: "bar",
             encoding: {
-              y: { field: "open" },
-              y2: { field: "close" },
-              fill: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN_DARK,
-                },
-                value: Colors.RED,
+              y: {
+                field: "close",
+                type: "quantitative",
               },
-              stroke: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN,
-                },
-                value: Colors.RED,
+              color: {
+                value: "#009cff",
               },
             },
           },
@@ -87,14 +72,24 @@ let topLevelViewSpec: View[] = [
 
 export type ChartProps = {
   dataSource: DataSource;
-  study?: "bollinger" | "volume" | "macd";
+  chartType?: "area" | "candle";
+  study?: "eldarRay" | "volume" | "macd";
+  overlay?: "bollinger" | "envelope";
+
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
   (
-    { dataSource, study, interval, onSetInterval }: ChartProps,
+    {
+      dataSource,
+      chartType,
+      study,
+      overlay,
+      interval,
+      onSetInterval,
+    }: ChartProps,
     ref: React.Ref<ChartInterface>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -130,17 +125,90 @@ export const Chart = React.forwardRef(
         values: data,
       };
 
+      switch (chartType) {
+        case "area":
+          if (topLevelViewSpec[0].layer) {
+            topLevelViewSpec[0].layer[0].layer = [
+              {
+                mark: {
+                  type: "area",
+                  line: {
+                    color: "#009cff",
+                  },
+                  color: {
+                    gradient: "linear",
+                    stops: [
+                      { offset: 0, color: "#044e80" },
+                      { offset: 1, color: "#000000" },
+                    ],
+                  },
+                },
+                encoding: {
+                  y: {
+                    field: "close",
+                    type: "quantitative",
+                  },
+                  color: {
+                    value: "#009cff",
+                  },
+                },
+              },
+            ];
+          }
+          break;
+        case "candle":
+          if (topLevelViewSpec[0].layer) {
+            topLevelViewSpec[0].layer[0].layer = [
+              {
+                mark: {
+                  type: "bar",
+                },
+                encoding: {
+                  y: {
+                    field: "open",
+                    type: "quantitative",
+                  },
+                  y2: {
+                    field: "close",
+                    type: "quantitative",
+                  },
+                  color: {
+                    value: "#009cff",
+                  },
+                },
+              },
+              {
+                mark: {
+                  type: "rule",
+                },
+                encoding: {
+                  y: {
+                    field: "low",
+                    type: "quantitative",
+                  },
+                  y2: {
+                    field: "high",
+                    type: "quantitative",
+                  },
+                  color: {
+                    value: "#009cff",
+                  },
+                },
+              },
+            ];
+          }
+          break;
+      }
+
       switch (study) {
-        case "bollinger":
+        case "eldarRay":
           topLevelViewSpec[1] = {
             name: "study",
             data: {
-              values: indicatorBollingerBands()(data.map((d) => d.open)).map(
-                (d, i) => ({
-                  ...data[i],
-                  ...d,
-                })
-              ),
+              values: indicatorElderRay()(data.map((d) => d)).map((d, i) => ({
+                ...data[i],
+                ...d,
+              })),
             },
             encoding: {
               x: { field: "date", type: "temporal" },
@@ -150,33 +218,20 @@ export const Chart = React.forwardRef(
                 mark: "line",
                 encoding: {
                   y: {
-                    field: "average",
+                    field: "bullPower",
                     type: "quantitative",
-                    scale: { zero: true },
                   },
-                  color: { value: Colors.GRAY_LIGHT_1 },
+                  color: { value: Colors.VEGA_GREEN },
                 },
               },
               {
                 mark: "line",
                 encoding: {
                   y: {
-                    field: "upper",
+                    field: "bearPower",
                     type: "quantitative",
-                    scale: { zero: true },
                   },
-                  color: { value: "red" },
-                },
-              },
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "lower",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: "green" },
+                  color: { value: Colors.VEGA_YELLOW },
                 },
               },
             ],
@@ -192,11 +247,10 @@ export const Chart = React.forwardRef(
               y: {
                 field: "volume",
                 type: "quantitative",
-                scale: { zero: true },
               },
               fill: {
                 condition: {
-                  test: ["lt", "open", "close"],
+                  test: { field: "open", lt: "close" },
                   value: Colors.GREEN_DARK,
                 },
                 value: Colors.RED,
@@ -223,7 +277,6 @@ export const Chart = React.forwardRef(
                   y: {
                     field: "divergence",
                     type: "quantitative",
-                    scale: { zero: true },
                   },
                   fill: { value: Colors.GRAY_LIGHT_1 },
                 },
@@ -234,7 +287,6 @@ export const Chart = React.forwardRef(
                   y: {
                     field: "macd",
                     type: "quantitative",
-                    scale: { zero: true },
                   },
                   color: { value: Colors.VEGA_YELLOW },
                 },
@@ -245,7 +297,6 @@ export const Chart = React.forwardRef(
                   y: {
                     field: "signal",
                     type: "quantitative",
-                    scale: { zero: true },
                   },
                   color: { value: Colors.VEGA_ORANGE },
                 },
@@ -257,8 +308,52 @@ export const Chart = React.forwardRef(
           topLevelViewSpec = [topLevelViewSpec[0]];
       }
 
-      return topLevelViewSpec;
-    }, [data, study]);
+      switch (overlay) {
+        case "bollinger":
+          topLevelViewSpec[0].data = {
+            values: indicatorBollingerBands()(data.map((d) => d.open)).map(
+              (d, i) => ({
+                ...data[i],
+                ...d,
+              })
+            ),
+          };
+
+          if (topLevelViewSpec[0].layer) {
+            topLevelViewSpec[0].layer[1] = {
+              layer: [
+                {
+                  mark: { type: "line" },
+                  encoding: {
+                    x: { field: "date", type: "temporal" },
+                    y: {
+                      field: "lower",
+                      type: "quantitative",
+                    },
+                    color: { value: Colors.VEGA_GREEN },
+                  },
+                },
+                {
+                  mark: "line",
+                  encoding: {
+                    x: { field: "date", type: "temporal" },
+                    y: {
+                      field: "upper",
+                      type: "quantitative",
+                    },
+                    color: { value: Colors.VEGA_YELLOW },
+                  },
+                },
+              ],
+            };
+          }
+          break;
+        default:
+          topLevelViewSpec = [...topLevelViewSpec];
+      }
+
+      return [...topLevelViewSpec];
+    }, [chartType, data, overlay, study]);
 
     const hotkeys = React.useMemo(
       () => [
@@ -317,7 +412,7 @@ export const Chart = React.forwardRef(
         false
       );
 
-      subscribe();
+      //subscribe();
 
       return () => {
         myDataSource.unsubscribe();

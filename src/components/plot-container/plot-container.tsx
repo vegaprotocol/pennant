@@ -39,7 +39,7 @@ export type PlotContainerProps = {
   onMouseOut?: () => void;
   onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
-  onGetDataRange: (from: string, to: string) => void;
+  onGetDataRange?: (from: string, to: string) => void;
 };
 
 export const PlotContainer = React.forwardRef(
@@ -53,7 +53,7 @@ export const PlotContainer = React.forwardRef(
       onMouseMove,
       onMouseOut,
       onMouseOver,
-      onGetDataRange,
+      onGetDataRange = () => {},
     }: PlotContainerProps,
     ref: React.Ref<ChartInterface>
   ) => {
@@ -98,6 +98,12 @@ export const PlotContainer = React.forwardRef(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
       throttle(onBoundsChanged, 200),
+      []
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const onGetDataRangeThrottled = React.useCallback(
+      throttle(onGetDataRange, 800),
       []
     );
 
@@ -182,10 +188,9 @@ export const PlotContainer = React.forwardRef(
                 data[0].date.getTime() - domainWidth
               ).toISOString();
 
-              onGetDataRange(from, to);
+              onGetDataRangeThrottled(from, to);
             }
           })
-          .on("start", (event) => {})
           .on("end", (event) => {
             selectAll(".d3fc-canvas-layer.crosshair").classed(
               "grabbing",
@@ -197,7 +202,7 @@ export const PlotContainer = React.forwardRef(
       candleWidth,
       data,
       onBoundsChangedThrottled,
-      onGetDataRange,
+      onGetDataRangeThrottled,
       requestRedraw,
       scenegraph,
     ]);

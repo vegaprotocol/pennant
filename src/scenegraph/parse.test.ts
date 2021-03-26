@@ -36,11 +36,10 @@ test("candlestick chart with study", () => {
         },
         y: {
           type: "quantitative",
-          scale: { zero: false },
         },
         color: {
           condition: {
-            test: ["lt", "open", "close"],
+            test: { field: "open", lt: "close" },
             value: Colors.GREEN,
           },
           value: Colors.RED,
@@ -60,14 +59,14 @@ test("candlestick chart with study", () => {
             y2: { field: "close" },
             fill: {
               condition: {
-                test: ["lt", "open", "close"],
+                test: { field: "open", lt: "close" },
                 value: Colors.GREEN_DARK,
               },
               value: Colors.RED,
             },
             stroke: {
               condition: {
-                test: ["lt", "open", "close"],
+                test: { field: "open", lt: "close" },
                 value: Colors.GREEN,
               },
               value: Colors.RED,
@@ -96,7 +95,7 @@ test("candlestick chart with study", () => {
       mark: "bar",
       encoding: {
         x: { field: "date", type: "temporal" },
-        y: { field: "volume", type: "quantitative", scale: { zero: true } },
+        y: { field: "volume", type: "quantitative" },
       },
     },
   ];
@@ -143,11 +142,10 @@ test("recursively parse a layer", () => {
           },
           y: {
             type: "quantitative",
-            scale: { zero: false },
           },
           color: {
             condition: {
-              test: ["lt", "open", "close"],
+              test: { field: "open", lt: "close" },
               value: Colors.GREEN,
             },
             value: Colors.RED,
@@ -167,14 +165,14 @@ test("recursively parse a layer", () => {
               y2: { field: "close" },
               fill: {
                 condition: {
-                  test: ["lt", "open", "close"],
+                  test: { field: "open", lt: "close" },
                   value: Colors.GREEN_DARK,
                 },
                 value: Colors.RED,
               },
               stroke: {
                 condition: {
-                  test: ["lt", "open", "close"],
+                  test: { field: "open", lt: "close" },
                   value: Colors.GREEN,
                 },
                 value: Colors.RED,

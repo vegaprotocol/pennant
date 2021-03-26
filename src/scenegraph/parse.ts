@@ -9,19 +9,31 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
+import { Color, Gradient, Mark, MarkDef } from "../mark";
+import { ColorDef, Field } from "../channeldef";
+import { PositionalElement, Scenegraph, View } from "../types";
 import {
-  Data,
-  EncodeEntry,
-  Mark,
-  MarkDef,
-  PositionalElement,
-  Scenegraph,
-  View,
-} from "../types";
+  Predicate,
+  isFieldGTPredicate,
+  isFieldLTPredicate,
+} from "../predicate";
+import {
+  indicatorBollingerBands,
+  indicatorElderRay,
+  indicatorEnvelope,
+  indicatorMacd,
+  indicatorMovingAverage,
+} from "@d3fc/d3fc-technical-indicator";
 
 import { AreaElement } from "../elements/element-area";
 import { Colors } from "../helpers";
+import { Data } from "../data";
+import { Encoding } from "../encoding";
+import { OutputNode } from "../compile/data/dataflow";
 import { RuleElement } from "../elements";
+import { Specification } from "../spec";
+import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
+import { compile } from "../compile/compile";
 import { extent } from "d3-array";
 
 const PADDING_INNER = 0.4;
@@ -45,11 +57,21 @@ function getAreaConfig(
   x: string,
   y: string,
   y2: string,
-  color: string | null
+  fill: string | Gradient | undefined,
+  line: Color | undefined
 ) {
+  if (y2 === undefined) {
+    return {
+      points: data.map((d: any) => [d[x], 0, d[y]]),
+      fill: fill ?? Colors.GRAY,
+      line: line,
+    };
+  }
+
   return {
-    points: data.map((d: any) => [d[x], d[y]]),
-    color: color,
+    points: data.map((d: any) => [d[x], d[y], d[y2]]),
+    fill: fill ?? Colors.GRAY,
+    line: line,
   };
 }
 
@@ -124,11 +146,11 @@ function getRuleConfig(
 
 export function compileLayer(
   data: Data,
-  encoding: EncodeEntry,
-  mark: MarkDef,
+  encoding: Encoding<Field>,
+  mark: Mark | MarkDef,
   candleWidth: number
 ) {
-  let markType: Mark;
+  let markType: string;
   let cfg = {};
 
   if (typeof mark === "object") {
@@ -137,13 +159,14 @@ export function compileLayer(
     markType = mark;
   }
 
-  if (markType === "area") {
+  if (markType === "area" && typeof Mark === "object") {
     cfg = getAreaConfig(
       data?.values,
       encoding.x?.field!,
       encoding.y?.field!,
       encoding.y2?.field!,
-      getConditionalColor(encoding?.color)(null)
+      (mark as MarkDef)?.color,
+      (mark as MarkDef)?.line?.color
     );
 
     return [createElement("area", cfg)];
@@ -159,7 +182,7 @@ export function compileLayer(
   }
 
   return data?.values
-    ?.map((d) => {
+    ?.map((d: any) => {
       let cfg = {};
 
       if (markType === "bar") {
@@ -183,7 +206,7 @@ export function compileLayer(
         );
       }
 
-      return createElement(markType ?? "bar", cfg);
+      return createElement((markType as any) ?? "bar", cfg);
     })
     .filter((d) => d.x !== undefined);
 }
@@ -191,7 +214,7 @@ export function compileLayer(
 export function parseLayer(
   layer: View,
   data: Data,
-  encoding: EncodeEntry,
+  encoding: Encoding<Field>,
   candleWidth: number
 ) {
   const series: any[] = [];
@@ -226,7 +249,7 @@ export function parseLayer(
 function extractYDomain(layer: View) {
   const mappedData = extractYEncodingFields(layer).flatMap(
     (field: any) =>
-      (layer.data?.values?.map((d) => d[field]) as unknown) as number
+      (layer.data?.values?.map((d: any) => d[field]) as unknown) as number
   );
 
   const domain = extent(mappedData) as [number, number];
@@ -280,11 +303,85 @@ export function parse(
     );
   }
 
+  const inputSpec: Specification = {
+    data: { values: data },
+    mark: "area",
+    transform: specification[0].transform,
+  };
+
+  const model = compile(inputSpec);
+
+  const outputNode = model.component.data.outputNodes["data"];
+
+  let head: OutputNode | null = outputNode;
+  let newData = [...data];
+
+  while (head !== null) {
+    if (head instanceof TechnicalIndicatorTransformNode) {
+      const transform = head.assemble();
+
+      switch (transform.method) {
+        case "bollinger":
+          {
+            const indicatorData = indicatorBollingerBands()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "eldarRay":
+          {
+            const indicatorData = indicatorElderRay()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "envelope":
+          {
+            const indicatorData = indicatorEnvelope()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "movingAverage":
+          {
+            const indicatorData = indicatorMovingAverage()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({
+              ...d,
+              movingAverage: indicatorData[i],
+            }));
+          }
+          break;
+        case "macd":
+          {
+            const indicatorData = indicatorMacd()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+      }
+    }
+
+    head = head.parent;
+  }
+
+  specification[0].data = { values: newData };
+
   return {
     panels: specification.map((panel) => {
       return {
         id: panel.name ?? "",
-        data: parseLayer(panel, { values: data }, {}, candleWidth),
+        data: parseLayer(panel, { values: newData }, {}, candleWidth),
         originalData: panel.data?.values ?? [],
         grid: new GridElement(),
         axis: new YAxisElement(),
@@ -313,38 +410,29 @@ export function parse(
   };
 }
 
-function getConditionalColor(
-  encoding:
-    | { condition?: { test: string[]; value: string }; value: string }
-    | undefined
-) {
+function getConditionalColor(colorDef: any | undefined) {
   let color: (datum: any) => string | null;
 
-  if (encoding?.condition?.test.length === 3) {
-    const test = encoding?.condition?.test;
+  if (colorDef === undefined) {
+    color = () => null;
+  } else if ("condition" in colorDef) {
+    const predicate: Predicate = colorDef.condition?.test;
 
-    const operator = test[0];
-    const operand1 = test[1];
-    const operand2 = test[2];
-
-    switch (operator) {
-      case "lt":
-        color = (datum) =>
-          datum[operand1] < datum[operand2]
-            ? encoding?.condition?.value ?? Colors.GRAY
-            : encoding?.value ?? Colors.GRAY;
-        break;
-      case "gt":
-        color = (datum) =>
-          datum[operand1] > datum[operand2]
-            ? encoding?.condition?.value ?? Colors.GRAY
-            : encoding?.value ?? Colors.GRAY;
-        break;
-      default:
-        throw new Error(`Unrecognized condition operator: ${operator}`);
+    if (isFieldLTPredicate(predicate)) {
+      color = (datum) =>
+        datum[predicate.field] < datum[predicate.lt]
+          ? colorDef.condition.value ?? Colors.GRAY
+          : colorDef.value ?? Colors.GRAY;
+    } else if (isFieldGTPredicate(predicate)) {
+      color = (datum) =>
+        datum[predicate.field] > datum[predicate.gt]
+          ? colorDef.condition.value ?? Colors.GRAY
+          : colorDef.value ?? Colors.GRAY;
+    } else {
+      color = () => null;
     }
-  } else if (encoding?.value) {
-    color = () => encoding.value;
+  } else if ("value" in colorDef) {
+    color = () => colorDef.value;
   } else {
     color = () => null;
   }

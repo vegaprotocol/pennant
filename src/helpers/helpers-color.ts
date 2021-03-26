@@ -20,6 +20,7 @@ export const Colors = {
   VEGA_ORANGE: "#d9822b",
   VEGA_GREEN: "#26ff8a",
   VEGA_YELLOW: "#daff0d",
+  BACKGROUND: "#000",
 };
 
 export function colorByChange(a: number, b: number) {

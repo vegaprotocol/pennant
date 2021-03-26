@@ -33,9 +33,9 @@ Simple.args = {
       name: "main",
       encoding: {
         x: { field: "date", type: "temporal" },
-        y: { type: "quantitative", scale: { zero: false } },
+        y: { type: "quantitative" },
         color: {
-          condition: { test: ["lt", "open", "close"], value: "#26ff8a" },
+          condition: { test: { field: "open", lt: "close" }, value: "#26ff8a" },
           value: "#ff2641",
         },
       },
@@ -52,11 +52,17 @@ Simple.args = {
             y: { field: "open" },
             y2: { field: "close" },
             fill: {
-              condition: { test: ["lt", "open", "close"], value: "#246340" },
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: "#246340",
+              },
               value: "#ff2641",
             },
             stroke: {
-              condition: { test: ["lt", "open", "close"], value: "#26ff8a" },
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: "#26ff8a",
+              },
               value: "#ff2641",
             },
           },
@@ -68,7 +74,7 @@ Simple.args = {
       mark: "bar",
       encoding: {
         x: { field: "date", type: "temporal" },
-        y: { field: "volume", type: "quantitative", scale: { zero: true } },
+        y: { field: "volume", type: "quantitative" },
       },
     },
   ],

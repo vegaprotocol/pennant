@@ -53,8 +53,8 @@ export class RuleElement implements PositionalElement {
 
     ctx.beginPath();
 
-    ctx.moveTo(x, Math.floor(y) + 0.5);
-    ctx.lineTo(x2, Math.floor(y2) + 0.5);
+    ctx.moveTo(x + 0.5, Math.round(y) + 0.5);
+    ctx.lineTo(x2 + 0.5, Math.round(y2) + 0.5);
 
     ctx.strokeStyle = this.color;
     ctx.stroke();
