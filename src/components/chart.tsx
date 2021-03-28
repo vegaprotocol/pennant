@@ -476,7 +476,7 @@ export const Chart = React.forwardRef(
           };
         }
       });
-    }, [dataSource, study]);
+    }, [dataSource]);
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
