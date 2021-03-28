@@ -14,7 +14,7 @@ export const ResetButton = ({ onClick }: ResetButtonProps) => {
       className="reset-button-wrapper"
       style={{ right: `${WIDTH + 8}px`, bottom: `${X_AXIS_HEIGHT + 8}px` }}
     >
-      <Button icon="reset" intent="primary" onClick={onClick} />
+      <Button icon="reset" outlined intent="primary" onClick={onClick} />
     </div>
   );
 };

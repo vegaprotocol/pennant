@@ -313,6 +313,7 @@ export const PlotContainer = React.forwardRef(
             )}
           </React.Fragment>
         ))}
+        <div className="separator"></div>
         <div className="x-axis">
           <XAxis
             scenegraph={scenegraph.xAxis}

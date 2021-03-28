@@ -336,7 +336,7 @@ export const CryptoCompare: Story = () => {
         <Chart
           ref={ref}
           dataSource={dataSource}
-          chartType={ chartType}
+          chartType={chartType}
           study={study === "none" ? undefined : study}
           overlay={overlay === "none" ? undefined : overlay}
           interval={interval}

@@ -75,7 +75,6 @@ export type ChartProps = {
   chartType?: "area" | "candle";
   study?: "eldarRay" | "volume" | "macd";
   overlay?: "bollinger" | "envelope";
-
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
@@ -161,24 +160,6 @@ export const Chart = React.forwardRef(
             topLevelViewSpec[0].layer[0].layer = [
               {
                 mark: {
-                  type: "bar",
-                },
-                encoding: {
-                  y: {
-                    field: "open",
-                    type: "quantitative",
-                  },
-                  y2: {
-                    field: "close",
-                    type: "quantitative",
-                  },
-                  color: {
-                    value: "#009cff",
-                  },
-                },
-              },
-              {
-                mark: {
                   type: "rule",
                 },
                 encoding: {
@@ -191,7 +172,40 @@ export const Chart = React.forwardRef(
                     type: "quantitative",
                   },
                   color: {
-                    value: "#009cff",
+                    condition: {
+                      test: { field: "open", lt: "close" },
+                      value: Colors.VEGA_GREEN,
+                    },
+                    value: Colors.VEGA_RED,
+                  },
+                },
+              },
+              {
+                mark: {
+                  type: "bar",
+                },
+                encoding: {
+                  y: {
+                    field: "open",
+                    type: "quantitative",
+                  },
+                  y2: {
+                    field: "close",
+                    type: "quantitative",
+                  },
+                  fill: {
+                    condition: {
+                      test: { field: "open", lt: "close" },
+                      value: Colors.GREEN_DARK,
+                    },
+                    value: Colors.VEGA_RED,
+                  },
+                  stroke: {
+                    condition: {
+                      test: { field: "open", lt: "close" },
+                      value: Colors.GREEN,
+                    },
+                    value: Colors.VEGA_RED,
                   },
                 },
               },
