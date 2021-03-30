@@ -3,7 +3,7 @@ import "./chart.scss";
 import * as React from "react";
 
 import { Colors, mergeData } from "../helpers";
-import { DataSource, PriceMonitoringBounds, View } from "../types";
+import { DataSource, PriceMonitoringBounds } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 import {
   indicatorBollingerBands,
@@ -21,10 +21,11 @@ import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
+import { Specification } from "../spec";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-let topLevelViewSpec: View[] = [
+let topLevelViewSpec: Specification[] = [
   {
     name: "main",
     transform: [{ indicator: "bollinger", on: "open" }],
@@ -363,7 +364,7 @@ export const Chart = React.forwardRef(
           }
           break;
         case "priceMonitoringBounds":
-           topLevelViewSpec[0].data = {
+          topLevelViewSpec[0].data = {
             values: data.map((d) => ({
               ...d,
               maxValidPrice: priceMonitoringBounds?.maxValidPrice,

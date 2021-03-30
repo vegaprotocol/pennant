@@ -9,7 +9,6 @@ import {
   ChartInterface,
   Panel,
   Scenegraph,
-  View,
 } from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
@@ -26,12 +25,13 @@ import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
 import { throttle } from "lodash";
+import { Specification } from "../../spec";
 
 export type PlotContainerProps = {
   width: number;
   height: number;
   data: any[];
-  view: View[];
+  view: Specification[];
   interval: Interval;
   decimalPlaces: number;
   onBoundsChanged?: (bounds: [Date, Date]) => void;

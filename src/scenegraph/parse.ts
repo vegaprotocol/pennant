@@ -11,8 +11,8 @@ import {
   YAxisTooltipElement,
 } from "../elements";
 import { Color, Gradient, Mark, MarkDef } from "../mark";
-import { ColorDef, Field } from "../channeldef";
-import { PositionalElement, Scenegraph, View } from "../types";
+import { Field } from "../channeldef";
+import { PositionalElement, Scenegraph } from "../types";
 import {
   Predicate,
   isFieldGTPredicate,
@@ -213,7 +213,7 @@ export function compileLayer(
 }
 
 export function parseLayer(
-  layer: View,
+  layer: Specification,
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number
@@ -247,7 +247,7 @@ export function parseLayer(
   return series;
 }
 
-function extractYDomain(layer: View) {
+function extractYDomain(layer: Specification) {
   const mappedData = extractYEncodingFields(layer).flatMap(
     (field: any) =>
       (layer.data?.values?.map((d: any) => d[field]) as unknown) as number
@@ -263,7 +263,7 @@ function extractYDomain(layer: View) {
   ];
 }
 
-function extractYEncodingFields(layer: View) {
+function extractYEncodingFields(layer: Specification) {
   const yEncodingFields: string[] = [];
 
   if (layer?.encoding) {
@@ -294,7 +294,7 @@ function extractYEncodingFields(layer: View) {
  */
 export function parse(
   data: any[],
-  specification: View[],
+  specification: Specification[],
   candleWidth: number,
   decimalPlaces: number
 ): Scenegraph {

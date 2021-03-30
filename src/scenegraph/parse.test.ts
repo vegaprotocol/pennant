@@ -1,10 +1,10 @@
 import { parse, parseLayer } from "./parse";
 
 import { Colors } from "../helpers";
-import { View } from "../types";
+import { Specification } from "../spec";
 
 test("simple case", () => {
-  const input: View[] = [
+  const input: Specification[] = [
     {
       mark: "bar",
       encoding: {
@@ -26,7 +26,7 @@ test("simple case", () => {
 });
 
 test("candlestick chart with study", () => {
-  const input: View[] = [
+  const input: Specification[] = [
     {
       name: "main",
       encoding: {
@@ -121,7 +121,7 @@ test("candlestick chart with study", () => {
 });
 
 test("recursively parse a layer", () => {
-  const input: View = {
+  const input: Specification = {
     layer: [
       {
         data: {
