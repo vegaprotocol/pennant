@@ -113,9 +113,11 @@ export const PlotContainer = React.forwardRef(
 
     const zoomControl = React.useMemo(() => {
       const transform: ZoomTransform = zoomIdentity;
+
       const range = timeScaleRef.current
         .range()
         .map(transform.invertX, transform);
+
       const domain = range.map(
         timeScaleRef.current.invert,
         timeScaleRef.current

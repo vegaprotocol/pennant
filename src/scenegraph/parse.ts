@@ -6,6 +6,7 @@ import {
   LineElement,
   XAxisElement,
   XAxisTooltipElement,
+  YAxisAnnotationElement,
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
@@ -387,6 +388,12 @@ export function parse(
         axis: new YAxisElement(),
         crosshair: new CrosshairElement(),
         axisTooltip: new YAxisTooltipElement(decimalPlaces),
+        annotations: [
+          new YAxisAnnotationElement(
+            (panel.data?.values[panel.data?.values.length - 1] as any)?.close,
+            decimalPlaces
+          ),
+        ],
         yEncodingFields: extractYEncodingFields(panel),
         yDomain: extractYDomain(panel),
       };
