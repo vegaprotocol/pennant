@@ -74,7 +74,7 @@ export type ChartProps = {
   dataSource: DataSource;
   chartType?: "area" | "candle";
   study?: "eldarRay" | "volume" | "macd";
-  overlay?: "bollinger" | "envelope";
+  overlay?: "bollinger" | "envelope" | "priceMonitoringBounds";
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
@@ -362,12 +362,61 @@ export const Chart = React.forwardRef(
             };
           }
           break;
+        case "priceMonitoringBounds":
+           topLevelViewSpec[0].data = {
+            values: data.map((d) => ({
+              ...d,
+              maxValidPrice: priceMonitoringBounds?.maxValidPrice,
+              minValidPrice: priceMonitoringBounds?.minValidPrice,
+            })),
+          };
+
+          if (topLevelViewSpec[0].layer) {
+            topLevelViewSpec[0].layer[1] = {
+              layer: [
+                {
+                  mark: {
+                    type: "area",
+                    line: {
+                      color: Colors.VEGA_ORANGE,
+                    },
+                    color: {
+                      gradient: "linear",
+                      stops: [
+                        { offset: 0, color: "#000000" },
+                        { offset: 1, color: "#000000" },
+                      ],
+                    },
+                  },
+                  encoding: {
+                    x: { field: "date", type: "temporal" },
+                    y: {
+                      field: "minValidPrice",
+                      type: "quantitative",
+                    },
+                  },
+                },
+                {
+                  mark: "line",
+                  encoding: {
+                    x: { field: "date", type: "temporal" },
+                    y: {
+                      field: "maxValidPrice",
+                      type: "quantitative",
+                    },
+                    color: { value: Colors.VEGA_YELLOW },
+                  },
+                },
+              ],
+            };
+          }
+          break;
         default:
-          topLevelViewSpec = [...topLevelViewSpec];
+          topLevelViewSpec[0].layer = topLevelViewSpec[0]?.layer?.slice(0, 1);
       }
 
       return [...topLevelViewSpec];
-    }, [chartType, data, overlay, study]);
+    }, [chartType, data, overlay, priceMonitoringBounds, study]);
 
     const hotkeys = React.useMemo(
       () => [
@@ -510,7 +559,7 @@ export const Chart = React.forwardRef(
                     ref={chartRef}
                     width={width}
                     height={height}
-                    data={data}
+                    data={topLevelViewSpec[0].data?.values ?? []}
                     view={view}
                     interval={interval}
                     decimalPlaces={dataSource.decimalPlaces}

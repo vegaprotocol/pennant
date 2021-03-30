@@ -30,7 +30,7 @@ import { throttle } from "lodash";
 export type PlotContainerProps = {
   width: number;
   height: number;
-  data: CandleDetailsExtended[];
+  data: any[];
   view: View[];
   interval: Interval;
   decimalPlaces: number;

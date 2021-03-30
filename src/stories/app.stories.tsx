@@ -20,11 +20,11 @@ export default {
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://n04.d.vega.xyz/query",
+  uri: "https://lb.testnet.vega.xyz/query",
 });
 
 const wsLink = new WebSocketLink({
-  uri: "wss://n04.d.vega.xyz/query",
+  uri: "wss://lb.testnet.vega.xyz/query",
   options: {
     reconnect: true,
   },
@@ -63,7 +63,7 @@ type Study = {
 };
 
 type Overlay = {
-  id: "bollinger" | "envelope" | "none";
+  id: "bollinger" | "envelope" | "priceMonitoringBounds" | "none";
   label: string;
 };
 
@@ -156,6 +156,7 @@ const studies: Study[] = [
 const overlays: Overlay[] = [
   { id: "none", label: "None" },
   { id: "bollinger", label: "Bollinger Bands" },
+  { id: "priceMonitoringBounds", label: "Price Monitoring Bounds" },
 ];
 
 export const VegaProtocol: Story = () => {
@@ -192,62 +193,74 @@ export const VegaProtocol: Story = () => {
             disabled={false}
           />
         </MarketSelect>
-        <ChartSelect
-          items={chartTypes}
-          itemRenderer={renderChart}
-          onItemSelect={(item: ChartType) => {
-            setChartType(item.id);
-          }}
-          noResults={<MenuItem disabled={true} text="No results." />}
-          filterable={false}
-        >
-          <Button
-            text={
-              chartTypes.find((s) => s.id === chartType)?.label ??
-              "No study selected"
-            }
-            disabled={false}
-          />
-        </ChartSelect>
-        <StudySelect
-          items={studies}
-          itemRenderer={renderStudy}
-          onItemSelect={(item: Study) => {
-            setStudy(item.id);
-          }}
-          noResults={<MenuItem disabled={true} text="No results." />}
-          filterable={false}
-        >
-          <Button
-            text={
-              studies.find((s) => s.id === study)?.label ?? "No study selected"
-            }
-            disabled={false}
-          />
-        </StudySelect>
-        <OverlaySelect
-          items={overlays}
-          itemRenderer={renderOverlay}
-          onItemSelect={(item: Overlay) => {
-            setOverlay(item.id);
-          }}
-          noResults={<MenuItem disabled={true} text="No results." />}
-          filterable={false}
-        >
-          <Button
-            text={
-              overlays.find((s) => s.id === overlay)?.label ??
-              "No overlay selected"
-            }
-            disabled={false}
-          />
-        </OverlaySelect>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <span>Chart</span>
+          <ChartSelect
+            items={chartTypes}
+            itemRenderer={renderChart}
+            onItemSelect={(item: ChartType) => {
+              setChartType(item.id);
+            }}
+            noResults={<MenuItem disabled={true} text="No results." />}
+            filterable={false}
+          >
+            <Button
+              text={
+                chartTypes.find((s) => s.id === chartType)?.label ??
+                "No study selected"
+              }
+              disabled={false}
+            />
+          </ChartSelect>
+        </div>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <span>Study</span>
+          <StudySelect
+            items={studies}
+            itemRenderer={renderStudy}
+            onItemSelect={(item: Study) => {
+              setStudy(item.id);
+            }}
+            noResults={<MenuItem disabled={true} text="No results." />}
+            filterable={false}
+          >
+            <Button
+              text={
+                studies.find((s) => s.id === study)?.label ??
+                "No study selected"
+              }
+              disabled={false}
+            />
+          </StudySelect>
+        </div>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <span>Overlay</span>
+          <OverlaySelect
+            items={overlays}
+            itemRenderer={renderOverlay}
+            onItemSelect={(item: Overlay) => {
+              setOverlay(item.id);
+            }}
+            noResults={<MenuItem disabled={true} text="No results." />}
+            filterable={false}
+          >
+            <Button
+              text={
+                overlays.find((s) => s.id === overlay)?.label ??
+                "No overlay selected"
+              }
+              disabled={false}
+            />
+          </OverlaySelect>
+        </div>
       </div>
-      <div style={{ height: "40vh" }}>
+      <div style={{ height: "60vh" }}>
         <Chart
           ref={ref}
           dataSource={dataSource}
+          chartType={chartType}
           study={study === "none" ? undefined : study}
+          overlay={overlay === "none" ? undefined : overlay}
           interval={interval}
           onSetInterval={setInterval}
         />
