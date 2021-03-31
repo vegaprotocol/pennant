@@ -8,32 +8,43 @@ function addYAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime<number, number, never>,
   yScale: ScaleLinear<number, number, never>,
-  position: [number | null, number | null],
+  position: number | null,
   decimalPlaces: number
 ) {
-  const y = position[1];
-
-  if (y) {
+  if (position) {
     const width = xScale.range()[1];
 
     ctx.font = `12px monospace`;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
-    const value = yScale.invert(y);
+    const value = position;
     const xPad = 5;
     const text = value.toFixed(decimalPlaces);
     const rectHeight = 18;
 
-    let yAdjusted = y;
+    let yAdjusted = yScale(position);
 
-    if (y - rectHeight / 2 < 0) {
+    if (yScale(position) - rectHeight / 2 < 0) {
       yAdjusted = rectHeight / 2;
     }
 
-    if (y + rectHeight / 2 > yScale.range()[0]) {
+    if (yScale(position) + rectHeight / 2 > yScale.range()[0]) {
       yAdjusted = yScale.range()[0] - rectHeight / 2;
     }
+
+    ctx.save();
+
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = Colors.GRAY_LIGHT;
+
+    ctx.beginPath();
+    ctx.moveTo(xScale.range()[0], Math.round(yScale(position)) + 0.5);
+    ctx.lineTo(xScale.range()[1], Math.round(yScale(position)) + 0.5);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.restore();
 
     ctx.beginPath();
     ctx.moveTo(width - WIDTH - 10, yAdjusted);
@@ -56,19 +67,20 @@ function addYAxisPath(
   }
 }
 
-export class YAxisTooltipElement implements RenderableElement {
+export class YAxisAnnotationElement implements RenderableElement {
   readonly decimalPlaces: number;
+  readonly position: number;
 
-  constructor(decimalPlaces: number) {
+  constructor(position: number, decimalPlaces: number) {
+    this.position = position;
     this.decimalPlaces = decimalPlaces;
   }
 
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
-    position: [number | null, number | null]
+    yScale: ScaleLinear<number, number, never>
   ) {
-    addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces);
+    addYAxisPath(ctx, xScale, yScale, this.position, this.decimalPlaces);
   }
 }

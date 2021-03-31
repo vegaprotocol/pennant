@@ -1,134 +1,48 @@
+import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../spec";
 import {
-  BarElement,
   CandleElement,
   CrosshairElement,
   GridElement,
-  LineElement,
   XAxisElement,
   XAxisTooltipElement,
+  YAxisAnnotationElement,
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
+import { Mark, MarkDef } from "../mark";
 import {
-  Data,
-  EncodeEntry,
-  Mark,
-  MarkDef,
-  PositionalElement,
-  Scenegraph,
-  View,
-} from "../types";
+  PADDING_INNER,
+  createElement,
+  getAreaConfig,
+  getBarConfig,
+  getConditionalColor,
+  getLineConfig,
+  getRuleConfig,
+} from "../helpers";
+import {
+  indicatorBollingerBands,
+  indicatorElderRay,
+  indicatorEnvelope,
+  indicatorMacd,
+  indicatorMovingAverage,
+} from "@d3fc/d3fc-technical-indicator";
 
-import { AreaElement } from "../elements/element-area";
-import { Colors } from "../helpers";
-import { RuleElement } from "../elements";
+import { Data } from "../data";
+import { Encoding } from "../encoding";
+import { Field } from "../channeldef";
+import { OutputNode } from "../compile/data/dataflow";
+import { Scenegraph } from "../types";
+import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
+import { compile } from "../compile/compile";
 import { extent } from "d3-array";
-
-const PADDING_INNER = 0.4;
-
-function createElement(type: Mark, options: any): PositionalElement {
-  if (type === "area") {
-    return new AreaElement(options);
-  } else if (type === "bar") {
-    return new BarElement(options);
-  } else if (type === "line") {
-    return new LineElement(options);
-  } else if (type === "rule") {
-    return new RuleElement(options);
-  }
-
-  throw new Error(`Element type not recognized: ${type}`);
-}
-
-function getAreaConfig(
-  data: any,
-  x: string,
-  y: string,
-  y2: string,
-  color: string | null
-) {
-  return {
-    points: data.map((d: any) => [d[x], d[y]]),
-    color: color,
-  };
-}
-
-function getBarConfig(
-  d: any,
-  x: string,
-  y: string,
-  y2: string,
-  width: number,
-  fill: string | null,
-  stroke: string | null
-) {
-  let base = 0;
-
-  if (y2) {
-    base = d[y2];
-  }
-
-  return {
-    x: d[x],
-    y: Math.max(d[y] as number, base),
-    height: Math.abs(base - (d[y] as number)),
-    width: width * (1 - PADDING_INNER),
-    fill: fill,
-    stroke: stroke,
-  };
-}
-
-function getLineConfig(data: any, x: string, y: string, color: string | null) {
-  return {
-    points: data.map((d: any) => [d[x], d[y]]),
-    color: color,
-  };
-}
-
-function getRuleConfig(
-  d: any,
-  x: string,
-  x2: string,
-  y: string,
-  y2: string,
-  color: string | null
-) {
-  if (x === undefined) {
-    return {
-      x: null,
-      x2: null,
-      y: d[y],
-      y2: y2 !== undefined ? d[y2] : null,
-      color: color,
-    };
-  }
-
-  if (y === undefined) {
-    return {
-      x: d[x],
-      x2: x2 !== undefined ? d[x2] : null,
-      y: null,
-      y2: null,
-      color: color,
-    };
-  }
-
-  return {
-    x: d[x],
-    x2: x2 !== undefined ? d[x2] : null,
-    y: d[y],
-    y2: d[y2],
-    color,
-  };
-}
 
 export function compileLayer(
   data: Data,
-  encoding: EncodeEntry,
-  mark: MarkDef,
+  encoding: Encoding<Field>,
+  mark: Mark | MarkDef,
   candleWidth: number
 ) {
-  let markType: Mark;
+  let markType: string;
   let cfg = {};
 
   if (typeof mark === "object") {
@@ -137,13 +51,14 @@ export function compileLayer(
     markType = mark;
   }
 
-  if (markType === "area") {
+  if (markType === "area" && typeof Mark === "object") {
     cfg = getAreaConfig(
       data?.values,
       encoding.x?.field!,
       encoding.y?.field!,
       encoding.y2?.field!,
-      getConditionalColor(encoding?.color)(null)
+      (mark as MarkDef)?.color,
+      (mark as MarkDef)?.line?.color
     );
 
     return [createElement("area", cfg)];
@@ -152,14 +67,14 @@ export function compileLayer(
       data?.values,
       encoding.x?.field!,
       encoding.y?.field!,
-      getConditionalColor(encoding?.color)(null)
+      (mark as MarkDef)?.color
     );
 
     return [createElement("line", cfg)];
   }
 
   return data?.values
-    ?.map((d) => {
+    ?.map((d: any) => {
       let cfg = {};
 
       if (markType === "bar") {
@@ -183,15 +98,15 @@ export function compileLayer(
         );
       }
 
-      return createElement(markType ?? "bar", cfg);
+      return createElement((markType as any) ?? "bar", cfg);
     })
     .filter((d) => d.x !== undefined);
 }
 
 export function parseLayer(
-  layer: View,
+  layer: BaseSpec,
   data: Data,
-  encoding: EncodeEntry,
+  encoding: Encoding<Field>,
   candleWidth: number
 ) {
   const series: any[] = [];
@@ -223,10 +138,9 @@ export function parseLayer(
   return series;
 }
 
-function extractYDomain(layer: View) {
+function extractYDomain(layer: BaseSpec, data: any[]) {
   const mappedData = extractYEncodingFields(layer).flatMap(
-    (field: any) =>
-      (layer.data?.values?.map((d) => d[field]) as unknown) as number
+    (field: any) => (data.map((d: any) => d[field]) as unknown) as number
   );
 
   const domain = extent(mappedData) as [number, number];
@@ -239,7 +153,7 @@ function extractYDomain(layer: View) {
   ];
 }
 
-function extractYEncodingFields(layer: View) {
+function extractYEncodingFields(layer: BaseSpec) {
   const yEncodingFields: string[] = [];
 
   if (layer?.encoding) {
@@ -269,31 +183,111 @@ function extractYEncodingFields(layer: View) {
  * @param decimalPlaces
  */
 export function parse(
-  data: any[],
-  specification: View[],
+  specification: TopLevelSpec,
   candleWidth: number,
   decimalPlaces: number
 ): Scenegraph {
-  if (specification.length > 2) {
+  if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
-      `Expected no more than 2 panels. Received ${specification.length}`
+      `Expected no more than 2 panels. Received ${specification.vconcat.length}`
     );
   }
 
+  const data: any[] = specification?.data?.values ?? [];
+  const model = compile(specification);
+  const outputNode = model.component.data.outputNodes["data"];
+
+  let head: OutputNode | null = outputNode;
+  let newData = [...data];
+
+  while (head !== null) {
+    if (head instanceof TechnicalIndicatorTransformNode) {
+      const transform = head.assemble();
+
+      switch (transform.method) {
+        case "bollinger":
+          {
+            const indicatorData = indicatorBollingerBands()(
+              data.map((d: any) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "eldarRay":
+          {
+            const indicatorData = indicatorElderRay()(data);
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "envelope":
+          {
+            const indicatorData = indicatorEnvelope()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "movingAverage":
+          {
+            const indicatorData = indicatorMovingAverage()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({
+              ...d,
+              movingAverage: indicatorData[i],
+            }));
+          }
+          break;
+        case "macd":
+          {
+            const indicatorData = indicatorMacd()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+      }
+    }
+
+    head = head.parent;
+  }
+
+  specification.data = { values: newData };
+
   return {
-    panels: specification.map((panel) => {
-      return {
-        id: panel.name ?? "",
-        data: parseLayer(panel, { values: data }, {}, candleWidth),
-        originalData: panel.data?.values ?? [],
-        grid: new GridElement(),
-        axis: new YAxisElement(),
-        crosshair: new CrosshairElement(),
-        axisTooltip: new YAxisTooltipElement(decimalPlaces),
-        yEncodingFields: extractYEncodingFields(panel),
-        yDomain: extractYDomain(panel),
-      };
-    }),
+    panels: isVConcatSpec(specification)
+      ? specification.vconcat.map((panel) => {
+          return {
+            id: panel.name ?? "",
+            data: parseLayer(
+              panel,
+              { values: newData },
+              specification.encoding ?? {},
+              candleWidth
+            ),
+            originalData: newData ?? [],
+            grid: new GridElement(),
+            axis: new YAxisElement(),
+            crosshair: new CrosshairElement(),
+            axisTooltip: new YAxisTooltipElement(decimalPlaces),
+            annotations: [
+              new YAxisAnnotationElement(
+                (panel.data?.values[
+                  panel.data?.values.length - 1
+                ] as any)?.close,
+                decimalPlaces
+              ),
+            ],
+            yEncodingFields: extractYEncodingFields(panel),
+            yDomain: extractYDomain(panel, newData),
+          };
+        })
+      : [], // FIXME: If not a vconcat spec what should we do?
     xAxis: {
       id: "x-axis",
       originalData: data,
@@ -311,43 +305,4 @@ export function parse(
       axisTooltip: new XAxisTooltipElement(),
     },
   };
-}
-
-function getConditionalColor(
-  encoding:
-    | { condition?: { test: string[]; value: string }; value: string }
-    | undefined
-) {
-  let color: (datum: any) => string | null;
-
-  if (encoding?.condition?.test.length === 3) {
-    const test = encoding?.condition?.test;
-
-    const operator = test[0];
-    const operand1 = test[1];
-    const operand2 = test[2];
-
-    switch (operator) {
-      case "lt":
-        color = (datum) =>
-          datum[operand1] < datum[operand2]
-            ? encoding?.condition?.value ?? Colors.GRAY
-            : encoding?.value ?? Colors.GRAY;
-        break;
-      case "gt":
-        color = (datum) =>
-          datum[operand1] > datum[operand2]
-            ? encoding?.condition?.value ?? Colors.GRAY
-            : encoding?.value ?? Colors.GRAY;
-        break;
-      default:
-        throw new Error(`Unrecognized condition operator: ${operator}`);
-    }
-  } else if (encoding?.value) {
-    color = () => encoding.value;
-  } else {
-    color = () => null;
-  }
-
-  return color;
 }

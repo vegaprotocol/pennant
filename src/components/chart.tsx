@@ -2,13 +2,8 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { Colors, mergeData } from "../helpers";
-import { DataSource, PriceMonitoringBounds, View } from "../types";
+import { DataSource, PriceMonitoringBounds } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
-import {
-  indicatorBollingerBands,
-  indicatorMacd,
-} from "@d3fc/d3fc-technical-indicator";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
@@ -20,81 +15,34 @@ import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
+import { constructTopLevelSpec } from "../helpers";
+import { mergeData } from "../helpers";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-let topLevelViewSpec: View[] = [
-  {
-    name: "main",
-    layer: [
-      {
-        encoding: {
-          x: {
-            field: "date",
-            type: "temporal",
-          },
-          y: {
-            type: "quantitative",
-            scale: { zero: false },
-          },
-          color: {
-            value: Colors.RED,
-          },
-        },
-        layer: [
-          {
-            name: "wick",
-            mark: "rule",
-            encoding: {
-              y: { field: "low" },
-              y2: { field: "high" },
-              color: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN,
-                },
-                value: Colors.RED,
-              },
-            },
-          },
-          {
-            name: "candle",
-            mark: "bar",
-            encoding: {
-              y: { field: "open" },
-              y2: { field: "close" },
-              fill: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN_DARK,
-                },
-                value: Colors.RED,
-              },
-              stroke: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN,
-                },
-                value: Colors.RED,
-              },
-            },
-          },
-        ],
-      },
-    ],
-  },
-];
+export type ChartType = "area" | "candle";
+export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
+export type Study = "eldarRay" | "volume" | "macd";
 
 export type ChartProps = {
   dataSource: DataSource;
-  study?: "bollinger" | "volume" | "macd";
+  chartType?: ChartType;
+  study?: Study;
+  overlay?: Overlay;
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
   (
-    { dataSource, study, interval, onSetInterval }: ChartProps,
+    {
+      dataSource,
+      chartType = "candle",
+      study,
+      overlay,
+      interval,
+      onSetInterval,
+    }: ChartProps,
     ref: React.Ref<ChartInterface>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -125,140 +73,10 @@ export const Chart = React.forwardRef(
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
     const [isLoading, setIsLoading] = React.useState(true);
 
-    const view = React.useMemo(() => {
-      topLevelViewSpec[0].data = {
-        values: data,
-      };
-
-      switch (study) {
-        case "bollinger":
-          topLevelViewSpec[1] = {
-            name: "study",
-            data: {
-              values: indicatorBollingerBands()(data.map((d) => d.open)).map(
-                (d, i) => ({
-                  ...data[i],
-                  ...d,
-                })
-              ),
-            },
-            encoding: {
-              x: { field: "date", type: "temporal" },
-            },
-            layer: [
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "average",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: Colors.GRAY_LIGHT_1 },
-                },
-              },
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "upper",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: "red" },
-                },
-              },
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "lower",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: "green" },
-                },
-              },
-            ],
-          };
-          break;
-        case "volume":
-          topLevelViewSpec[1] = {
-            name: "study",
-            data: { values: data },
-            mark: "bar",
-            encoding: {
-              x: { field: "date", type: "temporal" },
-              y: {
-                field: "volume",
-                type: "quantitative",
-                scale: { zero: true },
-              },
-              fill: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN_DARK,
-                },
-                value: Colors.RED,
-              },
-            },
-          };
-          break;
-        case "macd":
-          topLevelViewSpec[1] = {
-            name: "study",
-            data: {
-              values: indicatorMacd()(data.map((d) => d.open)).map((d, i) => ({
-                ...data[i],
-                ...d,
-              })),
-            },
-            encoding: {
-              x: { field: "date", type: "temporal" },
-            },
-            layer: [
-              {
-                mark: "bar",
-                encoding: {
-                  y: {
-                    field: "divergence",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  fill: { value: Colors.GRAY_LIGHT_1 },
-                },
-              },
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "macd",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: Colors.VEGA_YELLOW },
-                },
-              },
-              {
-                mark: "line",
-                encoding: {
-                  y: {
-                    field: "signal",
-                    type: "quantitative",
-                    scale: { zero: true },
-                  },
-                  color: { value: Colors.VEGA_ORANGE },
-                },
-              },
-            ],
-          };
-          break;
-        default:
-          topLevelViewSpec = [topLevelViewSpec[0]];
-      }
-
-      return topLevelViewSpec;
-    }, [data, study]);
+    const specification = React.useMemo(
+      () => constructTopLevelSpec(data, chartType, overlay, study),
+      [chartType, data, overlay, study]
+    );
 
     const hotkeys = React.useMemo(
       () => [
@@ -317,7 +135,7 @@ export const Chart = React.forwardRef(
         false
       );
 
-      subscribe();
+      //subscribe();
 
       return () => {
         myDataSource.unsubscribe();
@@ -331,43 +149,11 @@ export const Chart = React.forwardRef(
         console.info(`Data Source ready:`, configuration);
         setIsLoading(false);
 
-        if (
-          configuration.priceMonitoringBounds.length > 0 &&
-          topLevelViewSpec[0].layer
-        ) {
+        if (configuration.priceMonitoringBounds.length > 0) {
           setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
-
-          topLevelViewSpec[0].layer[1] = {
-            data: {
-              values: [
-                {
-                  max: configuration.priceMonitoringBounds[0].maxValidPrice,
-                  min: configuration.priceMonitoringBounds[0].minValidPrice,
-                  reference:
-                    configuration.priceMonitoringBounds[0].referencePrice,
-                },
-              ],
-            },
-            layer: [
-              {
-                encoding: {
-                  y: { field: "max" },
-                  color: { value: Colors.WHITE },
-                },
-                mark: "rule",
-              },
-              {
-                encoding: {
-                  y: { field: "min" },
-                  color: { value: Colors.WHITE },
-                },
-                mark: "rule",
-              },
-            ],
-          };
         }
       });
-    }, [dataSource, study]);
+    }, [dataSource]);
 
     const handleGetDataRange = React.useCallback(
       (from: string, to: string) => {
@@ -401,8 +187,7 @@ export const Chart = React.forwardRef(
                     ref={chartRef}
                     width={width}
                     height={height}
-                    data={data}
-                    view={view}
+                    specification={specification}
                     interval={interval}
                     decimalPlaces={dataSource.decimalPlaces}
                     onBoundsChanged={setBounds}

@@ -1,6 +1,6 @@
 {
   "name": "pennant",
-  "version": "0.1.0-alpha.5",
+  "version": "0.1.0-alpha.7",
   "description": "React component library for visualising financial data",
   "exports": "./dist/modern.js",
   "main": "./dist/legacy.js",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/vegaprotocol/pennant",
   "files": [
     "dist/*.js",
+    "dist/*.css",
     "dist/**/*.d.ts"
   ],
   "dependencies": {
@@ -50,7 +51,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "bignumber.js": "^9.0.1",
     "classnames": "^2.2.6",
-    "d3-array": "^2.3.0",
+    "d3-array": "2.3.3",
     "d3-dispatch": "^2.0.0",
     "d3-interpolate": "^2.0.1",
     "d3-scale": "^3.2.3",
@@ -88,6 +89,7 @@
   },
   "devDependencies": {
     "@apollo/client": "3.3.11",
+    "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-transform-runtime": "7.13.10",
     "@babel/preset-env": "7.13.10",
     "@babel/preset-react": "7.12.13",
@@ -130,8 +132,5 @@
     "@blueprintjs/select": "^3.15.7",
     "react": "^16.8.0 | ^17.0.0",
     "react-dom": "^16.8.0 | ^17.0.0"
-  },
-  "resolutions": {
-    "d3-array": "2.3.3"
   }
 }

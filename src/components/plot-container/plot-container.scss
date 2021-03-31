@@ -9,15 +9,20 @@
 
 .plot-area {
   position: relative;
-  flex: 0 0 120px;
 }
 
-.plot-area:first-child {
+.plot-area:nth-child(1) {
+  flex: 3 3 0;
+}
+
+.plot-area:nth-child(3) {
   flex: 1 1 0;
+  max-height: 120px;
 }
 
 .x-axis {
   position: relative;
+  cursor: ew-resize;
 }
 
 .d3fc-canvas-layer {
@@ -44,7 +49,7 @@
 .separator {
   position: relative;
   flex: 0 0 1px;
-  background-color: $gray1;
+  background-color: $white;
 }
 
 .separator .handle {
