@@ -1,6 +1,6 @@
 import { Data } from "../data";
 import { DataComponent } from "./data";
-import { Specification } from "../spec";
+import { BaseSpec } from "../spec";
 import { Transform } from "../transform";
 import { parseData } from "./data/parse";
 
@@ -14,7 +14,7 @@ export class Model {
   public readonly component: Component;
   public readonly children: Model[] = [];
 
-  constructor(spec: Specification, public readonly parent: Model | null) {
+  constructor(spec: BaseSpec, public readonly parent: Model | null) {
     this.data = spec.data ?? null;
     this.transforms = spec.transform ?? [];
 

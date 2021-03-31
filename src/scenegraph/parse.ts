@@ -32,10 +32,10 @@ import { Data } from "../data";
 import { Encoding } from "../encoding";
 import { OutputNode } from "../compile/data/dataflow";
 import { RuleElement } from "../elements";
-import { Specification } from "../spec";
 import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
 import { compile } from "../compile/compile";
 import { extent } from "d3-array";
+import { isVConcatSpec, BaseSpec, TopLevelSpec } from "../spec";
 
 const PADDING_INNER = 0.4;
 
@@ -101,7 +101,12 @@ function getBarConfig(
   };
 }
 
-function getLineConfig(data: any, x: string, y: string, color: string | null) {
+function getLineConfig(
+  data: any,
+  x: string,
+  y: string,
+  color: string | Gradient | undefined
+) {
   return {
     points: data.map((d: any) => [d[x], d[y]]),
     color: color,
@@ -176,7 +181,7 @@ export function compileLayer(
       data?.values,
       encoding.x?.field!,
       encoding.y?.field!,
-      getConditionalColor(encoding?.color)(null)
+      (mark as MarkDef)?.color
     );
 
     return [createElement("line", cfg)];
@@ -213,7 +218,7 @@ export function compileLayer(
 }
 
 export function parseLayer(
-  layer: Specification,
+  layer: BaseSpec,
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number
@@ -247,10 +252,9 @@ export function parseLayer(
   return series;
 }
 
-function extractYDomain(layer: Specification) {
+function extractYDomain(layer: BaseSpec, data: any[]) {
   const mappedData = extractYEncodingFields(layer).flatMap(
-    (field: any) =>
-      (layer.data?.values?.map((d: any) => d[field]) as unknown) as number
+    (field: any) => (data.map((d: any) => d[field]) as unknown) as number
   );
 
   const domain = extent(mappedData) as [number, number];
@@ -263,7 +267,7 @@ function extractYDomain(layer: Specification) {
   ];
 }
 
-function extractYEncodingFields(layer: Specification) {
+function extractYEncodingFields(layer: BaseSpec) {
   const yEncodingFields: string[] = [];
 
   if (layer?.encoding) {
@@ -293,25 +297,18 @@ function extractYEncodingFields(layer: Specification) {
  * @param decimalPlaces
  */
 export function parse(
-  data: any[],
-  specification: Specification[],
+  specification: TopLevelSpec,
   candleWidth: number,
   decimalPlaces: number
 ): Scenegraph {
-  if (specification.length > 2) {
+  if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
-      `Expected no more than 2 panels. Received ${specification.length}`
+      `Expected no more than 2 panels. Received ${specification.vconcat.length}`
     );
   }
 
-  const inputSpec: Specification = {
-    data: { values: data },
-    mark: "area",
-    transform: specification[0].transform,
-  };
-
-  const model = compile(inputSpec);
-
+  const data: any[] = specification?.data?.values ?? [];
+  const model = compile(specification);
   const outputNode = model.component.data.outputNodes["data"];
 
   let head: OutputNode | null = outputNode;
@@ -325,7 +322,7 @@ export function parse(
         case "bollinger":
           {
             const indicatorData = indicatorBollingerBands()(
-              data.map((d) => d[transform.on])
+              data.map((d: any) => d[transform.on])
             );
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
@@ -333,9 +330,7 @@ export function parse(
           break;
         case "eldarRay":
           {
-            const indicatorData = indicatorElderRay()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData = indicatorElderRay()(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
@@ -376,28 +371,37 @@ export function parse(
     head = head.parent;
   }
 
-  specification[0].data = { values: newData };
+  specification.data = { values: newData };
 
   return {
-    panels: specification.map((panel) => {
-      return {
-        id: panel.name ?? "",
-        data: parseLayer(panel, { values: newData }, {}, candleWidth),
-        originalData: panel.data?.values ?? [],
-        grid: new GridElement(),
-        axis: new YAxisElement(),
-        crosshair: new CrosshairElement(),
-        axisTooltip: new YAxisTooltipElement(decimalPlaces),
-        annotations: [
-          new YAxisAnnotationElement(
-            (panel.data?.values[panel.data?.values.length - 1] as any)?.close,
-            decimalPlaces
-          ),
-        ],
-        yEncodingFields: extractYEncodingFields(panel),
-        yDomain: extractYDomain(panel),
-      };
-    }),
+    panels: isVConcatSpec(specification)
+      ? specification.vconcat.map((panel) => {
+          return {
+            id: panel.name ?? "",
+            data: parseLayer(
+              panel,
+              { values: newData },
+              specification.encoding ?? {},
+              candleWidth
+            ),
+            originalData: newData ?? [],
+            grid: new GridElement(),
+            axis: new YAxisElement(),
+            crosshair: new CrosshairElement(),
+            axisTooltip: new YAxisTooltipElement(decimalPlaces),
+            annotations: [
+              new YAxisAnnotationElement(
+                (panel.data?.values[
+                  panel.data?.values.length - 1
+                ] as any)?.close,
+                decimalPlaces
+              ),
+            ],
+            yEncodingFields: extractYEncodingFields(panel),
+            yDomain: extractYDomain(panel, newData),
+          };
+        })
+      : [], // FIXME: If not a vconcat spec what should we do?
     xAxis: {
       id: "x-axis",
       originalData: data,

@@ -156,6 +156,7 @@ const studies: Study[] = [
 const overlays: Overlay[] = [
   { id: "none", label: "None" },
   { id: "bollinger", label: "Bollinger Bands" },
+  { id: "envelope", label: "Envelope" },
   { id: "priceMonitoringBounds", label: "Price Monitoring Bounds" },
 ];
 

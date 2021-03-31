@@ -1,8 +1,8 @@
 import { Model } from "./model";
-import { Specification } from "../spec";
+import { BaseSpec } from "../spec/base";
 import { buildModel } from "./buildModel";
 
-export function compile(inputSpec: Specification) {
+export function compile(inputSpec: BaseSpec) {
   const model: Model = buildModel(inputSpec, null);
 
   model.parse();

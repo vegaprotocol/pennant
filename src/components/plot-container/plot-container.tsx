@@ -20,18 +20,17 @@ import { Interval } from "../../api/vega-graphql";
 import { PlotArea } from "../plot-area";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
-import { drawChart } from "../../render";
+import { drawChart, drawChartNoTransform } from "../../render";
 import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
 import { throttle } from "lodash";
-import { Specification } from "../../spec";
+import { TopLevelSpec } from "../../spec";
 
 export type PlotContainerProps = {
   width: number;
   height: number;
-  data: any[];
-  view: Specification[];
+  specification: TopLevelSpec;
   interval: Interval;
   decimalPlaces: number;
   onBoundsChanged?: (bounds: [Date, Date]) => void;
@@ -45,8 +44,7 @@ export type PlotContainerProps = {
 export const PlotContainer = React.forwardRef(
   (
     {
-      data,
-      view,
+      specification,
       interval,
       decimalPlaces,
       onBoundsChanged = () => {},
@@ -81,19 +79,24 @@ export const PlotContainer = React.forwardRef(
     const timeScaleRescaledRef = React.useRef(scaleTime()); // A rescaled copy of the time scale which reflects the user panning and scaling
     const chartRef = React.useRef<FcElement>(null!);
     const crosshairXRef = React.useRef<number | null>(null);
-    const crosshairsRef = React.useRef<(number | null)[]>(view.map(() => null));
+    const crosshairsRef = React.useRef<(number | null)[]>([null, null]);
     const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>([
       scaleLinear(),
       scaleLinear(),
     ]);
+
+    const data: any[] = React.useMemo(() => specification?.data?.values ?? [], [
+      specification,
+    ]);
+
     const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
     const candleWidth = getCandleWidth(interval);
 
     // Compile data and view specification into scenegraph ready for rendering
-    const scenegraph: Scenegraph = React.useMemo(
-      () => parse(data, view, candleWidth, decimalPlaces),
-      [candleWidth, data, decimalPlaces, view]
-    );
+    const scenegraph: Scenegraph = React.useMemo(() => {
+      console.log("new scenegraph");
+      return parse(specification, candleWidth, decimalPlaces);
+    }, [candleWidth, decimalPlaces, specification]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
@@ -290,10 +293,20 @@ export const PlotContainer = React.forwardRef(
       select(chartRef.current).node()?.requestRedraw();
     }, []);
 
+    drawChartNoTransform(
+      timeScaleRef.current,
+      timeScaleRescaledRef.current,
+      data,
+      scenegraph,
+      scalesRef,
+      requestRedraw,
+      onBoundsChangedThrottled
+    );
+
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
         {scenegraph.panels.map((panel: Panel, panelIndex: number) => (
-          <React.Fragment key={panel.id}>
+          <React.Fragment key={panelIndex}>
             <div className="plot-area">
               <PlotArea
                 scenegraph={panel}

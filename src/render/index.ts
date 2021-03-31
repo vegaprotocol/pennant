@@ -29,3 +29,24 @@ export function drawChart(
   requestRedraw();
   onBoundsChanged?.(domain as [Date, Date]);
 }
+
+export function drawChartNoTransform(
+  timeScale: ScaleTime<number, number, never>,
+  timeScaleRescaled: ScaleTime<number, number, never>,
+  data: any[],
+  scenegraph: Scenegraph,
+  scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
+  requestRedraw: () => void,
+  onBoundsChanged: ((bounds: [Date, Date]) => void) | undefined
+) {
+  const domain = timeScaleRescaled.domain();
+
+  const filteredData = scenegraph.panels.map((panel) =>
+    panel.originalData.filter((d) => d.date > domain[0] && d.date < domain[1])
+  );
+
+  recalculateScales(scenegraph, filteredData, scalesRef);
+
+  requestRedraw();
+  onBoundsChanged?.(domain as [Date, Date]);
+}

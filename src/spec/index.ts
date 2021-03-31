@@ -1,17 +1,10 @@
-import { Data } from "../data";
-import { Encoding } from "../encoding";
-import { Mark, MarkDef } from "../mark";
-import { Transform } from "../transform";
+import { BaseSpec } from "./base";
+import { GenericVConcatSpec } from "./concat";
+import { TopLevel } from "./toplevel";
 
-export interface Specification {
-  data?: Data | null;
-  encoding?: Encoding<any>;
-  mark?: Mark | MarkDef;
+export type { BaseSpec } from "./base";
+export { isVConcatSpec } from "./concat";
 
-  /**
-   * Name for later reference
-   */
-  name?: string;
-  layer?: Specification[];
-  transform?: Transform[];
-}
+export type TopLevelSpec =
+  | TopLevel<BaseSpec>
+  | TopLevel<GenericVConcatSpec<BaseSpec>>;
