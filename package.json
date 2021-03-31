@@ -51,7 +51,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "bignumber.js": "^9.0.1",
     "classnames": "^2.2.6",
-    "d3-array": "2.3.3",
+    "d3-array": "2.12.1",
     "d3-dispatch": "^2.0.0",
     "d3-interpolate": "^2.0.1",
     "d3-scale": "^3.2.3",
