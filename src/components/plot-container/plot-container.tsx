@@ -4,28 +4,23 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import {
-  CandleDetailsExtended,
-  ChartInterface,
-  Panel,
-  Scenegraph,
-} from "../../types";
+import { ChartInterface, Panel, Scenegraph } from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { drawChart, drawChartNoTransform } from "../../render";
 import { getCandleWidth, getSubMinutes } from "../../helpers";
 import { select, selectAll } from "d3-selection";
 
 import { FcElement } from "../../types";
 import { Interval } from "../../api/vega-graphql";
 import { PlotArea } from "../plot-area";
+import { TopLevelSpec } from "../../spec";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
-import { drawChart, drawChartNoTransform } from "../../render";
 import { extent } from "d3-array";
 import { interpolateZoom } from "d3-interpolate";
 import { parse } from "../../scenegraph/parse";
 import { throttle } from "lodash";
-import { TopLevelSpec } from "../../spec";
 
 export type PlotContainerProps = {
   width: number;
@@ -169,7 +164,6 @@ export const PlotContainer = React.forwardRef(
               event,
               timeScaleRef.current,
               timeScaleRescaledRef.current,
-              data,
               scenegraph,
               scalesRef,
               requestRedraw,
@@ -294,9 +288,7 @@ export const PlotContainer = React.forwardRef(
     }, []);
 
     drawChartNoTransform(
-      timeScaleRef.current,
       timeScaleRescaledRef.current,
-      data,
       scenegraph,
       scalesRef,
       requestRedraw,

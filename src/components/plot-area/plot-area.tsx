@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../../helpers";
-import { FcElement, Panel, PositionalElement } from "../../types";
+import { FcElement, Panel } from "../../types";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { bisector } from "d3-array";

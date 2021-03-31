@@ -2,14 +2,8 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { Colors, mergeData } from "../helpers";
 import { DataSource, PriceMonitoringBounds } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
-import {
-  indicatorBollingerBands,
-  indicatorElderRay,
-  indicatorMacd,
-} from "@d3fc/d3fc-technical-indicator";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
@@ -22,6 +16,7 @@ import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
 import { constructTopLevelSpec } from "../helpers";
+import { mergeData } from "../helpers";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

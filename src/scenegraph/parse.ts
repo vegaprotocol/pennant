@@ -1,3 +1,4 @@
+import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../spec";
 import {
   CandleElement,
   CrosshairElement,
@@ -9,8 +10,15 @@ import {
   YAxisTooltipElement,
 } from "../elements";
 import { Mark, MarkDef } from "../mark";
-import { Field } from "../channeldef";
-import { Scenegraph } from "../types";
+import {
+  PADDING_INNER,
+  createElement,
+  getAreaConfig,
+  getBarConfig,
+  getConditionalColor,
+  getLineConfig,
+  getRuleConfig,
+} from "../helpers";
 import {
   indicatorBollingerBands,
   indicatorElderRay,
@@ -19,22 +27,14 @@ import {
   indicatorMovingAverage,
 } from "@d3fc/d3fc-technical-indicator";
 
-import {
-  createElement,
-  getAreaConfig,
-  getBarConfig,
-  getConditionalColor,
-  getLineConfig,
-  getRuleConfig,
-  PADDING_INNER,
-} from "../helpers";
 import { Data } from "../data";
 import { Encoding } from "../encoding";
+import { Field } from "../channeldef";
 import { OutputNode } from "../compile/data/dataflow";
+import { Scenegraph } from "../types";
 import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
 import { compile } from "../compile/compile";
 import { extent } from "d3-array";
-import { isVConcatSpec, BaseSpec, TopLevelSpec } from "../spec";
 
 export function compileLayer(
   data: Data,

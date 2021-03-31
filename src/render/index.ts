@@ -8,7 +8,6 @@ export function drawChart(
   event: any,
   timeScale: ScaleTime<number, number, never>,
   timeScaleRescaled: ScaleTime<number, number, never>,
-  data: any[],
   scenegraph: Scenegraph,
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
   requestRedraw: () => void,
@@ -31,9 +30,7 @@ export function drawChart(
 }
 
 export function drawChartNoTransform(
-  timeScale: ScaleTime<number, number, never>,
   timeScaleRescaled: ScaleTime<number, number, never>,
-  data: any[],
   scenegraph: Scenegraph,
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>,
   requestRedraw: () => void,
