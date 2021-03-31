@@ -1,4 +1,5 @@
 export * from "./element-annotation";
+export * from "./element-area";
 export * from "./element-bar";
 export * from "./element-candle";
 export * from "./element-crosshair";
