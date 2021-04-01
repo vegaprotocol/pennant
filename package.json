@@ -33,7 +33,7 @@
     "@d3fc/d3fc-zoom": "^1.1.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
+    "@testing-library/user-event": "^13.0.0",
     "@types/classnames": "^2.2.11",
     "@types/d3-array": "^2.9.0",
     "@types/d3-dispatch": "^2.0.0",
