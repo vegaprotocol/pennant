@@ -20,7 +20,7 @@ import { mergeData } from "../helpers";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-export type ChartType = "area" | "candle";
+export type ChartType = "area" | "candle" | "line";
 export type Overlay =
   | "bollinger"
   | "envelope"
@@ -139,7 +139,7 @@ export const Chart = React.forwardRef(
         false
       );
 
-      //subscribe();
+      subscribe();
 
       return () => {
         myDataSource.unsubscribe();
@@ -214,11 +214,6 @@ export const Chart = React.forwardRef(
                     decimalPlaces={dataSource.decimalPlaces}
                   />
                 )}
-                <ResetButton
-                  onClick={() => {
-                    chartRef.current.reset();
-                  }}
-                />
               </div>
             </div>
           ) : (

@@ -50,25 +50,6 @@ export const ChartInfo = ({
 }: ChartInfoProps) => {
   return (
     <div className="chart-info-wrapper" style={{ pointerEvents: "auto" }}>
-      <IntervalSelect
-        className="interval-select"
-        items={createIntervalOptions([
-          "I15M",
-          "I1D",
-          "I1H",
-          "I1M",
-          "I5M",
-          "I6H",
-        ])}
-        itemRenderer={renderInterval}
-        onItemSelect={(item: IntervalOption) => {
-          onSetInterval(item.interval);
-        }}
-        noResults={<MenuItem disabled={true} text="No intervals found" />}
-        filterable={false}
-      >
-        <Button text={INTERVALS[interval]} disabled={false} />
-      </IntervalSelect>
       <div>
         <span>{`${format(bounds[0], "HH:mm dd MMM yyyy")}`}</span>
         <span className="text-muted"> to </span>
