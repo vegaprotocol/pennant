@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../../helpers";
-import { FcElement, Panel, PositionalElement } from "../../types";
+import { FcElement, Panel } from "../../types";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { bisector } from "d3-array";
@@ -61,7 +61,7 @@ export const PlotArea = ({
             ctx.save();
             ctx.scale(pixelRatio, pixelRatio);
 
-            clearCanvas(child, ctx, Colors.BLACK);
+            clearCanvas(child, ctx, Colors.BACKGROUND);
 
             if (scenegraph.grid) {
               scenegraph.grid.draw(ctx, x, y);
@@ -99,7 +99,7 @@ export const PlotArea = ({
 
           if (scenegraph.annotations) {
             for (const annotation of scenegraph.annotations) {
-              annotation.draw(ctx, x, y);
+              annotation.draw(ctx, x, y, 59000);
             }
           }
 
@@ -126,25 +126,22 @@ export const PlotArea = ({
       event: { offsetX: number; offsetY: number },
       callback?: (index: number) => void
     ) {
-      const data = scenegraph.data[0];
+      const data = scenegraph.originalData;
 
       if (data.length > 0) {
         const { offsetX, offsetY } = event;
         const timeAtMouseX = x.invert(offsetX);
 
-        const index = bisector((d: PositionalElement) => d.x).left(
-          data,
-          timeAtMouseX
-        );
+        const index = bisector((d: any) => d.date).left(data, timeAtMouseX);
 
         const firstElement = data[index - 1];
         const secondElement = data[index];
 
-        let element: PositionalElement;
+        let element: any;
         let indexOffset = 0;
 
         if (firstElement && secondElement) {
-          const nearestCandleDates = [firstElement.x, secondElement.x];
+          const nearestCandleDates = [firstElement.date, secondElement.date];
           indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
           element = [firstElement, secondElement][indexOffset];
         } else if (firstElement) {
@@ -155,7 +152,7 @@ export const PlotArea = ({
           element = secondElement;
         }
 
-        crosshairXRef.current = x(element.x);
+        crosshairXRef.current = x(element.date);
         crosshairYRef.current[panelIndex] = offsetY;
 
         requestRedraw();
@@ -164,15 +161,11 @@ export const PlotArea = ({
     }
 
     container
-      .on("mouseover", (event: { offsetX: number; offsetY: number }) => {
-        handleMouse(event, onMouseOver);
-      })
       .on(
-        "mousemove",
+        "mouseover mousemove",
         (event: { offsetX: number; offsetY: number }) => {
-          handleMouse(event, onMouseMove);
-        },
-        { capture: true } // TODO: It would be preferable to still respond to this event while zooming
+          handleMouse(event, onMouseOver);
+        }
       )
       .on("mouseout", () => {
         crosshairXRef.current = null;
@@ -184,16 +177,15 @@ export const PlotArea = ({
   }, [
     crosshairXRef,
     crosshairYRef,
-    panelIndex,
-    onMouseMove,
     onMouseOut,
     onMouseOver,
+    panelIndex,
     requestRedraw,
     scenegraph.annotations,
     scenegraph.axis,
     scenegraph.axisTooltip,
     scenegraph.crosshair,
-    scenegraph.data,
+    scenegraph.originalData,
     x,
     y,
   ]);

@@ -21,6 +21,6 @@ Primary.args = {
     close: 110,
     low: 90,
     high: 120,
-    volume: 10_000,
+    volume: 10000,
   },
 };

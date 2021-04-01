@@ -2,8 +2,7 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { Colors, mergeData } from "../helpers";
-import { DataSource, View } from "../types";
+import { DataSource, PriceMonitoringBounds } from "../types";
 import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -14,83 +13,36 @@ import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
+import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { ResetButton } from "./reset-button";
+import { constructTopLevelSpec } from "../helpers";
+import { mergeData } from "../helpers";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const topLevelViewSpec: View[] = [
-  {
-    name: "main",
-    layer: [
-      {
-        encoding: {
-          x: {
-            field: "date",
-            type: "temporal",
-          },
-          y: {
-            type: "quantitative",
-            scale: { zero: false },
-          },
-          color: {
-            condition: {
-              test: ["lt", "open", "close"],
-              value: Colors.GREEN,
-            },
-            value: Colors.RED,
-          },
-        },
-        layer: [
-          {
-            name: "wick",
-            mark: "rule",
-            encoding: { y: { field: "low" }, y2: { field: "high" } },
-          },
-          {
-            name: "candle",
-            mark: "bar",
-            encoding: {
-              y: { field: "open" },
-              y2: { field: "close" },
-              fill: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN_DARK,
-                },
-                value: Colors.RED,
-              },
-              stroke: {
-                condition: {
-                  test: ["lt", "open", "close"],
-                  value: Colors.GREEN,
-                },
-                value: Colors.RED,
-              },
-            },
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "study",
-    mark: "bar",
-    encoding: {
-      x: { field: "date", type: "temporal" },
-      y: { field: "volume", type: "quantitative", scale: { zero: true } },
-    },
-  },
-];
+export type ChartType = "area" | "candle";
+export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
+export type Study = "eldarRay" | "volume" | "macd";
 
 export type ChartProps = {
   dataSource: DataSource;
+  chartType?: ChartType;
+  study?: Study;
+  overlay?: Overlay;
   interval: Interval;
   onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
   (
-    { dataSource, interval, onSetInterval }: ChartProps,
+    {
+      dataSource,
+      chartType = "candle",
+      study,
+      overlay,
+      interval,
+      onSetInterval,
+    }: ChartProps,
     ref: React.Ref<ChartInterface>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -110,12 +62,21 @@ export const Chart = React.forwardRef(
 
     const chartRef = React.useRef<ChartInterface>(null!);
     const [data, setData] = React.useState<any[]>([]);
+    const [
+      priceMonitoringBounds,
+      setPriceMonitoringBounds,
+    ] = React.useState<PriceMonitoringBounds | null>(null);
     const [bounds, setBounds] = React.useState<[Date, Date]>([
       new Date(),
       new Date(),
     ]);
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
     const [isLoading, setIsLoading] = React.useState(true);
+
+    const specification = React.useMemo(
+      () => constructTopLevelSpec(data, chartType, overlay, study),
+      [chartType, data, overlay, study]
+    );
 
     const hotkeys = React.useMemo(
       () => [
@@ -174,7 +135,7 @@ export const Chart = React.forwardRef(
         false
       );
 
-      subscribe();
+      //subscribe();
 
       return () => {
         myDataSource.unsubscribe();
@@ -188,39 +149,8 @@ export const Chart = React.forwardRef(
         console.info(`Data Source ready:`, configuration);
         setIsLoading(false);
 
-        if (
-          configuration.priceMonitoringBounds.length > 0 &&
-          topLevelViewSpec[0].layer
-        ) {
-          topLevelViewSpec[0].layer[1] = {
-            data: {
-              values: [
-                {
-                  max: configuration.priceMonitoringBounds[0].maxValidPrice,
-                  min: configuration.priceMonitoringBounds[0].minValidPrice,
-                  reference:
-                    configuration.priceMonitoringBounds[0].referencePrice,
-                },
-              ],
-            },
-            layer: [
-              {
-                encoding: { y: { field: "max" }, color: { value: "green" } },
-                mark: "rule",
-              },
-              {
-                encoding: { y: { field: "min" }, color: { value: "red" } },
-                mark: "rule",
-              },
-              {
-                encoding: {
-                  y: { field: "reference" },
-                  color: { value: Colors.VEGA_YELLOW },
-                },
-                mark: "rule",
-              },
-            ],
-          };
+        if (configuration.priceMonitoringBounds.length > 0) {
+          setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
         }
       });
     }, [dataSource]);
@@ -257,8 +187,7 @@ export const Chart = React.forwardRef(
                     ref={chartRef}
                     width={width}
                     height={height}
-                    data={data}
-                    view={topLevelViewSpec}
+                    specification={specification}
                     interval={interval}
                     decimalPlaces={dataSource.decimalPlaces}
                     onBoundsChanged={setBounds}
@@ -274,6 +203,7 @@ export const Chart = React.forwardRef(
                   bounds={bounds}
                   onSetInterval={onSetInterval}
                 />
+
                 {selectedIndex !== null && (
                   <CandleInfo
                     candle={data[selectedIndex]}

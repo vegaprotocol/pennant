@@ -1,12 +1,12 @@
 [![CI status](https://github.com/vegaprotocol/pennant/actions/workflows/test.yml/badge.svg)](https://github.com/vegaprotocol/pennant/actions/workflows/test.yml)
 [![GitHub license](https://img.shields.io/npm/l/pennant?style=plastic)](https://github.com/vegaprotocol/pennant/blob/main/LICENSE)
 [![NPM](https://img.shields.io/npm/v/pennant?style=plastic&color=green)](https://npmjs.com/vegaprotocol/pennant/)
-[![Netlify Status](https://img.shields.io/netlify/754fddcc-e010-4b27-913e-83c7b8ebdcf8?color=green&style=plastic)](https://app.netlify.com/sites/distracted-lamarr-c30618/deploys)
+[![Netlify Status](https://img.shields.io/netlify/754fddcc-e010-4b27-913e-83c7b8ebdcf8?color=green&style=plastic)](https://app.netlify.com/sites/pennant/deploys)
 
 <br />
 <p align="center">
   <a href="https://github.com/vegaprotocol/pennant">
-    <img src="https://user-images.githubusercontent.com/981531/111454723-e0742f00-870c-11eb-8030-49edb8f05bc3.png" alt="Logo" width="256" height="128" style="image-rendering: pixelated;">
+    <img src="./assets/logo.svg" alt="Logo" width="256" height="128" style="image-rendering: pixelated;">
   </a>
 
   <h3 align="center">Pennant</h3>

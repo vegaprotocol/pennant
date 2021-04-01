@@ -1,11 +1,10 @@
-import { CandleDetailsExtended, Scenegraph } from "../types";
-
 import { ScaleLinear } from "d3-scale";
+import { Scenegraph } from "../types";
 import { extent } from "d3-array";
 
 export function recalculateScales(
   scenegraph: Scenegraph,
-  data: CandleDetailsExtended[],
+  data: any[][],
   scalesRef: React.MutableRefObject<ScaleLinear<number, number, never>[]>
 ) {
   scenegraph.panels.forEach((panel, i) => {
@@ -13,10 +12,7 @@ export function recalculateScales(
 
     if (yEncodingFields) {
       const mappedData = yEncodingFields.flatMap(
-        (field: any) =>
-          (data.map(
-            (d) => d[field as keyof CandleDetailsExtended]
-          ) as unknown) as number
+        (field: any) => (data[i].map((d: any) => d[field]) as unknown) as number
       );
 
       const domain = extent(mappedData) as [number, number];

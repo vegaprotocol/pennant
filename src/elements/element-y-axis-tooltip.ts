@@ -44,7 +44,7 @@ function addYAxisPath(
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();

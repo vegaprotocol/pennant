@@ -31,8 +31,8 @@ function addYAxisPath(
 
   ctx.beginPath();
   ctx.strokeStyle = Colors.GRAY_LIGHT;
-  ctx.moveTo(xRange[1] - WIDTH, yRange[0]);
-  ctx.lineTo(xRange[1] - WIDTH, yRange[1]);
+  ctx.moveTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[0]);
+  ctx.lineTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[1]);
   ctx.stroke();
   ctx.closePath();
 
