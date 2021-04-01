@@ -16,7 +16,7 @@
     "jsx": "react-jsx",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "dist/types",
+    "declarationDir": "dist/types"
   },
   "include": ["src"]
 }
