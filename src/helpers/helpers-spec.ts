@@ -13,7 +13,34 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
           },
           mark: {
             type: "area",
-            line: { color: "green" },
+            line: {
+              color: "#009cff",
+            },
+            color: {
+              gradient: "linear",
+              stops: [
+                {
+                  offset: 0,
+                  color: "#044e80",
+                },
+                {
+                  offset: 1,
+                  color: "#000000",
+                },
+              ],
+            },
+          },
+        },
+      ];
+    case "line":
+      return [
+        {
+          encoding: {
+            y: { field: "close", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: "#009cff",
           },
         },
       ];
@@ -162,6 +189,27 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
         },
       ];
     case "envelope":
+      return [
+        {
+          encoding: {
+            y: { field: "lower", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_ORANGE,
+          },
+        },
+        {
+          encoding: {
+            y: { field: "upper", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+      ];
+    case "priceMonitoringBounds":
       return [
         {
           encoding: {

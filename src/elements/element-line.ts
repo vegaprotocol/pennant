@@ -1,5 +1,5 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
-import { curveBasis, line as d3Line } from "d3-shape";
+import { curveLinear, line as d3Line } from "d3-shape";
 
 import { PositionalElement } from "../types";
 
@@ -30,7 +30,7 @@ export class LineElement implements PositionalElement {
   ) {
     // TODO: Instantiate on construction
     const line = d3Line<[Date, number]>()
-      .curve(curveBasis)
+      .curve(curveLinear)
       .x((d) => xScale(d[0]))
       .y((d) => yScale(d[1]));
 

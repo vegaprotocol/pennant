@@ -1,5 +1,5 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
-import { curveBasis, area as d3Area, line as d3Line } from "d3-shape";
+import { curveLinear, area as d3Area, line as d3Line } from "d3-shape";
 
 import { Gradient } from "../mark";
 import { PositionalElement } from "../types";
@@ -34,13 +34,13 @@ export class AreaElement implements PositionalElement {
   ) {
     // TODO: Instantiate on construction
     const area = d3Area<[Date, number, number]>()
-      .curve(curveBasis)
+      .curve(curveLinear)
       .x((d) => xScale(d[0]))
       .y0((d) => yScale(d[1]))
       .y1((d) => yScale(d[2]));
 
     const line = d3Line<[Date, number, number]>()
-      .curve(curveBasis)
+      .curve(curveLinear)
       .x((d) => xScale(d[0]))
       .y((d) => yScale(d[2]));
 
