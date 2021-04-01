@@ -182,6 +182,47 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
         },
       ];
+    case "ichimoku":
+      return [
+        {
+          encoding: {
+            y: { field: "leadingSpanA", type: "quantitative" },
+            y2: { field: "leadingSpanB", type: "quantitative" },
+          },
+          mark: {
+            type: "area",
+            line: { color: Colors.RED },
+            color: Colors.GREEN_DARK,
+          },
+        },
+        {
+          encoding: {
+            y: { field: "conversion", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+        {
+          encoding: {
+            y: { field: "baseline", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_ORANGE,
+          },
+        },
+        {
+          encoding: {
+            y: { field: "laggingSpan", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.GRAY_LIGHT,
+          },
+        },
+      ];
     default:
       return [];
   }
@@ -193,6 +234,8 @@ function constructOverlayTransform(overlay: Overlay): Transform[] {
       return [{ indicator: "bollinger", on: "close" }];
     case "envelope":
       return [{ indicator: "envelope", on: "close" }];
+    case "ichimoku":
+      return [{ indicator: "ichimoku", on: "close" }]; // FIXME: on isn't necessary here?
     default:
       return [];
   }
