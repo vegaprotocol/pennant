@@ -10,8 +10,6 @@ import { terser } from "rollup-plugin-terser";
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
 const globals = {
-  "@blueprintjs/core": "blueprint",
-  "@blueprintjs/select": "blueprint",
   react: "React",
   "react-dom": "ReactDOM",
 };

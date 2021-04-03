@@ -263,7 +263,6 @@ export const VegaProtocol: Story = () => {
           study={study === "none" ? undefined : study}
           overlay={overlay === "none" ? undefined : overlay}
           interval={interval}
-          onSetInterval={setInterval}
         />
       </div>
     </div>
@@ -354,7 +353,6 @@ export const CryptoCompare: Story = () => {
           study={study === "none" ? undefined : study}
           overlay={overlay === "none" ? undefined : overlay}
           interval={interval}
-          onSetInterval={setInterval}
         />
       </div>
     </div>

@@ -3,22 +3,17 @@ import "./chart.scss";
 import * as React from "react";
 
 import { DataSource, PriceMonitoringBounds } from "../types";
-import { FocusStyleManager, useHotkeys } from "@blueprintjs/core";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { ChartInterface } from "../types";
-import { HotkeysProvider } from "@blueprintjs/core";
 import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
-import { ResetButton } from "./reset-button";
 import { constructTopLevelSpec } from "../helpers";
 import { mergeData } from "../helpers";
-
-FocusStyleManager.onlyShowFocusOnTabs();
 
 export type ChartType = "area" | "candle" | "line";
 export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
@@ -30,19 +25,11 @@ export type ChartProps = {
   study?: Study;
   overlay?: Overlay;
   interval: Interval;
-  onSetInterval: (interval: Interval) => void;
 };
 
 export const Chart = React.forwardRef(
   (
-    {
-      dataSource,
-      chartType = "candle",
-      study,
-      overlay,
-      interval,
-      onSetInterval,
-    }: ChartProps,
+    { dataSource, chartType = "candle", study, overlay, interval }: ChartProps,
     ref: React.Ref<ChartInterface>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -77,38 +64,6 @@ export const Chart = React.forwardRef(
       () => constructTopLevelSpec(data, chartType, overlay, study),
       [chartType, data, overlay, study]
     );
-
-    const hotkeys = React.useMemo(
-      () => [
-        {
-          combo: "r",
-          global: true,
-          label: "Reset",
-          onKeyDown: () => {
-            chartRef.current.reset();
-          },
-        },
-        {
-          combo: "left",
-          global: true,
-          label: "Refresh data",
-          onKeyDown: () => {
-            chartRef.current.panBy(-1);
-          },
-        },
-        {
-          combo: "right",
-          global: true,
-          label: "Focus text input",
-          onKeyDown: () => {
-            chartRef.current.panBy(1);
-          },
-        },
-      ],
-      []
-    );
-
-    const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
@@ -165,58 +120,44 @@ export const Chart = React.forwardRef(
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
 
     if (isLoading) {
-      return <NonIdealState icon="timeline-line-chart" title="Loading" />;
+      return <NonIdealState title="Loading" />;
     }
 
-    return (
-      <HotkeysProvider>
-        <div
-          onKeyDown={handleKeyDown}
-          onKeyUp={handleKeyUp}
-          style={{ height: "100%" }}
+    return !isLoading && data.length > 1 ? (
+      <div className="chart-wrapper">
+        <AutoSizer
+          defaultHeight={150}
+          defaultWidth={300}
+          style={{ height: "100%", width: "100%" }} // TODO: Find a better method
         >
-          {!isLoading && data.length > 1 ? (
-            <div className="chart-wrapper">
-              <AutoSizer
-                defaultHeight={150}
-                defaultWidth={300}
-                style={{ height: "100%", width: "100%" }} // TODO: Find a better method
-              >
-                {({ height, width }) => (
-                  <PlotContainer
-                    ref={chartRef}
-                    width={width}
-                    height={height}
-                    specification={specification}
-                    interval={interval}
-                    decimalPlaces={dataSource.decimalPlaces}
-                    onBoundsChanged={setBounds}
-                    onMouseMove={setCandle}
-                    onMouseOut={handleOnMouseOut}
-                    onGetDataRange={handleGetDataRange}
-                  />
-                )}
-              </AutoSizer>
-              <div className="overlay">
-                <ChartInfo
-                  interval={interval}
-                  bounds={bounds}
-                  onSetInterval={onSetInterval}
-                />
+          {({ height, width }) => (
+            <PlotContainer
+              ref={chartRef}
+              width={width}
+              height={height}
+              specification={specification}
+              interval={interval}
+              decimalPlaces={dataSource.decimalPlaces}
+              onBoundsChanged={setBounds}
+              onMouseMove={setCandle}
+              onMouseOut={handleOnMouseOut}
+              onGetDataRange={handleGetDataRange}
+            />
+          )}
+        </AutoSizer>
+        <div className="overlay">
+          <ChartInfo bounds={bounds} />
 
-                {selectedIndex !== null && (
-                  <CandleInfo
-                    candle={data[selectedIndex]}
-                    decimalPlaces={dataSource.decimalPlaces}
-                  />
-                )}
-              </div>
-            </div>
-          ) : (
-            <NonIdealState icon="timeline-line-chart" title="No data found" />
+          {selectedIndex !== null && (
+            <CandleInfo
+              candle={data[selectedIndex]}
+              decimalPlaces={dataSource.decimalPlaces}
+            />
           )}
         </div>
-      </HotkeysProvider>
+      </div>
+    ) : (
+      <NonIdealState title="No data found" />
     );
   }
 );
