@@ -147,7 +147,6 @@ export const Chart = React.forwardRef(
         </AutoSizer>
         <div className="overlay">
           <ChartInfo bounds={bounds} />
-
           {selectedIndex !== null && (
             <CandleInfo
               candle={data[selectedIndex]}

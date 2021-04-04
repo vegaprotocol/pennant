@@ -89,7 +89,6 @@ export const PlotContainer = React.forwardRef(
 
     // Compile data and view specification into scenegraph ready for rendering
     const scenegraph: Scenegraph = React.useMemo(() => {
-      console.log("new scenegraph");
       return parse(specification, candleWidth, decimalPlaces);
     }, [candleWidth, decimalPlaces, specification]);
 

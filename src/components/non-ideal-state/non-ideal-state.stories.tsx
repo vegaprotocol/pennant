@@ -14,7 +14,6 @@ const Template: Story<NonIdealStateProps> = (args) => (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  icon: "timeline-line-chart",
   title: "No data found",
   description: "Try a different market",
 };
