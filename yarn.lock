@@ -1250,6 +1250,18 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
+"@blueprintjs/popover2@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-0.4.0.tgz#93925e15bc97301a9d8a63df957bba4df9453e16"
+  integrity sha512-7XT6wIvQZmQlN//0EhaDUL3JPo61GF4ELB2uqiYT8I44SvFjPPKfgv9aHnaoAcE/GrwnvqSaZkgEZwDhIXT3Bw==
+  dependencies:
+    "@blueprintjs/core" "^3.42.0"
+    "@popperjs/core" "^2.5.4"
+    classnames "^2.2"
+    dom4 "^2.1.5"
+    react-popper "^2.2.4"
+    tslib "~1.13.0"
+
 "@blueprintjs/select@3.15.9":
   version "3.15.9"
   resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.15.9.tgz#b925127cc87987901b5e2559a9beba4d6aaa4a34"
@@ -4400,7 +4412,12 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2, classnames@^2.2.5, classnames@^2.2.6:
+classnames@^2.2:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.0.tgz#19524334bad47ccd99793936b67f9be0860fe835"
+  integrity sha512-UUf/S3eeczXBjHPpSnrZ1ZyxH3KmLW8nVYFUWIZA/dixYMIQr7l94yYKxaAkmPk7HO9dlT6gFqAPZC02tTdfQw==
+
+classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
