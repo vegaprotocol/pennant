@@ -161,12 +161,12 @@ export const PlotArea = ({
     }
 
     container
-      .on(
-        "mouseover mousemove",
-        (event: { offsetX: number; offsetY: number }) => {
-          handleMouse(event, onMouseOver);
-        }
-      )
+      .on("mouseover", (event: { offsetX: number; offsetY: number }) => {
+        handleMouse(event, onMouseOver);
+      })
+      .on("mousemove", (event: { offsetX: number; offsetY: number }) => {
+        handleMouse(event, onMouseMove);
+      })
       .on("mouseout", () => {
         crosshairXRef.current = null;
         crosshairYRef.current[panelIndex] = null;
@@ -177,6 +177,7 @@ export const PlotArea = ({
   }, [
     crosshairXRef,
     crosshairYRef,
+    onMouseMove,
     onMouseOut,
     onMouseOver,
     panelIndex,
