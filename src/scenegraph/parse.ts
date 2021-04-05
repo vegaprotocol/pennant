@@ -277,9 +277,7 @@ export function parse(
             axisTooltip: new YAxisTooltipElement(decimalPlaces),
             annotations: [
               new YAxisAnnotationElement(
-                (panel.data?.values[
-                  panel.data?.values.length - 1
-                ] as any)?.close,
+                newData[newData.length - 1].close,
                 decimalPlaces
               ),
             ],

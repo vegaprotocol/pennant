@@ -99,7 +99,7 @@ export const PlotArea = ({
 
           if (scenegraph.annotations) {
             for (const annotation of scenegraph.annotations) {
-              annotation.draw(ctx, x, y, 59000);
+              annotation.draw(ctx, x, y);
             }
           }
 

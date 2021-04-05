@@ -25,14 +25,6 @@ function addYAxisPath(
 
     let yAdjusted = yScale(position);
 
-    if (yScale(position) - rectHeight / 2 < 0) {
-      yAdjusted = rectHeight / 2;
-    }
-
-    if (yScale(position) + rectHeight / 2 > yScale.range()[0]) {
-      yAdjusted = yScale.range()[0] - rectHeight / 2;
-    }
-
     ctx.save();
 
     ctx.setLineDash([6, 6]);
