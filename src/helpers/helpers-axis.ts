@@ -1,3 +1,7 @@
 export function getNumXTicks(size: number): number {
-  return size / 100;
+  return Math.abs(size) / 100;
+}
+
+export function getNumYTicks(size: number): number {
+  return Math.max(3, Math.abs(size) / 50);
 }

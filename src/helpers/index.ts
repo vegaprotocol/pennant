@@ -1,3 +1,4 @@
+export * from "./helpers-axis";
 export * from "./helpers-candle";
 export * from "./helpers-canvas";
 export * from "./helpers-color";

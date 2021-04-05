@@ -1,8 +1,8 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+import { getNumXTicks, getNumYTicks } from "../helpers";
 
 import { Colors } from "../helpers";
 import { RenderableElement } from "../types";
-import { getNumXTicks } from "../helpers/helpers-axis";
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,
@@ -13,7 +13,7 @@ function addGridPath(
   const yRange = yScale.range().map(Math.round);
 
   const numXTicks = getNumXTicks(xRange[1] - xRange[0]);
-  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 50;
+  const numYTicks = getNumYTicks(yRange[1] - yRange[0]);
 
   const xTicks = xScale.ticks(numXTicks);
   const yTicks = yScale.ticks(numYTicks);

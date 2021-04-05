@@ -1,6 +1,6 @@
+import { Colors, getNumYTicks } from "../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { Colors } from "../helpers";
 import { RenderableElement } from "../types";
 import { WIDTH } from "../constants";
 
@@ -13,7 +13,7 @@ function addYAxisPath(
 ) {
   const xRange = xScale.range();
   const yRange = yScale.range();
-  const numYTicks = Math.abs(yRange[1] - yRange[0]) / 60;
+  const numYTicks = getNumYTicks(yRange[1] - yRange[0]);
   const yTicks = yScale.ticks(numYTicks);
   const tickFormat = yScale.tickFormat(numYTicks);
 

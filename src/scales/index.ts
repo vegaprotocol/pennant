@@ -19,10 +19,12 @@ export function recalculateScales(
       const domainSize = Math.abs(domain[1] - domain[0]);
 
       // TO DO: Include zero if specified in specification
-      scalesRef.current![i].domain([
-        domain[0] - domainSize * 0.1,
-        domain[1] + domainSize * 0.2,
-      ]);
+      scalesRef
+        .current![i].domain([
+          domain[0] - domainSize * 0.1,
+          domain[1] + domainSize * 0.2,
+        ])
+        .nice();
     }
   });
 }
