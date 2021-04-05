@@ -10,9 +10,9 @@ import {
   MenuItem,
 } from "@blueprintjs/core";
 import { ChartType, Overlay, Study } from "../../../components/chart";
-import { GQLInterval, INTERVALS } from "../../../helpers";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 
+import { INTERVALS } from "../../../helpers";
 import { Interval } from "../../../api/vega-graphql";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
@@ -20,8 +20,6 @@ const chartTypeIcon = new Map<ChartType, IconName>([
   ["candle", "waterfall-chart"],
   ["line", "timeline-line-chart"],
 ]);
-
-const intervals: GQLInterval[] = ["I15M", "I1D", "I1H", "I1M", "I5M", "I6H"];
 
 export type ChartControlsProps = {
   interval: Interval;
@@ -32,6 +30,7 @@ export type ChartControlsProps = {
   onSetChartType: (chartType: ChartType) => void;
   onSetOverlay: (overlay: Overlay) => void;
   onSetStudy: (study: Study) => void;
+  onSnapshot: () => void;
 };
 
 export const ChartControls = ({
@@ -43,6 +42,7 @@ export const ChartControls = ({
   onSetChartType,
   onSetOverlay,
   onSetStudy,
+  onSnapshot,
 }: ChartControlsProps) => {
   return (
     <div className="chart-controls">
@@ -161,7 +161,7 @@ export const ChartControls = ({
       </ButtonGroup>
       <ButtonGroup minimal>
         <Tooltip2 content="Save image">
-          <Button icon="camera" />
+          <Button icon="camera" onClick={onSnapshot} />
         </Tooltip2>
       </ButtonGroup>
     </div>

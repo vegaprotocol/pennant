@@ -7,8 +7,8 @@ import * as React from "react";
 import { ChartInterface, Panel, Scenegraph } from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
 import { drawChart, drawChartNoTransform } from "../../render";
-import { getCandleWidth, getSubMinutes } from "../../helpers";
 import { select, selectAll } from "d3-selection";
 
 import { FcElement } from "../../types";
@@ -62,6 +62,9 @@ export const PlotContainer = React.forwardRef(
       },
       reset: () => {
         reset();
+      },
+      snapshot: () => {
+        return snapshot();
       },
     }));
 
@@ -228,6 +231,8 @@ export const PlotContainer = React.forwardRef(
       },
       [data, zoomControl.translateTo]
     );
+
+    const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
 
     const panBy = React.useCallback(
       function panBy(n: number) {

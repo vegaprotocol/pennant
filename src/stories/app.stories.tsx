@@ -1,12 +1,13 @@
 import "./app.stories.scss";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { Button, MenuItem } from "@blueprintjs/core";
+import { Button, Intent, MenuItem } from "@blueprintjs/core";
 import { Chart, ChartType, Overlay, Study } from "../components/chart";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 
 import { ApolloDataSource } from "../data/vega-protocol-data-source";
+import { AppToaster } from "./components/toaster";
 import { ChartControls } from "./components/chart-controls";
 import { ChartInterface } from "../types";
 import { CryptoCompareDataSource } from "../data/crypto-compare-data-source";
@@ -118,6 +119,24 @@ export const VegaProtocol: Story = () => {
           onSetChartType={setChartType}
           onSetOverlay={setOverlay}
           onSetStudy={setStudy}
+          onSnapshot={async () => {
+            const blob = await ref.current.snapshot();
+
+            if (blob) {
+              if (navigator.clipboard) {
+                await navigator?.clipboard?.write?.([
+                  new ClipboardItem({ "image/png": blob }),
+                ]);
+
+                AppToaster.show({
+                  intent: Intent.SUCCESS,
+                  message: "Copied to clipboard",
+                });
+              } else {
+                console.log("Clipboard API not found");
+              }
+            }
+          }}
         />
       </div>
       <div style={{ height: "60vh" }}>
@@ -155,6 +174,24 @@ export const CryptoCompare: Story = () => {
         onSetChartType={setChartType}
         onSetOverlay={setOverlay}
         onSetStudy={setStudy}
+        onSnapshot={async () => {
+          const blob = await ref.current.snapshot();
+
+          if (blob) {
+            if (navigator.clipboard) {
+              await navigator?.clipboard?.write?.([
+                new ClipboardItem({ "image/png": blob }),
+              ]);
+
+              AppToaster.show({
+                intent: Intent.SUCCESS,
+                message: "Copied to clipboard",
+              });
+            } else {
+              console.log("Clipboard API not found");
+            }
+          }
+        }}
       />
       <div style={{ height: "40vh" }}>
         <Chart

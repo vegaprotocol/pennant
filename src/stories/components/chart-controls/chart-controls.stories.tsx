@@ -25,6 +25,7 @@ const Template: Story<ChartControlsProps> = (args) => {
   return (
     <div className="bp3-dark docs-example">
       <ChartControls
+      {...args}
         interval={interval}
         chartType={chartType}
         overlay={overlay}
@@ -39,3 +40,4 @@ const Template: Story<ChartControlsProps> = (args) => {
 };
 
 export const Primary = Template.bind({});
+Primary.args = {};

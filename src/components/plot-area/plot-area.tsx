@@ -194,12 +194,12 @@ export const PlotArea = ({
     <>
       <d3fc-canvas
         ref={visualizationRef}
-        class="d3fc-canvas-layer"
+        class="d3fc-canvas-layer base"
         use-device-pixel-ratio
       ></d3fc-canvas>
       <d3fc-canvas
         ref={foregroundRef}
-        class="d3fc-canvas-layer crosshair"
+        class="d3fc-canvas-layer foreground crosshair"
         use-device-pixel-ratio
       ></d3fc-canvas>
       <div className="annotation-layer"></div>
