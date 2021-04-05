@@ -45,6 +45,9 @@ export const Chart = React.forwardRef(
       reset: () => {
         chartRef.current.reset();
       },
+      snapshot: () => {
+        return chartRef.current.snapshot();
+      },
     }));
 
     const chartRef = React.useRef<ChartInterface>(null!);

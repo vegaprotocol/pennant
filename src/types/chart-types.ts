@@ -15,4 +15,9 @@ export interface ChartInterface {
   panTo(x: Date): void;
 
   reset(): void;
+
+  /**
+   * Snapshot of chart as Blob
+   */
+  snapshot(): Promise<Blob | null>;
 }
