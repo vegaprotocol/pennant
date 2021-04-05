@@ -27,7 +27,7 @@ function addYAxisPath(
 
     ctx.save();
 
-    ctx.setLineDash([6, 6]);
+    ctx.setLineDash([2, 2]);
     ctx.strokeStyle = Colors.GRAY_LIGHT;
 
     ctx.beginPath();
