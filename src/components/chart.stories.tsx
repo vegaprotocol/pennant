@@ -17,3 +17,10 @@ const Template: Story<ChartProps> = (args) => (
 
 export const Simple = Template.bind({});
 Simple.args = { dataSource: new JsonDataSource("", 5), interval: Interval.I5M };
+
+export const Study = Template.bind({});
+Study.args = {
+  ...Simple.args,
+  chartType: "area",
+  study: "macd",
+};
