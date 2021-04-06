@@ -12,12 +12,12 @@
 }
 
 .plot-area:nth-child(1) {
-  flex: 3 3 0;
+  flex: 2 2 0;
 }
 
 .plot-area:nth-child(3) {
   flex: 1 1 0;
-  max-height: 120px;
+  max-height: 200px;
 }
 
 .x-axis {

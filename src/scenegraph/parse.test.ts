@@ -1,7 +1,7 @@
 import { parse, parseLayer } from "./parse";
 
-import { Colors } from "../helpers";
 import { BaseSpec } from "../spec/base";
+import { Colors } from "../helpers";
 import { TopLevelSpec } from "../spec";
 
 test("simple case", () => {
@@ -21,7 +21,7 @@ test("simple case", () => {
   const scenegraph = parse(input, 10, 0);
 
   expect(scenegraph).toHaveProperty("panels");
-  expect(scenegraph.panels).toHaveLength(1);
+  expect(scenegraph?.panels).toHaveLength(1);
 });
 
 test("candlestick chart with study", () => {
@@ -114,8 +114,8 @@ test("candlestick chart with study", () => {
   const scenegraph = parse(input, 10, 0);
 
   expect(scenegraph).toHaveProperty("panels");
-  expect(scenegraph.panels).toHaveLength(2);
-  expect(scenegraph.panels[0].data).toHaveLength(4);
+  expect(scenegraph?.panels).toHaveLength(2);
+  expect(scenegraph?.panels[0].data).toHaveLength(4);
 });
 
 test("recursively parse a layer", () => {

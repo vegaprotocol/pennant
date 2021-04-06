@@ -28,8 +28,8 @@ export type ChartControlsProps = {
   study: Study | null;
   onSetInterval: (interval: Interval) => void;
   onSetChartType: (chartType: ChartType) => void;
-  onSetOverlay: (overlay: Overlay) => void;
-  onSetStudy: (study: Study) => void;
+  onSetOverlay: (overlay: Overlay | null) => void;
+  onSetStudy: (study: Study | null) => void;
   onSnapshot: () => void;
 };
 
@@ -130,23 +130,38 @@ export const ChartControls = ({
               <MenuItem
                 active={overlay === "bollinger"}
                 text="Bollinger bands"
-                onClick={() => onSetOverlay("bollinger")}
+                onClick={() =>
+                  onSetOverlay(overlay === "bollinger" ? null : "bollinger")
+                }
               />
               <MenuItem
                 active={overlay === "priceMonitoringBounds"}
                 text="Price monitoring bounds"
-                onClick={() => onSetOverlay("priceMonitoringBounds")}
+                onClick={() =>
+                  onSetOverlay(
+                    overlay === "priceMonitoringBounds"
+                      ? null
+                      : "priceMonitoringBounds"
+                  )
+                }
               />
               <MenuDivider title="Studies" />
               <MenuItem
                 active={study === "eldarRay"}
                 text="Eldar-ray"
-                onClick={() => onSetStudy("eldarRay")}
+                onClick={() =>
+                  onSetStudy(study === "eldarRay" ? null : "eldarRay")
+                }
               />
               <MenuItem
                 active={study === "macd"}
                 text="MACD"
-                onClick={() => onSetStudy("macd")}
+                onClick={() => onSetStudy(study === "macd" ? null : "macd")}
+              />
+              <MenuItem
+                active={study === "volume"}
+                text="Volume"
+                onClick={() => onSetStudy(study === "volume" ? null : "volume")}
               />
             </Menu>
           }

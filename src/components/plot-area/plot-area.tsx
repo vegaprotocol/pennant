@@ -1,3 +1,5 @@
+import "./plot-area.scss";
+
 import * as React from "react";
 
 import { Colors, clearCanvas } from "../../helpers";
@@ -15,6 +17,7 @@ export type PlotAreaProps = {
   crosshairXRef: React.MutableRefObject<number | null>;
   index: number;
   crosshairYRef: React.MutableRefObject<(number | null)[]>;
+  overlay?: React.ReactNode;
   requestRedraw: () => void;
   onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
@@ -28,6 +31,7 @@ export const PlotArea = ({
   crosshairXRef,
   index: panelIndex,
   crosshairYRef,
+  overlay,
   requestRedraw,
   onMouseMove,
   onMouseOut,
@@ -204,6 +208,7 @@ export const PlotArea = ({
         use-device-pixel-ratio
       ></d3fc-canvas>
       <div className="annotation-layer"></div>
+      {overlay && <div className="overlay-layer">{overlay}</div>}
     </>
   );
 };

@@ -214,7 +214,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
       return [
         {
           encoding: {
-            y: { field: "lower", type: "quantitative" },
+            y: { field: "minValidPrice", type: "quantitative" },
           },
           mark: {
             type: "line",
@@ -223,7 +223,16 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
         },
         {
           encoding: {
-            y: { field: "upper", type: "quantitative" },
+            y: { field: "maxValidPrice", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_GREEN,
+          },
+        },
+        {
+          encoding: {
+            y: { field: "referencePrice", type: "quantitative" },
           },
           mark: {
             type: "line",
@@ -262,7 +271,8 @@ export function constructTopLevelSpec(
   data: any[],
   chartType: ChartType,
   overlay?: Overlay,
-  study?: Study
+  study?: Study,
+  priceMonitoringBounds?: any
 ) {
   const vconcat: BaseSpec[] = [];
   const transform: Transform[] = [];
@@ -286,6 +296,15 @@ export function constructTopLevelSpec(
     };
 
     vconcat.push(studySpecification);
+  }
+
+  if (priceMonitoringBounds) {
+    data = data.map((d) => ({
+      ...d,
+      maxValidPrice: priceMonitoringBounds.maxValidPrice,
+      minValidPrice: priceMonitoringBounds.minValidPrice,
+      referencePrice: priceMonitoringBounds.referencePrice,
+    }));
   }
 
   const topLevelSpec: TopLevelSpec = {

@@ -177,7 +177,6 @@ function extractYEncodingFields(layer: BaseSpec) {
 
 /**
  * Parse top-level view specification into a scenegraph model
- * @param data
  * @param specification
  * @param candleWidth
  * @param decimalPlaces
@@ -186,11 +185,15 @@ export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
   decimalPlaces: number
-): Scenegraph {
+): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
       `Expected no more than 2 panels. Received ${specification.vconcat.length}`
     );
+  }
+
+  if (specification.data?.values.length === 0) {
+    return null;
   }
 
   const data: any[] = specification?.data?.values ?? [];
@@ -261,7 +264,7 @@ export function parse(
 
   return {
     panels: isVConcatSpec(specification)
-      ? specification.vconcat.map((panel) => {
+      ? specification.vconcat.map((panel, panelIndex) => {
           return {
             id: panel.name ?? "",
             data: parseLayer(
@@ -275,12 +278,15 @@ export function parse(
             axis: new YAxisElement(),
             crosshair: new CrosshairElement(),
             axisTooltip: new YAxisTooltipElement(decimalPlaces),
-            annotations: [
-              new YAxisAnnotationElement(
-                newData[newData.length - 1].close,
-                decimalPlaces
-              ),
-            ],
+            annotations:
+              panelIndex === 0
+                ? [
+                    new YAxisAnnotationElement(
+                      newData[newData.length - 1].close,
+                      decimalPlaces
+                    ),
+                  ]
+                : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData),
           };

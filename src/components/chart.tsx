@@ -2,7 +2,8 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { DataSource, PriceMonitoringBounds } from "../types";
+import { DataSource, PriceMonitoringBounds, Scenegraph } from "../types";
+import { constructTopLevelSpec, getCandleWidth } from "../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
@@ -12,8 +13,9 @@ import { Interval } from "../api/vega-graphql";
 import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";
-import { constructTopLevelSpec } from "../helpers";
+import { StudyInfo } from "./study-info";
 import { mergeData } from "../helpers";
+import { parse } from "../scenegraph/parse";
 
 export type ChartType = "area" | "candle" | "line";
 export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
@@ -26,6 +28,40 @@ export type ChartProps = {
   overlay?: Overlay;
   interval: Interval;
 };
+
+const StudyLabel = new Map<
+  Study,
+  { label: string; producedFields: { field: string; label: string }[] }
+>([
+  [
+    "eldarRay",
+    {
+      label: "Eldar-ray",
+      producedFields: [
+        { field: "bullPower", label: "Bull" },
+        { field: "bearPower", label: "Bear" },
+      ],
+    },
+  ],
+  [
+    "macd",
+    {
+      label: "MACD",
+      producedFields: [
+        { field: "signal", label: "S" },
+        { field: "macd", label: "M" },
+        { field: "divergence", label: "D" },
+      ],
+    },
+  ],
+  [
+    "volume",
+    {
+      label: "Volume",
+      producedFields: [{ field: "volume", label: "V" }],
+    },
+  ],
+]);
 
 export const Chart = React.forwardRef(
   (
@@ -64,9 +100,25 @@ export const Chart = React.forwardRef(
     const [isLoading, setIsLoading] = React.useState(true);
 
     const specification = React.useMemo(
-      () => constructTopLevelSpec(data, chartType, overlay, study),
-      [chartType, data, overlay, study]
+      () =>
+        constructTopLevelSpec(
+          data,
+          chartType,
+          overlay,
+          study,
+          priceMonitoringBounds
+        ),
+      [chartType, data, overlay, priceMonitoringBounds, study]
     );
+
+    // Compile data and view specification into scenegraph ready for rendering
+    const scenegraph = React.useMemo(() => {
+      return parse(
+        specification,
+        getCandleWidth(interval),
+        dataSource.decimalPlaces
+      );
+    }, [dataSource.decimalPlaces, interval, specification]);
 
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
@@ -126,7 +178,7 @@ export const Chart = React.forwardRef(
       return <NonIdealState title="Loading" />;
     }
 
-    return !isLoading && data.length > 1 ? (
+    return !isLoading && scenegraph ? (
       <div className="chart-wrapper">
         <AutoSizer
           defaultHeight={150}
@@ -139,8 +191,42 @@ export const Chart = React.forwardRef(
               width={width}
               height={height}
               specification={specification}
+              scenegraph={scenegraph}
               interval={interval}
               decimalPlaces={dataSource.decimalPlaces}
+              plotOverlay={
+                <div className="overlay">
+                  <ChartInfo bounds={bounds} />
+                  {selectedIndex !== null && (
+                    <CandleInfo
+                      candle={data[selectedIndex]}
+                      decimalPlaces={dataSource.decimalPlaces}
+                    />
+                  )}
+                </div>
+              }
+              studyOverlay={
+                <div className="overlay">
+                  {study && selectedIndex !== null && (
+                    <StudyInfo
+                      title={StudyLabel.get(study)?.label ?? ""}
+                      info={
+                        StudyLabel.get(study)?.producedFields.map(
+                          (producedField) => ({
+                            id: producedField.field,
+                            label: producedField.label,
+                            value:
+                              scenegraph.panels[0].originalData[selectedIndex][
+                                producedField.field
+                              ]?.toFixed(dataSource.decimalPlaces) ?? "",
+                          })
+                        ) ?? []
+                      }
+                      decimalPlaces={dataSource.decimalPlaces}
+                    />
+                  )}
+                </div>
+              }
               onBoundsChanged={setBounds}
               onMouseMove={setCandle}
               onMouseOut={handleOnMouseOut}
@@ -148,15 +234,6 @@ export const Chart = React.forwardRef(
             />
           )}
         </AutoSizer>
-        <div className="overlay">
-          <ChartInfo bounds={bounds} />
-          {selectedIndex !== null && (
-            <CandleInfo
-              candle={data[selectedIndex]}
-              decimalPlaces={dataSource.decimalPlaces}
-            />
-          )}
-        </div>
       </div>
     ) : (
       <NonIdealState title="No data found" />

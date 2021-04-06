@@ -1,5 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
+import React from "react";
+
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
