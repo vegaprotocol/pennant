@@ -1,7 +1,8 @@
-import { ChartType, Overlay, Study } from "../components/chart";
 import { BaseSpec, TopLevelSpec } from "../spec";
-import { Transform } from "../transform";
+import { ChartType, Overlay, Study } from "../components/chart";
+
 import { Colors } from "./helpers-color";
+import { Transform } from "../transform";
 
 function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   switch (chartType) {
@@ -120,7 +121,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
             y: { field: "divergence", type: "quantitative" },
             fill: {
               condition: {
-                test: { field: "open", lt: "close" },
+                test: { field: "divergence", gt: 0 },
                 value: Colors.GREEN_DARK,
               },
               value: Colors.RED,
@@ -145,7 +146,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: "#009cff",
           },
         },
       ];

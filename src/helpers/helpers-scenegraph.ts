@@ -1,11 +1,12 @@
-import { Colors } from ".";
 import { AreaElement, BarElement, LineElement, RuleElement } from "../elements";
 import { Color, Gradient, Mark } from "../mark";
 import {
+  Predicate,
   isFieldGTPredicate,
   isFieldLTPredicate,
-  Predicate,
 } from "../predicate";
+
+import { Colors } from ".";
 import { PositionalElement } from "../types";
 
 export const PADDING_INNER = 0.4;
@@ -130,13 +131,23 @@ export function getConditionalColor(colorDef: any | undefined) {
     const predicate: Predicate = colorDef.condition?.test;
 
     if (isFieldLTPredicate(predicate)) {
+      const comparison =
+        typeof predicate.lt === "string"
+          ? (datum: any) => datum[predicate.lt]
+          : () => predicate.lt;
+
       color = (datum) =>
-        datum[predicate.field] < datum[predicate.lt]
+        datum[predicate.field] < comparison(datum)
           ? colorDef.condition.value ?? Colors.GRAY
           : colorDef.value ?? Colors.GRAY;
     } else if (isFieldGTPredicate(predicate)) {
+      const comparison =
+        typeof predicate.gt === "string"
+          ? (datum: any) => datum[predicate.gt]
+          : () => predicate.gt;
+
       color = (datum) =>
-        datum[predicate.field] > datum[predicate.gt]
+        datum[predicate.field] > comparison(datum)
           ? colorDef.condition.value ?? Colors.GRAY
           : colorDef.value ?? Colors.GRAY;
     } else {
