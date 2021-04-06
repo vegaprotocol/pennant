@@ -13,8 +13,13 @@
 
   <p align="center">
     A React component library for visualising financial data.
-    <br />
-    <br />
+  </p>
+
+  <p align="center">
+    <img src="./assets/screenshot.png" alt="Pennant chart" width="940">
+  </p>
+  
+  <p align="center">
     <a href="https://pennant.netlify.app/">View Demo</a>
     ·
     <a href="https://github.com/vegaprotocol/pennant/issues">Report Bug</a>
