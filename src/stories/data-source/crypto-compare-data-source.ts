@@ -1,6 +1,6 @@
 import { DataSource } from "../../types";
 import { Interval } from "../api/vega-graphql";
-import { addDecimal } from "../../helpers";
+import { addDecimal } from "../helpers";
 
 const API_KEY =
   "541aa2fde7a4ca90365d4ac19fabc0740bd190f106e3e53d8f2144a3b2bdc297";

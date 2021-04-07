@@ -1,6 +1,6 @@
 import { DataSource } from "../../types";
 import { Interval } from "../api/vega-graphql";
-import { addDecimal } from "../../helpers";
+import { addDecimal } from "../helpers";
 import json from "./data.json";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
