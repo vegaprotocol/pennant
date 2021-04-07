@@ -3,9 +3,9 @@ import "./plot-container.stories.scss";
 import { Meta, Story } from "@storybook/react/types-6-0";
 import { PlotContainer, PlotContainerProps } from "./plot-container";
 
-import { Interval } from "../../api/vega-graphql";
-import { extendCandle } from "../../data/json-data-source";
-import json from "../../data/data.json";
+import { Interval } from "../../stories/api/vega-graphql";
+import { extendCandle } from "../../stories/data-source/json-data-source";
+import json from "../../stories/data-source/data.json";
 
 export default {
   title: "Components/PlotContainer",

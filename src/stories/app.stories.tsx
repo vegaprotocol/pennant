@@ -6,12 +6,12 @@ import { Chart, ChartType, Overlay, Study } from "../components/chart";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 
-import { ApolloDataSource } from "../data/vega-protocol-data-source";
+import { ApolloDataSource } from "./data-source/vega-protocol-data-source";
 import { AppToaster } from "./components/toaster";
 import { ChartControls } from "./components/chart-controls";
 import { ChartInterface } from "../types";
-import { CryptoCompareDataSource } from "../data/crypto-compare-data-source";
-import { Interval } from "../api/vega-graphql";
+import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
+import { Interval } from "./api/vega-graphql";
 import React from "react";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import data from "./app.stories.json";

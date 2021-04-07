@@ -12,7 +12,7 @@ import { drawChart, drawChartNoTransform } from "../../render";
 import { select, selectAll } from "d3-selection";
 
 import { FcElement } from "../../types";
-import { Interval } from "../../api/vega-graphql";
+import { Interval } from "../../stories/api/vega-graphql";
 import { PlotArea } from "../plot-area";
 import { TopLevelSpec } from "../../spec";
 import { WIDTH } from "../../constants";

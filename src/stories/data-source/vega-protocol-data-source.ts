@@ -7,8 +7,8 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { DataSource } from "../types";
-import { addDecimal } from "../helpers";
+import { DataSource } from "../../types";
+import { addDecimal } from "../../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {

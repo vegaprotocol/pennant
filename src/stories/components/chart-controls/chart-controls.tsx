@@ -13,7 +13,7 @@ import { ChartType, Overlay, Study } from "../../../components/chart";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { INTERVALS } from "../../../helpers";
-import { Interval } from "../../../api/vega-graphql";
+import { Interval } from "../../api/vega-graphql";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
   ["area", "timeline-area-chart"],

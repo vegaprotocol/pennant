@@ -1,4 +1,4 @@
-import { Interval } from "../api/vega-graphql";
+import { Interval } from "../stories/api/vega-graphql";
 
 export interface DataSource {
   readonly decimalPlaces: number;

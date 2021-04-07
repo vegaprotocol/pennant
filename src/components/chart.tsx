@@ -9,7 +9,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "./candle-info";
 import { ChartInfo } from "./chart-info";
 import { ChartInterface } from "../types";
-import { Interval } from "../api/vega-graphql";
+import { Interval } from "../stories/api/vega-graphql";
 import { NonIdealState } from "./non-ideal-state";
 import { PlotContainer } from "./plot-container";
 import { PriceMonitoringInfo } from "./price-monitoring-info";

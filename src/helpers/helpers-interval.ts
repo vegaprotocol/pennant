@@ -6,7 +6,7 @@ import {
   subMinutes,
 } from "date-fns";
 
-import { Interval } from "../api/vega-graphql";
+import { Interval } from "../stories/api/vega-graphql";
 
 export type GQLInterval = keyof typeof Interval;
 

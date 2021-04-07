@@ -1,4 +1,4 @@
-import { Interval } from "../api/vega-graphql";
+import { Interval } from "../stories/api/vega-graphql";
 import { parseInterval } from "./helpers-interval";
 
 const minutesToMS = (mins: number): number => mins * 60 * 1000;

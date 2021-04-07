@@ -7,7 +7,7 @@ import { ChartType, Overlay, Study } from "../../../components/chart";
 import { Meta, Story } from "@storybook/react";
 
 import { FocusStyleManager } from "@blueprintjs/core";
-import { Interval } from "../../../api/vega-graphql";
+import { Interval } from "../../api/vega-graphql";
 
 export default {
   title: "Example components/ChartControls",
