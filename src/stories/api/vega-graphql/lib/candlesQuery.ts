@@ -1,13 +1,4 @@
-/* tslint:disable */
-/* eslint-disable */
-// @generated
-// This file was automatically generated and should not be edited.
-
 import { Interval } from "./globalTypes";
-
-// ====================================================
-// GraphQL query operation: candlesQuery
-// ====================================================
 
 export interface candlesQuery_market_tradableInstrument_instrument {
   __typename: "Instrument";
