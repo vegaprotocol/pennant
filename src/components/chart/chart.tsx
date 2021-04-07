@@ -8,20 +8,20 @@ import {
   Overlay,
   PriceMonitoringBounds,
   Study,
-} from "../types";
-import { constructTopLevelSpec, getCandleWidth } from "../helpers";
+} from "../../types";
+import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CandleInfo } from "./candle-info";
-import { ChartInfo } from "./chart-info";
-import { ChartInterface } from "../types";
-import { Interval } from "../stories/api/vega-graphql";
-import { NonIdealState } from "./non-ideal-state";
-import { PlotContainer } from "./plot-container";
-import { PriceMonitoringInfo } from "./price-monitoring-info";
-import { StudyInfo } from "./study-info";
-import { mergeData } from "../helpers";
-import { parse } from "../scenegraph/parse";
+import { CandleInfo } from "../candle-info";
+import { ChartInfo } from "../chart-info";
+import { ChartInterface } from "../../types";
+import { Interval } from "../../stories/api/vega-graphql";
+import { NonIdealState } from "../non-ideal-state";
+import { PlotContainer } from "../plot-container";
+import { PriceMonitoringInfo } from "../price-monitoring-info";
+import { StudyInfo } from "../study-info";
+import { mergeData } from "../../helpers";
+import { parse } from "../../scenegraph/parse";
 
 export type ChartProps = {
   dataSource: DataSource;
