@@ -1,5 +1,5 @@
 import { BaseSpec, TopLevelSpec } from "../spec";
-import { ChartType, Overlay, Study } from "../components/chart";
+import { ChartType, Overlay, Study } from "../types";
 
 import { Colors } from "./helpers-color";
 import { Transform } from "../transform";

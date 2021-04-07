@@ -2,7 +2,13 @@ import "./chart.scss";
 
 import * as React from "react";
 
-import { DataSource, PriceMonitoringBounds, Scenegraph } from "../types";
+import {
+  ChartType,
+  DataSource,
+  Overlay,
+  PriceMonitoringBounds,
+  Study,
+} from "../types";
 import { constructTopLevelSpec, getCandleWidth } from "../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -16,10 +22,6 @@ import { PriceMonitoringInfo } from "./price-monitoring-info";
 import { StudyInfo } from "./study-info";
 import { mergeData } from "../helpers";
 import { parse } from "../scenegraph/parse";
-
-export type ChartType = "area" | "candle" | "line";
-export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
-export type Study = "eldarRay" | "macd" | "volume";
 
 export type ChartProps = {
   dataSource: DataSource;

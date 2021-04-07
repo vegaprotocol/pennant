@@ -2,12 +2,13 @@ import "./app.stories.scss";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { Button, Intent, MenuItem } from "@blueprintjs/core";
-import { Chart, ChartType, Overlay, Study } from "../components/chart";
+import { ChartType, Overlay, Study } from "../types";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 
 import { ApolloDataSource } from "./data-source/vega-protocol-data-source";
 import { AppToaster } from "./components/toaster";
+import { Chart } from "../components/chart";
 import { ChartControls } from "./components/chart-controls";
 import { ChartInterface } from "../types";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";

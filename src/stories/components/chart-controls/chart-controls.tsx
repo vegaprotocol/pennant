@@ -9,7 +9,7 @@ import {
   MenuDivider,
   MenuItem,
 } from "@blueprintjs/core";
-import { ChartType, Overlay, Study } from "../../../components/chart";
+import { ChartType, Overlay, Study } from "../../../types";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { INTERVALS } from "../../../helpers";

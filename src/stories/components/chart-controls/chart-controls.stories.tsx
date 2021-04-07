@@ -3,7 +3,7 @@ import "./chart-controls.stories.scss";
 import * as React from "react";
 
 import { ChartControls, ChartControlsProps } from "./chart-controls";
-import { ChartType, Overlay, Study } from "../../../components/chart";
+import { ChartType, Overlay, Study } from "../../../types";
 import { Meta, Story } from "@storybook/react";
 
 import { FocusStyleManager } from "@blueprintjs/core";
@@ -25,7 +25,7 @@ const Template: Story<ChartControlsProps> = (args) => {
   return (
     <div className="bp3-dark docs-example">
       <ChartControls
-      {...args}
+        {...args}
         interval={interval}
         chartType={chartType}
         overlay={overlay}

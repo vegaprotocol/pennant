@@ -1,3 +1,7 @@
+export type ChartType = "area" | "candle" | "line";
+export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
+export type Study = "eldarRay" | "macd" | "volume";
+
 export interface ChartInterface {
   /**
    * Sets the viewport to contain the given bounds.
