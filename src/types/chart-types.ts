@@ -1,6 +1,15 @@
-export type ChartType = "area" | "candle" | "line";
-export type Overlay = "bollinger" | "envelope" | "priceMonitoringBounds";
-export type Study = "eldarRay" | "macd" | "volume";
+export const chartTypes = ["area", "candle", "line"] as const;
+export type ChartType = typeof chartTypes[number];
+
+export const overlays = [
+  "bollinger",
+  "envelope",
+  "priceMonitoringBounds",
+] as const;
+export type Overlay = typeof overlays[number];
+
+export const studies = ["eldarRay", "macd", "volume"] as const;
+export type Study = typeof studies[number];
 
 export interface ChartInterface {
   /**
