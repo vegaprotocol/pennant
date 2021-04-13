@@ -7,9 +7,34 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { DataSource } from "../../types";
+import { Annotation, DataSource } from "../../types";
 import { addDecimal } from "../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
+import { positionSubscription } from "../api/vega-graphql/queries/position";
+
+export interface Order {
+  type: "order";
+  id: string;
+  price: number;
+  timeInForce: number;
+  side: string;
+  market: string;
+  size: number;
+  party: string;
+  orderType: string;
+}
+
+export interface Position {
+  type: "position";
+  market: string;
+  party: string;
+  openVolume: number;
+  realisedPNL: number;
+  unrealisedPNL: number;
+  averageEntryPrice: number;
+  margins: number;
+  updatedAt: Date;
+}
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
@@ -27,7 +52,10 @@ export class ApolloDataSource implements DataSource {
   client: ApolloClient<any>;
   candlesSub: ZenObservable.Subscription | null = null;
   marketDataSub: ZenObservable.Subscription | null = null;
+  positionsSub: ZenObservable.Subscription | null = null;
+  ordersSub: ZenObservable.Subscription | null = null;
   marketId: string;
+  partyId: string;
   _decimalPlaces: number;
 
   get decimalPlaces(): number {
@@ -37,10 +65,12 @@ export class ApolloDataSource implements DataSource {
   constructor(
     client: ApolloClient<any>,
     marketId: string,
+    partyId: string,
     decimalPlaces: number
   ) {
     this.client = client;
     this.marketId = marketId;
+    this.partyId = partyId;
     this._decimalPlaces = decimalPlaces;
   }
 
@@ -97,7 +127,10 @@ export class ApolloDataSource implements DataSource {
   }
 
   async query(interval: Interval, from: string, to: string) {
-    const res = await this.client.query<candlesQuery, candlesQueryVariables>({
+    const { data } = await this.client.query<
+      candlesQuery,
+      candlesQueryVariables
+    >({
       query: candleQuery,
       variables: {
         marketId: this.marketId,
@@ -107,19 +140,20 @@ export class ApolloDataSource implements DataSource {
       fetchPolicy: "no-cache",
     });
 
-    if (!res?.data?.market?.candles) {
+    if (data && data.market && data.market.candles) {
+      const decimalPlaces = data.market.decimalPlaces;
+
+      const candles = data.market.candles
+        .filter((d) => d !== null)
+        .map((d) => extendCandle(d, decimalPlaces));
+
+      return candles;
+    } else {
       return [];
     }
-
-    const decimalPlaces = res.data.market.decimalPlaces;
-    const candles = res.data.market.candles?.map((d) =>
-      extendCandle(d, decimalPlaces)
-    );
-
-    return candles;
   }
 
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
+  subscribeData(interval: Interval, onSubscriptionData: (datum: any) => void) {
     const candlesObervable = this.client.subscribe({
       query: candleSubscriptionQuery,
       variables: { marketId: this.marketId, interval },
@@ -131,7 +165,25 @@ export class ApolloDataSource implements DataSource {
     });
   }
 
-  unsubscribe() {
+  unsubscribeData() {
     return this.candlesSub && this.candlesSub.unsubscribe();
+  }
+
+  subscribeAnnotations(
+    onSubscriptionAnnotation: (annotations: Annotation[]) => void
+  ) {
+    const positionsObservable = this.client.subscribe({
+      query: positionSubscription,
+      variables: { partyId: this.partyId },
+    });
+
+    this.positionsSub = positionsObservable.subscribe(({ data }) => {
+      console.info(data);
+      onSubscriptionAnnotation(data);
+    });
+  }
+
+  unsubscribeAnnotations() {
+    return this.positionsSub && this.positionsSub.unsubscribe();
   }
 }

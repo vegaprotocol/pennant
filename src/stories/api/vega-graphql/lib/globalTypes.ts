@@ -9,3 +9,13 @@ export enum Interval {
   I5M = "I5M",
   I6H = "I6H",
 }
+
+/**
+ * What market trading mode are we in
+ */
+export enum MarketTradingMode {
+  BATCH_AUCTION = "BATCH_AUCTION",
+  CONTINUOUS = "CONTINUOUS",
+  MONITORING_AUCTION = "MONITORING_AUCTION",
+  OPENING_AUCTION = "OPENING_AUCTION",
+}

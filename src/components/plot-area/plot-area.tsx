@@ -9,6 +9,7 @@ import { ScaleLinear, ScaleTime } from "d3-scale";
 import { bisector } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { select } from "d3-selection";
+import { AnnotationLayer } from "../annotation-layer";
 
 export type PlotAreaProps = {
   scenegraph: Panel;
@@ -208,6 +209,19 @@ export const PlotArea = ({
         use-device-pixel-ratio
       ></d3fc-canvas>
       <div className="annotation-layer"></div>
+      <div className="position-layer">
+        {scenegraph.labels && (
+          <AnnotationLayer
+            annotations={scenegraph.labels.map(
+              (annotation, annotationIndex) => ({
+                ...annotation,
+                id: String(annotationIndex),
+                y: y(annotation.y),
+              })
+            )}
+          />
+        )}
+      </div>
       {overlay && <div className="overlay-layer">{overlay}</div>}
     </>
   );

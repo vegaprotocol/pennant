@@ -1,4 +1,4 @@
-import "./annotation.scss";
+import "./label.scss";
 
 import * as React from "react";
 
@@ -6,7 +6,7 @@ import classNames from "classnames";
 
 export type Intent = "none" | "primary" | "success" | "warning" | "danger";
 
-export type AnnotationProps = {
+export type LabelProps = {
   cells: {
     label: string;
     stroke?: boolean;
@@ -16,7 +16,7 @@ export type AnnotationProps = {
   intent: Intent;
 };
 
-export const Annotation = React.forwardRef<HTMLDivElement, AnnotationProps>(
+export const Label = React.forwardRef<HTMLDivElement, LabelProps>(
   ({ cells, intent = "none" }, ref) => {
     return (
       <div ref={ref} className={`annotation intent-${intent}`}>

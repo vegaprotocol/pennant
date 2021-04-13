@@ -31,7 +31,7 @@ import { Data } from "../data";
 import { Encoding } from "../encoding";
 import { Field } from "../channeldef";
 import { OutputNode } from "../compile/data/dataflow";
-import { Scenegraph } from "../types";
+import { Annotation, Scenegraph } from "../types";
 import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
 import { compile } from "../compile/compile";
 import { extent } from "d3-array";
@@ -184,7 +184,8 @@ function extractYEncodingFields(layer: BaseSpec) {
 export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
-  decimalPlaces: number
+  decimalPlaces: number,
+  annotations: Annotation[]
 ): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
@@ -287,6 +288,7 @@ export function parse(
                     ),
                   ]
                 : [],
+            labels: panelIndex === 0 ? annotations : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData),
           };

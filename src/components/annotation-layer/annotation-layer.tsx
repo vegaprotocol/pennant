@@ -2,7 +2,7 @@ import "./annotation-layer.scss";
 
 import * as React from "react";
 
-import { Annotation, Intent } from "../annotation";
+import { Label, Intent } from "../label";
 
 export type AnnotationLayerProps = {
   annotations: { id: string; cells?: any; intent: Intent; y: number }[];
@@ -79,7 +79,7 @@ export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
             top: `${shiftedAnnotations[i] - 12}px`,
           }}
         >
-          <Annotation
+          <Label
             ref={refs[annotation.id]}
             cells={annotation.cells}
             intent={annotation.intent}

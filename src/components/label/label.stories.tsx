@@ -1,16 +1,14 @@
-import * as React from "react";
-
-import { Annotation, AnnotationProps } from "./annotation";
+import { Label, LabelProps } from "./label";
 import { Meta, Story } from "@storybook/react";
 
 export default {
-  title: "Components/Annotation",
-  component: Annotation,
+  title: "Components/Label",
+  component: Label,
 } as Meta;
 
-const Template: Story<AnnotationProps> = (args) => (
+const Template: Story<LabelProps> = (args) => (
   <div style={{ backgroundColor: "black", padding: "24px 24px" }}>
-    <Annotation {...args} />
+    <Label {...args} />
   </div>
 );
 

@@ -24,3 +24,9 @@ Study.args = {
   chartType: "area",
   study: "macd",
 };
+
+export const Positions = Template.bind({});
+Positions.args = {
+  ...Simple.args,
+  chartType: "area",
+};
