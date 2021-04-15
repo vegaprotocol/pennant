@@ -1,19 +1,19 @@
 @import "../../styles/colors";
 
 .annotation {
+  background-color: black;
+  border-color: grey;
+  border-style: solid;
+  border-width: 2px;
+  color: white;
   display: inline-flex;
   flex-direction: row;
-  border-width: 2px;
-  border-style: solid;
-  border-color: grey;
-  color: white;
-  background-color: black;
 }
 
 .cell {
-  padding: 0 4px;
   border-right-style: solid;
   border-right-width: 2px;
+  padding: 0 4px;
 }
 
 .annotation.intent-primary {
@@ -25,8 +25,8 @@
 }
 
 .annotation.intent-primary > .cell.fill {
-  color: black;
   background-color: #137cbd;
+  color: black;
 }
 
 .annotation.intent-success {
@@ -38,8 +38,8 @@
 }
 
 .annotation.intent-success > .cell.fill {
-  color: black;
   background-color: $vega-green3;
+  color: black;
 }
 
 .annotation.intent-success > .cell.stroke {
@@ -63,8 +63,8 @@
 }
 
 .annotation.intent-danger > .cell.fill {
-  color: black;
   background-color: $vega-red3;
+  color: black;
 }
 
 .annotation.intent-danger > .cell.stroke {
