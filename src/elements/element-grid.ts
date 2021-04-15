@@ -24,7 +24,7 @@ function addGridPath(
 
     ctx.strokeStyle = Colors.GRAY;
     ctx.fillStyle = "transparent";
-    ctx.lineWidth = 0.7;
+    ctx.lineWidth = 1;
 
     ctx.moveTo(Math.round(xScale(tick)), yRange[0]);
     ctx.lineTo(Math.round(xScale(tick)), yRange[1]);

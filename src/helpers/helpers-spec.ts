@@ -55,9 +55,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: "green",
+                value: Colors.GREEN,
               },
-              value: "red",
+              value: Colors.RED,
             },
           },
           mark: {
