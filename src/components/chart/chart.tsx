@@ -22,6 +22,7 @@ import { PriceMonitoringInfo } from "../price-monitoring-info";
 import { StudyInfo } from "../study-info";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
+import { ErrorBoundary } from "../error-boundary";
 
 export type ChartProps = {
   dataSource: DataSource;
@@ -181,62 +182,66 @@ export const Chart = React.forwardRef(
     }
 
     return !isLoading && scenegraph ? (
-      <div className="chart-wrapper">
-        <AutoSizer
-          defaultHeight={150}
-          defaultWidth={300}
-          style={{ height: "100%", width: "100%" }} // TODO: Find a better method
-        >
-          {({ height, width }) => (
-            <PlotContainer
-              ref={chartRef}
-              width={width}
-              height={height}
-              specification={specification}
-              scenegraph={scenegraph}
-              interval={interval}
-              decimalPlaces={dataSource.decimalPlaces}
-              plotOverlay={
-                <div className="overlay">
-                  <ChartInfo bounds={bounds} />
-                  {selectedIndex !== null && (
-                    <CandleInfo
-                      candle={data[selectedIndex]}
-                      decimalPlaces={dataSource.decimalPlaces}
-                    />
-                  )}
-                </div>
-              }
-              studyOverlay={
-                <div className="overlay">
-                  {study && selectedIndex !== null && (
-                    <StudyInfo
-                      title={StudyLabel.get(study)?.label ?? ""}
-                      info={
-                        StudyLabel.get(study)?.producedFields.map(
-                          (producedField) => ({
-                            id: producedField.field,
-                            label: producedField.label,
-                            value:
-                              scenegraph.panels[0].originalData[selectedIndex][
-                                producedField.field
-                              ]?.toFixed(dataSource.decimalPlaces) ?? "",
-                          })
-                        ) ?? []
-                      }
-                      decimalPlaces={dataSource.decimalPlaces}
-                    />
-                  )}
-                </div>
-              }
-              onBoundsChanged={setBounds}
-              onMouseMove={setCandle}
-              onMouseOut={handleOnMouseOut}
-              onGetDataRange={handleGetDataRange}
-            />
-          )}
-        </AutoSizer>
-      </div>
+      <ErrorBoundary>
+        <div className="chart-wrapper">
+          <AutoSizer
+            defaultHeight={150}
+            defaultWidth={300}
+            style={{ height: "100%", width: "100%" }} // TODO: Find a better method
+          >
+            {({ height, width }) => (
+              <PlotContainer
+                ref={chartRef}
+                width={width}
+                height={height}
+                specification={specification}
+                scenegraph={scenegraph}
+                interval={interval}
+                decimalPlaces={dataSource.decimalPlaces}
+                plotOverlay={
+                  <div className="overlay">
+                    <ChartInfo bounds={bounds} />
+                    {selectedIndex !== null && (
+                      <CandleInfo
+                        candle={data[selectedIndex]}
+                        decimalPlaces={dataSource.decimalPlaces}
+                      />
+                    )}
+                  </div>
+                }
+                studyOverlay={
+                  <div className="overlay">
+                    {study && selectedIndex !== null && (
+                      <StudyInfo
+                        title={StudyLabel.get(study)?.label ?? ""}
+                        info={
+                          StudyLabel.get(study)?.producedFields.map(
+                            (producedField) => ({
+                              id: producedField.field,
+                              label: producedField.label,
+                              value:
+                                scenegraph.panels[0].originalData[
+                                  selectedIndex
+                                ][producedField.field]?.toFixed(
+                                  dataSource.decimalPlaces
+                                ) ?? "",
+                            })
+                          ) ?? []
+                        }
+                        decimalPlaces={dataSource.decimalPlaces}
+                      />
+                    )}
+                  </div>
+                }
+                onBoundsChanged={setBounds}
+                onMouseMove={setCandle}
+                onMouseOut={handleOnMouseOut}
+                onGetDataRange={handleGetDataRange}
+              />
+            )}
+          </AutoSizer>
+        </div>
+      </ErrorBoundary>
     ) : (
       <NonIdealState title="No data found" />
     );

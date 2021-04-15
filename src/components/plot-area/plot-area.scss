@@ -1,3 +1,11 @@
+.axis-interaction {
+  position: absolute;
+  right: 0;
+  width: 80px;
+  height: 100%;
+  cursor: ns-resize;
+}
+
 .overlay-layer {
   position: absolute;
   top: 0;
