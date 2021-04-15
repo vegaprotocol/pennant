@@ -14,7 +14,7 @@ import { select, selectAll } from "d3-selection";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { PlotArea } from "../plot-area";
-import { TopLevelSpec } from "../../spec";
+import { TopLevelSpec } from "../../vega-lite/spec";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
 import { extent } from "d3-array";
