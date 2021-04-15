@@ -14,7 +14,7 @@ import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "../candle-info";
 import { ChartInfo } from "../chart-info";
-import { ChartInterface } from "../../types";
+import { ChartElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
@@ -68,7 +68,7 @@ const StudyLabel = new Map<
 export const Chart = React.forwardRef(
   (
     { dataSource, chartType = "candle", study, overlay, interval }: ChartProps,
-    ref: React.Ref<ChartInterface>
+    ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {
@@ -88,7 +88,7 @@ export const Chart = React.forwardRef(
       },
     }));
 
-    const chartRef = React.useRef<ChartInterface>(null!);
+    const chartRef = React.useRef<ChartElement>(null!);
     const [data, setData] = React.useState<any[]>([]);
     const [
       priceMonitoringBounds,

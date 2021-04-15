@@ -11,7 +11,7 @@ export type Overlay = typeof overlays[number];
 export const studies = ["eldarRay", "macd", "volume"] as const;
 export type Study = typeof studies[number];
 
-export interface ChartInterface {
+export interface ChartElement {
   /**
    * Sets the viewport to contain the given bounds.
    */

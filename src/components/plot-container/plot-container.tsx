@@ -4,7 +4,7 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartInterface, Panel, Scenegraph } from "../../types";
+import { ChartElement, Panel, Scenegraph } from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
@@ -53,7 +53,7 @@ export const PlotContainer = React.forwardRef(
       onMouseOver,
       onGetDataRange = () => {},
     }: PlotContainerProps,
-    ref: React.Ref<ChartInterface>
+    ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {
