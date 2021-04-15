@@ -1,6 +1,6 @@
 import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../vega-lite/spec";
 import {
-  CandleElement,
+  DummyElement,
   CrosshairElement,
   GridElement,
   XAxisElement,
@@ -297,11 +297,9 @@ export function parse(
       originalData: data,
       data: [
         data.map(
-          (candle) =>
-            new CandleElement({
-              ...candle,
-              x: candle.date,
-              width: candleWidth * (1 - PADDING_INNER),
+          (d) =>
+            new DummyElement({
+              x: d.date,
             })
         ),
       ],
