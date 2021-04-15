@@ -1,5 +1,10 @@
 export const chartTypes = ["area", "candle", "line"] as const;
 export type ChartType = typeof chartTypes[number];
+export const chartTypeLabels: Record<ChartType, string> = {
+  area: "Mountain",
+  candle: "Candlestick",
+  line: "Line",
+} as const;
 
 export const overlays = [
   "bollinger",
@@ -7,9 +12,19 @@ export const overlays = [
   "priceMonitoringBounds",
 ] as const;
 export type Overlay = typeof overlays[number];
+export const overlayLabels: Record<Overlay, string> = {
+  bollinger: "Bollinger bands",
+  envelope: "Envelope",
+  priceMonitoringBounds: "Price monitoring bounds",
+} as const;
 
 export const studies = ["eldarRay", "macd", "volume"] as const;
 export type Study = typeof studies[number];
+export const studyLabels: Record<Study, string> = {
+  eldarRay: "Eldar-ray",
+  macd: "MACD",
+  volume: "Volumne",
+} as const;
 
 export interface ChartElement {
   /**
@@ -27,6 +42,9 @@ export interface ChartElement {
    */
   panTo(x: Date): void;
 
+  /**
+   * Changes the center of the chart to the most recent Date.
+   */
   reset(): void;
 
   /**
