@@ -1,7 +1,7 @@
 {
   "name": "pennant",
   "version": "0.1.4",
-  "description": "React component library for visualising financial data",
+  "description": "A React component library for visualising historical and streaming financial market data",
   "exports": "./dist/modern.js",
   "main": "./dist/legacy.js",
   "module": "./dist/module.js",
