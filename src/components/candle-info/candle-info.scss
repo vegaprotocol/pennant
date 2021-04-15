@@ -10,7 +10,7 @@
   pointer-events: auto;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
+  max-width: 100%;
 }
 
 .candle-info__item {
