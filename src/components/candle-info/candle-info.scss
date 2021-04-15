@@ -1,18 +1,23 @@
+@import "../../styles/colors";
+
 .candle-info-wrapper {
-  display: inline-flex;
-  flex-direction: row;
-  gap: 8px;
+  width: 100%;
+  pointer-events: auto;
+  cursor: default;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-items: center;
   padding: 4px;
   color: #f5f8fa;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: $overlay-backdrop;
+}
+
+.candle-info__item {
+  display: inline;
+  padding-right: 6px;
 }
 
 .text-muted {
   color: #a7b6c2;
-}
-
-.monospace-text {
-  font-family: monospace;
-  font-size: 16px;
-  text-transform: none;
 }

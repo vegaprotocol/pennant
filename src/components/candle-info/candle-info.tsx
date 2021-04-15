@@ -11,31 +11,31 @@ export type CandleInfoProps = {
 export const CandleInfo = ({ candle, decimalPlaces }: CandleInfoProps) => {
   return (
     <div className="candle-info-wrapper">
-      <div>
+      <div className="candle-info__item">
         <span className="text-muted">Candle: </span>
         <span className="monospace-text">
           {candle?.date && format(candle?.date, "HH:mm dd MMM yyyy")}
         </span>
       </div>
-      <div>
+      <div className="candle-info__item">
         <span className="text-muted">O </span>
         <span className="monospace-text">
           {candle?.open.toFixed(decimalPlaces)}
         </span>
       </div>
-      <div>
+      <div className="candle-info__item">
         <span className="text-muted">H </span>
         <span className="monospace-text">
           {candle?.high.toFixed(decimalPlaces)}
         </span>
       </div>
-      <div>
+      <div className="candle-info__item">
         <span className="text-muted">L </span>
         <span className="monospace-text">
           {candle?.low.toFixed(decimalPlaces)}
         </span>
       </div>
-      <div>
+      <div className="candle-info__item">
         <span className="text-muted">C </span>
         <span className="monospace-text">
           {candle?.close.toFixed(decimalPlaces)}

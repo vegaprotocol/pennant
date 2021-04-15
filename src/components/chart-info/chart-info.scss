@@ -1,11 +1,15 @@
+@import "../../styles/colors";
+
 .chart-info-wrapper {
+  pointer-events: auto;
+  cursor: default;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  padding: 0 0 4px 4px;
+  padding: 4px;
   color: #f5f8fa;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: $overlay-backdrop;
 }
 
 .interval-select .bp3-menu {

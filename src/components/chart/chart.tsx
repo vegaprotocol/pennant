@@ -199,12 +199,10 @@ export const Chart = React.forwardRef(
               plotOverlay={
                 <div className="overlay">
                   <ChartInfo bounds={bounds} />
-                  {selectedIndex !== null && (
-                    <CandleInfo
-                      candle={data[selectedIndex]}
-                      decimalPlaces={dataSource.decimalPlaces}
-                    />
-                  )}
+                  <CandleInfo
+                    candle={data[selectedIndex ?? data.length - 1]}
+                    decimalPlaces={dataSource.decimalPlaces}
+                  />
                 </div>
               }
               studyOverlay={
