@@ -3,6 +3,7 @@ import { Meta, Story } from "@storybook/react/types-6-0";
 
 import { Interval } from "../../stories/api/vega-graphql";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
+import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 
 export default {
   title: "Components/Chart",
@@ -24,3 +25,6 @@ Study.args = {
   chartType: "area",
   study: "macd",
 };
+
+export const NoData = Template.bind({});
+NoData.args = { dataSource: new EmptyDataSource(), interval: Interval.I5M };
