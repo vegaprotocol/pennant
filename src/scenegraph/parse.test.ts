@@ -1,6 +1,5 @@
 import { parse, parseLayer } from "./parse";
 
-import { BaseSpec } from "../vega-lite/spec/base";
 import { Colors } from "../helpers";
 import { TopLevelSpec } from "../vega-lite/spec";
 
@@ -18,7 +17,7 @@ test("simple case", () => {
     ],
   };
 
-  const scenegraph = parse(input, 10, 0);
+  const scenegraph = parse(input, 10, 0,[]);
 
   expect(scenegraph).toHaveProperty("panels");
   expect(scenegraph?.panels).toHaveLength(1);
