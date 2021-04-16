@@ -74,10 +74,7 @@ $dark-navbar-background-color: $black;
 // Popover
 $dark-popover-background-color: $dark-gray2;
 
-//overlay-backdrop
-.bp3-overlay-backdrop {
-  background-color: rgba(73, 73, 73, 0.7);
-}
+$overlay-backdrop: rgba(20, 20, 20, 0.5);
 
 // Text helpers
 .text-deemphasise {

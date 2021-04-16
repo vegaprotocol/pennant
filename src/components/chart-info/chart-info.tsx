@@ -8,7 +8,7 @@ export type ChartInfoProps = {
 
 export const ChartInfo = ({ bounds }: ChartInfoProps) => {
   return (
-    <div className="chart-info-wrapper" style={{ pointerEvents: "auto" }}>
+    <div className="chart-info-wrapper">
       <div>
         <span>{`${format(bounds[0], "HH:mm dd MMM yyyy")}`}</span>
         <span className="text-muted"> to </span>

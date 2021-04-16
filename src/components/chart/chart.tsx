@@ -15,7 +15,7 @@ import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "../candle-info";
 import { ChartInfo } from "../chart-info";
-import { ChartInterface } from "../../types";
+import { ChartElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
@@ -77,7 +77,7 @@ export const Chart = React.forwardRef(
       interval,
       onClick = () => {},
     }: ChartProps,
-    ref: React.Ref<ChartInterface>
+    ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {
@@ -97,7 +97,7 @@ export const Chart = React.forwardRef(
       },
     }));
 
-    const chartRef = React.useRef<ChartInterface>(null!);
+    const chartRef = React.useRef<ChartElement>(null!);
     const [data, setData] = React.useState<any[]>([]);
     const [annotations, setAnnotations] = React.useState<Annotation[]>([]);
 
@@ -232,12 +232,10 @@ export const Chart = React.forwardRef(
               plotOverlay={
                 <div className="overlay">
                   <ChartInfo bounds={bounds} />
-                  {selectedIndex !== null && (
-                    <CandleInfo
-                      candle={data[selectedIndex]}
-                      decimalPlaces={dataSource.decimalPlaces}
-                    />
-                  )}
+                  <CandleInfo
+                    candle={data[selectedIndex ?? data.length - 1]}
+                    decimalPlaces={dataSource.decimalPlaces}
+                  />
                 </div>
               }
               studyOverlay={

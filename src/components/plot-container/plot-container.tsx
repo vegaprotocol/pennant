@@ -4,7 +4,7 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartInterface, Panel, Scenegraph } from "../../types";
+import { ChartElement, Panel, Scenegraph } from "../../types";
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
@@ -14,7 +14,7 @@ import { select, selectAll } from "d3-selection";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { PlotArea } from "../plot-area";
-import { TopLevelSpec } from "../../spec";
+import { TopLevelSpec } from "../../vega-lite/spec";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
 import { extent } from "d3-array";
@@ -53,7 +53,7 @@ export const PlotContainer = React.forwardRef(
       onMouseOver,
       onGetDataRange = () => {},
     }: PlotContainerProps,
-    ref: React.Ref<ChartInterface>
+    ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
       fitBounds: (bounds: [Date, Date]) => {

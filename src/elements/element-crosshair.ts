@@ -17,21 +17,21 @@ function addCrosshairPath(
 
   ctx.save();
 
-  ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = Colors.GRAY_LIGHT;
+  ctx.setLineDash([4, 6]);
+  ctx.strokeStyle = Colors.GRAY_LIGHT_1;
 
   if (x) {
     ctx.beginPath();
-    ctx.moveTo(Math.round(x) + 0.5, yRange[0]);
-    ctx.lineTo(Math.round(x) + 0.5, yRange[1]);
+    ctx.moveTo(Math.round(x), yRange[0]);
+    ctx.lineTo(Math.round(x), yRange[1]);
     ctx.stroke();
     ctx.closePath();
   }
 
   if (y) {
     ctx.beginPath();
-    ctx.moveTo(xRange[0], Math.round(y) + 0.5);
-    ctx.lineTo(xRange[1], Math.round(y) + 0.5);
+    ctx.moveTo(xRange[0], Math.round(y));
+    ctx.lineTo(xRange[1], Math.round(y));
     ctx.stroke();
     ctx.closePath();
   }

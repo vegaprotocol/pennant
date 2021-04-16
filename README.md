@@ -12,7 +12,7 @@
   <h3 align="center">Pennant</h3>
 
   <p align="center">
-    A React component library for visualising financial data.
+    A React component library for visualising historical and streaming financial market data.
   </p>
 
   <p align="center">
@@ -49,7 +49,7 @@
 
 ## About The Project
 
-React components for viewing financial data. Built for the Vega platform.
+A React chart component visualising historical and streaming financial market data. Built for the Vega platform but can be embedded in any application.
 
 ## Getting Started
 
@@ -75,20 +75,26 @@ yarn add pennant
 import React from "react";
 import { Chart } from "pennant";
 
-const dataSource = new ExampleDataSource();
+const dataSource = new DataSource();
 
-export const App = () => {
-  const [interval, setInterval] = React.useState("I1M");
-
-  return (
-    <Chart
-      dataSource={dataSource}
-      interval={interval}
-      onSetInterval={setInterval}
-    />
-  );
-};
+export const App = () => (
+  <Chart dataSource={dataSource} chartType="candle" interval="I1M" />
+);
 ```
+
+The minimum props required are:
+
+- dataSource
+- chartType
+- interval
+
+## Data
+
+Pennant displays financial data using a DataSource object you pass as a prop to the React Chart component. This object must implement the DataSource interface, and typically takes the form of a class.
+
+It provides a set of methods such as `query` and `subscribe` which will be called by the chart to get historical and streaming data respectively.
+
+Several reference implementations are provided.
 
 ## Contributing
 

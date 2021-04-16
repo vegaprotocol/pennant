@@ -1,10 +1,16 @@
 @import "../../styles/colors";
 
+canvas {
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -webkit-crisp-edges; /* Webkit (Safari) */
+  image-rendering: pixelated; /* Chrome */
+}
+
 .d3fc-group {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
+  width: 100%;
 }
 
 .plot-area {
@@ -21,21 +27,21 @@
 }
 
 .x-axis {
-  position: relative;
   cursor: ew-resize;
+  position: relative;
 }
 
 .d3fc-canvas-layer {
+  height: 100%;
   position: absolute;
   width: 100%;
-  height: 100%;
 }
 
 .annotation-layer {
-  position: absolute;
-  width: 100%;
   height: 100%;
   pointer-events: none;
+  position: absolute;
+  width: 100%;
 }
 
 .crosshair {
@@ -47,19 +53,19 @@
 }
 
 .separator {
-  position: relative;
-  flex: 0 0 1px;
   background-color: $white;
+  flex: 0 0 1px;
+  position: relative;
 }
 
 .separator .handle {
-  position: absolute;
-  z-index: 10;
-  top: -4px;
+  cursor: row-resize;
   height: 9px;
   left: 0;
+  position: absolute;
+  top: -4px;
   width: 100%;
-  cursor: row-resize;
+  z-index: 10;
 }
 
 .separator .handle:hover {
@@ -67,6 +73,6 @@
 }
 
 .time-axis {
-  width: 100%;
   height: 26px;
+  width: 100%;
 }

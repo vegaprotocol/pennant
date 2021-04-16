@@ -1,10 +1,10 @@
 import { AreaElement, BarElement, LineElement, RuleElement } from "../elements";
-import { Color, Gradient, Mark } from "../mark";
+import { Color, Gradient, Mark } from "../vega-lite/mark";
 import {
   Predicate,
   isFieldGTPredicate,
   isFieldLTPredicate,
-} from "../predicate";
+} from "../vega-lite/predicate";
 
 import { Colors } from ".";
 import { PositionalElement } from "../types";

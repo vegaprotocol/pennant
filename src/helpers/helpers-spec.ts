@@ -1,8 +1,8 @@
-import { BaseSpec, TopLevelSpec } from "../spec";
+import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { ChartType, Overlay, Study } from "../types";
 
 import { Colors } from "./helpers-color";
-import { Transform } from "../transform";
+import { Transform } from "../vega-lite/transform";
 
 function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   switch (chartType) {
@@ -55,9 +55,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: "green",
+                value: Colors.GREEN,
               },
-              value: "red",
+              value: Colors.RED,
             },
           },
           mark: {

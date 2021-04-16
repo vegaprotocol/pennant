@@ -1,8 +1,8 @@
 import { parse, parseLayer } from "./parse";
 
-import { BaseSpec } from "../spec/base";
+import { BaseSpec } from "../vega-lite/spec/base";
 import { Colors } from "../helpers";
-import { TopLevelSpec } from "../spec";
+import { TopLevelSpec } from "../vega-lite/spec";
 
 test("simple case", () => {
   const input: TopLevelSpec = {
