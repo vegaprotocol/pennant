@@ -31,13 +31,24 @@ const Template: Story<
 export const Example = Template.bind({});
 Example.args = {
   annotations: [
-    { ...(AnnotationStories.LimitGt.args as LabelProps), id: "a", y: 30 },
+    {
+      ...(AnnotationStories.LimitGt.args as LabelProps),
+      type: "label",
+      id: "a",
+      y: 30,
+    },
     {
       ...(AnnotationStories.Position.args as LabelProps),
+      type: "label",
       id: "b",
       y: 100,
     },
-    { ...(AnnotationStories.Limit.args as LabelProps), id: "c", y: 110 },
+    {
+      ...(AnnotationStories.Limit.args as LabelProps),
+      type: "label",
+      id: "c",
+      y: 110,
+    },
   ],
   position: 110,
 };
