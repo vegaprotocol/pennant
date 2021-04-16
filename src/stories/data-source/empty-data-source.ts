@@ -34,7 +34,7 @@ export class EmptyDataSource implements DataSource {
     return Promise.resolve([]);
   }
 
-  subscribe(_interval: Interval, _onSubscriptionData: (data: any) => void) {}
+  subscribeData(_interval: Interval, _onSubscriptionData: (data: any) => void) {}
 
-  unsubscribe() {}
+  unsubscribeData() {}
 }

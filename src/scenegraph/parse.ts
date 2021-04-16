@@ -1,3 +1,4 @@
+import { Annotation, Scenegraph } from "../types";
 import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../vega-lite/spec";
 import {
   DummyElement,
@@ -11,7 +12,6 @@ import {
 } from "../elements";
 import { Mark, MarkDef } from "../vega-lite/mark";
 import {
-  PADDING_INNER,
   createElement,
   getAreaConfig,
   getBarConfig,
@@ -31,7 +31,6 @@ import { Data } from "../vega-lite/data";
 import { Encoding } from "../vega-lite/encoding";
 import { Field } from "../vega-lite/channeldef";
 import { OutputNode } from "../vega-lite/compile/data/dataflow";
-import { Scenegraph } from "../types";
 import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technicalIndicator";
 import { compile } from "../vega-lite/compile/compile";
 import { extent } from "d3-array";
@@ -184,7 +183,8 @@ function extractYEncodingFields(layer: BaseSpec) {
 export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
-  decimalPlaces: number
+  decimalPlaces: number,
+  annotations: Annotation[]
 ): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
@@ -287,6 +287,7 @@ export function parse(
                     ),
                   ]
                 : [],
+            labels: panelIndex === 0 ? annotations : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData),
           };

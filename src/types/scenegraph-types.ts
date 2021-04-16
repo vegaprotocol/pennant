@@ -1,4 +1,5 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+import { Annotation } from ".";
 
 export interface RenderableElement {
   draw(
@@ -22,6 +23,7 @@ export interface Panel {
   axisTooltip?: RenderableElement;
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
+  labels?: Annotation[];
 
   /**
    * Fields to use to determine y axis extent

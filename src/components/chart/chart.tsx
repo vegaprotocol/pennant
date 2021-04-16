@@ -3,6 +3,7 @@ import "./chart.scss";
 import * as React from "react";
 
 import {
+  Annotation,
   ChartType,
   DataSource,
   Overlay,
@@ -29,6 +30,7 @@ export type ChartProps = {
   study?: Study;
   overlay?: Overlay;
   interval: Interval;
+  onClick?: (id: string) => void;
 };
 
 const StudyLabel = new Map<
@@ -67,7 +69,14 @@ const StudyLabel = new Map<
 
 export const Chart = React.forwardRef(
   (
-    { dataSource, chartType = "candle", study, overlay, interval }: ChartProps,
+    {
+      dataSource,
+      chartType = "candle",
+      study,
+      overlay,
+      interval,
+      onClick = () => {},
+    }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
@@ -90,6 +99,8 @@ export const Chart = React.forwardRef(
 
     const chartRef = React.useRef<ChartElement>(null!);
     const [data, setData] = React.useState<any[]>([]);
+    const [annotations, setAnnotations] = React.useState<Annotation[]>([]);
+
     const [
       priceMonitoringBounds,
       setPriceMonitoringBounds,
@@ -118,10 +129,12 @@ export const Chart = React.forwardRef(
       return parse(
         specification,
         getCandleWidth(interval),
-        dataSource.decimalPlaces
+        dataSource.decimalPlaces,
+        annotations
       );
-    }, [dataSource.decimalPlaces, interval, specification]);
+    }, [annotations, dataSource.decimalPlaces, interval, specification]);
 
+    // Fetch historical data
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
         const newData = await dataSource.query(interval, from, to);
@@ -132,9 +145,10 @@ export const Chart = React.forwardRef(
       [dataSource, interval]
     );
 
+    // Respond to streaming data
     React.useEffect(() => {
       function subscribe() {
-        dataSource.subscribe(interval, (datum) => {
+        dataSource.subscribeData(interval, (datum) => {
           setData((data) => mergeData([datum], data));
         });
       }
@@ -150,9 +164,29 @@ export const Chart = React.forwardRef(
       subscribe();
 
       return () => {
-        myDataSource.unsubscribe();
+        myDataSource.unsubscribeData();
       };
     }, [dataSource, interval, query]);
+
+    // Respond to streaming annotations
+    React.useEffect(() => {
+      function subscribe() {
+        if (dataSource.subscribeAnnotations) {
+          dataSource.subscribeAnnotations((annotations) => {
+            setAnnotations(annotations);
+          });
+        }
+      }
+
+      const myDataSource = dataSource;
+
+      subscribe();
+
+      return () => {
+        myDataSource.unsubscribeAnnotations &&
+          myDataSource.unsubscribeAnnotations();
+      };
+    }, [dataSource]);
 
     React.useEffect(() => {
       setIsLoading(true);

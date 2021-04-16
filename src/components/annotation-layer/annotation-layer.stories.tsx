@@ -1,10 +1,9 @@
-import * as AnnotationStories from "../annotation/annotation.stories";
-import * as React from "react";
+import * as AnnotationStories from "../label/label.stories";
 
 import { AnnotationLayer, AnnotationLayerProps } from "./annotation-layer";
 import { Meta, Story } from "@storybook/react";
 
-import { AnnotationProps } from "../annotation";
+import { LabelProps } from "../label";
 
 export default {
   title: "Components/AnnotationLayer",
@@ -32,13 +31,24 @@ const Template: Story<
 export const Example = Template.bind({});
 Example.args = {
   annotations: [
-    { ...(AnnotationStories.LimitGt.args as AnnotationProps), id: "a", y: 30 },
     {
-      ...(AnnotationStories.Position.args as AnnotationProps),
+      ...(AnnotationStories.LimitGt.args as LabelProps),
+      type: "label",
+      id: "a",
+      y: 30,
+    },
+    {
+      ...(AnnotationStories.Position.args as LabelProps),
+      type: "label",
       id: "b",
       y: 100,
     },
-    { ...(AnnotationStories.Limit.args as AnnotationProps), id: "c", y: 110 },
+    {
+      ...(AnnotationStories.Limit.args as LabelProps),
+      type: "label",
+      id: "c",
+      y: 110,
+    },
   ],
   position: 110,
 };

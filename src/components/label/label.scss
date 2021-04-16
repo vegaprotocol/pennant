@@ -77,7 +77,10 @@
   padding: 0 4px;
 }
 
+.cell > button.action {
+  color: white;
+}
+
 .cell:last-child {
   border-right: none;
-  padding: 0;
 }

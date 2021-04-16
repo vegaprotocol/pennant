@@ -1,3 +1,4 @@
+export * from "./annotation-types";
 export * from "./chart-types";
 export * from "./d3fc-types";
 export * from "./data-source";

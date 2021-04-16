@@ -70,7 +70,7 @@ export class CryptoCompareDataSource implements DataSource {
     }));
   }
 
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
+  subscribeData(_interval: Interval, onSubscriptionData: (datum: any) => void) {
     socket.onopen = function onStreamOpen() {
       var subRequest = {
         action: "SubAdd",
@@ -97,7 +97,7 @@ export class CryptoCompareDataSource implements DataSource {
     };
   }
 
-  unsubscribe() {
+  unsubscribeData() {
     const subRequest = {
       action: "SubRemove",
       subs: ["24~CCCAGG~BTC~USD~m"],

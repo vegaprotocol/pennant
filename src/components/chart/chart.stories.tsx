@@ -26,5 +26,11 @@ Study.args = {
   study: "macd",
 };
 
+export const Positions = Template.bind({});
+Positions.args = {
+  ...Simple.args,
+  chartType: "area",
+};
+
 export const NoData = Template.bind({});
 NoData.args = { dataSource: new EmptyDataSource(), interval: Interval.I5M };

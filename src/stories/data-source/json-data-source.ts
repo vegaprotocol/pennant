@@ -1,4 +1,4 @@
-import { DataSource } from "../../types";
+import { Annotation, DataSource } from "../../types";
 import { Interval } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
 import json from "./data.json";
@@ -45,7 +45,44 @@ export class JsonDataSource implements DataSource {
     return Promise.resolve(candles);
   }
 
-  subscribe(_interval: Interval, _onSubscriptionData: (data: any) => void) {}
+  subscribeData(
+    _interval: Interval,
+    _onSubscriptionData: (datum: any) => void
+  ) {}
 
-  unsubscribe() {}
+  unsubscribeData() {}
+
+  subscribeAnnotations(
+    onSubscriptionAnnotation: (annotations: Annotation[]) => void
+  ) {
+    setInterval(() => {
+      const averageEntryPrice = 605 + 5 * Math.random();
+
+      onSubscriptionAnnotation([
+        {
+          type: "label",
+          id: "0",
+          cells: [
+            { label: "Position" },
+            { label: `${averageEntryPrice}` },
+            {
+              label: `PnL ${10000}`,
+              stroke: true,
+            },
+          ],
+          intent: "success",
+          y: averageEntryPrice,
+        },
+        {
+          type: "label",
+          id: "1",
+          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${600}` }],
+          intent: "danger",
+          y: 600,
+        },
+      ]);
+    }, 2000);
+  }
+
+  unsubscribeAnnotations() {}
 }
