@@ -20,9 +20,9 @@ export const Label = React.forwardRef<HTMLDivElement, LabelProps>(
   ({ cells, intent = "none" }, ref) => {
     return (
       <div ref={ref} className={`annotation intent-${intent}`}>
-        {cells.map((cell) => (
+        {cells.map((cell, cellIndex) => (
           <div
-            key={cell.label}
+            key={cellIndex}
             className={classNames(
               "cell",
               { fill: cell.fill },

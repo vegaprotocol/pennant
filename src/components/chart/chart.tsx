@@ -134,6 +134,7 @@ export const Chart = React.forwardRef(
       );
     }, [annotations, dataSource.decimalPlaces, interval, specification]);
 
+    // Fetch historical data
     const query = React.useCallback(
       async (from: string, to: string, merge = true) => {
         const newData = await dataSource.query(interval, from, to);
@@ -144,6 +145,7 @@ export const Chart = React.forwardRef(
       [dataSource, interval]
     );
 
+    // Respond to streaming data
     React.useEffect(() => {
       function subscribe() {
         dataSource.subscribeData(interval, (datum) => {
@@ -166,10 +168,11 @@ export const Chart = React.forwardRef(
       };
     }, [dataSource, interval, query]);
 
+    // Respond to streaming annotations
     React.useEffect(() => {
       function subscribe() {
         if (dataSource.subscribeAnnotations) {
-          dataSource.subscribeAnnotations?.((annotations) => {
+          dataSource.subscribeAnnotations((annotations) => {
             setAnnotations(annotations);
           });
         }
@@ -178,8 +181,6 @@ export const Chart = React.forwardRef(
       const myDataSource = dataSource;
 
       subscribe();
-
-      console.info("subscribing to annotations");
 
       return () => {
         myDataSource.unsubscribeAnnotations &&

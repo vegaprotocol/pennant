@@ -7,10 +7,11 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { Annotation, DataSource } from "../../types";
+import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { addDecimal } from "../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
 import { positionSubscription } from "../api/vega-graphql/queries/position";
+import { orderSubscription } from "../api/vega-graphql/queries/order";
 
 export interface Order {
   type: "order";
@@ -57,6 +58,8 @@ export class ApolloDataSource implements DataSource {
   marketId: string;
   partyId: string;
   _decimalPlaces: number;
+  orderAnnotations: Annotation[] = [];
+  positionAnnotations: Annotation[] = [];
 
   get decimalPlaces(): number {
     return this._decimalPlaces;
@@ -177,9 +180,84 @@ export class ApolloDataSource implements DataSource {
       variables: { partyId: this.partyId },
     });
 
+    const ordersObservable = this.client.subscribe({
+      query: orderSubscription,
+      variables: { partyId: this.partyId },
+    });
+
     this.positionsSub = positionsObservable.subscribe(({ data }) => {
-      console.info(data);
-      onSubscriptionAnnotation(data);
+      const position = data.positions;
+
+      if (position.market.id === this.marketId) {
+        const positionAnnotation: LabelAnnotation = {
+          type: "label",
+          id: "position",
+          cells: [
+            { label: "Position" },
+            {
+              label: `${Number(
+                addDecimal(position.averageEntryPrice, this._decimalPlaces)
+              )}`,
+            },
+            { label: `+${Number(position.openVolume)}`, fill: true },
+            {
+              label: `PnL ${Number(position.unrealisedPNL)}`,
+              stroke: true,
+            },
+            { label: "Close" },
+          ],
+          intent: "success",
+          y: Number(
+            addDecimal(position.averageEntryPrice, this._decimalPlaces)
+          ),
+        };
+
+        this.positionAnnotations = [positionAnnotation];
+
+        onSubscriptionAnnotation([
+          ...this.positionAnnotations,
+          ...this.orderAnnotations,
+        ]);
+      }
+    });
+
+    this.ordersSub = ordersObservable.subscribe(({ data }) => {
+      const orders = data.orders;
+
+      const orderAnnotations: LabelAnnotation[] = [];
+
+      for (const order of orders) {
+        if (order.market.id === this.marketId) {
+          orderAnnotations.push({
+            type: "label",
+            id: order.id,
+            cells: [
+              { label: `${order.type} ${order.timeInForce}`, stroke: true },
+              {
+                label: `${Number(
+                  addDecimal(order.price, this._decimalPlaces)
+                )}`,
+              },
+              {
+                label: `${order.side === "Buy" ? "+" : "-"}${Number(
+                  order.size
+                )}`,
+                stroke: true,
+              },
+              { label: "Cancel" },
+            ],
+            intent: "danger",
+            y: Number(addDecimal(order.price, this._decimalPlaces)),
+          });
+        }
+      }
+
+      this.orderAnnotations = orderAnnotations;
+
+      onSubscriptionAnnotation([
+        ...this.positionAnnotations,
+        ...this.orderAnnotations,
+      ]);
     });
   }
 
