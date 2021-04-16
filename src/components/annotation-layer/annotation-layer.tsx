@@ -2,10 +2,12 @@ import "./annotation-layer.scss";
 
 import * as React from "react";
 
-import { Label, Intent } from "../label";
+import { Label } from "../label";
+import { Annotation } from "../../types";
+import { Colors } from "../../helpers";
 
 export type AnnotationLayerProps = {
-  annotations: { id: string; cells?: any; intent: Intent; y: number }[];
+  annotations: Annotation[];
 };
 
 export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
@@ -56,8 +58,8 @@ export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
   }, []);
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
-      <svg width="100%" height="100%">
+    <div className="annotation-layer-wrapper">
+      <svg className="annotation-layer-lines">
         {sortedAnnotations.map((annotation, i) => (
           <line
             key={annotation.id}
@@ -65,7 +67,11 @@ export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
             y1={shiftedAnnotations[i]}
             x2="100%"
             y2={annotation.y}
-            stroke={annotation.intent === "success" ? "#26ff8a" : "#ff261a"}
+            stroke={
+              annotation.intent === "success"
+                ? Colors.VEGA_GREEN
+                : Colors.VEGA_RED
+            }
             strokeWidth={2}
             strokeDasharray="2 6"
           />
@@ -74,8 +80,8 @@ export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
       {sortedAnnotations.map((annotation, i) => (
         <div
           key={annotation.id}
+          className="annotation-layer__label_wrapper"
           style={{
-            position: "absolute",
             top: `${shiftedAnnotations[i] - 12}px`,
           }}
         >

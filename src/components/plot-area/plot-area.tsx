@@ -213,9 +213,8 @@ export const PlotArea = ({
         {scenegraph.labels && (
           <AnnotationLayer
             annotations={scenegraph.labels.map(
-              (annotation, annotationIndex) => ({
+              (annotation) => ({
                 ...annotation,
-                id: String(annotationIndex),
                 y: y(annotation.y),
               })
             )}

@@ -13,30 +13,6 @@ import { marketQuery } from "../api/vega-graphql/queries/markets";
 import { positionSubscription } from "../api/vega-graphql/queries/position";
 import { orderSubscription } from "../api/vega-graphql/queries/order";
 
-export interface Order {
-  type: "order";
-  id: string;
-  price: number;
-  timeInForce: number;
-  side: string;
-  market: string;
-  size: number;
-  party: string;
-  orderType: string;
-}
-
-export interface Position {
-  type: "position";
-  market: string;
-  party: string;
-  openVolume: number;
-  realisedPNL: number;
-  unrealisedPNL: number;
-  averageEntryPrice: number;
-  margins: number;
-  updatedAt: Date;
-}
-
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
     ...candle,

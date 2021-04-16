@@ -1,20 +1,5 @@
-import { Intent, LabelProps } from "../components/label";
+import { Annotation } from ".";
 import { Interval } from "../stories/api/vega-graphql";
-
-export type LabelAnnotation = {
-  type: "label";
-  id: string;
-  cells: {
-    label: string;
-    stroke?: boolean;
-    fill?: boolean;
-    onClick?: () => void;
-  }[];
-  intent: Intent;
-  y: number;
-};
-
-export type Annotation = LabelAnnotation;
 
 export interface DataSource {
   readonly decimalPlaces: number;
