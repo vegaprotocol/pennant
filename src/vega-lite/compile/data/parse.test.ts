@@ -1,6 +1,6 @@
 import { Model } from "../model";
 import { PlaceholderDataFlowNode } from "./util";
-import { TechnicalIndicatorTransformNode } from "./technicalIndicator";
+import { TechnicalIndicatorTransformNode } from "./technical-indicator";
 import { Transform } from "../../transform";
 import { parseTransformArray } from "./parse";
 

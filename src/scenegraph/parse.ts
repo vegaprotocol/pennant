@@ -31,7 +31,7 @@ import { Data } from "../vega-lite/data";
 import { Encoding } from "../vega-lite/encoding";
 import { Field } from "../vega-lite/channeldef";
 import { OutputNode } from "../vega-lite/compile/data/dataflow";
-import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technicalIndicator";
+import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
 import { compile } from "../vega-lite/compile/compile";
 import { extent } from "d3-array";
 

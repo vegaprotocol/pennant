@@ -4,7 +4,7 @@ import { TechnicalIndicatorTransform, Transform } from "../../transform";
 import { DataComponent } from ".";
 import { Model } from "../model";
 import { SourceNode } from "./source";
-import { TechnicalIndicatorTransformNode } from "./technicalIndicator";
+import { TechnicalIndicatorTransformNode } from "./technical-indicator";
 
 function isTechnicalIndicator(t: Transform): t is TechnicalIndicatorTransform {
   return "indicator" in t;
