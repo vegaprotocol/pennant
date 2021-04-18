@@ -1,3 +1,3 @@
-export function macd(data: any[]) {
+export function indetity(data: any[]) {
   return data;
 }
