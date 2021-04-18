@@ -1,19 +1,5 @@
 import { DataSource } from "../../types";
 import { Interval } from "../api/vega-graphql";
-import { addDecimal } from "../helpers";
-import json from "./data.json";
-
-export function extendCandle(candle: any, decimalPlaces: number): any {
-  return {
-    ...candle,
-    date: new Date(candle.datetime),
-    high: Number(addDecimal(candle.high, decimalPlaces)),
-    low: Number(addDecimal(candle.low, decimalPlaces)),
-    open: Number(addDecimal(candle.open, decimalPlaces)),
-    close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, 0)),
-  };
-}
 
 export class EmptyDataSource implements DataSource {
   _decimalPlaces = 0;
@@ -34,7 +20,10 @@ export class EmptyDataSource implements DataSource {
     return Promise.resolve([]);
   }
 
-  subscribeData(_interval: Interval, _onSubscriptionData: (data: any) => void) {}
+  subscribeData(
+    _interval: Interval,
+    _onSubscriptionData: (data: any) => void
+  ) {}
 
   unsubscribeData() {}
 }

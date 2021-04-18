@@ -10,18 +10,6 @@ const socket = new WebSocket(
   "protocolOne"
 );
 
-export function extendCandle(candle: any, decimalPlaces: number): any {
-  return {
-    ...candle,
-    date: new Date(candle.datetime),
-    high: Number(addDecimal(candle.high, decimalPlaces)),
-    low: Number(addDecimal(candle.low, decimalPlaces)),
-    open: Number(addDecimal(candle.open, decimalPlaces)),
-    close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, decimalPlaces)),
-  };
-}
-
 export class CryptoCompareDataSource implements DataSource {
   get decimalPlaces(): number {
     return 2;

@@ -16,7 +16,6 @@ export const Primary = Template.bind({});
 Primary.args = {
   candle: {
     date: new Date(2021, 2, 1),
-    datetime: new Date(2021, 2, 1).toISOString(),
     open: 100,
     close: 110,
     low: 90,

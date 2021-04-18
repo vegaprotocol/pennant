@@ -4,10 +4,7 @@
  * @param b Second array
  * @returns Merged array
  */
-export function mergeData(
-  a: { date: Date; datetime: string }[],
-  b: { date: Date; datetime: string }[]
-) {
+export function mergeData(a: { date: Date }[], b: { date: Date }[]) {
   let i = 0;
   let j = 0;
 
