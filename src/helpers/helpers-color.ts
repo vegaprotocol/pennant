@@ -15,7 +15,6 @@ export const Colors = {
   RED: "#ff2641",
   RED_TRANSPARENT: "rgba(255, 38, 65, 0.3)",
   TRANSPARENT: "rgba(0,0,0,0)",
-
   VEGA_RED: "#ff261a",
   VEGA_ORANGE: "#d9822b",
   VEGA_GREEN: "#26ff8a",

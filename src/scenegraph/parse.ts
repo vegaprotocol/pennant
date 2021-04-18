@@ -1,6 +1,7 @@
-import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../spec";
+import { Annotation, Scenegraph } from "../types";
+import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../vega-lite/spec";
 import {
-  CandleElement,
+  DummyElement,
   CrosshairElement,
   GridElement,
   XAxisElement,
@@ -9,9 +10,8 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
-import { Mark, MarkDef } from "../mark";
+import { Mark, MarkDef } from "../vega-lite/mark";
 import {
-  PADDING_INNER,
   createElement,
   getAreaConfig,
   getBarConfig,
@@ -27,13 +27,12 @@ import {
   indicatorMovingAverage,
 } from "@d3fc/d3fc-technical-indicator";
 
-import { Data } from "../data";
-import { Encoding } from "../encoding";
-import { Field } from "../channeldef";
-import { OutputNode } from "../compile/data/dataflow";
-import { Scenegraph } from "../types";
-import { TechnicalIndicatorTransformNode } from "../compile/data/technicalIndicator";
-import { compile } from "../compile/compile";
+import { Data } from "../vega-lite/data";
+import { Encoding } from "../vega-lite/encoding";
+import { Field } from "../vega-lite/channeldef";
+import { OutputNode } from "../vega-lite/compile/data/dataflow";
+import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
+import { compile } from "../vega-lite/compile/compile";
 import { extent } from "d3-array";
 
 export function compileLayer(
@@ -184,7 +183,8 @@ function extractYEncodingFields(layer: BaseSpec) {
 export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
-  decimalPlaces: number
+  decimalPlaces: number,
+  annotations: Annotation[]
 ): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
@@ -287,6 +287,7 @@ export function parse(
                     ),
                   ]
                 : [],
+            labels: panelIndex === 0 ? annotations : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData),
           };
@@ -297,11 +298,9 @@ export function parse(
       originalData: data,
       data: [
         data.map(
-          (candle) =>
-            new CandleElement({
-              ...candle,
-              x: candle.date,
-              width: candleWidth * (1 - PADDING_INNER),
+          (d) =>
+            new DummyElement({
+              x: d.date,
             })
         ),
       ],

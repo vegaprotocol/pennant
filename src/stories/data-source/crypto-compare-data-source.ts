@@ -10,18 +10,6 @@ const socket = new WebSocket(
   "protocolOne"
 );
 
-export function extendCandle(candle: any, decimalPlaces: number): any {
-  return {
-    ...candle,
-    date: new Date(candle.datetime),
-    high: Number(addDecimal(candle.high, decimalPlaces)),
-    low: Number(addDecimal(candle.low, decimalPlaces)),
-    open: Number(addDecimal(candle.open, decimalPlaces)),
-    close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, decimalPlaces)),
-  };
-}
-
 export class CryptoCompareDataSource implements DataSource {
   get decimalPlaces(): number {
     return 2;
@@ -70,7 +58,7 @@ export class CryptoCompareDataSource implements DataSource {
     }));
   }
 
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
+  subscribeData(_interval: Interval, onSubscriptionData: (datum: any) => void) {
     socket.onopen = function onStreamOpen() {
       var subRequest = {
         action: "SubAdd",
@@ -97,7 +85,7 @@ export class CryptoCompareDataSource implements DataSource {
     };
   }
 
-  unsubscribe() {
+  unsubscribeData() {
     const subRequest = {
       action: "SubRemove",
       subs: ["24~CCCAGG~BTC~USD~m"],

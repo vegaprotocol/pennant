@@ -1,3 +1,4 @@
+import { Annotation } from ".";
 import { Interval } from "../stories/api/vega-graphql";
 
 export interface DataSource {
@@ -8,6 +9,13 @@ export interface DataSource {
     priceMonitoringBounds: any;
   }>;
   query(interval: Interval, from: string, to: string): Promise<any>;
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void): void;
-  unsubscribe(): void;
+  subscribeData(
+    interval: Interval,
+    onSubscriptionData: (datum: any) => void
+  ): void;
+  unsubscribeData(): void;
+  subscribeAnnotations?(
+    onSubscriptionAnnotations: (annotations: Annotation[]) => void
+  ): void;
+  unsubscribeAnnotations?(): void;
 }

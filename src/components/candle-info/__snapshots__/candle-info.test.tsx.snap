@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CandleInfo renders correctly 1`] = `
+<div
+  className="candle-info-wrapper"
+>
+  <div
+    className="candle-info__item"
+  >
+    <span
+      className="text-muted"
+    >
+      Candle: 
+    </span>
+    <span
+      className="monospace-text"
+    >
+      00:00 01 Feb 2021
+    </span>
+  </div>
+  <div
+    className="candle-info__item"
+  >
+    <span
+      className="text-muted"
+    >
+      O 
+    </span>
+    <span
+      className="monospace-text"
+    >
+      102.00000
+    </span>
+  </div>
+  <div
+    className="candle-info__item"
+  >
+    <span
+      className="text-muted"
+    >
+      H 
+    </span>
+    <span
+      className="monospace-text"
+    >
+      100.00000
+    </span>
+  </div>
+  <div
+    className="candle-info__item"
+  >
+    <span
+      className="text-muted"
+    >
+      L 
+    </span>
+    <span
+      className="monospace-text"
+    >
+      101.00000
+    </span>
+  </div>
+  <div
+    className="candle-info__item"
+  >
+    <span
+      className="text-muted"
+    >
+      C 
+    </span>
+    <span
+      className="monospace-text"
+    >
+      103.00000
+    </span>
+  </div>
+</div>
+`;

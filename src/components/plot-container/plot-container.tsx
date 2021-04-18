@@ -4,8 +4,8 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartInterface, Panel, Scenegraph } from "../../types";
-import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
+import { ChartElement, Scenegraph } from "../../types";
+import { scaleLinear, scaleTime } from "d3-scale";
 import {
   ZoomTransform,
   zoom as d3Zoom,
@@ -14,12 +14,12 @@ import {
 } from "d3-zoom";
 import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
 import { drawChart, drawChartNoTransform } from "../../render";
-import { select, selectAll } from "d3-selection";
+import { select } from "d3-selection";
 
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { PlotArea } from "../plot-area";
-import { TopLevelSpec } from "../../spec";
+import { TopLevelSpec } from "../../vega-lite/spec";
 import { WIDTH } from "../../constants";
 import { XAxis } from "../x-axis/x-axis";
 import { extent } from "d3-array";
@@ -34,7 +34,6 @@ export type PlotContainerProps = {
   specification: TopLevelSpec;
   scenegraph: Scenegraph;
   interval: Interval;
-  decimalPlaces: number;
   plotOverlay?: React.ReactNode;
   studyOverlay?: React.ReactNode;
   onBoundsChanged?: (bounds: [Date, Date]) => void;
@@ -46,12 +45,11 @@ export type PlotContainerProps = {
 };
 
 export const PlotContainer = React.forwardRef(
-  (props: PlotContainerProps, ref: React.Ref<ChartInterface>) => {
+  (props: PlotContainerProps, ref: React.Ref<ChartElement>) => {
     const {
       specification,
       scenegraph,
       interval,
-      decimalPlaces,
       plotOverlay,
       studyOverlay,
       onBoundsChanged = () => {},

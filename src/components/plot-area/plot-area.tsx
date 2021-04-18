@@ -9,6 +9,7 @@ import { useDrawPlot } from "./hooks/useDrawPlot";
 import { useDrawForeground } from "./hooks/useDrawForeground";
 import { select } from "d3-selection";
 import { drag } from "d3-drag";
+import { AnnotationLayer } from "../annotation-layer";
 
 export type PlotAreaProps = {
   scenegraph: Panel;
@@ -88,6 +89,16 @@ export const PlotArea = ({
       ></d3fc-canvas>
       <div className="annotation-layer"></div>
       <div ref={axisInteractionRef} className="axis-interaction"></div>
+      <div className="position-layer">
+        {scenegraph.labels && (
+          <AnnotationLayer
+            annotations={scenegraph.labels.map((annotation) => ({
+              ...annotation,
+              y: y(annotation.y),
+            }))}
+          />
+        )}
+      </div>
       {overlay && <div className="overlay-layer">{overlay}</div>}
     </>
   );

@@ -7,9 +7,11 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { DataSource } from "../../types";
+import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { addDecimal } from "../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
+import { positionSubscription } from "../api/vega-graphql/queries/position";
+import { orderSubscription } from "../api/vega-graphql/queries/order";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
@@ -19,7 +21,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
     low: Number(addDecimal(candle.low, decimalPlaces)),
     open: Number(addDecimal(candle.open, decimalPlaces)),
     close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, decimalPlaces)),
+    volume: Number(candle.volume),
   };
 }
 
@@ -27,8 +29,13 @@ export class ApolloDataSource implements DataSource {
   client: ApolloClient<any>;
   candlesSub: ZenObservable.Subscription | null = null;
   marketDataSub: ZenObservable.Subscription | null = null;
+  positionsSub: ZenObservable.Subscription | null = null;
+  ordersSub: ZenObservable.Subscription | null = null;
   marketId: string;
+  partyId: string;
   _decimalPlaces: number;
+  orderAnnotations: Annotation[] = [];
+  positionAnnotations: Annotation[] = [];
 
   get decimalPlaces(): number {
     return this._decimalPlaces;
@@ -37,10 +44,12 @@ export class ApolloDataSource implements DataSource {
   constructor(
     client: ApolloClient<any>,
     marketId: string,
+    partyId: string,
     decimalPlaces: number
   ) {
     this.client = client;
     this.marketId = marketId;
+    this.partyId = partyId;
     this._decimalPlaces = decimalPlaces;
   }
 
@@ -97,7 +106,10 @@ export class ApolloDataSource implements DataSource {
   }
 
   async query(interval: Interval, from: string, to: string) {
-    const res = await this.client.query<candlesQuery, candlesQueryVariables>({
+    const { data } = await this.client.query<
+      candlesQuery,
+      candlesQueryVariables
+    >({
       query: candleQuery,
       variables: {
         marketId: this.marketId,
@@ -107,19 +119,20 @@ export class ApolloDataSource implements DataSource {
       fetchPolicy: "no-cache",
     });
 
-    if (!res?.data?.market?.candles) {
+    if (data && data.market && data.market.candles) {
+      const decimalPlaces = data.market.decimalPlaces;
+
+      const candles = data.market.candles
+        .filter((d) => d !== null)
+        .map((d) => extendCandle(d, decimalPlaces));
+
+      return candles;
+    } else {
       return [];
     }
-
-    const decimalPlaces = res.data.market.decimalPlaces;
-    const candles = res.data.market.candles?.map((d) =>
-      extendCandle(d, decimalPlaces)
-    );
-
-    return candles;
   }
 
-  subscribe(interval: Interval, onSubscriptionData: (data: any) => void) {
+  subscribeData(interval: Interval, onSubscriptionData: (datum: any) => void) {
     const candlesObervable = this.client.subscribe({
       query: candleSubscriptionQuery,
       variables: { marketId: this.marketId, interval },
@@ -131,7 +144,101 @@ export class ApolloDataSource implements DataSource {
     });
   }
 
-  unsubscribe() {
-    return this.candlesSub && this.candlesSub.unsubscribe();
+  unsubscribeData() {
+    this.candlesSub && this.candlesSub.unsubscribe();
+  }
+
+  subscribeAnnotations(
+    onSubscriptionAnnotation: (annotations: Annotation[]) => void
+  ) {
+    const positionsObservable = this.client.subscribe({
+      query: positionSubscription,
+      variables: { partyId: this.partyId },
+    });
+
+    const ordersObservable = this.client.subscribe({
+      query: orderSubscription,
+      variables: { partyId: this.partyId },
+    });
+
+    this.positionsSub = positionsObservable.subscribe(({ data }) => {
+      const position = data.positions;
+
+      if (position.market.id === this.marketId) {
+        const positionAnnotation: LabelAnnotation = {
+          type: "label",
+          id: "position",
+          cells: [
+            { label: "Position" },
+            {
+              label: `${Number(
+                addDecimal(position.averageEntryPrice, this._decimalPlaces)
+              )}`,
+            },
+            { label: `+${Number(position.openVolume)}`, fill: true },
+            {
+              label: `PnL ${Number(position.unrealisedPNL)}`,
+              stroke: true,
+            },
+            { label: "Close" },
+          ],
+          intent: "success",
+          y: Number(
+            addDecimal(position.averageEntryPrice, this._decimalPlaces)
+          ),
+        };
+
+        this.positionAnnotations = [positionAnnotation];
+
+        onSubscriptionAnnotation([
+          ...this.positionAnnotations,
+          ...this.orderAnnotations,
+        ]);
+      }
+    });
+
+    this.ordersSub = ordersObservable.subscribe(({ data }) => {
+      const orders = data.orders;
+
+      const orderAnnotations: LabelAnnotation[] = [];
+
+      for (const order of orders) {
+        if (order.market.id === this.marketId) {
+          orderAnnotations.push({
+            type: "label",
+            id: order.id,
+            cells: [
+              { label: `${order.type} ${order.timeInForce}`, stroke: true },
+              {
+                label: `${Number(
+                  addDecimal(order.price, this._decimalPlaces)
+                )}`,
+              },
+              {
+                label: `${order.side === "Buy" ? "+" : "-"}${Number(
+                  order.size
+                )}`,
+                stroke: true,
+              },
+              { label: "Cancel" },
+            ],
+            intent: "danger",
+            y: Number(addDecimal(order.price, this._decimalPlaces)),
+          });
+        }
+      }
+
+      this.orderAnnotations = orderAnnotations;
+
+      onSubscriptionAnnotation([
+        ...this.positionAnnotations,
+        ...this.orderAnnotations,
+      ]);
+    });
+  }
+
+  unsubscribeAnnotations() {
+    this.ordersSub && this.ordersSub.unsubscribe();
+    this.positionsSub && this.positionsSub.unsubscribe();
   }
 }
