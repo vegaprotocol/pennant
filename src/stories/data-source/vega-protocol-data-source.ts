@@ -21,7 +21,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
     low: Number(addDecimal(candle.low, decimalPlaces)),
     open: Number(addDecimal(candle.open, decimalPlaces)),
     close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, decimalPlaces)),
+    volume: Number(candle.volume),
   };
 }
 
@@ -145,7 +145,7 @@ export class ApolloDataSource implements DataSource {
   }
 
   unsubscribeData() {
-    return this.candlesSub && this.candlesSub.unsubscribe();
+    this.candlesSub && this.candlesSub.unsubscribe();
   }
 
   subscribeAnnotations(
@@ -238,6 +238,7 @@ export class ApolloDataSource implements DataSource {
   }
 
   unsubscribeAnnotations() {
-    return this.positionsSub && this.positionsSub.unsubscribe();
+    this.ordersSub && this.ordersSub.unsubscribe();
+    this.positionsSub && this.positionsSub.unsubscribe();
   }
 }
