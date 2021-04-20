@@ -1,6 +1,6 @@
 import "@d3fc/d3fc-element";
 
-import { createRef, useEffect } from "react";
+import React, { createRef, useEffect, useRef } from "react";
 import { zoom as d3Zoom, zoomTransform } from "d3-zoom";
 
 import { FcElement } from "../../types";
@@ -16,6 +16,8 @@ export type ExperimentProps = {
 };
 
 export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
+  const chartRef = useRef<FcElement>(null!);
+
   const refs = range(numPlotAreas).reduce((acc, value) => {
     acc[value] = createRef<HTMLDivElement>();
     return acc;
@@ -75,8 +77,9 @@ export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
       xAxis.xScale(xr);
       plotAreas.forEach((plotArea: any) => plotArea.xScale(xr));
       plotAreas[index].yScale(yr);
+      yAxes[index].yScale(yr);
 
-      select<FcElement, unknown>("#chart").node()?.requestRedraw();
+      chartRef.current?.requestRedraw();
     }
 
     function dragged(e: any, index: number) {
@@ -87,7 +90,7 @@ export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
       plotAreas[index].yScale(yr);
       yAxes[index].yScale(yr);
 
-      select<FcElement, unknown>("#chart").node()?.requestRedraw();
+      chartRef.current?.requestRedraw();
     }
 
     function xDragged(e: any) {
@@ -99,7 +102,7 @@ export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
 
       plotAreas.forEach((plotArea) => plotArea.xScale(xr));
 
-      select<FcElement, unknown>("#chart").node()?.requestRedraw();
+      chartRef.current?.requestRedraw();
     }
 
     const xAxisContainer = select<FcElement, unknown>("#x-axis")
@@ -135,11 +138,12 @@ export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
         })
     );
 
-    select<FcElement, unknown>("#chart").node()?.requestRedraw();
+    chartRef.current?.requestRedraw();
   }, [numPlotAreas, refs]);
 
   return (
     <d3fc-group
+      ref={chartRef}
       id="chart"
       auto-resize
       style={{
@@ -150,27 +154,29 @@ export const Experiment = ({ numPlotAreas = 3 }: ExperimentProps) => {
       }}
     >
       {range(numPlotAreas).map((index) => (
-        <div
-          ref={refs[index]}
-          key={index}
-          style={{ flex: 1, display: "flex", flexDirection: "row" }}
-        >
-          <d3fc-svg
-            id={`plot-area-${index}`}
-            class="plot-area"
-            style={{ flex: 1 }}
-          ></d3fc-svg>
-          <d3fc-svg
-            id="y-axis-a"
-            class="y-axis"
-            style={{ width: "5em", cursor: "ns-resize" }}
-          ></d3fc-svg>
-        </div>
+        <React.Fragment key={index}>
+          <div
+            ref={refs[index]}
+            style={{ flex: 1, display: "flex", flexDirection: "row" }}
+          >
+            <d3fc-svg
+              id={`plot-area-${index}`}
+              class="plot-area"
+              style={{ flex: 1 }}
+            ></d3fc-svg>
+            <d3fc-svg
+              id="y-axis-a"
+              class="y-axis"
+              style={{ width: "20px", cursor: "ns-resize" }}
+            ></d3fc-svg>
+          </div>
+          <div style={{ height: "1px", backgroundColor: "white" }}></div>
+        </React.Fragment>
       ))}
       <div style={{ height: "3em", display: "flex", flexDirection: "row" }}>
         <d3fc-svg
           id="x-axis"
-          style={{ flex: 1, marginRight: "5em", cursor: "ew-resize" }}
+          style={{ flex: 1, marginRight: "20px", cursor: "ew-resize" }}
         ></d3fc-svg>
       </div>
     </d3fc-group>
