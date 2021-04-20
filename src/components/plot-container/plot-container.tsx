@@ -120,6 +120,7 @@ export const PlotContainer = React.forwardRef(
     );
 
     const candleWidth = getCandleWidth(interval);
+    const hasStudy = scenegraph.panels.length > 1;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
@@ -155,24 +156,25 @@ export const PlotContainer = React.forwardRef(
           )
           .end()
           .then(() => {
-            select(studyRef.current)
-              .datum("independent")
-              .transition()
-              .duration(250)
-              .call(
-                studyZoom.current.translateTo,
-                timeScaleRef.current.range()[1],
-                0,
-                [timeScaleRef.current(latestData) - (WIDTH + 26), 0]
-              )
-              .end()
-              .then(() => {
-                select(studyRef.current).datum(undefined);
-              })
-              .catch((reason) => {
-                select(studyRef.current).datum(undefined);
-                console.warn(`Transition end promise failed: ${reason}`);
-              });
+            hasStudy &&
+              select(studyRef.current)
+                .datum("independent")
+                .transition()
+                .duration(250)
+                .call(
+                  studyZoom.current.translateTo,
+                  timeScaleRef.current.range()[1],
+                  0,
+                  [timeScaleRef.current(latestData) - (WIDTH + 26), 0]
+                )
+                .end()
+                .then(() => {
+                  select(studyRef.current).datum(undefined);
+                })
+                .catch((reason) => {
+                  select(studyRef.current).datum(undefined);
+                  console.warn(`Transition end promise failed: ${reason}`);
+                });
 
             select(plotRef.current)
               .datum("independent")
@@ -202,7 +204,7 @@ export const PlotContainer = React.forwardRef(
 
         select(chartRef.current).node()?.requestRedraw();
       },
-      [data]
+      [data, hasStudy]
     );
 
     React.useEffect(() => {
@@ -267,9 +269,8 @@ export const PlotContainer = React.forwardRef(
           }
 
           isDragging.current = true;
-          console.log(isDragging.current);
 
-          if (d !== "independent") {
+          if (hasStudy && d !== "independent") {
             select(studyRef.current)
               .datum("sync")
               .call(
@@ -319,7 +320,7 @@ export const PlotContainer = React.forwardRef(
           }
         })
         .on("end", () => {
-          console.log("drag ended");
+          console.log("zoom ended");
           isDragging.current = false;
 
           select(plotRef.current)
@@ -329,116 +330,118 @@ export const PlotContainer = React.forwardRef(
           requestRedraw();
         });
 
-      studyZoom.current
-        // @ts-ignore
-        .interpolate(interpolateZoom.rho(0))
-        .scaleExtent([1 / (1 << 2), domainWidth / (candleWidth * 10)])
-        .translateExtent([
-          [0, 0],
-          [0, 800],
-        ])
-        .constrain(function constrain(transform, extent, translateExtent) {
-          const k = transform.k / previousStudyZoomTransform.current.k;
-          const x = transform.x - previousStudyZoomTransform.current.x;
+      hasStudy &&
+        studyZoom.current
+          // @ts-ignore
+          .interpolate(interpolateZoom.rho(0))
+          .scaleExtent([1 / (1 << 2), domainWidth / (candleWidth * 10)])
+          .translateExtent([
+            [0, 0],
+            [0, 800],
+          ])
+          .constrain(function constrain(transform, extent, translateExtent) {
+            const k = transform.k / previousStudyZoomTransform.current.k;
+            const x = transform.x - previousStudyZoomTransform.current.x;
 
-          let newTransform = transform;
+            let newTransform = transform;
 
-          if (isPinnedRef.current && k === 1 && x !== 0) {
-            isPinnedRef.current = false;
-          } else if (isPinnedRef.current) {
-            const gap =
-              transform.invertX(extent[1][0] - (WIDTH + 26)) -
-              (extent[1][0] - 0);
+            if (isPinnedRef.current && k === 1 && x !== 0) {
+              isPinnedRef.current = false;
+            } else if (isPinnedRef.current) {
+              const gap =
+                transform.invertX(extent[1][0] - (WIDTH + 26)) -
+                (extent[1][0] - 0);
 
-            newTransform = transform.translate(gap, 0);
-          }
+              newTransform = transform.translate(gap, 0);
+            }
 
-          if (x !== 0) {
-            isDragging.current = true;
+            if (x !== 0) {
+              isDragging.current = true;
+
+              select(studyRef.current)
+                .select(".d3fc-canvas-layer.crosshair")
+                .classed("grabbing", true);
+            }
+
+            previousStudyZoomTransform.current = transform;
+
+            return newTransform;
+          })
+          .filter(function filter(event) {
+            if (event.type == "dblclick") {
+              reset();
+              return false;
+            }
+
+            return !event.ctrlKey && !event.button;
+          })
+          .on("zoom", (event, d) => {
+            if (d === "sync") {
+              return;
+            }
+
+            if (d !== "independent") {
+              select(plotRef.current)
+                .datum("sync")
+                .call(
+                  plotZoom.current.transform,
+                  zoomIdentity.translate(
+                    event.transform.x,
+                    zoomTransform(plotRef.current).y
+                  )
+                )
+                .datum(undefined);
+            }
+
+            drawChart(
+              1,
+              event,
+              timeScaleRef.current,
+              timeScaleRescaledRef.current,
+              plotScaleRef.current,
+              plotScaleRescaledRef.current,
+              studyScaleRef.current,
+              studyScaleRescaledRef.current,
+              scenegraph,
+              requestRedraw,
+              onBoundsChangedThrottled
+            );
+
+            const transform: ZoomTransform = event.transform;
+
+            const range = timeScaleRef.current
+              .range()
+              .map(transform.invertX, transform);
+
+            const domain = range.map(
+              timeScaleRef.current.invert,
+              timeScaleRef.current
+            );
+
+            const domainWidth = domain[1].getTime() - domain[0].getTime();
+
+            if (data[0].date.getTime() + domainWidth > domain[0].getTime()) {
+              const to = data[0].date.toISOString();
+              const from = new Date(
+                data[0].date.getTime() - domainWidth
+              ).toISOString();
+
+              onGetDataRangeThrottled(from, to);
+            }
+          })
+          .on("end", (event) => {
+            //isDragging.current = false;
 
             select(studyRef.current)
               .select(".d3fc-canvas-layer.crosshair")
-              .classed("grabbing", true);
-          }
+              .classed("grabbing", false);
 
-          previousStudyZoomTransform.current = transform;
-
-          return newTransform;
-        })
-        .filter(function filter(event) {
-          if (event.type == "dblclick") {
-            reset();
-            return false;
-          }
-
-          return !event.ctrlKey && !event.button;
-        })
-        .on("zoom", (event, d) => {
-          if (d === "sync") {
-            return;
-          }
-
-          if (d !== "independent") {
-            select(plotRef.current)
-              .datum("sync")
-              .call(
-                plotZoom.current.transform,
-                zoomIdentity.translate(
-                  event.transform.x,
-                  zoomTransform(plotRef.current).y
-                )
-              )
-              .datum(undefined);
-          }
-
-          drawChart(
-            1,
-            event,
-            timeScaleRef.current,
-            timeScaleRescaledRef.current,
-            plotScaleRef.current,
-            plotScaleRescaledRef.current,
-            studyScaleRef.current,
-            studyScaleRescaledRef.current,
-            scenegraph,
-            requestRedraw,
-            onBoundsChangedThrottled
-          );
-
-          const transform: ZoomTransform = event.transform;
-
-          const range = timeScaleRef.current
-            .range()
-            .map(transform.invertX, transform);
-
-          const domain = range.map(
-            timeScaleRef.current.invert,
-            timeScaleRef.current
-          );
-
-          const domainWidth = domain[1].getTime() - domain[0].getTime();
-
-          if (data[0].date.getTime() + domainWidth > domain[0].getTime()) {
-            const to = data[0].date.toISOString();
-            const from = new Date(
-              data[0].date.getTime() - domainWidth
-            ).toISOString();
-
-            onGetDataRangeThrottled(from, to);
-          }
-        })
-        .on("end", (event) => {
-          //isDragging.current = false;
-
-          select(studyRef.current)
-            .select(".d3fc-canvas-layer.crosshair")
-            .classed("grabbing", false);
-
-          requestRedraw();
-        });
+            requestRedraw();
+          });
     }, [
       candleWidth,
       data,
+      hasStudy,
       onBoundsChangedThrottled,
       onGetDataRangeThrottled,
       requestRedraw,
@@ -479,15 +482,20 @@ export const PlotContainer = React.forwardRef(
                 )
               );
 
-              select(studyRef.current).call(
-                studyZoom.current.transform,
-                zoomIdentity.translate(
-                  timeScaleRef.current(timeDomainRef.current[1]) -
-                    timeScaleRef.current.range()[1] -
-                    WIDTH,
-                  0
-                )
-              );
+              hasStudy &&
+                select(studyRef.current).call(
+                  studyZoom.current.transform,
+                  zoomIdentity.translate(
+                    timeScaleRef.current(timeDomainRef.current[1]) -
+                      timeScaleRef.current.range()[1] -
+                      WIDTH,
+                    0
+                  )
+                );
+
+              plotScaleRescaledRef.current.domain(plotDomainRef.current);
+              hasStudy &&
+                studyScaleRescaledRef.current.domain(studyDomainRef.current);
 
               isFirstRun.current = false;
             }
@@ -499,13 +507,11 @@ export const PlotContainer = React.forwardRef(
           studyScaleRef.current.domain(studyDomainRef.current);
         });
 
-      //chartContainer.call(timeZoom.current);
-
       select(plotRef.current).call(plotZoom.current);
       select(studyRef.current).call(studyZoom.current);
 
       chartContainer.node()?.requestRedraw();
-    }, []);
+    }, [hasStudy]);
 
     // If pinned include neweest data point in domain
     React.useEffect(() => {
@@ -532,8 +538,6 @@ export const PlotContainer = React.forwardRef(
       requestRedraw,
       onBoundsChangedThrottled
     );
-
-    console.log(isDragging.current);
 
     return (
       <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>

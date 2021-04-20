@@ -20,7 +20,6 @@ export function useDrawForeground(
   onMouseOver: any
 ) {
   React.useEffect(() => {
-    console.info(isDragging);
     const container = select<HTMLElement, unknown>(foregroundRef.current).on(
       "draw",
       function drawPlotAreaForeground(event: {

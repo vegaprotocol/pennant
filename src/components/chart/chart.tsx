@@ -140,7 +140,6 @@ export const Chart = React.forwardRef(
       async (from: string, to: string, merge = true) => {
         const newData = await dataSource.query(interval, from, to);
 
-        // TODO: need convenience functions for calculating range, sorting and distinct values and merging
         setData((data) => mergeData(newData, merge ? data : []));
       },
       [dataSource, interval]

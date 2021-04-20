@@ -22,8 +22,11 @@ export function drawChart(
   const timeDomain = timeRange.map(timeScale.invert, timeScale);
   timeScaleRescaled.domain(timeDomain);
 
+  let newTransform = transform.scale(1);
+  console.log(transform, newTransform);
+
   if (index === 0) {
-    const plotRange = plotScale.range().map(transform.invertY, transform);
+    const plotRange = plotScale.range().map(newTransform.invertY, newTransform);
     const plotDomain = plotRange.map(plotScale.invert, plotScale);
     plotScaleRescaled.domain(plotDomain);
   } else {
