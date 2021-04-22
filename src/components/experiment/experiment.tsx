@@ -1,17 +1,11 @@
 import "@d3fc/d3fc-element";
 
-import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
-import { zoom as d3Zoom, zoomTransform } from "d3-zoom";
+import React, { createRef, useEffect, useRef, useState } from "react";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FcElement } from "../../types";
 import { chart } from "./chart";
-import { plotArea } from "./plot-area";
 import { range } from "d3-array";
-import { scaleLinear } from "d3-scale";
-import { select } from "d3-selection";
-import { xAxis as xAxisElement } from "./x-axis";
-import { yAxis } from "./y-axis";
 
 const format = (date: number | Date | undefined) =>
   new Intl.DateTimeFormat("en-US").format(date);
@@ -29,7 +23,7 @@ export const Experiment = ({
     <div
       style={{
         height: "60vh",
-        width: "60vw",
+        width: "90vw",
         flexDirection: "column",
         resize: "both",
         overflow: "hidden",
@@ -71,12 +65,12 @@ export const Chart = ({
       ),
       { ref: xAxisRef, data: [] },
       initialBounds
-    ).on("redraw", () => {}) as any).on(
-      "bounds_changed",
-      (bounds: [Date, Date]) => {
-        setX(bounds);
-      }
-    );
+    ).on("redraw", () => {
+      chartRef.current?.requestRedraw();
+    }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
+      setX(bounds);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

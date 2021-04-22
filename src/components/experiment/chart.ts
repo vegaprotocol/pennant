@@ -150,6 +150,7 @@ export const chart = (
   ) {
     if (t.k === 1) {
       xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
+
       isFreePan &&
         plotAreaElements[id].call(
           yZooms[id].translateBy,
@@ -180,8 +181,14 @@ export const chart = (
   }
 
   function dragged(e: any, id: string) {
-    plotAreaElements[id].call(yZooms[id].scaleBy, 1 - e.dy / 128, [0, 64]);
+    plotAreaElements[id].call(
+      yZooms[id].scaleBy,
+      1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
+      [0, (yScales[id].range()[0] - yScales[id].range()[1]) / 2]
+    );
+
     const yr = yTransforms[id]().rescaleY(yScales[id]);
+
     plotAreas[id].yScale(yr);
     yAxes[id].yScale(yr);
 
@@ -232,7 +239,9 @@ export const chart = (
       .on("measure", (event) => {
         const { height } = event.detail;
         yScales[index].range([height, 0]);
+
         const yr = yTransforms[index]().rescaleY(yScales[index]);
+
         plotAreas[index].yScale(yr);
         yAxes[index].yScale(yr);
       })
