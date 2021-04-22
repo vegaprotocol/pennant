@@ -8,7 +8,7 @@ import { dispatch } from "d3-dispatch";
 import { mean } from "d3-array";
 
 export const plotArea = (
-  x: ScaleLinear<number, number, unknown>,
+  x: ScaleTime<number, number, number | undefined>,
   y: ScaleLinear<number, number, unknown>
 ) => {
   let listeners = dispatch("zoom", "dblclick");
@@ -65,10 +65,12 @@ export const plotArea = (
     selection.call(zoom);
   };
 
-  plotArea.xScale = (x?: ScaleLinear<number, number, unknown>): any => {
+  plotArea.xScale = (
+    x?: ScaleTime<number, number, number | undefined>
+  ): any => {
     if (x) {
       gridline.xScale(x);
-      xScale = x;
+      xScale = x.copy();
 
       return plotArea;
     } else {

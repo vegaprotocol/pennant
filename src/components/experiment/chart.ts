@@ -1,6 +1,11 @@
-import { ScaleLinear, scaleLinear } from "d3-scale";
+import { ScaleLinear, ScaleTime, scaleLinear, scaleTime } from "d3-scale";
 import { Selection, select } from "d3-selection";
-import { ZoomTransform, zoom as d3Zoom, zoomTransform } from "d3-zoom";
+import {
+  ZoomTransform,
+  zoom as d3Zoom,
+  zoomIdentity,
+  zoomTransform,
+} from "d3-zoom";
 
 import { FcElement } from "../../types";
 import { dispatch } from "d3-dispatch";
@@ -8,13 +13,22 @@ import { plotArea } from "./plot-area";
 import { xAxis as xAxisElement } from "./x-axis";
 import { yAxis } from "./y-axis";
 
+/**
+ * The chart component renders multiple plot areas which share a common x-axis.
+ *
+ * Zooming and panning over plot areas is supported. Dragging the axes will zoom.
+ * @param areas
+ * @param axis
+ * @param initialBounds
+ * @returns
+ */
 export const chart = (
   areas: Record<
     string,
     { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
   >,
   axis: { ref: React.MutableRefObject<FcElement>; data: any },
-  initialBounds: [number, number]
+  initialBounds: [Date, Date]
 ) => {
   let listeners = dispatch(
     "bounds_changed",
@@ -33,9 +47,11 @@ export const chart = (
   let isPinned = true;
   let isFreePan = false;
 
-  let xScale: ScaleLinear<number, number, number> = scaleLinear().domain(
-    initialBounds
-  );
+  let xScale: ScaleTime<number, number, number | undefined> = scaleTime<
+    number,
+    number,
+    number | undefined
+  >().domain(initialBounds);
 
   let yScales: Record<
     string,
@@ -101,8 +117,18 @@ export const chart = (
   );
 
   function reset() {
+    xElement.call(xZoom.transform, zoomIdentity);
+
+    const xr = xTransform().rescaleX(xScale);
+
+    xAxis.xScale(xr);
+    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+
     isPinned = true;
     isFreePan = false;
+
+    listeners.call("redraw", chart);
+    listeners.call("bounds_changed", chart, xr.domain());
   }
 
   function zoomed(
@@ -133,7 +159,6 @@ export const chart = (
     const yr = yTransforms[id]().rescaleY(yScales[id]);
 
     xAxis.xScale(xr);
-
     Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
 
     plotAreas[id].yScale(yr);

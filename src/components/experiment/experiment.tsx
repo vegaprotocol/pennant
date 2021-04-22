@@ -13,14 +13,17 @@ import { select } from "d3-selection";
 import { xAxis as xAxisElement } from "./x-axis";
 import { yAxis } from "./y-axis";
 
+const format = (date: number | Date | undefined) =>
+  new Intl.DateTimeFormat("en-US").format(date);
+
 export type ExperimentProps = {
   numPlotAreas?: number;
-  initialBounds?: [number, number];
+  initialBounds?: [Date, Date];
 };
 
 export const Experiment = ({
   numPlotAreas = 3,
-  initialBounds = [2, 8],
+  initialBounds = [new Date(2020, 1, 1), new Date(2020, 2, 1)],
 }: ExperimentProps) => {
   return (
     <div
@@ -43,7 +46,7 @@ export const Experiment = ({
 
 export const Chart = ({
   numPlotAreas = 3,
-  initialBounds = [2, 8],
+  initialBounds = [new Date(2020, 1, 1), new Date(2020, 2, 1)],
 }: ExperimentProps) => {
   const [x, setX] = useState(initialBounds);
   const [y, setY] = useState<Record<string, number>>({});
@@ -70,7 +73,7 @@ export const Chart = ({
       initialBounds
     ).on("redraw", () => {
       chartRef.current?.requestRedraw();
-    }) as any).on("bounds_changed", (bounds: [number, number]) => {
+    }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
       setX(bounds);
     });
   }, []);
@@ -133,7 +136,7 @@ export const Chart = ({
                 cursor: "ns-resize",
               }}
             ></d3fc-svg>
-            <div style={{}}>{`${x[0].toFixed(2)} - ${x[1].toFixed(2)}`}</div>
+            <div style={{}}>{`${format(x[0])} - ${format(x[1])}`}</div>
           </div>
           <div style={{ height: "1px", backgroundColor: "white" }}></div>
         </React.Fragment>
