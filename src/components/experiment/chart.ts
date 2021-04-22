@@ -256,7 +256,7 @@ export const chart = (
 
         ctx?.scale(pixelRatio, pixelRatio);
 
-        plotAreas[index].context(ctx)();
+        plotAreas[index].context(ctx).pixelRatio(pixelRatio)();
       });
   });
 
