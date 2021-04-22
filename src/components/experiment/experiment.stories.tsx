@@ -9,3 +9,7 @@ export default {
 export const Simple: Story<ExperimentProps> = (args) => {
   return <Experiment {...args} />;
 };
+
+Simple.args = {
+  numPlotAreas: 3,
+};

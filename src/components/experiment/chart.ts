@@ -1,0 +1,296 @@
+import { ScaleLinear, scaleLinear } from "d3-scale";
+import { Selection, select } from "d3-selection";
+import { ZoomTransform, zoom as d3Zoom, zoomTransform } from "d3-zoom";
+
+import { FcElement } from "../../types";
+import { dispatch } from "d3-dispatch";
+import { plotArea } from "./plot-area";
+import { xAxis as xAxisElement } from "./x-axis";
+import { yAxis } from "./y-axis";
+
+export const chart = (
+  areas: Record<
+    string,
+    { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
+  >,
+  axis: { ref: React.MutableRefObject<FcElement>; data: any }
+) => {
+  let listeners = dispatch("redraw");
+  let isPinned = true;
+  let isFreePan = false;
+
+  let xScale: ScaleLinear<number, number, number> = scaleLinear().domain([
+    0,
+    10,
+  ]);
+
+  let yScales: Record<
+    string,
+    ScaleLinear<number, number, number>
+  > = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      scaleLinear().domain([0, 10]),
+    ])
+  );
+
+  let xZoom = d3Zoom<Element, unknown>();
+  let xElement = select<Element, unknown>(axis.ref.current);
+
+  let xAxis: any = xAxisElement(xScale).on("drag", (e) => {
+    xDragged(e);
+  });
+
+  let yAxes: Record<string, any> = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      yAxis(yScales[value.id]).on("drag", (e) => {
+        dragged(e, value.id);
+      }),
+    ])
+  );
+
+  let plotAreas: any = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      (plotArea(xScale, yScales[value.id]).on("zoom", (e, t, point) => {
+        zoomed(e, t, point, value.id);
+      }) as any).on("dblclick", () => {
+        reset();
+      }),
+    ])
+  );
+
+  let yZooms = Object.fromEntries(
+    Object.values(areas).map((value) => [value.id, d3Zoom<Element, unknown>()])
+  );
+
+  let plotAreaElements = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      select<Element, unknown>(areas[value.id].ref.current!),
+    ])
+  );
+
+  const xTransform = () => zoomTransform(xElement.node()!);
+
+  const yTransforms = Object.fromEntries(
+    Object.entries(plotAreaElements).map(([id, plotArea]) => [
+      id,
+      () => zoomTransform(plotArea.node()!),
+    ])
+  );
+
+  xElement.call(xZoom);
+  Object.entries(plotAreaElements).map(([id, plotArea]) =>
+    plotArea.call(yZooms[id])
+  );
+
+  function reset() {
+    isPinned = true;
+    isFreePan = false;
+  }
+
+  function zoomed(
+    e: any,
+    t: ZoomTransform,
+    point: [number, number],
+    id: string
+  ) {
+    if (t.k === 1) {
+      xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
+      isFreePan &&
+        plotAreaElements[id].call(
+          yZooms[id].translateBy,
+          0,
+          t.y / yTransforms[id]().k
+        );
+
+      isPinned = false;
+    } else {
+      xElement.call(
+        xZoom.scaleBy,
+        t.k,
+        isPinned ? [xScale.range()[1], 0] : point
+      );
+    }
+
+    const xr = xTransform().rescaleX(xScale);
+    const yr = yTransforms[id]().rescaleY(yScales[id]);
+
+    xAxis.xScale(xr);
+
+    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+
+    plotAreas[id].yScale(yr);
+    yAxes[id].yScale(yr);
+
+    listeners.call("redraw", chart);
+  }
+
+  function dragged(e: any, id: string) {
+    plotAreaElements[id].call(yZooms[id].scaleBy, 1 - e.dy / 128, [0, 64]);
+    const yr = yTransforms[id]().rescaleY(yScales[id]);
+    plotAreas[id].yScale(yr);
+    yAxes[id].yScale(yr);
+
+    isFreePan = true;
+
+    listeners.call("redraw", chart);
+  }
+
+  function xDragged(e: any) {
+    xElement.call(
+      xZoom.scaleBy,
+      1 - e.dx / (xScale.range()[1] - xScale.range()[0]),
+      [
+        isPinned
+          ? xScale.range()[1]
+          : (xScale.range()[1] - xScale.range()[0]) / 2,
+        0,
+      ]
+    );
+
+    const xr = xTransform().rescaleX(xScale);
+    xAxis.xScale(xr);
+    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+
+    listeners.call("redraw", chart);
+  }
+
+  // x-axis
+  const xAxisContainer = select<FcElement, unknown>(axis.ref.current)
+    .on("measure", (event) => {
+      const { width } = event.detail;
+      xScale.range([0, width]);
+    })
+    .on("draw", (event) => {
+      select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
+    });
+
+  Object.entries(yScales).map(([key, scale], index) =>
+    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+      .select(".y-axis")
+      .on("measure", (event) => {
+        const { height } = event.detail;
+        yScales[index].range([height, 0]);
+
+        const yr = yTransforms[index]().rescaleY(yScales[index]);
+        plotAreas[index].yScale(yr);
+        yAxes[index].yScale(yr);
+      })
+      .on("draw", (event) => {
+        select(event.currentTarget)
+          .select<SVGSVGElement>("svg")
+          .call(yAxes[index]);
+      })
+  );
+
+  Object.entries(yScales).map(([key, scale], index) => {
+    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+      .select(".plot-area")
+      .on("draw", (event) => {
+        select(event.currentTarget)
+          .select<SVGSVGElement>("svg")
+          .call(plotAreas[index]);
+      });
+  });
+
+  const chart = (selection?: Selection<SVGSVGElement, any, any, any>) => {
+    listeners.call("redraw", chart);
+    axis.ref.current.requestRedraw();
+  };
+
+  chart.plotAreas = (
+    areas: Record<
+      string,
+      { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
+    >
+  ) => {
+    const oldIds = Object.keys(yScales);
+    const newIds = Object.keys(areas);
+
+    const newYScales: Record<string, ScaleLinear<number, number, number>> = {};
+    const newYAxes: Record<string, any> = {};
+    const newPlotAreas: Record<string, any> = {};
+    const newZooms: Record<string, any> = {};
+    const newGPlotAreas: Record<string, any> = {};
+    const newTs: Record<string, any> = {};
+
+    for (const id of newIds) {
+      if (oldIds.includes(id)) {
+        newYScales[id] = yScales[id];
+        newYAxes[id] = yAxes[id];
+        newPlotAreas[id] = plotAreas[id];
+        newZooms[id] = yZooms[id];
+        newGPlotAreas[id] = plotAreaElements[id];
+        newTs[id] = yTransforms[id];
+      } else {
+        newYScales[id] = scaleLinear().domain([
+          0,
+          Math.ceil(10 * Math.random() + 5),
+        ]);
+        newYAxes[id] = yAxis(newYScales[id]).on("drag", (e) => {
+          dragged(e, id);
+        });
+        newPlotAreas[id] = (plotArea(
+          xTransform().rescaleX(xScale),
+          newYScales[id]
+        ).on("zoom", (e: any, t: any, point: [number, number]) => {
+          zoomed(e, t, point, id);
+        }) as any).on("dblclick", () => {
+          reset();
+        });
+        newZooms[id] = d3Zoom<Element, unknown>();
+        newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
+        yTransforms[id] = () => zoomTransform(newGPlotAreas[id].node());
+
+        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+          .select(".y-axis")
+          .on("measure", (event) => {
+            const { height } = event.detail;
+            yScales[id].range([height, 0]);
+
+            const yr = yTransforms[id]().rescaleY(yScales[iidndex]);
+            plotAreas[id].yScale(yr);
+            yAxes[id].yScale(yr);
+          })
+          .on("draw", (event) => {
+            select(event.currentTarget)
+              .select<SVGSVGElement>("svg")
+              .call(yAxes[id]);
+          });
+
+        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+          .select(".plot-area")
+          .on("draw", (event) => {
+            select(event.currentTarget)
+              .select<SVGSVGElement>("svg")
+              .call(plotAreas[id]);
+          });
+      }
+    }
+
+    yScales = newYScales;
+    yAxes = newYAxes;
+    plotAreas = newPlotAreas;
+    yZooms = newZooms;
+    plotAreaElements = newGPlotAreas;
+
+    return chart;
+  };
+
+  chart.on = (
+    typenames: string,
+    callback?: (this: object, ...args: any[]) => void
+  ) => {
+    if (callback) {
+      listeners.on(typenames, callback);
+      return chart;
+    } else {
+      return listeners.on(typenames);
+    }
+  };
+
+  return chart;
+};

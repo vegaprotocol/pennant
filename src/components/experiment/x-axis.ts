@@ -16,15 +16,6 @@ export const xAxis = (x: ScaleLinear<number, number, number>) => {
     listeners.call("drag", xAxis, e);
   });
 
-  function center(event: any, target: any) {
-    if (event.sourceEvent) {
-      const p = pointers(event, target);
-      return [mean(p, (d) => d[0]), mean(p, (d) => d[1])];
-    }
-
-    return [(xScale.range()[0] - xScale.range()[1]) / 2];
-  }
-
   const xAxis = (selection: Selection<SVGSVGElement, any, any, any>) => {
     selection.call(axisBottom(xScale));
     selection.call(drag);

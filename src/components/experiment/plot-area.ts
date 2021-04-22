@@ -11,29 +11,39 @@ export const plotArea = (
   x: ScaleLinear<number, number, unknown>,
   y: ScaleLinear<number, number, unknown>
 ) => {
-  let listeners = dispatch("zoom");
+  let listeners = dispatch("zoom", "dblclick");
   let gridline = annotationSvgGridline().xScale(x).yScale(y);
-  let xScale = x;
-  let yScale = y;
+  let xScale = x.copy();
+  let yScale = y.copy();
 
-  let zoom = d3Zoom<SVGSVGElement, unknown>().on("zoom", function (e) {
-    const t = e.transform;
-    const k = t.k / z.k;
-    const point = center(e, this);
+  let zoom = d3Zoom<SVGSVGElement, unknown>()
+    .filter(function filter(e) {
+      if (e.type === "dblclick") {
+        listeners.call("dblclick", plotArea, e);
+        return false;
+      }
 
-    listeners.call(
-      "zoom",
-      plotArea,
-      {
-        x: t.x - z.x,
-        y: t.y - z.y,
-        k: k,
-      },
-      point
-    );
+      return true;
+    })
+    .on("zoom", function (e) {
+      const t = e.transform;
+      const k = t.k / z.k;
+      const point = center(e, this);
 
-    z = t;
-  });
+      listeners.call(
+        "zoom",
+        plotArea,
+        e,
+        {
+          x: t.x - z.x,
+          y: t.y - z.y,
+          k: k,
+        },
+        point
+      );
+
+      z = t;
+    });
 
   // z holds a copy of the previous transform, so we can track its changes
   let z = zoomIdentity;
