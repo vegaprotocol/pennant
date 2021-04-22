@@ -13,16 +13,29 @@ export const chart = (
     string,
     { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
   >,
-  axis: { ref: React.MutableRefObject<FcElement>; data: any }
+  axis: { ref: React.MutableRefObject<FcElement>; data: any },
+  initialBounds: [number, number]
 ) => {
-  let listeners = dispatch("redraw");
+  let listeners = dispatch(
+    "bounds_changed",
+    "click",
+    "contextmenu",
+    "dblclick",
+    "drag",
+    "dragend",
+    "dragstart",
+    "mousemove",
+    "mouseout",
+    "mouseover",
+    "redraw",
+    "rightclick"
+  );
   let isPinned = true;
   let isFreePan = false;
 
-  let xScale: ScaleLinear<number, number, number> = scaleLinear().domain([
-    0,
-    10,
-  ]);
+  let xScale: ScaleLinear<number, number, number> = scaleLinear().domain(
+    initialBounds
+  );
 
   let yScales: Record<
     string,
@@ -50,13 +63,14 @@ export const chart = (
     ])
   );
 
-  let plotAreas: any = Object.fromEntries(
+  let plotAreas: Record<string, any> = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
       (plotArea(xScale, yScales[value.id]).on("zoom", (e, t, point) => {
         zoomed(e, t, point, value.id);
       }) as any).on("dblclick", () => {
         reset();
+        listeners.call("dblclick", chart);
       }),
     ])
   );
@@ -126,6 +140,7 @@ export const chart = (
     yAxes[id].yScale(yr);
 
     listeners.call("redraw", chart);
+    listeners.call("bounds_changed", chart, xr.domain());
   }
 
   function dragged(e: any, id: string) {
@@ -156,6 +171,7 @@ export const chart = (
     Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
 
     listeners.call("redraw", chart);
+    listeners.call("bounds_changed", chart, xr.domain());
   }
 
   // x-axis
@@ -174,7 +190,6 @@ export const chart = (
       .on("measure", (event) => {
         const { height } = event.detail;
         yScales[index].range([height, 0]);
-
         const yr = yTransforms[index]().rescaleY(yScales[index]);
         plotAreas[index].yScale(yr);
         yAxes[index].yScale(yr);
@@ -251,7 +266,7 @@ export const chart = (
             const { height } = event.detail;
             yScales[id].range([height, 0]);
 
-            const yr = yTransforms[id]().rescaleY(yScales[iidndex]);
+            const yr = yTransforms[id]().rescaleY(yScales[id]);
             plotAreas[id].yScale(yr);
             yAxes[id].yScale(yr);
           })
@@ -284,6 +299,8 @@ export const chart = (
     typenames: string,
     callback?: (this: object, ...args: any[]) => void
   ) => {
+    console.log(typenames);
+
     if (callback) {
       listeners.on(typenames, callback);
       return chart;
