@@ -175,10 +175,16 @@ export const chart = (
   }
 
   // x-axis
-  const xAxisContainer = select<FcElement, unknown>(axis.ref.current)
+  select<FcElement, unknown>(axis.ref.current)
     .on("measure", (event) => {
       const { width } = event.detail;
       xScale.range([0, width]);
+
+      const xr = xTransform().rescaleX(xScale);
+      xAxis.xScale(xr);
+      Object.entries(plotAreas).forEach(([id, plotArea]) =>
+        plotArea.xScale(xr)
+      );
     })
     .on("draw", (event) => {
       select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
@@ -299,8 +305,6 @@ export const chart = (
     typenames: string,
     callback?: (this: object, ...args: any[]) => void
   ) => {
-    console.log(typenames);
-
     if (callback) {
       listeners.on(typenames, callback);
       return chart;
