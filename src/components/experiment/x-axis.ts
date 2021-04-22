@@ -5,6 +5,11 @@ import { axisBottom } from "d3-axis";
 import { drag as d3Drag } from "d3-drag";
 import { dispatch } from "d3-dispatch";
 
+/**
+ * The x-axis component renders human readable reference marks.
+ * @param x
+ * @returns
+ */
 export const xAxis = (x: ScaleTime<number, number, number | undefined>) => {
   let listeners = dispatch("drag");
   let xScale = x.copy();
@@ -14,10 +19,7 @@ export const xAxis = (x: ScaleTime<number, number, number | undefined>) => {
   });
 
   const xAxis = (selection: Selection<SVGSVGElement, any, any, any>) => {
-    const axis = axisBottom<Date>(xScale);
-
-    console.log(axis);
-    selection.call(axis);
+    selection.call(axisBottom<Date>(xScale));
     selection.call(drag);
   };
 
@@ -44,6 +46,3 @@ export const xAxis = (x: ScaleTime<number, number, number | undefined>) => {
 
   return xAxis;
 };
-function scaleDate<T, U, V>(): import("d3-axis").AxisScale<Date> {
-  throw new Error("Function not implemented.");
-}

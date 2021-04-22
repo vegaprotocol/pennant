@@ -71,11 +71,12 @@ export const Chart = ({
       ),
       { ref: xAxisRef, data: [] },
       initialBounds
-    ).on("redraw", () => {
-      chartRef.current?.requestRedraw();
-    }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
-      setX(bounds);
-    });
+    ).on("redraw", () => {}) as any).on(
+      "bounds_changed",
+      (bounds: [Date, Date]) => {
+        setX(bounds);
+      }
+    );
   }, []);
 
   useEffect(() => {

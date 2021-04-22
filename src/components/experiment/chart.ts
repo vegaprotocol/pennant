@@ -212,6 +212,7 @@ export const chart = (
       );
     })
     .on("draw", (event) => {
+      console.log(event);
       select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
     });
 
