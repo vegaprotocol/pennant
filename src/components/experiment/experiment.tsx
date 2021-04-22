@@ -116,9 +116,19 @@ export const Chart = ({
               flexDirection: "row",
             }}
           >
-            <d3fc-svg
+            <d3fc-canvas
               id={`plot-area-${index}`}
               class="plot-area"
+              style={{
+                position: "absolute",
+                flex: 1,
+                width: "100%",
+                height: "100%",
+              }}
+            ></d3fc-canvas>
+            <d3fc-svg
+              id={`plot-area-interaction-${index}`}
+              class="plot-area-interaction"
               style={{
                 position: "absolute",
                 flex: 1,

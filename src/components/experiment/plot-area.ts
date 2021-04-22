@@ -1,9 +1,7 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
-import { Selection, pointers } from "d3-selection";
-import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 
 // @ts-ignore
-import { annotationSvgGridline } from "@d3fc/d3fc-annotation";
+import { annotationCanvasGridline } from "@d3fc/d3fc-annotation";
 import { dispatch } from "d3-dispatch";
 import { mean } from "d3-array";
 
@@ -12,57 +10,18 @@ export const plotArea = (
   y: ScaleLinear<number, number, unknown>
 ) => {
   let listeners = dispatch("zoom", "dblclick");
-  let gridline = annotationSvgGridline().xScale(x).yScale(y);
+  let ctx: CanvasRenderingContext2D | null = null;
+  let gridline = annotationCanvasGridline().xScale(x).yScale(y);
   let xScale = x.copy();
   let yScale = y.copy();
 
-  let zoom = d3Zoom<SVGSVGElement, unknown>()
-    .filter(function filter(e) {
-      if (e.type === "dblclick") {
-        listeners.call("dblclick", plotArea, e);
-        return false;
-      }
-
-      return true;
-    })
-    .on("zoom", function (e) {
-      const t = e.transform;
-      const k = t.k / z.k;
-      const point = center(e, this);
-
-      listeners.call(
-        "zoom",
-        plotArea,
-        e,
-        {
-          x: t.x - z.x,
-          y: t.y - z.y,
-          k: k,
-        },
-        point
-      );
-
-      z = t;
-    });
-
-  // z holds a copy of the previous transform, so we can track its changes
-  let z = zoomIdentity;
-
-  function center(event: any, target: any) {
-    if (event.sourceEvent) {
-      const p = pointers(event, target);
-      return [mean(p, (d) => d[0]), mean(p, (d) => d[1])];
-    }
-
-    return [
-      (xScale.range()[1] - xScale.range()[0]) / 2,
-      (yScale.range()[0] - yScale.range()[1]) / 2,
-    ];
+  function draw() {
+    gridline();
   }
 
-  const plotArea = (selection: Selection<SVGSVGElement, any, any, any>) => {
-    selection.call(gridline);
-    selection.call(zoom);
+  const plotArea = () => {
+    gridline.context(ctx);
+    gridline();
   };
 
   plotArea.xScale = (
@@ -75,6 +34,16 @@ export const plotArea = (
       return plotArea;
     } else {
       return xScale;
+    }
+  };
+
+  plotArea.context = (context?: CanvasRenderingContext2D): any => {
+    if (context) {
+      ctx = context;
+
+      return plotArea;
+    } else {
+      return yScale;
     }
   };
 

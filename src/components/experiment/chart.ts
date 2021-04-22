@@ -10,6 +10,7 @@ import {
 import { FcElement } from "../../types";
 import { dispatch } from "d3-dispatch";
 import { plotArea } from "./plot-area";
+import { plotAreaInteraction } from "./plot-area-interaction";
 import { xAxis as xAxisElement } from "./x-axis";
 import { yAxis } from "./y-axis";
 
@@ -82,9 +83,19 @@ export const chart = (
   let plotAreas: Record<string, any> = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
-      (plotArea(xScale, yScales[value.id]).on("zoom", (e, t, point) => {
-        zoomed(e, t, point, value.id);
-      }) as any).on("dblclick", () => {
+      plotArea(xScale, yScales[value.id]),
+    ])
+  );
+
+  let plotAreaInteractions: Record<string, any> = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      (plotAreaInteraction(xScale, yScales[value.id]).on(
+        "zoom",
+        (e, t, point) => {
+          zoomed(e, t, point, value.id);
+        }
+      ) as any).on("dblclick", () => {
         reset();
         listeners.call("dblclick", chart);
       }),
@@ -212,7 +223,6 @@ export const chart = (
       );
     })
     .on("draw", (event) => {
-      console.log(event);
       select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
     });
 
@@ -237,9 +247,22 @@ export const chart = (
     select<HTMLDivElement, unknown>(areas[key].ref.current!)
       .select(".plot-area")
       .on("draw", (event) => {
+        const ctx = select(event.currentTarget)
+          .select<HTMLCanvasElement>("canvas")
+          .node()
+          ?.getContext("2d");
+
+        plotAreas[index].context(ctx)();
+      });
+  });
+
+  Object.entries(yScales).map(([key, scale], index) => {
+    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+      .select(".plot-area-interaction")
+      .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(plotAreas[index]);
+          .call(plotAreaInteractions[index]);
       });
   });
 
@@ -260,6 +283,7 @@ export const chart = (
     const newYScales: Record<string, ScaleLinear<number, number, number>> = {};
     const newYAxes: Record<string, any> = {};
     const newPlotAreas: Record<string, any> = {};
+    const newPlotAreaInteractions: Record<string, any> = {};
     const newZooms: Record<string, any> = {};
     const newGPlotAreas: Record<string, any> = {};
     const newTs: Record<string, any> = {};
@@ -269,6 +293,7 @@ export const chart = (
         newYScales[id] = yScales[id];
         newYAxes[id] = yAxes[id];
         newPlotAreas[id] = plotAreas[id];
+        newPlotAreaInteractions[id] = plotAreaInteractions[id];
         newZooms[id] = yZooms[id];
         newGPlotAreas[id] = plotAreaElements[id];
         newTs[id] = yTransforms[id];
@@ -280,13 +305,18 @@ export const chart = (
         newYAxes[id] = yAxis(newYScales[id]).on("drag", (e) => {
           dragged(e, id);
         });
-        newPlotAreas[id] = (plotArea(
+        newPlotAreas[id] = plotArea(
           xTransform().rescaleX(xScale),
           newYScales[id]
-        ).on("zoom", (e: any, t: any, point: [number, number]) => {
+        );
+        newPlotAreaInteractions[id] = (plotAreaInteraction(
+          xTransform().rescaleX(xScale),
+          newYScales[id]
+        ).on("zoom", (e, t, point) => {
           zoomed(e, t, point, id);
         }) as any).on("dblclick", () => {
           reset();
+          listeners.call("dblclick", chart);
         });
         newZooms[id] = d3Zoom<Element, unknown>();
         newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
@@ -311,9 +341,20 @@ export const chart = (
         select<HTMLDivElement, unknown>(areas[id].ref.current!)
           .select(".plot-area")
           .on("draw", (event) => {
+            const ctx = select(event.currentTarget)
+              .select<HTMLCanvasElement>("canvas")
+              .node()
+              ?.getContext("2d");
+
+            plotAreas[id].context(ctx)();
+          });
+
+        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+          .select(".plot-area-interaction")
+          .on("draw", (event) => {
             select(event.currentTarget)
               .select<SVGSVGElement>("svg")
-              .call(plotAreas[id]);
+              .call(plotAreaInteractions[id]);
           });
       }
     }
@@ -321,6 +362,7 @@ export const chart = (
     yScales = newYScales;
     yAxes = newYAxes;
     plotAreas = newPlotAreas;
+    plotAreaInteractions = newPlotAreaInteractions;
     yZooms = newZooms;
     plotAreaElements = newGPlotAreas;
 
