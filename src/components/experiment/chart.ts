@@ -252,6 +252,10 @@ export const chart = (
           .node()
           ?.getContext("2d");
 
+        const pixelRatio = event.detail.pixelRatio;
+
+        ctx?.scale(pixelRatio, pixelRatio);
+
         plotAreas[index].context(ctx)();
       });
   });

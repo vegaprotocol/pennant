@@ -119,6 +119,7 @@ export const Chart = ({
             <d3fc-canvas
               id={`plot-area-${index}`}
               class="plot-area"
+              use-device-pixel-ratio
               style={{
                 position: "absolute",
                 flex: 1,

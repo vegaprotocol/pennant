@@ -1,11 +1,12 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Annotation } from ".";
 
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale?: ScaleLinear<number, number, never>,
+    xScale: ScaleTime<number, number, number | undefined | unknown>,
+    yScale?: ScaleLinear<number, number, number | undefined | never>,
     ...rest: any[]
   ): void;
 }
