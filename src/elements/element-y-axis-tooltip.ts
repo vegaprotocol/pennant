@@ -67,6 +67,7 @@ export class YAxisTooltipElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>,
+    pixelRatio: number = 1,
     position: [number | null, number | null]
   ) {
     addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces);

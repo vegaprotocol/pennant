@@ -1,9 +1,11 @@
-import { bisector } from "d3-array";
-import { ScaleLinear, ScaleTime } from "d3-scale";
-import { select } from "d3-selection";
-import { closestIndexTo } from "date-fns";
 import * as React from "react";
+
 import { FcElement, Panel } from "../../../types";
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
+import { bisector } from "d3-array";
+import { closestIndexTo } from "date-fns";
+import { select } from "d3-selection";
 
 export function useDrawForeground(
   foregroundRef: React.MutableRefObject<FcElement>,
@@ -43,14 +45,14 @@ export function useDrawForeground(
           }
 
           if (scenegraph.crosshair && !isDragging) {
-            scenegraph.crosshair.draw(ctx, x, y, [
+            scenegraph.crosshair.draw(ctx, x, y, pixelRatio, [
               crosshairXRef.current,
               crosshairYRef.current[panelIndex],
             ]);
           }
 
           if (scenegraph.axisTooltip) {
-            scenegraph.axisTooltip.draw(ctx, x, y, [
+            scenegraph.axisTooltip.draw(ctx, x, y, pixelRatio, [
               crosshairXRef.current,
               crosshairYRef.current[panelIndex],
             ]);

@@ -63,6 +63,7 @@ export class XAxisTooltipElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
     _yScale: ScaleLinear<number, number, never>,
+    pixelRatio: number = 1,
     position: [number | null, number | null]
   ) {
     addXAxisTooltipPath(ctx, xScale, position);

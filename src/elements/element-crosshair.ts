@@ -44,6 +44,7 @@ export class CrosshairElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
     yScale: ScaleLinear<number, number, never>,
+    pixelRatio: number = 1,
     position: [number | null, number | null]
   ) {
     addCrosshairPath(ctx, xScale, yScale, position);

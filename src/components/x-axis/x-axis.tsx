@@ -50,7 +50,7 @@ export const XAxis = ({
           }
 
           if (scenegraph.axisTooltip) {
-            scenegraph.axisTooltip.draw(ctx, x, y, [
+            scenegraph.axisTooltip.draw(ctx, x, y, pixelRatio, [
               crosshairXRef.current,
               null,
             ]);
