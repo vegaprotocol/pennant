@@ -1,16 +1,13 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
-import { Selection } from "d3-selection";
 import { YAxisElement } from "../../elements";
-import { axisRight } from "d3-axis";
-import { drag as d3Drag } from "d3-drag";
 
 export const yAxis = (
   x: ScaleTime<number, number, number | undefined | unknown>,
   y: ScaleLinear<number, number, number | undefined | unknown>
 ) => {
-  let ctx: CanvasRenderingContext2D | null = null;
   let axis = new YAxisElement();
+  let ctx: CanvasRenderingContext2D | null = null;
   let pixelRatio: number = 1;
   let xScale: any = x.copy();
   let yScale: any = y.copy();

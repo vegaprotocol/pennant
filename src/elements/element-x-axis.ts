@@ -6,7 +6,8 @@ import { getNumXTicks } from "../helpers/helpers-axis";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>
+  xScale: ScaleTime<number, number, never>,
+  pixelRatio: number
 ) {
   ctx.strokeStyle = "#fff";
 
@@ -21,7 +22,7 @@ function addXAxisPath(
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
-    ctx.font = `12px monospace`;
+    ctx.font = `${12}px monospace`;
     ctx.fillText(tickFormat(tick), xScale(tick), 9);
     ctx.closePath();
   });
@@ -31,8 +32,9 @@ export class XAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
-    _yScale: ScaleLinear<number, number, never>
+    _yScale: ScaleLinear<number, number, never>,
+    pixelRatio = 1
   ) {
-    addXAxisPath(ctx, xScale);
+    addXAxisPath(ctx, xScale, pixelRatio);
   }
 }

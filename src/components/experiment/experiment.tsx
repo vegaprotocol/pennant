@@ -7,11 +7,7 @@ import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { chart } from "./chart";
 
-const format = (date: number | Date | undefined) =>
-  new Intl.DateTimeFormat("en-US").format(date);
-
 export type ExperimentProps = {
-  numPlotAreas?: number;
   initialBounds?: [Date, Date];
 };
 
@@ -31,7 +27,6 @@ const plotAreas = [
 ];
 
 export const Experiment = ({
-  numPlotAreas = 3,
   initialBounds = [new Date(2020, 1, 1), new Date(2020, 2, 1)],
 }: ExperimentProps) => {
   return (
@@ -46,23 +41,20 @@ export const Experiment = ({
       }}
     >
       <AutoSizer style={{ width: "100%", height: "100%" }}>
-        {() => (
-          <Chart numPlotAreas={numPlotAreas} initialBounds={initialBounds} />
-        )}
+        {() => <Chart initialBounds={initialBounds} />}
       </AutoSizer>
     </div>
   );
 };
 
 export const Chart = ({
-  numPlotAreas = 3,
   initialBounds = [new Date(2020, 1, 1), new Date(2020, 2, 1)],
 }: ExperimentProps) => {
   const [x, setX] = useState(initialBounds);
   const [y, setY] = useState<Record<string, number>>({});
 
   const chartRef = useRef<FcElement>(null!);
-  const xAxisRef = useRef<FcElement>(null!);
+  const xAxisRef = useRef<HTMLDivElement>(null!);
 
   const refs = plotAreas
     .map((area) => area.id)
@@ -151,7 +143,6 @@ export const Chart = ({
               class="plot-area-interaction"
               style={{
                 position: "absolute",
-                flex: 1,
                 width: "100%",
                 height: "100%",
               }}
@@ -172,11 +163,25 @@ export const Chart = ({
           <div style={{ height: "1px", backgroundColor: "white" }}></div>
         </React.Fragment>
       ))}
-      <div style={{ height: "3em", display: "flex", flexDirection: "row" }}>
+      <div ref={xAxisRef} style={{ height: "24px", position: "relative" }}>
+        <d3fc-canvas
+          class="x-axis"
+          use-device-pixel-ratio
+          style={{
+            position: "absolute",
+            cursor: "ew-resize",
+            width: "100%",
+            height: "100%",
+          }}
+        ></d3fc-canvas>
         <d3fc-svg
-          ref={xAxisRef}
-          id="x-axis"
-          style={{ flex: 1, cursor: "ew-resize" }}
+          class="x-axis-interaction"
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            cursor: "ew-resize",
+          }}
         ></d3fc-svg>
       </div>
     </d3fc-group>

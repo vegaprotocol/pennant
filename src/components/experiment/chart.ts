@@ -8,10 +8,12 @@ import {
 } from "d3-zoom";
 
 import { FcElement } from "../../types";
+import { WIDTH } from "../../constants";
 import { dispatch } from "d3-dispatch";
 import { plotArea } from "./plot-area";
 import { plotAreaInteraction } from "./plot-area-interaction";
 import { xAxis as xAxisElement } from "./x-axis";
+import { xAxisInteraction as xAxisInteractionElement } from "./x-axis-interaction";
 import { yAxis } from "./y-axis";
 import { yAxisInteraction } from "./y-axis-interaction";
 
@@ -29,7 +31,7 @@ export const chart = (
     string,
     { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
   >,
-  axis: { ref: React.MutableRefObject<FcElement>; data: any },
+  axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any },
   initialBounds: [Date, Date]
 ) => {
   let listeners = dispatch(
@@ -66,11 +68,18 @@ export const chart = (
   );
 
   let xZoom = d3Zoom<Element, unknown>();
-  let xElement = select<Element, unknown>(axis.ref.current);
+  let xElement = select<Element, unknown>(axis.ref.current)
+    .select<Element>(".x-axis")
+    .style("pointer-events", "none");
 
-  let xAxis: any = xAxisElement(xScale).on("drag", (e) => {
-    xDragged(e);
-  });
+  let xAxis: any = xAxisElement(xScale);
+
+  let xAxisInteraction: any = xAxisInteractionElement(xScale).on(
+    "drag",
+    (e) => {
+      xDragged(e);
+    }
+  );
 
   let yAxes: Record<string, any> = Object.fromEntries(
     Object.values(areas).map((value) => [
@@ -126,15 +135,15 @@ export const chart = (
   const xTransform = () => zoomTransform(xElement.node()!);
 
   const yTransforms = Object.fromEntries(
-    Object.entries(plotAreaElements).map(([id, plotArea]) => [
+    Object.entries(plotAreaElements).map(([id, plotAreaElement]) => [
       id,
-      () => zoomTransform(plotArea.node()!),
+      () => zoomTransform(plotAreaElement.node()!),
     ])
   );
 
   xElement.call(xZoom);
-  Object.entries(plotAreaElements).map(([id, plotArea]) =>
-    plotArea.call(yZooms[id])
+  Object.entries(plotAreaElements).map(([id, plotAreaElement]) =>
+    plotAreaElement.call(yZooms[id])
   );
 
   function reset() {
@@ -191,7 +200,6 @@ export const chart = (
   }
 
   function dragged(e: any, id: string) {
-    console.log("dragged");
     plotAreaElements[id].call(
       yZooms[id].scaleBy,
       1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
@@ -214,7 +222,7 @@ export const chart = (
       1 - e.dx / (xScale.range()[1] - xScale.range()[0]),
       [
         isPinned
-          ? xScale.range()[1]
+          ? xScale.range()[1] - WIDTH
           : (xScale.range()[1] - xScale.range()[0]) / 2,
         0,
       ]
@@ -230,7 +238,8 @@ export const chart = (
   }
 
   // x-axis
-  select<FcElement, unknown>(axis.ref.current)
+  select<HTMLDivElement, unknown>(axis.ref.current)
+    .select(".x-axis")
     .on("measure", (event) => {
       const { width } = event.detail;
       xScale.range([0, width]);
@@ -243,7 +252,24 @@ export const chart = (
       );
     })
     .on("draw", (event) => {
-      select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
+      const ctx = select(event.currentTarget)
+        .select<HTMLCanvasElement>("canvas")
+        .node()
+        ?.getContext("2d");
+
+      const pixelRatio = event.detail.pixelRatio;
+
+      ctx?.scale(pixelRatio, pixelRatio);
+
+      xAxis.context(ctx).pixelRatio(pixelRatio)();
+    });
+
+  select<HTMLDivElement, unknown>(axis.ref.current)
+    .select(".x-axis-interaction")
+    .on("draw", (event) => {
+      select(event.currentTarget)
+        .select<SVGSVGElement>("svg")
+        .call(xAxisInteraction);
     });
 
   Object.entries(yScales).map(([key, scale]) =>
@@ -309,9 +335,8 @@ export const chart = (
       });
   });
 
-  const chart = (selection?: Selection<SVGSVGElement, any, any, any>) => {
+  const chart = () => {
     listeners.call("redraw", chart);
-    axis.ref.current.requestRedraw();
   };
 
   chart.plotAreas = (
