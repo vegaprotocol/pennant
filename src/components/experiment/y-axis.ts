@@ -1,21 +1,52 @@
-import { ScaleLinear } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
 import { Selection } from "d3-selection";
+import { YAxisElement } from "../../elements";
 import { axisRight } from "d3-axis";
 import { drag as d3Drag } from "d3-drag";
-import { dispatch } from "d3-dispatch";
 
-export const yAxis = (y: ScaleLinear<number, number, number | undefined>) => {
-  let listeners = dispatch("drag");
+export const yAxis = (
+  x: ScaleTime<number, number, number | undefined | unknown>,
+  y: ScaleLinear<number, number, number | undefined | unknown>
+) => {
+  let ctx: CanvasRenderingContext2D | null = null;
+  let axis = new YAxisElement();
+  let pixelRatio: number = 1;
+  let xScale: any = x.copy();
+  let yScale: any = y.copy();
 
-  let yScale = y;
+  const yAxis = () => {
+    if (ctx) {
+      axis.draw(ctx, xScale, yScale, pixelRatio);
+    }
+  };
 
-  let drag = d3Drag<SVGSVGElement, unknown>().on("drag", function (e) {
-    listeners.call("drag", yAxis, e);
-  });
+  yAxis.context = (context?: CanvasRenderingContext2D): any => {
+    if (context) {
+      ctx = context;
+      return yAxis;
+    } else {
+      return context;
+    }
+  };
 
-  const yAxis = (selection: Selection<SVGSVGElement, any, any, any>) => {
-    selection.call(axisRight(yScale));
-    selection.call(drag);
+  yAxis.pixelRatio = (ratio?: number): any => {
+    if (ratio) {
+      pixelRatio = ratio;
+      return yAxis;
+    } else {
+      return pixelRatio;
+    }
+  };
+
+  yAxis.xScale = (x?: ScaleTime<number, number, number | undefined>): any => {
+    if (x) {
+      xScale = x.copy();
+
+      return yAxis;
+    } else {
+      return xScale;
+    }
   };
 
   yAxis.yScale = (y?: ScaleLinear<number, number, number>): any => {
@@ -25,18 +56,6 @@ export const yAxis = (y: ScaleLinear<number, number, number | undefined>) => {
       return yAxis;
     } else {
       return yScale;
-    }
-  };
-
-  yAxis.on = (
-    typenames: string,
-    callback?: (this: object, ...args: any[]) => void
-  ) => {
-    if (callback) {
-      listeners.on(typenames, callback);
-      return yAxis;
-    } else {
-      return listeners.on(typenames);
     }
   };
 

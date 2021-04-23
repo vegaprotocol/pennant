@@ -13,6 +13,7 @@ import { plotArea } from "./plot-area";
 import { plotAreaInteraction } from "./plot-area-interaction";
 import { xAxis as xAxisElement } from "./x-axis";
 import { yAxis } from "./y-axis";
+import { yAxisInteraction } from "./y-axis-interaction";
 
 /**
  * The chart component renders multiple plot areas which share a common x-axis.
@@ -74,7 +75,14 @@ export const chart = (
   let yAxes: Record<string, any> = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
-      yAxis(yScales[value.id]).on("drag", (e) => {
+      yAxis(xScale, yScales[value.id]),
+    ])
+  );
+
+  let yAxisInteractions: Record<string, any> = Object.fromEntries(
+    Object.values(areas).map((value) => [
+      value.id,
+      yAxisInteraction(yScales[value.id]).on("drag", (e) => {
         dragged(e, value.id);
       }),
     ])
@@ -183,6 +191,7 @@ export const chart = (
   }
 
   function dragged(e: any, id: string) {
+    console.log("dragged");
     plotAreaElements[id].call(
       yZooms[id].scaleBy,
       1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
@@ -214,6 +223,7 @@ export const chart = (
     const xr = xTransform().rescaleX(xScale);
     xAxis.xScale(xr);
     Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+    Object.entries(yAxes).forEach(([id, axis]) => axis.xScale(xr));
 
     listeners.call("redraw", chart);
     listeners.call("bounds_changed", chart, xr.domain());
@@ -227,6 +237,7 @@ export const chart = (
 
       const xr = xTransform().rescaleX(xScale);
       xAxis.xScale(xr);
+      Object.entries(yAxes).forEach(([id, axis]) => axis.xScale(xr));
       Object.entries(plotAreas).forEach(([id, plotArea]) =>
         plotArea.xScale(xr)
       );
@@ -248,9 +259,26 @@ export const chart = (
         yAxes[key].yScale(yr);
       })
       .on("draw", (event) => {
+        const ctx = select(event.currentTarget)
+          .select<HTMLCanvasElement>("canvas")
+          .node()
+          ?.getContext("2d");
+
+        const pixelRatio = event.detail.pixelRatio;
+
+        ctx?.scale(pixelRatio, pixelRatio);
+
+        yAxes[key].context(ctx).pixelRatio(pixelRatio)();
+      })
+  );
+
+  Object.entries(yScales).map(([key, scale]) =>
+    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+      .select(".y-axis-interaction")
+      .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(yAxes[key]);
+          .call(yAxisInteractions[key]);
       })
   );
 
@@ -297,6 +325,7 @@ export const chart = (
 
     const newYScales: Record<string, ScaleLinear<number, number, number>> = {};
     const newYAxes: Record<string, any> = {};
+    const newYAxisInteractions: Record<string, any> = {};
     const newPlotAreas: Record<string, any> = {};
     const newPlotAreaInteractions: Record<string, any> = {};
     const newZooms: Record<string, any> = {};
@@ -307,6 +336,7 @@ export const chart = (
       if (oldIds.includes(id)) {
         newYScales[id] = yScales[id];
         newYAxes[id] = yAxes[id];
+        newYAxisInteractions[id] = yAxisInteractions[id];
         newPlotAreas[id] = plotAreas[id];
         newPlotAreaInteractions[id] = plotAreaInteractions[id];
         newZooms[id] = yZooms[id];
@@ -317,9 +347,13 @@ export const chart = (
           0,
           Math.ceil(10 * Math.random() + 5),
         ]);
-        newYAxes[id] = yAxis(newYScales[id]).on("drag", (e) => {
-          dragged(e, id);
-        });
+        newYAxes[id] = yAxis(xTransform().rescaleX(xScale), newYScales[id]);
+        newYAxisInteractions[id] = yAxisInteraction(newYScales[id]).on(
+          "drag",
+          (e) => {
+            dragged(e, id);
+          }
+        );
         newPlotAreas[id] = plotArea(
           xTransform().rescaleX(xScale),
           newYScales[id]
@@ -376,6 +410,7 @@ export const chart = (
 
     yScales = newYScales;
     yAxes = newYAxes;
+    yAxisInteractions = newYAxisInteractions;
     plotAreas = newPlotAreas;
     plotAreaInteractions = newPlotAreaInteractions;
     yZooms = newZooms;

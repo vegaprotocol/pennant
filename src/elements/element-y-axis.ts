@@ -1,4 +1,4 @@
-import { Colors, getNumYTicks } from "../helpers";
+import { Colors, align, alignSpan, getNumYTicks } from "../helpers";
 import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { RenderableElement } from "../types";
@@ -9,7 +9,8 @@ const MARGIN = 6;
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>
+  yScale: ScaleLinear<number, number, never>,
+  pixelRatio: number
 ) {
   const xRange = xScale.range();
   const yRange = yScale.range();
@@ -31,8 +32,8 @@ function addYAxisPath(
 
   ctx.beginPath();
   ctx.strokeStyle = Colors.GRAY_LIGHT;
-  ctx.moveTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[0]);
-  ctx.lineTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[1]);
+  ctx.moveTo(align(xRange[1] - WIDTH, pixelRatio), yRange[0]);
+  ctx.lineTo(align(xRange[1] - WIDTH, pixelRatio), yRange[1]);
   ctx.stroke();
   ctx.closePath();
 
@@ -40,7 +41,7 @@ function addYAxisPath(
   ctx.fillStyle = Colors.GRAY_LIGHT;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
-  ctx.font = `12px monospace`;
+  ctx.font = `${12}px monospace`;
 
   yTicks.forEach(function drawTick(tick: number) {
     ctx.beginPath();
@@ -59,8 +60,9 @@ export class YAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    yScale: ScaleLinear<number, number, never>,
+    pixelRatio = 1
   ) {
-    addYAxisPath(ctx, xScale, yScale);
+    addYAxisPath(ctx, xScale, yScale, pixelRatio);
   }
 }

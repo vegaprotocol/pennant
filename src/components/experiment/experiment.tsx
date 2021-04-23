@@ -132,7 +132,16 @@ export const Chart = ({
               use-device-pixel-ratio
               style={{
                 position: "absolute",
-                flex: 1,
+                width: "100%",
+                height: "100%",
+              }}
+            ></d3fc-canvas>
+            <d3fc-canvas
+              id={`y-axis-${area.id}`}
+              class="y-axis"
+              use-device-pixel-ratio
+              style={{
+                position: "absolute",
                 width: "100%",
                 height: "100%",
               }}
@@ -148,12 +157,12 @@ export const Chart = ({
               }}
             ></d3fc-svg>
             <d3fc-svg
-              id={`y-axis-${area.id}`}
-              class="y-axis"
+              id={`y-axis-interaction-${area.id}`}
+              class="y-axis-interaction"
               style={{
                 position: "absolute",
                 right: 0,
-                width: "20px",
+                width: "64px",
                 height: "100%",
                 cursor: "ns-resize",
               }}

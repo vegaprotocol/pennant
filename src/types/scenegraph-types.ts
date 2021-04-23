@@ -5,8 +5,8 @@ import { Annotation } from ".";
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, number | undefined | unknown>,
-    yScale?: ScaleLinear<number, number, number | undefined | never>,
+    xScale: ScaleTime<number, number, number | undefined | unknown> | null,
+    yScale: ScaleLinear<number, number, number | undefined | never> | null,
     pixelRatio?: number,
     ...rest: any[]
   ): void;

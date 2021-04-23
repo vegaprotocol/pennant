@@ -54,7 +54,7 @@ export const plotArea = (
       ctx = context;
       return plotArea;
     } else {
-      return yScale;
+      return ctx;
     }
   };
 
