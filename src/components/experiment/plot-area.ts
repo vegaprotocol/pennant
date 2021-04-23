@@ -1,5 +1,12 @@
-import { AreaElement, GridElement } from "../../elements";
+import {
+  AreaElement,
+  BarElement,
+  GridElement,
+  LineElement,
+} from "../../elements";
 import { ScaleLinear, ScaleTime } from "d3-scale";
+
+import { Colors } from "../../helpers";
 
 export const plotArea = (
   x: ScaleTime<number, number, number | undefined | unknown>,
@@ -11,34 +18,34 @@ export const plotArea = (
   let xScale: any = x.copy();
   let yScale: any = y.copy();
 
-  /*   readonly points: [Date, number, number][];
-  readonly fill: string | Gradient;
-  readonly line: string | undefined; */
-
   const plotArea = (data: any[]) => {
-    console.log(data);
+    let bars = data.map(
+      (d) =>
+        new BarElement({
+          x: d.date,
+          y: d.open,
+          width: 1000 * 60 * 60 * 24 * 3,
+          height: 50,
+          fill: Colors.GREEN_DARK,
+          stroke: Colors.GREEN,
+        })
+    );
 
-    let area = new AreaElement({
-      points: data.map((d) => [d.date, 0, d.open]),
-      line: "#009cff",
-      fill: {
-        gradient: "linear",
-        stops: [
-          {
-            offset: 0,
-            color: "#044e80",
-          },
-          {
-            offset: 1,
-            color: "#000000",
-          },
-        ],
-      },
-    });
+    let lines = data.map(
+      (d) =>
+        new LineElement({
+          points: [
+            [d.date, d.open - 80],
+            [d.date, d.open + 30],
+          ],
+          color: Colors.GREEN,
+        })
+    );
 
     if (ctx) {
       gridline.draw(ctx, xScale, yScale, pixelRatio);
-      area.draw(ctx, xScale, yScale);
+      lines.forEach((line) => line.draw(ctx!, xScale, yScale, pixelRatio));
+      bars.forEach((bar) => bar.draw(ctx!, xScale, yScale, pixelRatio));
     }
   };
 

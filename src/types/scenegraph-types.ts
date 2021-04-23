@@ -7,6 +7,7 @@ export interface RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, number | undefined | unknown>,
     yScale?: ScaleLinear<number, number, number | undefined | never>,
+    pixelRatio?: number,
     ...rest: any[]
   ): void;
 }

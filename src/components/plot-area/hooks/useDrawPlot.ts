@@ -1,8 +1,10 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
-import { select } from "d3-selection";
 import * as React from "react";
-import { clearCanvas, Colors } from "../../../helpers";
+
+import { Colors, clearCanvas } from "../../../helpers";
 import { FcElement, Panel } from "../../../types";
+import { ScaleLinear, ScaleTime } from "d3-scale";
+
+import { select } from "d3-selection";
 
 export function useDrawPlot(
   ref: React.MutableRefObject<FcElement>,
@@ -40,13 +42,13 @@ export function useDrawPlot(
             clearCanvas(child, ctx, Colors.BACKGROUND);
 
             if (scenegraph.grid) {
-              scenegraph.grid.draw(ctx, x, y);
+              scenegraph.grid.draw(ctx, x, y, pixelRatio);
             }
 
             if (scenegraph.data) {
               for (const layer of scenegraph.data)
                 for (const datum of layer) {
-                  datum.draw(ctx, x, y);
+                  datum.draw(ctx, x, y, pixelRatio);
                 }
             }
 

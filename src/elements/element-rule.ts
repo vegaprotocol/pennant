@@ -1,4 +1,5 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+import { align, alignSpan } from "../helpers";
 
 import { PositionalElement } from "../types";
 
@@ -27,7 +28,8 @@ export class RuleElement implements PositionalElement {
   draw(
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    yScale: ScaleLinear<number, number, never>,
+    pixelRatio: number = 1
   ) {
     let x;
     let x2;
@@ -53,10 +55,12 @@ export class RuleElement implements PositionalElement {
 
     ctx.beginPath();
 
-    ctx.moveTo(x + 0.5, Math.round(y) + 0.5);
-    ctx.lineTo(x2 + 0.5, Math.round(y2) + 0.5);
+    ctx.moveTo(align(x, pixelRatio), alignSpan(y, pixelRatio));
+    ctx.lineTo(align(x2, pixelRatio), alignSpan(y2, pixelRatio));
 
     ctx.strokeStyle = this.color;
+    ctx.lineCap = "butt";
+    ctx.lineWidth = 1 / pixelRatio;
     ctx.stroke();
     ctx.closePath();
   }

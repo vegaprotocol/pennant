@@ -1,12 +1,8 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
-import { getNumXTicks, getNumYTicks } from "../helpers";
+import { align, getNumXTicks, getNumYTicks } from "../helpers";
 
 import { Colors } from "../helpers";
 import { RenderableElement } from "../types";
-
-function align(x: number, pixelRatio: number = 1) {
-  return Math.round(pixelRatio * Math.round(x)) / pixelRatio + 0.5 / pixelRatio;
-}
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,
@@ -27,7 +23,7 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.WHITE;
+    ctx.strokeStyle = Colors.GRAY_DARK_2;
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
@@ -45,7 +41,7 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.WHITE;
+    ctx.strokeStyle = Colors.GRAY_DARK_2;
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
