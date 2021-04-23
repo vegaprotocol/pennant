@@ -109,7 +109,9 @@ export const chart = (
   let plotAreaElements = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
-      select<Element, unknown>(areas[value.id].ref.current!),
+      select<Element, any>(areas[value.id].ref.current!)
+        .select<Element>(".plot-area")
+        .style("pointer-events", "none"),
     ])
   );
 

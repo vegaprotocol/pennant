@@ -3,6 +3,7 @@ import "@d3fc/d3fc-element";
 import React, { createRef, useEffect, useRef, useState } from "react";
 
 import AutoSizer from "react-virtualized-auto-sizer";
+import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { chart } from "./chart";
 
@@ -116,15 +117,13 @@ export const Chart = ({
         flexDirection: "column",
       }}
     >
-      {plotAreas.map((area) => (
+      {plotAreas.map((area, index) => (
         <React.Fragment key={area.id}>
           <div
             ref={refs[area.id]}
             style={{
               position: "relative",
               flex: 1,
-              display: "flex",
-              flexDirection: "row",
             }}
           >
             <d3fc-canvas
@@ -159,9 +158,7 @@ export const Chart = ({
                 cursor: "ns-resize",
               }}
             ></d3fc-svg>
-            <div style={{ zIndex: 1 }}>{`${format(x[0])} - ${format(
-              x[1]
-            )}`}</div>
+            {index === 0 && <ChartInfo bounds={x} />}
           </div>
           <div style={{ height: "1px", backgroundColor: "white" }}></div>
         </React.Fragment>
