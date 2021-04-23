@@ -60,7 +60,7 @@ export const chart = (
   > = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
-      scaleLinear().domain([0, 10]),
+      scaleLinear().domain([0, 140]),
     ])
   );
 
@@ -233,26 +233,26 @@ export const chart = (
       select(event.currentTarget).select<SVGSVGElement>("svg").call(xAxis);
     });
 
-  Object.entries(yScales).map(([key, scale], index) =>
+  Object.entries(yScales).map(([key, scale]) =>
     select<HTMLDivElement, unknown>(areas[key].ref.current!)
       .select(".y-axis")
       .on("measure", (event) => {
         const { height } = event.detail;
-        yScales[index].range([height, 0]);
+        yScales[key].range([height, 0]);
 
-        const yr = yTransforms[index]().rescaleY(yScales[index]);
+        const yr = yTransforms[key]().rescaleY(yScales[key]);
 
-        plotAreas[index].yScale(yr);
-        yAxes[index].yScale(yr);
+        plotAreas[key].yScale(yr);
+        yAxes[key].yScale(yr);
       })
       .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(yAxes[index]);
+          .call(yAxes[key]);
       })
   );
 
-  Object.entries(yScales).map(([key, scale], index) => {
+  Object.entries(yScales).map(([key, scale]) => {
     select<HTMLDivElement, unknown>(areas[key].ref.current!)
       .select(".plot-area")
       .on("draw", (event) => {
@@ -265,17 +265,17 @@ export const chart = (
 
         ctx?.scale(pixelRatio, pixelRatio);
 
-        plotAreas[index].context(ctx).pixelRatio(pixelRatio)();
+        plotAreas[key].context(ctx).pixelRatio(pixelRatio)(areas[key].data);
       });
   });
 
-  Object.entries(yScales).map(([key, scale], index) => {
+  Object.entries(yScales).map(([key, scale]) => {
     select<HTMLDivElement, unknown>(areas[key].ref.current!)
       .select(".plot-area-interaction")
       .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(plotAreaInteractions[index]);
+          .call(plotAreaInteractions[key]);
       });
   });
 

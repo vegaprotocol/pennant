@@ -5,7 +5,6 @@ import React, { createRef, useEffect, useRef, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FcElement } from "../../types";
 import { chart } from "./chart";
-import { range } from "d3-array";
 
 const format = (date: number | Date | undefined) =>
   new Intl.DateTimeFormat("en-US").format(date);
@@ -14,6 +13,21 @@ export type ExperimentProps = {
   numPlotAreas?: number;
   initialBounds?: [Date, Date];
 };
+
+const plotAreas = [
+  {
+    id: "main",
+    data: [
+      { date: new Date(2020, 1, 1), open: 100 },
+      { date: new Date(2020, 1, 10), open: 110 },
+      { date: new Date(2020, 1, 20), open: 90 },
+    ],
+  },
+  {
+    id: "study",
+    data: [],
+  },
+];
 
 export const Experiment = ({
   numPlotAreas = 3,
@@ -27,6 +41,7 @@ export const Experiment = ({
         flexDirection: "column",
         resize: "both",
         overflow: "hidden",
+        backgroundColor: "black",
       }}
     >
       <AutoSizer style={{ width: "100%", height: "100%" }}>
@@ -48,19 +63,21 @@ export const Chart = ({
   const chartRef = useRef<FcElement>(null!);
   const xAxisRef = useRef<FcElement>(null!);
 
-  const refs = range(numPlotAreas).reduce((acc, value) => {
-    acc[value] = createRef<HTMLDivElement>();
-    return acc;
-  }, {} as { [index: number]: React.RefObject<HTMLDivElement> });
+  const refs = plotAreas
+    .map((area) => area.id)
+    .reduce((acc, value) => {
+      acc[value] = createRef<HTMLDivElement>();
+      return acc;
+    }, {} as { [index: string]: React.RefObject<HTMLDivElement> });
 
   const chartElement = useRef<any>(null);
 
   useEffect(() => {
     chartElement.current = (chart(
       Object.fromEntries(
-        range(numPlotAreas).map((index) => [
-          String(index),
-          { id: String(index), ref: refs[index], data: [] },
+        plotAreas.map((area) => [
+          area.id,
+          { id: String(area.id), ref: refs[area.id], data: area.data },
         ])
       ),
       { ref: xAxisRef, data: [] },
@@ -77,16 +94,16 @@ export const Chart = ({
     if (xAxisRef.current) {
       chartElement.current.plotAreas(
         Object.fromEntries(
-          range(numPlotAreas).map((index) => [
-            String(index),
-            { id: String(index), ref: refs[index], data: [] },
+          plotAreas.map((area) => [
+            String(area.id),
+            { id: String(area.id), ref: refs[area.id], data: [] },
           ])
         )
       );
 
       chartRef.current?.requestRedraw();
     }
-  }, [chartElement, numPlotAreas, refs]);
+  }, [chartElement, refs]);
 
   return (
     <d3fc-group
@@ -99,10 +116,10 @@ export const Chart = ({
         flexDirection: "column",
       }}
     >
-      {range(numPlotAreas).map((index) => (
-        <React.Fragment key={index}>
+      {plotAreas.map((area) => (
+        <React.Fragment key={area.id}>
           <div
-            ref={refs[index]}
+            ref={refs[area.id]}
             style={{
               position: "relative",
               flex: 1,
@@ -111,7 +128,7 @@ export const Chart = ({
             }}
           >
             <d3fc-canvas
-              id={`plot-area-${index}`}
+              id={`plot-area-${area.id}`}
               class="plot-area"
               use-device-pixel-ratio
               style={{
@@ -122,7 +139,7 @@ export const Chart = ({
               }}
             ></d3fc-canvas>
             <d3fc-svg
-              id={`plot-area-interaction-${index}`}
+              id={`plot-area-interaction-${area.id}`}
               class="plot-area-interaction"
               style={{
                 position: "absolute",
@@ -132,7 +149,7 @@ export const Chart = ({
               }}
             ></d3fc-svg>
             <d3fc-svg
-              id="y-axis-${index}"
+              id={`y-axis-${area.id}`}
               class="y-axis"
               style={{
                 position: "absolute",
@@ -142,7 +159,9 @@ export const Chart = ({
                 cursor: "ns-resize",
               }}
             ></d3fc-svg>
-            <div style={{}}>{`${format(x[0])} - ${format(x[1])}`}</div>
+            <div style={{ zIndex: 1 }}>{`${format(x[0])} - ${format(
+              x[1]
+            )}`}</div>
           </div>
           <div style={{ height: "1px", backgroundColor: "white" }}></div>
         </React.Fragment>

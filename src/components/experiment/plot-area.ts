@@ -1,6 +1,5 @@
+import { AreaElement, GridElement } from "../../elements";
 import { ScaleLinear, ScaleTime } from "d3-scale";
-
-import { GridElement } from "../../elements";
 
 export const plotArea = (
   x: ScaleTime<number, number, number | undefined | unknown>,
@@ -12,8 +11,35 @@ export const plotArea = (
   let xScale: any = x.copy();
   let yScale: any = y.copy();
 
-  const plotArea = () => {
-    ctx && gridline.draw(ctx, xScale, yScale, pixelRatio);
+  /*   readonly points: [Date, number, number][];
+  readonly fill: string | Gradient;
+  readonly line: string | undefined; */
+
+  const plotArea = (data: any[]) => {
+    console.log(data);
+
+    let area = new AreaElement({
+      points: data.map((d) => [d.date, 0, d.open]),
+      line: "#009cff",
+      fill: {
+        gradient: "linear",
+        stops: [
+          {
+            offset: 0,
+            color: "#044e80",
+          },
+          {
+            offset: 1,
+            color: "#000000",
+          },
+        ],
+      },
+    });
+
+    if (ctx) {
+      gridline.draw(ctx, xScale, yScale, pixelRatio);
+      area.draw(ctx, xScale, yScale);
+    }
   };
 
   plotArea.context = (context?: CanvasRenderingContext2D): any => {
