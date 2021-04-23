@@ -241,8 +241,8 @@ export const chart = (
   select<HTMLDivElement, unknown>(axis.ref.current)
     .select(".x-axis")
     .on("measure", (event) => {
-      const { width } = event.detail;
-      xScale.range([0, width]);
+      const { width, pixelRatio } = event.detail;
+      xScale.range([0, width / pixelRatio]);
 
       const xr = xTransform().rescaleX(xScale);
       xAxis.xScale(xr);
@@ -276,8 +276,8 @@ export const chart = (
     select<HTMLDivElement, unknown>(areas[key].ref.current!)
       .select(".y-axis")
       .on("measure", (event) => {
-        const { height } = event.detail;
-        yScales[key].range([height, 0]);
+        const { height, pixelRatio } = event.detail;
+        yScales[key].range([height / pixelRatio, 0]);
 
         const yr = yTransforms[key]().rescaleY(yScales[key]);
 

@@ -23,7 +23,6 @@ export function drawChart(
   timeScaleRescaled.domain(timeDomain);
 
   let newTransform = transform.scale(1);
-  console.log(transform, newTransform);
 
   if (index === 0) {
     const plotRange = plotScale.range().map(newTransform.invertY, newTransform);
