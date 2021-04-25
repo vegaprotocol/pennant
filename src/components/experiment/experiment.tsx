@@ -1,11 +1,15 @@
 import "@d3fc/d3fc-element";
+import "./experiment.scss";
 
 import React, { createRef, useEffect, useRef, useState } from "react";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
+// @ts-ignore
+import Split from "react-split-grid";
 import { chart } from "./chart";
+import { Panel } from "./panel";
 
 export type ExperimentProps = {
   initialBounds?: [Date, Date];
@@ -21,7 +25,11 @@ const plotAreas = [
     ],
   },
   {
-    id: "study",
+    id: "study-0",
+    data: [],
+  },
+  {
+    id: "study-1",
     data: [],
   },
 ];
@@ -40,7 +48,10 @@ export const Experiment = ({
         backgroundColor: "black",
       }}
     >
-      <AutoSizer style={{ width: "100%", height: "100%" }}>
+      <AutoSizer
+        style={{ width: "100%", height: "100%" }}
+        onResize={() => console.log("Eeeee orrrr")}
+      >
         {() => <Chart initialBounds={initialBounds} />}
       </AutoSizer>
     </div>
@@ -56,7 +67,7 @@ export const Chart = ({
   const chartRef = useRef<FcElement>(null!);
   const xAxisRef = useRef<HTMLDivElement>(null!);
 
-  const refs = plotAreas
+  let refs = plotAreas
     .map((area) => area.id)
     .reduce((acc, value) => {
       acc[value] = createRef<HTMLDivElement>();
@@ -81,21 +92,19 @@ export const Chart = ({
       setX(bounds);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   useEffect(() => {
-    if (xAxisRef.current) {
-      chartElement.current.plotAreas(
-        Object.fromEntries(
-          plotAreas.map((area) => [
-            String(area.id),
-            { id: String(area.id), ref: refs[area.id], data: [] },
-          ])
-        )
-      );
+    chartElement.current.plotAreas(
+      Object.fromEntries(
+        plotAreas.map((area) => [
+          String(area.id),
+          { id: String(area.id), ref: refs[area.id], data: [] },
+        ])
+      )
+    );
 
-      chartRef.current?.requestRedraw();
-    }
+    chartRef.current?.requestRedraw();
   }, [chartElement, refs]);
 
   return (
@@ -109,60 +118,47 @@ export const Chart = ({
         flexDirection: "column",
       }}
     >
-      {plotAreas.map((area, index) => (
-        <React.Fragment key={area.id}>
+      <Split
+        minSize={100}
+        cursor="row-resize"
+        render={({
+          getGridProps,
+          getGutterProps,
+        }: {
+          getGridProps: any;
+          getGutterProps: any;
+        }) => (
           <div
-            ref={refs[area.id]}
+            className="grid"
             style={{
-              position: "relative",
-              flex: 1,
+              gridTemplateRows: `${"1fr 8px ".repeat(plotAreas.length - 1)}1fr`,
             }}
+            {...getGridProps()}
           >
-            <d3fc-canvas
-              id={`plot-area-${area.id}`}
-              class="plot-area"
-              use-device-pixel-ratio
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-              }}
-            ></d3fc-canvas>
-            <d3fc-canvas
-              id={`y-axis-${area.id}`}
-              class="y-axis"
-              use-device-pixel-ratio
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-              }}
-            ></d3fc-canvas>
-            <d3fc-svg
-              id={`plot-area-interaction-${area.id}`}
-              class="plot-area-interaction"
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-              }}
-            ></d3fc-svg>
-            <d3fc-svg
-              id={`y-axis-interaction-${area.id}`}
-              class="y-axis-interaction"
-              style={{
-                position: "absolute",
-                right: 0,
-                width: "64px",
-                height: "100%",
-                cursor: "ns-resize",
-              }}
-            ></d3fc-svg>
-            {index === 0 && <ChartInfo bounds={x} />}
+            {plotAreas.map((area, index) => (
+              <React.Fragment key={area.id}>
+                <div key={area.id} style={{ height: "100%" }}>
+                  <Panel
+                    ref={refs[area.id]}
+                    id={area.id}
+                    bounds={x}
+                    showChartInfo={index === 0}
+                    onResize={() => {
+                      chartRef.current?.requestRedraw();
+                    }}
+                  />
+                </div>
+                {index < plotAreas.length - 1 && (
+                  <div
+                    className={`gutter-row gutter-row-${2 * index + 1}`}
+                    {...getGutterProps("row", 2 * index + 1)}
+                  />
+                )}
+              </React.Fragment>
+            ))}
           </div>
-          <div style={{ height: "1px", backgroundColor: "white" }}></div>
-        </React.Fragment>
-      ))}
+        )}
+      />
       <div ref={xAxisRef} style={{ height: "24px", position: "relative" }}>
         <d3fc-canvas
           class="x-axis"

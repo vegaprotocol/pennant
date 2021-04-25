@@ -1,0 +1,22 @@
+.grid {
+  display: grid;
+  height: 100%;
+  grid-template-rows: 1fr 8px 1fr 8px 1fr;
+}
+
+.gutter-row {
+  grid-column: 1/-1;
+  cursor: row-resize;
+  background-image: url(/horizontal.png);
+  background-color: rgb(32, 32, 32);
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.gutter-row-1 {
+  grid-row: 2;
+}
+
+.gutter-row-3 {
+  grid-row: 4;
+}

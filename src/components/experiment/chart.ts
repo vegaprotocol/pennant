@@ -1,5 +1,5 @@
 import { ScaleLinear, ScaleTime, scaleLinear, scaleTime } from "d3-scale";
-import { Selection, select } from "d3-selection";
+import { select } from "d3-selection";
 import {
   ZoomTransform,
   zoom as d3Zoom,
@@ -7,7 +7,6 @@ import {
   zoomTransform,
 } from "d3-zoom";
 
-import { FcElement } from "../../types";
 import { WIDTH } from "../../constants";
 import { dispatch } from "d3-dispatch";
 import { plotArea } from "./plot-area";
@@ -124,12 +123,14 @@ export const chart = (
   );
 
   let plotAreaElements = Object.fromEntries(
-    Object.values(areas).map((value) => [
-      value.id,
-      select<Element, any>(areas[value.id].ref.current!)
-        .select<Element>(".plot-area")
-        .style("pointer-events", "none"),
-    ])
+    Object.values(areas).map((value) => {
+      return [
+        value.id,
+        select<Element, any>(areas[value.id].ref.current!)
+          .select<Element>(".plot-area")
+          .style("pointer-events", "none"),
+      ];
+    })
   );
 
   const xTransform = () => zoomTransform(xElement.node()!);
