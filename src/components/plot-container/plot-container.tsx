@@ -5,6 +5,7 @@ import "./plot-container.scss";
 import * as React from "react";
 
 import { ChartElement, Scenegraph } from "../../types";
+import { ChartInterface, chart } from "../experiment/chart";
 import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
 import { useEffect, useRef, useState } from "react";
 
@@ -12,7 +13,6 @@ import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { TopLevelSpec } from "../../vega-lite/spec";
-import { chart } from "../experiment/chart";
 import { createRef } from "react";
 import { throttle } from "lodash";
 import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
@@ -48,6 +48,24 @@ export const PlotContainer = React.forwardRef(
 
     useWhyDidYouUpdate("PlotContainer", props);
 
+    React.useImperativeHandle(ref, () => ({
+      fitBounds: (bounds: [Date, Date]) => {
+        //chartElement.current?.fitBounds(bounds);
+      },
+      panBy: (n: number) => {
+        //chartElement.current?.reset();
+      },
+      panTo: (x: Date) => {
+        //chartElement.current?.reset();
+      },
+      reset: () => {
+        chartElement.current?.reset();
+      },
+      snapshot: async () => {
+        return await new Blob(); //chartElement.current?.snapshot();
+      },
+    }));
+
     const data: any[] = React.useMemo(() => specification?.data?.values ?? [], [
       specification,
     ]);
@@ -76,7 +94,7 @@ export const PlotContainer = React.forwardRef(
         return acc;
       }, {} as { [index: string]: React.RefObject<HTMLDivElement> });
 
-    const chartElement = useRef<any>(null);
+    const chartElement = useRef<ChartInterface | null>(null);
 
     useEffect(() => {
       chartElement.current = (chart(
@@ -99,6 +117,8 @@ export const PlotContainer = React.forwardRef(
       }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
         setBounds(bounds);
       });
+
+      chartElement.current?.reset();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

@@ -84,13 +84,7 @@ export const VegaProtocol: Story = () => {
   const [interval, setInterval] = React.useState(Interval.I15M);
 
   const dataSource = React.useMemo(
-    () =>
-      new ApolloDataSource(
-        client,
-        market,
-        "",
-        5
-      ),
+    () => new ApolloDataSource(client, market, "", 5),
     [market]
   );
 
@@ -210,6 +204,7 @@ export const CryptoCompare: Story = () => {
           interval={interval}
         />
       </div>
+      <button onClick={() => ref.current.reset()}>reset</button>
     </div>
   );
 };

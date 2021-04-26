@@ -41,6 +41,15 @@ export type ChartPanel = {
   initialBounds: [number, number];
 };
 
+export interface ChartInterface {
+  on(
+    typenames: string,
+    callback?: (this: object, ...args: any[]) => void
+  ): void;
+  plotAreas(areas: Record<string, ChartPanel>): ChartInterface;
+  reset(): void;
+}
+
 /**
  * The chart component renders multiple plot areas which share a common x-axis.
  *
@@ -54,7 +63,7 @@ export const chart = (
   panels: Record<string, ChartPanel>,
   axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] },
   initialBounds: [Date, Date]
-) => {
+): ChartInterface => {
   let listeners = dispatch(
     "bounds_changed",
     "click",
@@ -201,7 +210,9 @@ export const chart = (
   );
 
   function reset() {
-    xElement.call(xZoom.transform, zoomIdentity);
+    xElement
+      .call(xZoom.transform, zoomIdentity)
+      .call(xZoom.translateBy, -WIDTH, 0);
 
     const xr = xTransform().rescaleX(xScale);
 
@@ -320,7 +331,7 @@ export const chart = (
       });
   });
 
-  const chart = () => {
+  const chart: ChartInterface = () => {
     listeners.call("redraw", chart);
   };
 
@@ -468,6 +479,10 @@ export const chart = (
     yTransforms = newTs;
 
     return chart;
+  };
+
+  chart.reset = () => {
+    reset();
   };
 
   chart.on = (
