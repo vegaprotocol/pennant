@@ -14,16 +14,17 @@ import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CandleInfo } from "../candle-info";
-import { ChartInfo } from "../chart-info";
 import { ChartElement } from "../../types";
+import { ChartInfo } from "../chart-info";
+import { ErrorBoundary } from "../error-boundary";
 import { Interval } from "../../stories/api/vega-graphql";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
 import { PriceMonitoringInfo } from "../price-monitoring-info";
 import { StudyInfo } from "../study-info";
+import { extent } from "d3-array";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
-import { ErrorBoundary } from "../error-boundary";
 
 export type ChartProps = {
   dataSource: DataSource;
@@ -230,39 +231,7 @@ export const Chart = React.forwardRef(
                 specification={specification}
                 scenegraph={scenegraph}
                 interval={interval}
-                plotOverlay={
-                  <div className="overlay">
-                    <ChartInfo bounds={bounds} />
-                    <CandleInfo
-                      candle={data[selectedIndex ?? data.length - 1]}
-                      decimalPlaces={dataSource.decimalPlaces}
-                    />
-                  </div>
-                }
-                studyOverlay={
-                  <div className="overlay">
-                    {study && selectedIndex !== null && (
-                      <StudyInfo
-                        title={StudyLabel.get(study)?.label ?? ""}
-                        info={
-                          StudyLabel.get(study)?.producedFields.map(
-                            (producedField) => ({
-                              id: producedField.field,
-                              label: producedField.label,
-                              value:
-                                scenegraph.panels[0].originalData[
-                                  selectedIndex
-                                ][producedField.field]?.toFixed(
-                                  dataSource.decimalPlaces
-                                ) ?? "",
-                            })
-                          ) ?? []
-                        }
-                        decimalPlaces={dataSource.decimalPlaces}
-                      />
-                    )}
-                  </div>
-                }
+                initialBounds={extent(data.map((d) => d.date)) as [Date, Date]}
                 onBoundsChanged={setBounds}
                 onMouseMove={setCandle}
                 onMouseOut={handleOnMouseOut}

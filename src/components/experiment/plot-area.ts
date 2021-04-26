@@ -1,51 +1,32 @@
-import {
-  AreaElement,
-  BarElement,
-  CrosshairElement,
-  GridElement,
-  LineElement,
-} from "../../elements";
-import { ScaleLinear, ScaleTime } from "../../types";
+import { Colors, clearCanvas } from "../../helpers";
+import { CrosshairElement, GridElement } from "../../elements";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
 
-import { Colors } from "../../helpers";
-
-export const plotArea = (x: ScaleTime, y: ScaleLinear) => {
+export const plotArea = (
+  x: ScaleTime,
+  y: ScaleLinear,
+  elements: RenderableElement[]
+) => {
   let crosshair = new CrosshairElement();
   let ctx: CanvasRenderingContext2D | null = null;
+  let gridline = new GridElement();
   let pixelRatio: number = 1;
   let position: [number | null, number | null] = [null, null];
-  let gridline = new GridElement();
-  let xScale: any = x.copy();
-  let yScale: any = y.copy();
+  let renderableElements: RenderableElement[] = elements;
+  let xScale = x.copy();
+  let yScale = y.copy();
 
-  const plotArea = (data: any[]) => {
-    let bars = data.map(
-      (d) =>
-        new BarElement({
-          x: d.date,
-          y: d.open,
-          width: 1000 * 60 * 60 * 24 * 3,
-          height: 50,
-          fill: Colors.GREEN_DARK,
-          stroke: Colors.GREEN,
-        })
-    );
-
-    let lines = data.map(
-      (d) =>
-        new LineElement({
-          points: [
-            [d.date, d.open - 80],
-            [d.date, d.open + 30],
-          ],
-          color: Colors.GREEN,
-        })
-    );
-
+  const plotArea = () => {
     if (ctx) {
+      console.log(xScale.domain(), yScale.domain());
+
+      clearCanvas(ctx.canvas, ctx, Colors.BACKGROUND);
       gridline.draw(ctx, xScale, yScale, pixelRatio);
-      lines.forEach((line) => line.draw(ctx!, xScale, yScale, pixelRatio));
-      bars.forEach((bar) => bar.draw(ctx!, xScale, yScale, pixelRatio));
+
+      renderableElements.forEach((element) =>
+        element.draw(ctx!, xScale, yScale, pixelRatio)
+      );
+
       crosshair.draw(ctx, xScale, yScale, pixelRatio, position);
     }
   };
@@ -75,6 +56,11 @@ export const plotArea = (x: ScaleTime, y: ScaleLinear) => {
     } else {
       return pixelRatio;
     }
+  };
+
+  plotArea.renderableElements = (elements: RenderableElement[]): any => {
+    renderableElements = elements;
+    return plotArea;
   };
 
   plotArea.xScale = (x?: ScaleTime): any => {

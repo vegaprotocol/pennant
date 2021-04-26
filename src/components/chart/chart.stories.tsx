@@ -1,9 +1,9 @@
 import { Chart, ChartProps } from "./chart";
 import { Meta, Story } from "@storybook/react/types-6-0";
 
+import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { Interval } from "../../stories/api/vega-graphql";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
-import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 
 export default {
   title: "Components/Chart",
@@ -11,7 +11,7 @@ export default {
 } as Meta;
 
 const Template: Story<ChartProps> = (args) => (
-  <div style={{ height: "800px" }}>
+  <div style={{ height: "400px" }}>
     <Chart {...args} />
   </div>
 );

@@ -5,6 +5,7 @@ export interface yAxisInterface {
   (): void;
   context(context: CanvasRenderingContext2D): yAxisInterface;
   pixelRatio(ratio: number): yAxisInterface;
+  xScale(x: ScaleTime): yAxisInterface;
   yScale(y: ScaleLinear): yAxisInterface;
 }
 

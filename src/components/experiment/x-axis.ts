@@ -1,3 +1,4 @@
+import { Colors, clearCanvas } from "../../helpers";
 import { XAxisElement, XAxisTooltipElement } from "../../elements";
 
 import { ScaleTime } from "../../types";
@@ -25,6 +26,7 @@ export const xAxis = (x: ScaleTime) => {
 
   const xAxis: xAxisInterface = () => {
     if (ctx) {
+      clearCanvas(ctx.canvas, ctx, Colors.BACKGROUND);
       axis.draw(ctx, xScale, null!, pixelRatio);
       tooltip.draw(ctx, xScale, null!, pixelRatio, position);
     }

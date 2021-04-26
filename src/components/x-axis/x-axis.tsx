@@ -65,7 +65,7 @@ export const XAxis = ({
       event: { offsetX: number; offsetY: number },
       callback?: (index: number) => void
     ) {
-      const data = scenegraph.data[0];
+      const data = scenegraph.renderableElements[0];
 
       if (data.length > 0) {
         const { offsetX } = event;
@@ -126,7 +126,7 @@ export const XAxis = ({
     requestRedraw,
     scenegraph.axis,
     scenegraph.axisTooltip,
-    scenegraph.data,
+    scenegraph.renderableElements,
     x,
     y,
   ]);

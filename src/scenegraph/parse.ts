@@ -1,8 +1,8 @@
 import { Annotation, Scenegraph } from "../types";
 import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../vega-lite/spec";
 import {
-  DummyElement,
   CrosshairElement,
+  DummyElement,
   GridElement,
   XAxisElement,
   XAxisTooltipElement,
@@ -32,6 +32,7 @@ import { Encoding } from "../vega-lite/encoding";
 import { Field } from "../vega-lite/channeldef";
 import { OutputNode } from "../vega-lite/compile/data/dataflow";
 import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
+import { calculateScales } from "../scales";
 import { compile } from "../vega-lite/compile/compile";
 import { extent } from "d3-array";
 
@@ -267,11 +268,16 @@ export function parse(
       ? specification.vconcat.map((panel, panelIndex) => {
           return {
             id: panel.name ?? "",
-            data: parseLayer(
+            renderableElements: parseLayer(
               panel,
               { values: newData },
               specification.encoding ?? {},
               candleWidth
+            ),
+            bounds: calculateScales(
+              panel,
+              newData,
+              extractYEncodingFields(panel)
             ),
             originalData: newData ?? [],
             grid: new GridElement(),
@@ -296,7 +302,7 @@ export function parse(
     xAxis: {
       id: "x-axis",
       originalData: data,
-      data: [
+      renderableElements: [
         data.map(
           (d) =>
             new DummyElement({

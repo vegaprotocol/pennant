@@ -37,11 +37,7 @@ export class BarElement implements PositionalElement {
   ) {
     ctx.beginPath();
 
-    const pixelWidth = xScale(this.width) - xScale(0);
-
-    if (pixelWidth < 1) {
-      return;
-    }
+    const pixelWidth = Math.max(xScale(this.width) - xScale(0), 1 / pixelRatio);
 
     ctx.rect(
       align(xScale(this.x.getTime() - this.width / 2), pixelRatio),

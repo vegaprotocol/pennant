@@ -45,8 +45,8 @@ export function useDrawPlot(
               scenegraph.grid.draw(ctx, x, y, pixelRatio);
             }
 
-            if (scenegraph.data) {
-              for (const layer of scenegraph.data)
+            if (scenegraph.renderableElements) {
+              for (const layer of scenegraph.renderableElements)
                 for (const datum of layer) {
                   datum.draw(ctx, x, y, pixelRatio);
                 }
@@ -56,5 +56,5 @@ export function useDrawPlot(
           }
         }
       );
-  }, [scenegraph.data, scenegraph.grid, ref, x, y, yOriginal]);
+  }, [scenegraph.renderableElements, scenegraph.grid, ref, x, y, yOriginal]);
 }

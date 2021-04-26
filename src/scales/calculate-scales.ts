@@ -1,12 +1,14 @@
-import { Panel } from "../types";
+import { BaseSpec } from "../vega-lite/spec";
 import { extent } from "d3-array";
 
-export function calculateScales(panel: Panel, data: any[]) {
+export function calculateScales(
+  panel: BaseSpec,
+  data: any[],
+  yEncodingFields: string[]
+): [number, number] {
   if (!panel) {
     return [0, 1];
   }
-
-  const yEncodingFields = panel.yEncodingFields;
 
   if (yEncodingFields) {
     const mappedData = yEncodingFields.flatMap(

@@ -50,9 +50,7 @@ export const Experiment = ({
 export const Chart = ({
   initialBounds = [new Date(2020, 1, 1), new Date(2020, 2, 1)],
 }: ExperimentProps) => {
-  const [x, setX] = useState(initialBounds);
-  const [y, setY] = useState<Record<string, number>>({});
-
+  const [bounds, setBounds] = useState(initialBounds);
   const chartRef = useRef<FcElement>(null!);
   const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -70,7 +68,12 @@ export const Chart = ({
       Object.fromEntries(
         plotAreas.map((area) => [
           area.id,
-          { id: String(area.id), ref: refs[area.id], data: area.data },
+          {
+            id: String(area.id),
+            ref: refs[area.id],
+            data: area.data,
+            initialBounds: [0, 140],
+          },
         ])
       ),
       { ref: xAxisRef, data: [] },
@@ -78,7 +81,7 @@ export const Chart = ({
     ).on("redraw", () => {
       chartRef.current?.requestRedraw();
     }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
-      setX(bounds);
+      setBounds(bounds);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -159,7 +162,7 @@ export const Chart = ({
                 cursor: "ns-resize",
               }}
             ></d3fc-svg>
-            {index === 0 && <ChartInfo bounds={x} />}
+            {index === 0 && <ChartInfo bounds={bounds} />}
           </div>
           <div style={{ height: "1px", backgroundColor: "white" }}></div>
         </React.Fragment>
