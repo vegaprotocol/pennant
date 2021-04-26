@@ -1,59 +1,53 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../../types";
+import { YAxisElement, YAxisTooltipElement } from "../../elements";
 
-import { YAxisElement } from "../../elements";
+export interface yAxisInterface {
+  (): void;
+  context(context: CanvasRenderingContext2D): yAxisInterface;
+  pixelRatio(ratio: number): yAxisInterface;
+  yScale(y: ScaleLinear): yAxisInterface;
+}
 
-export const yAxis = (
-  x: ScaleTime<number, number, number | undefined | unknown>,
-  y: ScaleLinear<number, number, number | undefined | unknown>
-) => {
+export const yAxis = (x: ScaleTime, y: ScaleLinear) => {
   let axis = new YAxisElement();
   let ctx: CanvasRenderingContext2D | null = null;
   let pixelRatio: number = 1;
-  let xScale: any = x.copy();
-  let yScale: any = y.copy();
+  let position: number | null = null;
+  let tooltip = new YAxisTooltipElement(5); // FIXME: Use correct formatting
+  let xScale = x.copy();
+  let yScale = y.copy();
 
   const yAxis = () => {
     if (ctx) {
       axis.draw(ctx, xScale, yScale, pixelRatio);
+      tooltip.draw(ctx, xScale, yScale, pixelRatio, position);
     }
   };
 
-  yAxis.context = (context?: CanvasRenderingContext2D): any => {
-    if (context) {
-      ctx = context;
-      return yAxis;
-    } else {
-      return context;
-    }
+  yAxis.context = (context: CanvasRenderingContext2D): yAxisInterface => {
+    ctx = context;
+    return yAxis;
   };
 
-  yAxis.pixelRatio = (ratio?: number): any => {
-    if (ratio) {
-      pixelRatio = ratio;
-      return yAxis;
-    } else {
-      return pixelRatio;
-    }
+  yAxis.crosshair = (pos: number | null): yAxisInterface => {
+    position = pos;
+    return yAxis;
   };
 
-  yAxis.xScale = (x?: ScaleTime<number, number, number | undefined>): any => {
-    if (x) {
-      xScale = x.copy();
-
-      return yAxis;
-    } else {
-      return xScale;
-    }
+  yAxis.pixelRatio = (ratio: number): yAxisInterface => {
+    pixelRatio = ratio;
+    return yAxis;
   };
 
-  yAxis.yScale = (y?: ScaleLinear<number, number, number>): any => {
-    if (y) {
-      yScale = y;
+  yAxis.xScale = (x: ScaleTime): yAxisInterface => {
+    xScale = x.copy();
 
-      return yAxis;
-    } else {
-      return yScale;
-    }
+    return yAxis;
+  };
+
+  yAxis.yScale = (y: ScaleLinear): yAxisInterface => {
+    yScale = y.copy();
+    return yAxis;
   };
 
   return yAxis;

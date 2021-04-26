@@ -1,5 +1,5 @@
 import { Colors, align, alignSpan, getNumYTicks } from "../helpers";
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../types";
 
 import { RenderableElement } from "../types";
 import { WIDTH } from "../constants";
@@ -9,8 +9,8 @@ const FADE_HEIGHT = 6;
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   pixelRatio: number
 ) {
   const xRange = xScale.range();
@@ -35,7 +35,7 @@ function addYAxisPath(
   ctx.fillStyle = Colors.GRAY_LIGHT;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
-  ctx.font = `${12}px monospace`;
+  ctx.font = `${12}px "Roboto Mono", monospace`;
 
   yTicks.forEach(function drawTick(tick: number) {
     ctx.beginPath();
@@ -84,8 +84,8 @@ function addYAxisPath(
 export class YAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio = 1
   ) {
     addYAxisPath(ctx, xScale, yScale, pixelRatio);

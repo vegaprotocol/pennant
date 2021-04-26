@@ -1,7 +1,5 @@
 import { Colors, align, alignSpan } from "../helpers";
-import { ScaleLinear, ScaleTime } from "d3-scale";
-
-import { PositionalElement } from "../types";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Bar = {
   x: Date;
@@ -33,8 +31,8 @@ export class BarElement implements PositionalElement {
 
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
     ctx.beginPath();

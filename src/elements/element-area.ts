@@ -1,8 +1,7 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { curveLinear, area as d3Area, line as d3Line } from "d3-shape";
 
 import { Gradient } from "../vega-lite/mark";
-import { PositionalElement } from "../types";
 
 export type Area = {
   points: [Date, number, number][];
@@ -27,11 +26,7 @@ export class AreaElement implements PositionalElement {
     this.line = line;
   }
 
-  draw(
-    ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
-  ) {
+  draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
     // TODO: Instantiate on construction
     const area = d3Area<[Date, number, number]>()
       .curve(curveLinear)

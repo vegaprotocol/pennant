@@ -1,4 +1,4 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../types";
 import { align, getNumXTicks, getNumYTicks } from "../helpers";
 
 import { Colors } from "../helpers";
@@ -6,8 +6,8 @@ import { RenderableElement } from "../types";
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, number | undefined | never>,
-  yScale: ScaleLinear<number, number, number | undefined | never>,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   pixelRatio: number = 1
 ) {
   const xRange = xScale.range().map(Math.round);
@@ -59,8 +59,8 @@ function addGridPath(
 export class GridElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, number | undefined | never>,
-    yScale: ScaleLinear<number, number, number | undefined | never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
     addGridPath(ctx, xScale, yScale, pixelRatio);

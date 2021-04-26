@@ -1,8 +1,6 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { align, alignSpan } from "../helpers";
 import { curveLinear, line as d3Line } from "d3-shape";
-
-import { PositionalElement } from "../types";
 
 export type Line = {
   points: [Date, number][];
@@ -26,8 +24,8 @@ export class LineElement implements PositionalElement {
 
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
     // TODO: Instantiate on construction

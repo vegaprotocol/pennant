@@ -84,7 +84,7 @@ export const Chart = ({
   }, []);
 
   useEffect(() => {
-    if (xAxisRef.current) {
+    if (chartElement.current) {
       chartElement.current.plotAreas(
         Object.fromEntries(
           plotAreas.map((area) => [
@@ -145,6 +145,7 @@ export const Chart = ({
                 position: "absolute",
                 width: "100%",
                 height: "100%",
+                cursor: "crosshair",
               }}
             ></d3fc-svg>
             <d3fc-svg

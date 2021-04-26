@@ -1,7 +1,5 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { align, alignSpan } from "../helpers";
-
-import { PositionalElement } from "../types";
 
 export type Rule = {
   points: [Date, number][];
@@ -27,8 +25,8 @@ export class RuleElement implements PositionalElement {
 
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
     let x;

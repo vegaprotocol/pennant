@@ -1,19 +1,22 @@
-import { ScaleLinear, ScaleTime, scaleLinear, scaleTime } from "d3-scale";
-import { Selection, select } from "d3-selection";
+import { ScaleLinear, ScaleTime } from "../../types";
 import {
   ZoomTransform,
   zoom as d3Zoom,
   zoomIdentity,
   zoomTransform,
 } from "d3-zoom";
+import { scaleLinear, scaleTime } from "d3-scale";
+import { xAxis as xAxisElement, xAxisInterface } from "./x-axis";
+import {
+  xAxisInteraction as xAxisInteractionElement,
+  xAxisInteractionInterface,
+} from "./x-axis-interaction";
 
-import { FcElement } from "../../types";
 import { WIDTH } from "../../constants";
 import { dispatch } from "d3-dispatch";
 import { plotArea } from "./plot-area";
 import { plotAreaInteraction } from "./plot-area-interaction";
-import { xAxis as xAxisElement } from "./x-axis";
-import { xAxisInteraction as xAxisInteractionElement } from "./x-axis-interaction";
+import { select } from "d3-selection";
 import { yAxis } from "./y-axis";
 import { yAxisInteraction } from "./y-axis-interaction";
 
@@ -29,9 +32,9 @@ import { yAxisInteraction } from "./y-axis-interaction";
 export const chart = (
   areas: Record<
     string,
-    { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
+    { id: string; ref: React.RefObject<HTMLDivElement>; data: any[] }
   >,
-  axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any },
+  axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] },
   initialBounds: [Date, Date]
 ) => {
   let listeners = dispatch(
@@ -51,16 +54,11 @@ export const chart = (
   let isPinned = true;
   let isFreePan = false;
 
-  let xScale: ScaleTime<number, number, number | undefined> = scaleTime<
-    number,
-    number,
-    number | undefined
-  >().domain(initialBounds);
+  let xScale: ScaleTime = scaleTime<number, number, number>().domain(
+    initialBounds
+  );
 
-  let yScales: Record<
-    string,
-    ScaleLinear<number, number, number>
-  > = Object.fromEntries(
+  let yScales: Record<string, ScaleLinear> = Object.fromEntries(
     Object.values(areas).map((value) => [
       value.id,
       scaleLinear().domain([0, 140]),
@@ -72,20 +70,16 @@ export const chart = (
     .select<Element>(".x-axis")
     .style("pointer-events", "none");
 
-  let xAxis: any = xAxisElement(xScale);
+  let xAxis: xAxisInterface = xAxisElement(xScale);
 
-  let xAxisInteraction: any = xAxisInteractionElement(xScale).on(
-    "drag",
-    (e) => {
-      xDragged(e);
-    }
-  );
+  let xAxisInteraction: xAxisInteractionInterface = xAxisInteractionElement(
+    xScale
+  ).on("drag", (e) => {
+    xDragged(e);
+  }) as xAxisInteractionInterface;
 
   let yAxes: Record<string, any> = Object.fromEntries(
-    Object.values(areas).map((value) => [
-      value.id,
-      yAxis(xScale, yScales[value.id]),
-    ])
+    Object.entries(yScales).map(([id, scale]) => [id, yAxis(xScale, scale)])
   );
 
   let yAxisInteractions: Record<string, any> = Object.fromEntries(
@@ -109,13 +103,63 @@ export const chart = (
       value.id,
       (plotAreaInteraction(xScale, yScales[value.id]).on(
         "zoom",
-        (e, t, point) => {
-          zoomed(e, t, point, value.id);
+        (_e, t, point) => {
+          zoomed(t, point, value.id);
         }
-      ) as any).on("dblclick", () => {
-        reset();
-        listeners.call("dblclick", chart);
-      }),
+      ) as any)
+        .on("zoomstart", () => {
+          Object.values(plotAreas).forEach((plotArea) => {
+            plotArea.crosshair([null, null]);
+          });
+
+          Object.values(yAxes).forEach((axis) => {
+            axis.crosshair(null);
+          });
+
+          xAxis.crosshair(null);
+        })
+        .on("zoomend", (offset: [number, number]) => {
+          Object.values(plotAreas).forEach((plotArea) => {
+            plotArea.crosshair(offset);
+          });
+
+          xAxis.crosshair(offset[0]);
+          yAxes[value.id].crosshair(offset[1]);
+
+          listeners.call("redraw", chart);
+        })
+        .on("dblclick", () => {
+          reset();
+          listeners.call("dblclick", chart);
+        })
+        .on("mousemove", (offset: [number, number]) => {
+          Object.values(plotAreas).forEach((plotArea) =>
+            plotArea.crosshair([offset[0], null])
+          );
+
+          Object.values(yAxes).forEach((axis) => {
+            axis.crosshair(null);
+          });
+
+          xAxis.crosshair(offset[0]);
+
+          plotAreas[value.id].crosshair(offset);
+          yAxes[value.id].crosshair(offset[1]);
+
+          listeners.call("redraw", chart);
+        })
+        .on("mouseout", () => {
+          Object.values(plotAreas).forEach((plotArea) =>
+            plotArea.crosshair([null, null])
+          );
+
+          xAxis.crosshair(null);
+          Object.values(yAxes).forEach((axis) => {
+            axis.crosshair(null);
+          });
+
+          listeners.call("redraw", chart);
+        }),
     ])
   );
 
@@ -124,9 +168,9 @@ export const chart = (
   );
 
   let plotAreaElements = Object.fromEntries(
-    Object.values(areas).map((value) => [
-      value.id,
-      select<Element, any>(areas[value.id].ref.current!)
+    Object.entries(areas).map(([id, area]) => [
+      id,
+      select<Element, any>(area.ref.current!)
         .select<Element>(".plot-area")
         .style("pointer-events", "none"),
     ])
@@ -142,7 +186,8 @@ export const chart = (
   );
 
   xElement.call(xZoom);
-  Object.entries(plotAreaElements).map(([id, plotAreaElement]) =>
+
+  Object.entries(plotAreaElements).forEach(([id, plotAreaElement]) =>
     plotAreaElement.call(yZooms[id])
   );
 
@@ -152,7 +197,7 @@ export const chart = (
     const xr = xTransform().rescaleX(xScale);
 
     xAxis.xScale(xr);
-    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+    Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
 
     isPinned = true;
     isFreePan = false;
@@ -161,12 +206,7 @@ export const chart = (
     listeners.call("bounds_changed", chart, xr.domain());
   }
 
-  function zoomed(
-    e: any,
-    t: ZoomTransform,
-    point: [number, number],
-    id: string
-  ) {
+  function zoomed(t: ZoomTransform, point: [number, number], id: string) {
     if (t.k === 1) {
       xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
 
@@ -230,8 +270,8 @@ export const chart = (
 
     const xr = xTransform().rescaleX(xScale);
     xAxis.xScale(xr);
-    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
-    Object.entries(yAxes).forEach(([id, axis]) => axis.xScale(xr));
+    Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
+    Object.values(yAxes).forEach((axis) => axis.xScale(xr));
 
     listeners.call("redraw", chart);
     listeners.call("bounds_changed", chart, xr.domain());
@@ -246,10 +286,8 @@ export const chart = (
 
       const xr = xTransform().rescaleX(xScale);
       xAxis.xScale(xr);
-      Object.entries(yAxes).forEach(([id, axis]) => axis.xScale(xr));
-      Object.entries(plotAreas).forEach(([id, plotArea]) =>
-        plotArea.xScale(xr)
-      );
+      Object.values(yAxes).forEach((axis) => axis.xScale(xr));
+      Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
     })
     .on("draw", (event) => {
       const ctx = select(event.currentTarget)
@@ -257,11 +295,13 @@ export const chart = (
         .node()
         ?.getContext("2d");
 
-      const pixelRatio = event.detail.pixelRatio;
+      if (ctx) {
+        const pixelRatio = event.detail.pixelRatio;
 
-      ctx?.scale(pixelRatio, pixelRatio);
+        ctx?.scale(pixelRatio, pixelRatio);
 
-      xAxis.context(ctx).pixelRatio(pixelRatio)();
+        xAxis.context(ctx).pixelRatio(pixelRatio)();
+      }
     });
 
   select<HTMLDivElement, unknown>(axis.ref.current)
@@ -272,17 +312,17 @@ export const chart = (
         .call(xAxisInteraction);
     });
 
-  Object.entries(yScales).map(([key, scale]) =>
-    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+  Object.entries(yScales).map(([id, scale]) =>
+    select<HTMLDivElement, unknown>(areas[id].ref.current!)
       .select(".y-axis")
       .on("measure", (event) => {
         const { height, pixelRatio } = event.detail;
-        yScales[key].range([height / pixelRatio, 0]);
+        scale.range([height / pixelRatio, 0]);
 
-        const yr = yTransforms[key]().rescaleY(yScales[key]);
+        const yr = yTransforms[id]().rescaleY(scale);
 
-        plotAreas[key].yScale(yr);
-        yAxes[key].yScale(yr);
+        plotAreas[id].yScale(yr);
+        yAxes[id].yScale(yr);
       })
       .on("draw", (event) => {
         const ctx = select(event.currentTarget)
@@ -294,22 +334,22 @@ export const chart = (
 
         ctx?.scale(pixelRatio, pixelRatio);
 
-        yAxes[key].context(ctx).pixelRatio(pixelRatio)();
+        yAxes[id].context(ctx).pixelRatio(pixelRatio)();
       })
   );
 
-  Object.entries(yScales).map(([key, scale]) =>
-    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+  Object.entries(areas).forEach(([id, area]) =>
+    select<HTMLDivElement, unknown>(area.ref.current!)
       .select(".y-axis-interaction")
       .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(yAxisInteractions[key]);
+          .call(yAxisInteractions[id]);
       })
   );
 
-  Object.entries(yScales).map(([key, scale]) => {
-    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+  Object.entries(areas).forEach(([id, area]) => {
+    select<HTMLDivElement, unknown>(area.ref.current!)
       .select(".plot-area")
       .on("draw", (event) => {
         const ctx = select(event.currentTarget)
@@ -321,17 +361,17 @@ export const chart = (
 
         ctx?.scale(pixelRatio, pixelRatio);
 
-        plotAreas[key].context(ctx).pixelRatio(pixelRatio)(areas[key].data);
+        plotAreas[id].context(ctx).pixelRatio(pixelRatio)(area.data);
       });
   });
 
-  Object.entries(yScales).map(([key, scale]) => {
-    select<HTMLDivElement, unknown>(areas[key].ref.current!)
+  Object.entries(areas).forEach(([id, area]) => {
+    select<HTMLDivElement, unknown>(area.ref.current!)
       .select(".plot-area-interaction")
       .on("draw", (event) => {
         select(event.currentTarget)
           .select<SVGSVGElement>("svg")
-          .call(plotAreaInteractions[key]);
+          .call(plotAreaInteractions[id]);
       });
   });
 
@@ -345,10 +385,10 @@ export const chart = (
       { id: string; ref: React.RefObject<HTMLDivElement>; data: any }
     >
   ) => {
-    const oldIds = Object.keys(yScales);
+    const oldIds = Object.keys(areas);
     const newIds = Object.keys(areas);
 
-    const newYScales: Record<string, ScaleLinear<number, number, number>> = {};
+    const newYScales: Record<string, ScaleLinear> = {};
     const newYAxes: Record<string, any> = {};
     const newYAxisInteractions: Record<string, any> = {};
     const newPlotAreas: Record<string, any> = {};
@@ -387,11 +427,61 @@ export const chart = (
           xTransform().rescaleX(xScale),
           newYScales[id]
         ).on("zoom", (e, t, point) => {
-          zoomed(e, t, point, id);
-        }) as any).on("dblclick", () => {
-          reset();
-          listeners.call("dblclick", chart);
-        });
+          zoomed(t, point, id);
+        }) as any)
+          .on("zoomstart", () => {
+            Object.values(newPlotAreas).forEach((plotArea) => {
+              plotArea.crosshair([null, null]);
+            });
+
+            Object.values(newYAxes).forEach((axis) => {
+              axis.crosshair(null);
+            });
+
+            xAxis.crosshair(null);
+          })
+          .on("zoomend", (offset: [number, number]) => {
+            Object.values(newPlotAreas).forEach((plotArea) => {
+              plotArea.crosshair(offset);
+            });
+
+            xAxis.crosshair(offset[0]);
+            newYAxes[id].crosshair(offset[1]);
+
+            listeners.call("redraw", chart);
+          })
+          .on("dblclick", () => {
+            reset();
+            listeners.call("dblclick", chart);
+          })
+          .on("mousemove", (offset: [number, number]) => {
+            Object.values(newPlotAreas).forEach((plotArea) =>
+              plotArea.crosshair([offset[0], null])
+            );
+
+            Object.values(newYAxes).forEach((axis) => {
+              axis.crosshair(null);
+            });
+
+            xAxis.crosshair(offset[0]);
+
+            newPlotAreas[id].crosshair(offset);
+            newYAxes[id].crosshair(offset[1]);
+
+            listeners.call("redraw", chart);
+          })
+          .on("mouseout", () => {
+            Object.values(newPlotAreas).forEach((plotArea) =>
+              plotArea.crosshair([null, null])
+            );
+
+            xAxis.crosshair(null);
+            Object.values(newYAxes).forEach((axis) => {
+              axis.crosshair(null);
+            });
+
+            listeners.call("redraw", chart);
+          });
         newZooms[id] = d3Zoom<Element, unknown>();
         newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
         yTransforms[id] = () => zoomTransform(newGPlotAreas[id].node());

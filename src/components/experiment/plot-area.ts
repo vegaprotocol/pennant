@@ -1,19 +1,19 @@
 import {
   AreaElement,
   BarElement,
+  CrosshairElement,
   GridElement,
   LineElement,
 } from "../../elements";
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../../types";
 
 import { Colors } from "../../helpers";
 
-export const plotArea = (
-  x: ScaleTime<number, number, number | undefined | unknown>,
-  y: ScaleLinear<number, number, number | undefined | unknown>
-) => {
+export const plotArea = (x: ScaleTime, y: ScaleLinear) => {
+  let crosshair = new CrosshairElement();
   let ctx: CanvasRenderingContext2D | null = null;
   let pixelRatio: number = 1;
+  let position: [number | null, number | null] = [null, null];
   let gridline = new GridElement();
   let xScale: any = x.copy();
   let yScale: any = y.copy();
@@ -46,6 +46,7 @@ export const plotArea = (
       gridline.draw(ctx, xScale, yScale, pixelRatio);
       lines.forEach((line) => line.draw(ctx!, xScale, yScale, pixelRatio));
       bars.forEach((bar) => bar.draw(ctx!, xScale, yScale, pixelRatio));
+      crosshair.draw(ctx, xScale, yScale, pixelRatio, position);
     }
   };
 
@@ -58,6 +59,15 @@ export const plotArea = (
     }
   };
 
+  plotArea.crosshair = (pos?: [number | null, number | null]): any => {
+    if (pos) {
+      position = pos;
+      return plotArea;
+    } else {
+      return position;
+    }
+  };
+
   plotArea.pixelRatio = (ratio?: number): any => {
     if (ratio) {
       pixelRatio = ratio;
@@ -67,9 +77,7 @@ export const plotArea = (
     }
   };
 
-  plotArea.xScale = (
-    x?: ScaleTime<number, number, number | undefined>
-  ): any => {
+  plotArea.xScale = (x?: ScaleTime): any => {
     if (x) {
       xScale = x.copy();
 
@@ -79,7 +87,7 @@ export const plotArea = (
     }
   };
 
-  plotArea.yScale = (y?: ScaleLinear<number, number, unknown>): any => {
+  plotArea.yScale = (y?: ScaleLinear): any => {
     if (y) {
       yScale = y;
 

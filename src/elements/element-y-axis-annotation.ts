@@ -1,20 +1,19 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
 
 import { Colors } from "../helpers";
-import { RenderableElement } from "../types";
-import { WIDTH } from "../constants";
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   position: number | null,
   decimalPlaces: number
 ) {
   if (position) {
     const width = xScale.range()[1];
 
-    ctx.font = `12px monospace`;
+    ctx.font = `${TICK_LABEL_FONT_SIZE}px monospace`;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
@@ -68,11 +67,7 @@ export class YAxisAnnotationElement implements RenderableElement {
     this.decimalPlaces = decimalPlaces;
   }
 
-  draw(
-    ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
-  ) {
+  draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
     addYAxisPath(ctx, xScale, yScale, this.position, this.decimalPlaces);
   }
 }

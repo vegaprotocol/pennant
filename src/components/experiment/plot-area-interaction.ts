@@ -1,15 +1,20 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../../types";
 import { Selection, pointers } from "d3-selection";
 import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
 
 import { dispatch } from "d3-dispatch";
 import { mean } from "d3-array";
+import { plotArea } from "./plot-area";
 
-export const plotAreaInteraction = (
-  x: ScaleTime<number, number, number | undefined>,
-  y: ScaleLinear<number, number, unknown>
-) => {
-  let listeners = dispatch("zoom", "dblclick");
+export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
+  let listeners = dispatch(
+    "zoom",
+    "zoomstart",
+    "zoomend",
+    "dblclick",
+    "mousemove",
+    "mouseout"
+  );
   let xScale = x.copy();
   let yScale = y.copy();
 
@@ -40,6 +45,15 @@ export const plotAreaInteraction = (
       );
 
       z = t;
+    })
+    .on("start", function () {
+      listeners.call("zoomstart", plotArea);
+    })
+    .on("end", function (e) {
+      listeners.call("zoomend", plotArea, [
+        e.sourceEvent.offsetX,
+        e.sourceEvent.offsetY,
+      ]);
     });
 
   // z holds a copy of the previous transform, so we can track its changes
@@ -61,11 +75,18 @@ export const plotAreaInteraction = (
     selection: Selection<SVGSVGElement, any, any, any>
   ) => {
     selection.call(zoom);
+
+    selection
+      .on("mousemove", (event) =>
+        listeners.call("mousemove", plotAreaInteraction, [
+          event.offsetX,
+          event.offsetY,
+        ])
+      )
+      .on("mouseout", () => listeners.call("mouseout", plotAreaInteraction));
   };
 
-  plotAreaInteraction.xScale = (
-    x?: ScaleTime<number, number, number | undefined>
-  ): any => {
+  plotAreaInteraction.xScale = (x?: ScaleTime): any => {
     if (x) {
       xScale = x.copy();
 
@@ -75,9 +96,7 @@ export const plotAreaInteraction = (
     }
   };
 
-  plotAreaInteraction.yScale = (
-    y?: ScaleLinear<number, number, unknown>
-  ): any => {
+  plotAreaInteraction.yScale = (y?: ScaleLinear): any => {
     if (y) {
       yScale = y;
 
