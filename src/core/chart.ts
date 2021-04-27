@@ -263,17 +263,15 @@ export const chart = (
   }
 
   function reset() {
+    xElement.call(xZoom.translateTo, xScale.range()[1], 0, [
+      xScale.range()[1] - WIDTH,
+      0,
+    ]);
+
     const xr = xTransform().rescaleX(xScale);
 
-    xElement.call(
-      xZoom.transform,
-      zoomIdentity.translate(
-        -WIDTH - (xScale(1000 * 60 * 5) - xScale(0)) * 5,
-        0
-      )
-    ); // TODO: Subtract N candle widths
-
     xAxis.xScale(xr);
+
     Object.entries(plotAreas).forEach(([id, plotArea]) => {
       plotArea.xScale(xr);
 
@@ -300,8 +298,8 @@ export const chart = (
 
     xElement.call(xZoom.scaleBy, 2 ** n, [
       isPinned
-        ? xScale.range()[1] - WIDTH - (xScale(1000 * 60 * 5) - xScale(0)) * 5
-        : (xScale.range()[0] + xScale.range()[1])/2,
+        ? xScale.range()[1] - WIDTH 
+        : (xScale.range()[0] + xScale.range()[1]) / 2,
       0,
     ]);
     xAxis.xScale(xr);
@@ -355,14 +353,7 @@ export const chart = (
       xElement.call(
         xZoom.scaleBy,
         t.k,
-        isPinned
-          ? [
-              xScale.range()[1] -
-                WIDTH -
-                (xScale(1000 * 60 * 5) - xScale(0)) * 5,
-              0,
-            ]
-          : point
+        isPinned ? [xScale.range()[1] - WIDTH, 0] : point
       );
 
       if (!isFreePan) {
