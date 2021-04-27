@@ -23,7 +23,7 @@ export type Study = typeof studies[number];
 export const studyLabels: Record<Study, string> = {
   eldarRay: "Eldar-ray",
   macd: "MACD",
-  volume: "Volumne",
+  volume: "Volume",
 } as const;
 
 export interface ChartElement {
