@@ -56,20 +56,20 @@ export const Chart = React.forwardRef(
     ref: React.Ref<ChartElement>
   ) => {
     React.useImperativeHandle(ref, () => ({
-      fitBounds: (bounds: [Date, Date]) => {
-        chartRef.current.fitBounds(bounds);
-      },
       panBy: (n: number) => {
-        chartRef.current.reset();
-      },
-      panTo: (x: Date) => {
-        chartRef.current.reset();
+        chartRef.current.panBy(n);
       },
       reset: () => {
         chartRef.current.reset();
       },
       snapshot: () => {
         return chartRef.current.snapshot();
+      },
+      zoomIn: (delta: number) => {
+        chartRef.current.zoomIn(delta);
+      },
+      zoomOut: (delta: number) => {
+        chartRef.current.zoomOut(delta);
       },
     }));
 

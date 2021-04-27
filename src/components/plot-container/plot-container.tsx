@@ -73,8 +73,8 @@ export type PlotContainerProps = {
 };
 
 export const PlotContainer = React.forwardRef(
-  (props: PlotContainerProps, ref: React.Ref<ChartElement>) => {
-    const {
+  (
+    {
       specification,
       scenegraph,
       interval,
@@ -84,25 +84,24 @@ export const PlotContainer = React.forwardRef(
       onMouseOut,
       onMouseOver,
       onGetDataRange = () => {},
-    } = props;
-
-    useWhyDidYouUpdate("PlotContainer", props);
-
+    }: PlotContainerProps,
+    ref: React.Ref<ChartElement>
+  ) => {
     React.useImperativeHandle(ref, () => ({
-      fitBounds: (bounds: [Date, Date]) => {
-        //chartElement.current?.fitBounds(bounds);
-      },
       panBy: (n: number) => {
-        //chartElement.current?.reset();
-      },
-      panTo: (x: Date) => {
-        //chartElement.current?.reset();
+        chartElement.current?.panBy(n);
       },
       reset: () => {
         chartElement.current?.reset();
       },
       snapshot: async () => {
         return await new Blob(); //chartElement.current?.snapshot();
+      },
+      zoomIn: (delta: number) => {
+        chartElement.current?.zoomIn(delta);
+      },
+      zoomOut: (delta: number) => {
+        chartElement.current?.zoomOut(delta);
       },
     }));
 

@@ -54,8 +54,11 @@ export interface ChartInterface {
     typenames: string,
     callback?: (this: object, ...args: any[]) => void
   ): ChartInterface;
+  panBy(n: number): void;
   plotAreas(areas: Record<string, ChartPanel>): ChartInterface;
   reset(): void;
+  zoomIn(delta: number): void;
+  zoomOut(delta: number): void;
 }
 
 /**
@@ -230,6 +233,35 @@ export const chart = (
     plotAreaElement.call(yZooms[id])
   );
 
+  function panBy(n: number) {
+    const xr = xTransform().rescaleX(xScale);
+
+    xElement.call(xZoom.translateBy, -(xScale(n * 1000 * 60) - xScale(0)), 0);
+
+    xAxis.xScale(xr);
+
+    Object.entries(plotAreas).forEach(([id, plotArea]) => {
+      plotArea.xScale(xr);
+
+      if (!isFreePan) {
+        recalculateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          plotAreaElements,
+          yZooms
+        );
+      }
+    });
+
+    isPinned = false;
+
+    listeners.call("redraw", chart);
+    listeners.call("bounds_changed", chart, xr.domain());
+  }
+
   function reset() {
     const xr = xTransform().rescaleX(xScale);
 
@@ -258,6 +290,37 @@ export const chart = (
 
     isPinned = true;
     isFreePan = false;
+
+    listeners.call("redraw", chart);
+    listeners.call("bounds_changed", chart, xr.domain());
+  }
+
+  function zoom(n: number) {
+    const xr = xTransform().rescaleX(xScale);
+
+    xElement.call(xZoom.scaleBy, 2 ** n, [
+      isPinned
+        ? xScale.range()[1] - WIDTH - (xScale(1000 * 60 * 5) - xScale(0)) * 5
+        : (xScale.range()[0] + xScale.range()[1])/2,
+      0,
+    ]);
+    xAxis.xScale(xr);
+
+    Object.entries(plotAreas).forEach(([id, plotArea]) => {
+      plotArea.xScale(xr);
+
+      if (!isFreePan) {
+        recalculateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          plotAreaElements,
+          yZooms
+        );
+      }
+    });
 
     listeners.call("redraw", chart);
     listeners.call("bounds_changed", chart, xr.domain());
@@ -561,8 +624,20 @@ export const chart = (
     return chart;
   };
 
+  chart.panBy = (n: number) => {
+    panBy(n);
+  };
+
   chart.reset = () => {
     reset();
+  };
+
+  chart.zoomIn = (delta: number) => {
+    zoom(delta);
+  };
+
+  chart.zoomOut = (delta: number) => {
+    zoom(-delta);
   };
 
   chart.on = (
