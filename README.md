@@ -76,16 +76,21 @@ import React from "react";
 import { Chart } from "pennant";
 
 const dataSource = new DataSource();
+const options = {
+  chartType: "candle",
+  studies: [],
+  overlays: [],
+};
 
 export const App = () => (
-  <Chart dataSource={dataSource} chartType="candle" interval="I1M" />
+  <Chart dataSource={dataSource} options={options} interval="I1M" />
 );
 ```
 
 The minimum props required are:
 
 - dataSource
-- chartType
+- options
 - interval
 
 ## Data
