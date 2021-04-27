@@ -18,6 +18,7 @@ const formatWeek = timeFormat("%b %d");
 const formatMonth = timeFormat("%B");
 const formatYear = timeFormat("%Y");
 
+// FIXME: UTC is not correct
 export function multiFormat(date: Date) {
   return (utcSecond(date) < date
     ? formatMillisecond
