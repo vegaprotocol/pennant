@@ -95,7 +95,7 @@ export const PlotContainer = React.forwardRef(
         chartElement.current?.reset();
       },
       snapshot: async () => {
-        return await new Blob(); //chartElement.current?.snapshot();
+        return snapshot();
       },
       zoomIn: (delta: number) => {
         chartElement.current?.zoomIn(delta);
@@ -212,13 +212,13 @@ export const PlotContainer = React.forwardRef(
           <React.Fragment key={panel.id}>
             <div
               ref={refs[panel.id]}
+              className="pane"
               style={{
                 position: "relative",
                 flex: 1,
               }}
             >
               <d3fc-canvas
-                id={`plot-area-${panel.id}`}
                 class="plot-area"
                 use-device-pixel-ratio
                 style={{
@@ -228,7 +228,6 @@ export const PlotContainer = React.forwardRef(
                 }}
               ></d3fc-canvas>
               <d3fc-canvas
-                id={`y-axis-${panel.id}`}
                 class="y-axis"
                 use-device-pixel-ratio
                 style={{
@@ -238,7 +237,6 @@ export const PlotContainer = React.forwardRef(
                 }}
               ></d3fc-canvas>
               <d3fc-svg
-                id={`plot-area-interaction-${panel.id}`}
                 class="plot-area-interaction"
                 style={{
                   position: "absolute",
@@ -248,7 +246,6 @@ export const PlotContainer = React.forwardRef(
                 }}
               ></d3fc-svg>
               <d3fc-svg
-                id={`y-axis-interaction-${panel.id}`}
                 class="y-axis-interaction"
                 style={{
                   position: "absolute",

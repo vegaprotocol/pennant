@@ -11,12 +11,12 @@ export async function asyncSnapshot(chartRef: React.RefObject<HTMLElement>) {
     const bbox = chartRef.current.getBoundingClientRect();
 
     // FIXME: These queries are extremely brittle. Replace with something more robust.
-    const baseCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".plot-area d3fc-canvas.base canvas"
+    const mainPlotAreaCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
+      ".pane .plot-area canvas"
     ) as HTMLCanvasElement;
 
-    const foregroundCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".plot-area d3fc-canvas.foreground canvas"
+    const mainYAxisCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
+      ".pane .y-axis canvas"
     ) as HTMLCanvasElement;
 
     const studyBaseCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
@@ -41,19 +41,19 @@ export async function asyncSnapshot(chartRef: React.RefObject<HTMLElement>) {
     const offScreenContext = offscreen.getContext("2d");
 
     if (offScreenContext) {
-      offScreenContext.drawImage(baseCanvas, 0, 0);
-      offScreenContext.drawImage(foregroundCanvas, 0, 0);
+      offScreenContext.drawImage(mainPlotAreaCanvas, 0, 0);
+      offScreenContext.drawImage(mainYAxisCanvas, 0, 0);
 
-      let offset = baseCanvas.height;
+      let offset = mainPlotAreaCanvas.height;
 
       if (studyBaseCanvas && studyForegroundCanvas) {
-        offScreenContext.drawImage(studyBaseCanvas, 0, baseCanvas.height);
-        offScreenContext.drawImage(studyForegroundCanvas, 0, baseCanvas.height);
+        offScreenContext.drawImage(studyBaseCanvas, 0, mainPlotAreaCanvas.height);
+        offScreenContext.drawImage(studyForegroundCanvas, 0, mainPlotAreaCanvas.height);
 
         offScreenContext.save();
         offScreenContext.beginPath();
-        offScreenContext.moveTo(0, baseCanvas.height + 0.5);
-        offScreenContext.lineTo(baseCanvas.width, baseCanvas.height + 0.5);
+        offScreenContext.moveTo(0, mainPlotAreaCanvas.height + 0.5);
+        offScreenContext.lineTo(mainPlotAreaCanvas.width, mainPlotAreaCanvas.height + 0.5);
 
         offScreenContext.strokeStyle = "#fff";
         offScreenContext.stroke();
@@ -68,7 +68,7 @@ export async function asyncSnapshot(chartRef: React.RefObject<HTMLElement>) {
       offScreenContext.save();
       offScreenContext.beginPath();
       offScreenContext.moveTo(0, offset + 0.5);
-      offScreenContext.lineTo(baseCanvas.width, offset + 0.5);
+      offScreenContext.lineTo(mainPlotAreaCanvas.width, offset + 0.5);
 
       offScreenContext.strokeStyle = "#fff";
       offScreenContext.stroke();
