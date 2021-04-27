@@ -1,5 +1,8 @@
+import { PlotAreaInterface, plotArea } from "./plot-area";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { Selection, select } from "d3-selection";
 import {
+  ZoomBehavior,
   ZoomTransform,
   zoom as d3Zoom,
   zoomIdentity,
@@ -18,6 +21,10 @@ import {
   measureXAxis,
   measureYAxis,
 } from "./helpers/chart-event-helpers";
+import {
+  plotAreaInteraction,
+  plotAreaInteractionInterface,
+} from "./plot-area-interaction";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { xAxis as xAxisElement, xAxisInterface } from "./x-axis";
 import {
@@ -25,13 +32,13 @@ import {
   xAxisInteractionInterface,
 } from "./x-axis-interaction";
 import { yAxis, yAxisInterface } from "./y-axis";
+import {
+  yAxisInteraction,
+  yAxisInteractionInterface,
+} from "./y-axis-interaction";
 
 import { WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
-import { plotArea } from "./plot-area";
-import { plotAreaInteraction } from "./plot-area-interaction";
-import { select } from "d3-selection";
-import { yAxisInteraction } from "./y-axis-interaction";
 
 export type ChartPanel = {
   id: string;
@@ -117,11 +124,14 @@ export const chart = (
     );
   }) as xAxisInteractionInterface;
 
-  let yAxes: Record<string, any> = Object.fromEntries(
+  let yAxes: Record<string, yAxisInterface> = Object.fromEntries(
     Object.entries(yScales).map(([id, scale]) => [id, yAxis(xScale, scale)])
   );
 
-  let yAxisInteractions: Record<string, any> = Object.fromEntries(
+  let yAxisInteractions: Record<
+    string,
+    yAxisInteractionInterface
+  > = Object.fromEntries(
     Object.values(panels).map((value) => [
       value.id,
       yAxisInteraction(yScales[value.id]).on("drag", (e) => {
@@ -130,7 +140,7 @@ export const chart = (
     ])
   );
 
-  let plotAreas: Record<string, any> = Object.fromEntries(
+  let plotAreas: Record<string, PlotAreaInterface> = Object.fromEntries(
     Object.values(panels).map((panel) => [
       panel.id,
       plotArea(
@@ -143,7 +153,10 @@ export const chart = (
     ])
   );
 
-  let plotAreaInteractions: Record<string, any> = Object.fromEntries(
+  let plotAreaInteractions: Record<
+    string,
+    plotAreaInteractionInterface
+  > = Object.fromEntries(
     Object.values(panels).map((value) => [
       value.id,
       (plotAreaInteraction(xScale, yScales[value.id]).on(
@@ -397,21 +410,27 @@ export const chart = (
 
     const newYScales: Record<string, ScaleLinear> = {};
     const newYAxes: Record<string, yAxisInterface> = {};
-    const newYAxisInteractions: Record<string, any> = {};
-    const newPlotAreas: Record<string, any> = {};
-    const newPlotAreaInteractions: Record<string, any> = {};
-    const newZooms: Record<string, any> = {};
-    const newGPlotAreas: Record<string, any> = {};
-    const newTs: Record<string, any> = {};
+    const newYAxisInteractions: Record<string, yAxisInteractionInterface> = {};
+    const newPlotAreas: Record<string, PlotAreaInterface> = {};
+    const newPlotAreaInteractions: Record<
+      string,
+      plotAreaInteractionInterface
+    > = {};
+    const newZooms: Record<string, ZoomBehavior<Element, unknown>> = {};
+    const newGPlotAreas: Record<
+      string,
+      Selection<Element, any, null, undefined>
+    > = {};
+    const newTs: Record<string, () => ZoomTransform> = {};
 
     for (const id of newIds) {
       if (oldIds.includes(id)) {
         newYScales[id] = yScales[id];
         newYAxes[id] = yAxes[id];
         newYAxisInteractions[id] = yAxisInteractions[id];
-        newPlotAreas[id] = plotAreas[id].renderableElements(
-          areas[id].renderableElements
-        );
+        newPlotAreas[id] = plotAreas[id]
+          .data(areas[id].data)
+          .renderableElements(areas[id].renderableElements);
         newPlotAreaInteractions[id] = plotAreaInteractions[id];
         newZooms[id] = yZooms[id];
         newGPlotAreas[id] = plotAreaElements[id];
@@ -472,7 +491,7 @@ export const chart = (
           });
         newZooms[id] = d3Zoom<Element, unknown>();
         newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
-        newTs[id] = () => zoomTransform(newGPlotAreas[id].node());
+        newTs[id] = () => zoomTransform(newGPlotAreas[id].node()!);
 
         select<HTMLDivElement, unknown>(axis.ref.current)
           .select(".x-axis")
@@ -559,12 +578,12 @@ function recalculateScale(
   xScale: ScaleTime,
   yScales: Record<string, ScaleLinear>,
   id: string,
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   plotAreaElements: any,
   yZooms: any
 ) {
   const xr = xTransform().rescaleX(xScale);
-  const bounds = xr.domain();
+  const bounds = xr.domain() as [Date, Date];
   const originalExtent = yScales[id].range();
   const newExtent = plotAreas[id].extent(bounds);
   const originalHeight = Math.abs(originalExtent[0] - originalExtent[1]);

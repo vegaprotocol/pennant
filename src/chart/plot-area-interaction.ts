@@ -6,6 +6,16 @@ import { dispatch } from "d3-dispatch";
 import { mean } from "d3-array";
 import { plotArea } from "./plot-area";
 
+export interface plotAreaInteractionInterface {
+  (selection: Selection<SVGSVGElement, any, any, any>): void;
+  xScale(x: ScaleTime): plotAreaInteractionInterface;
+  yScale(y: ScaleLinear): plotAreaInteractionInterface;
+  on(
+    typenames: string,
+    callback: (this: object, ...args: any[]) => void
+  ): plotAreaInteractionInterface;
+}
+
 export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
   let listeners = dispatch(
     "zoom",
@@ -73,7 +83,7 @@ export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
 
   const plotAreaInteraction = (
     selection: Selection<SVGSVGElement, any, any, any>
-  ) => {
+  ): void => {
     selection.call(zoom);
 
     selection
@@ -86,36 +96,24 @@ export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
       .on("mouseout", () => listeners.call("mouseout", plotAreaInteraction));
   };
 
-  plotAreaInteraction.xScale = (x?: ScaleTime): any => {
-    if (x) {
-      xScale = x.copy();
-
-      return plotAreaInteraction;
-    } else {
-      return xScale;
-    }
+  plotAreaInteraction.xScale = (x: ScaleTime): plotAreaInteractionInterface => {
+    xScale = x.copy();
+    return plotAreaInteraction;
   };
 
-  plotAreaInteraction.yScale = (y?: ScaleLinear): any => {
-    if (y) {
-      yScale = y;
-
-      return plotAreaInteraction;
-    } else {
-      return yScale;
-    }
+  plotAreaInteraction.yScale = (
+    y: ScaleLinear
+  ): plotAreaInteractionInterface => {
+    yScale = y;
+    return plotAreaInteraction;
   };
 
   plotAreaInteraction.on = (
     typenames: string,
-    callback?: (this: object, ...args: any[]) => void
+    callback: (this: object, ...args: any[]) => void
   ) => {
-    if (callback) {
-      listeners.on(typenames, callback);
-      return plotAreaInteraction;
-    } else {
-      return listeners.on(typenames);
-    }
+    listeners.on(typenames, callback);
+    return plotAreaInteraction;
   };
 
   return plotAreaInteraction;

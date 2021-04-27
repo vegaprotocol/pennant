@@ -4,18 +4,58 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartElement, Scenegraph } from "../../types";
+import { ChartElement, Scenegraph, Study } from "../../types";
 import { ChartInterface, chart } from "../../chart";
-import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
+import {
+  asyncSnapshot,
+  formatter,
+  getCandleWidth,
+  getSubMinutes,
+} from "../../helpers";
 import { useEffect, useRef, useState } from "react";
 
 import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
+import { StudyInfo } from "../study-info";
 import { TopLevelSpec } from "../../vega-lite/spec";
 import { createRef } from "react";
 import { throttle } from "lodash";
 import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
+
+const StudyInfoFields: Record<
+  string,
+  { label: string; fields: { field: string; label: string }[] }
+> = {
+  main: {
+    label: "Candle",
+    fields: [
+      { field: "open", label: "O" },
+      { field: "high", label: "H" },
+      { field: "low", label: "L" },
+      { field: "close", label: "C" },
+    ],
+  },
+  eldarRay: {
+    label: "Eldar-ray",
+    fields: [
+      { field: "bullPower", label: "Bull" },
+      { field: "bearPower", label: "Bear" },
+    ],
+  },
+  macd: {
+    label: "MACD",
+    fields: [
+      { field: "signal", label: "S" },
+      { field: "divergence", label: "D" },
+      { field: "macd", label: "MACD" },
+    ],
+  },
+  volume: {
+    label: "Volume",
+    fields: [{ field: "volume", label: "V" }],
+  },
+};
 
 export type PlotContainerProps = {
   width: number;
@@ -84,6 +124,8 @@ export const PlotContainer = React.forwardRef(
 
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState(initialBounds);
+    const [dataIndex, setDataIndex] = useState<number | null>(null);
+    const [activePanel, setActivePanel] = useState<string | null>(null);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -118,6 +160,14 @@ export const PlotContainer = React.forwardRef(
         })
         .on("bounds_changed", (bounds: [Date, Date]) => {
           setBounds(bounds);
+        })
+        .on("mousemove", (index: number, id: string) => {
+          setDataIndex(index);
+          setActivePanel(id);
+        })
+        .on("mouseout", () => {
+          setDataIndex(null);
+          setActivePanel(null);
         });
 
       chartRef.current?.requestRedraw();
@@ -209,7 +259,23 @@ export const PlotContainer = React.forwardRef(
                   cursor: "ns-resize",
                 }}
               ></d3fc-svg>
-              {index === 0 && <ChartInfo bounds={bounds} />}
+              <div className="plot-container__info_overlay">
+                {index === 0 && <ChartInfo bounds={bounds} />}
+                {dataIndex && (
+                  <StudyInfo
+                    title={StudyInfoFields[panel.id].label}
+                    info={StudyInfoFields[panel.id].fields.map(
+                      (field: any) => ({
+                        id: field.field,
+                        label: field.label,
+                        value: formatter(
+                          panel.originalData[dataIndex][field.field]
+                        ),
+                      })
+                    )}
+                  />
+                )}
+              </div>
             </div>
             <div style={{ height: "1px", backgroundColor: "white" }}></div>
           </React.Fragment>

@@ -1,7 +1,9 @@
 @import "../../styles/colors";
 
-canvas {
-
+.plot-container__info_overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .d3fc-group {

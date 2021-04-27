@@ -17,7 +17,7 @@ function addCrosshairPath(
   ctx.save();
 
   ctx.setLineDash([4, 6]);
-  ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+  ctx.strokeStyle = Colors.WHITE;
 
   if (x) {
     ctx.beginPath();

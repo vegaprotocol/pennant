@@ -1,9 +1,18 @@
-import { ScaleLinear } from "d3-scale";
+import { ScaleLinear } from "../types";
 import { Selection } from "d3-selection";
 import { drag as d3Drag } from "d3-drag";
 import { dispatch } from "d3-dispatch";
 
-export const yAxisInteraction = (y: ScaleLinear<number, number, number | undefined>) => {
+export interface yAxisInteractionInterface {
+  (selection: Selection<SVGSVGElement, any, any, any>): void;
+  yScale(y: ScaleLinear): yAxisInteractionInterface;
+  on(
+    typenames: string,
+    callback: (this: object, ...args: any[]) => void
+  ): yAxisInteractionInterface;
+}
+
+export const yAxisInteraction = (y: ScaleLinear) => {
   let listeners = dispatch("drag");
 
   let yScale = y;
@@ -12,30 +21,23 @@ export const yAxisInteraction = (y: ScaleLinear<number, number, number | undefin
     listeners.call("drag", yAxisInteraction, e);
   });
 
-  const yAxisInteraction = (selection: Selection<SVGSVGElement, any, any, any>) => {
+  const yAxisInteraction = (
+    selection: Selection<SVGSVGElement, any, any, any>
+  ) => {
     selection.call(drag);
   };
 
-  yAxisInteraction.yScale = (y?: ScaleLinear<number, number, number>): any => {
-    if (y) {
-      yScale = y;
-
-      return yAxisInteraction;
-    } else {
-      return yScale;
-    }
+  yAxisInteraction.yScale = (y: ScaleLinear): any => {
+    yScale = y;
+    return yAxisInteraction;
   };
 
   yAxisInteraction.on = (
     typenames: string,
-    callback?: (this: object, ...args: any[]) => void
-  ) => {
-    if (callback) {
-      listeners.on(typenames, callback);
-      return yAxisInteraction;
-    } else {
-      return listeners.on(typenames);
-    }
+    callback: (this: object, ...args: any[]) => void
+  ): yAxisInteractionInterface => {
+    listeners.on(typenames, callback);
+    return yAxisInteraction;
   };
 
   return yAxisInteraction;

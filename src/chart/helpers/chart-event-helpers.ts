@@ -2,8 +2,10 @@ import { ScaleLinear, ScaleTime } from "../../types";
 import { Selection, select } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
+import { PlotAreaInterface } from "../plot-area";
 import { WIDTH } from "../../constants";
 import { xAxisInterface } from "../x-axis";
+import { yAxisInterface } from "../y-axis";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,
@@ -13,7 +15,7 @@ export function handleXAxisDrag(
   isPinned: boolean,
   xTransform: () => ZoomTransform,
   xAxis: xAxisInterface,
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   yAxes: Record<string, any>,
   listeners: any,
   chart: any
@@ -44,7 +46,7 @@ export function measureXAxis(
   xTransform: () => ZoomTransform,
   xAxis: xAxisInterface,
   yAxes: Record<string, any>,
-  plotAreas: Record<string, any>
+  plotAreas: Record<string, PlotAreaInterface>
 ) {
   const { width, pixelRatio } = event.detail;
   xScale.range([0, width / pixelRatio]);
@@ -71,7 +73,7 @@ export function drawXAxis(event: any, xAxis: xAxisInterface) {
 }
 
 export function handleZoomend(
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   offset: [number, number],
   xAxis: xAxisInterface,
   yAxes: Record<string, any>,
@@ -90,7 +92,7 @@ export function handleZoomend(
 }
 
 export function handleZoomstart(
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   yAxes: Record<string, any>,
   xAxis: xAxisInterface
 ) {
@@ -109,8 +111,8 @@ export function measureYAxis(
   event: any,
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
-  plotArea: Record<string, any>,
-  yAxis: Record<string, any>
+  plotArea: PlotAreaInterface,
+  yAxis: yAxisInterface
 ) {
   const { height, pixelRatio } = event.detail;
 
@@ -134,7 +136,7 @@ export function drawPlotAreaInteraction(
 
 export function drawPlotArea(
   event: any,
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   id: string
 ) {
   const ctx = select(event.currentTarget)
@@ -142,11 +144,11 @@ export function drawPlotArea(
     .node()
     ?.getContext("2d");
 
-  const pixelRatio = event.detail.pixelRatio;
-
-  ctx?.scale(pixelRatio, pixelRatio);
-
-  plotAreas[id].context(ctx).pixelRatio(pixelRatio)();
+  if (ctx) {
+    const pixelRatio = event.detail.pixelRatio;
+    ctx.scale(pixelRatio, pixelRatio);
+    plotAreas[id].context(ctx).pixelRatio(pixelRatio)();
+  }
 }
 
 export function drawYAxis(event: any, yAxes: Record<string, any>, id: string) {
@@ -163,7 +165,7 @@ export function drawYAxis(event: any, yAxes: Record<string, any>, id: string) {
 }
 
 export function handleMouseout(
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   xAxis: xAxisInterface,
   yAxes: Record<string, any>,
   listeners: any,
@@ -179,10 +181,11 @@ export function handleMouseout(
   });
 
   listeners.call("redraw", chart);
+  listeners.call("mousemove", chart);
 }
 
 export function handleMousemove(
-  plotAreas: Record<string, any>,
+  plotAreas: Record<string, PlotAreaInterface>,
   offset: [number, number],
   yAxes: Record<string, any>,
   xAxis: xAxisInterface,
@@ -190,18 +193,20 @@ export function handleMousemove(
   listeners: any,
   chart: any
 ) {
-  Object.values(plotAreas).forEach((plotArea) =>
-    plotArea.crosshair([offset[0], null])
-  );
+  // Calculate index of data item
+  const [index, x] = plotAreas[id].getIndex(offset[0]);
+
+  Object.values(plotAreas).forEach((plotArea) => plotArea.crosshair([x, null]));
 
   Object.values(yAxes).forEach((axis) => {
     axis.crosshair(null);
   });
 
-  xAxis.crosshair(offset[0]);
+  xAxis.crosshair(x);
 
-  plotAreas[id].crosshair(offset);
+  plotAreas[id].crosshair([x, offset[1]]);
   yAxes[id].crosshair(offset[1]);
 
   listeners.call("redraw", chart);
+  listeners.call("mousemove", chart, index, id);
 }

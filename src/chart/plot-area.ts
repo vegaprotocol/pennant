@@ -1,8 +1,23 @@
 import { Colors, clearCanvas } from "../helpers";
 import { CrosshairElement, GridElement } from "../elements";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { bisector, extent } from "d3-array";
 
-import { extent } from "d3-array";
+import { closestIndexTo } from "date-fns";
+
+export interface PlotAreaInterface {
+  (): void;
+  context(context: CanvasRenderingContext2D): PlotAreaInterface;
+  crosshair(pos: [number | null, number | null]): PlotAreaInterface;
+  data(originalData: any[]): PlotAreaInterface;
+  extent(bounds?: [Date, Date]): [number, number];
+  getIndex(offset: number): [number, number];
+  pixelRatio(ratio: number): PlotAreaInterface;
+  renderableElements(elements: RenderableElement[]): PlotAreaInterface;
+  xScale(scale: ScaleTime): PlotAreaInterface;
+  yScale(scale: ScaleLinear): PlotAreaInterface;
+  yEncodingFields(fields: string[]): PlotAreaInterface;
+}
 
 export const plotArea = (
   x: ScaleTime,
@@ -22,7 +37,7 @@ export const plotArea = (
   let yEncodingFields = fields;
   let yScale = y.copy();
 
-  const plotArea = () => {
+  const plotArea: PlotAreaInterface = () => {
     if (ctx) {
       clearCanvas(ctx.canvas, ctx, Colors.BACKGROUND);
       gridline.draw(ctx, xScale, yScale, pixelRatio);
@@ -35,25 +50,19 @@ export const plotArea = (
     }
   };
 
-  plotArea.context = (context?: CanvasRenderingContext2D): any => {
-    if (context) {
-      ctx = context;
-      return plotArea;
-    } else {
-      return ctx;
-    }
+  plotArea.context = (context: CanvasRenderingContext2D): PlotAreaInterface => {
+    ctx = context;
+    return plotArea;
   };
 
-  plotArea.crosshair = (pos?: [number | null, number | null]): any => {
-    if (pos) {
-      position = pos;
-      return plotArea;
-    } else {
-      return position;
-    }
+  plotArea.crosshair = (
+    pos: [number | null, number | null]
+  ): PlotAreaInterface => {
+    position = pos;
+    return plotArea;
   };
 
-  plotArea.data = (originalData: any[]): any => {
+  plotArea.data = (originalData: any[]): PlotAreaInterface => {
     data = originalData;
     return plotArea;
   };
@@ -68,43 +77,61 @@ export const plotArea = (
       : extent(data.flatMap((d) => yEncodingFields?.map((field) => d[field])));
   };
 
-  plotArea.pixelRatio = (ratio?: number): any => {
-    if (ratio) {
-      pixelRatio = ratio;
-      return plotArea;
+  plotArea.getIndex = (offset: number): [number, number] => {
+    const data = originalData;
+    const timeAtMouseX = xScale.invert(offset);
+
+    const index = bisector((d: any) => d.date).left(data, timeAtMouseX);
+
+    const firstElement: Date = data[index - 1].date;
+    const secondElement: Date = data[index].date;
+
+    let element: Date;
+    let indexOffset = 0;
+
+    if (firstElement && secondElement) {
+      const nearestCandleDates = [firstElement, secondElement];
+      indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+      element = [firstElement, secondElement][indexOffset];
+    } else if (firstElement) {
+      indexOffset = 0;
+      element = firstElement;
     } else {
-      return pixelRatio;
+      indexOffset = 1;
+      element = secondElement;
     }
+
+    return [
+      index + indexOffset - 1,
+      xScale(data[index + indexOffset - 1].date),
+    ];
   };
 
-  plotArea.renderableElements = (elements: RenderableElement[]): any => {
+  plotArea.pixelRatio = (ratio: number): PlotAreaInterface => {
+    pixelRatio = ratio;
+    return plotArea;
+  };
+
+  plotArea.renderableElements = (
+    elements: RenderableElement[]
+  ): PlotAreaInterface => {
     renderableElements = elements;
     return plotArea;
   };
 
-  plotArea.xScale = (x?: ScaleTime): any => {
-    if (x) {
-      xScale = x.copy();
-
-      return plotArea;
-    } else {
-      return xScale;
-    }
+  plotArea.xScale = (x: ScaleTime): PlotAreaInterface => {
+    xScale = x.copy();
+    return plotArea;
   };
 
-  plotArea.yEncodingFields = (fields: string[]): any => {
+  plotArea.yEncodingFields = (fields: string[]): PlotAreaInterface => {
     yEncodingFields = fields;
     return plotArea;
   };
 
-  plotArea.yScale = (y?: ScaleLinear): any => {
-    if (y) {
-      yScale = y;
-
-      return plotArea;
-    } else {
-      return yScale;
-    }
+  plotArea.yScale = (y: ScaleLinear): PlotAreaInterface => {
+    yScale = y;
+    return plotArea;
   };
 
   return plotArea;

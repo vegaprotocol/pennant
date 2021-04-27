@@ -5,17 +5,12 @@ import { dispatch } from "d3-dispatch";
 
 export interface xAxisInteractionInterface {
   (selection: Selection<SVGSVGElement, any, any, any>): void;
-  xScale(x?: ScaleTime | undefined): xAxisInteractionInterface;
+  xScale(x: ScaleTime): xAxisInteractionInterface;
   on(
     typenames: string,
-    callback?: ((this: object, ...args: any[]) => void) | undefined
-  ):
-    | xAxisInteractionInterface
-    | ((this: object, ...args: any[]) => void)
-    | undefined;
+    callback: (this: object, ...args: any[]) => void
+  ): xAxisInteractionInterface;
 }
-
-//... | ((this: object, ...args: any[]) => void) | undefined
 
 /**
  * The x-axis component renders human readable reference marks.
@@ -36,25 +31,17 @@ export const xAxisInteraction = (x: ScaleTime) => {
     selection.call(drag);
   };
 
-  xAxisInteraction.xScale = (x?: ScaleTime): any => {
-    if (x) {
-      xScale = x.copy();
-      return xAxisInteraction;
-    } else {
-      return xScale;
-    }
+  xAxisInteraction.xScale = (x: ScaleTime): xAxisInteractionInterface => {
+    xScale = x.copy();
+    return xAxisInteraction;
   };
 
   xAxisInteraction.on = (
     typenames: string,
-    callback?: (this: object, ...args: any[]) => void
-  ) => {
-    if (callback) {
-      listeners.on(typenames, callback);
-      return xAxisInteraction;
-    } else {
-      return listeners.on(typenames);
-    }
+    callback: (this: object, ...args: any[]) => void
+  ): xAxisInteractionInterface => {
+    listeners.on(typenames, callback);
+    return xAxisInteraction;
   };
 
   return xAxisInteraction;

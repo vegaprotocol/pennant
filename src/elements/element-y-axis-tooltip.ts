@@ -3,6 +3,7 @@ import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
 
 import { Colors } from "../helpers";
 import { RenderableElement } from "../types";
+import { formatter } from "../helpers";
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
@@ -20,7 +21,7 @@ function addYAxisPath(
 
     const value = yScale.invert(position);
     const xPad = 5;
-    const text = value.toFixed(decimalPlaces);
+    const text = formatter(value, decimalPlaces);
     const rectHeight = 18;
 
     let yAdjusted = position;

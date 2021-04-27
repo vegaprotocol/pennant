@@ -1,3 +1,4 @@
+import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import {
   Interval,
   candleQuery,
@@ -7,11 +8,10 @@ import {
 } from "../api/vega-graphql";
 
 import { ApolloClient } from "@apollo/client";
-import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { addDecimal } from "../helpers";
 import { marketQuery } from "../api/vega-graphql/queries/markets";
-import { positionSubscription } from "../api/vega-graphql/queries/position";
 import { orderSubscription } from "../api/vega-graphql/queries/order";
+import { positionSubscription } from "../api/vega-graphql/queries/position";
 
 export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
