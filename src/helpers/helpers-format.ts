@@ -1,11 +1,11 @@
 import {
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeSecond,
-  timeWeek,
-  timeYear,
+  utcDay,
+  utcHour,
+  utcMinute,
+  utcMonth,
+  utcSecond,
+  utcWeek,
+  utcYear,
 } from "d3-time";
 import { timeFormat } from "d3-time-format";
 
@@ -19,19 +19,19 @@ const formatMonth = timeFormat("%B");
 const formatYear = timeFormat("%Y");
 
 export function multiFormat(date: Date) {
-  return (timeSecond(date) < date
+  return (utcSecond(date) < date
     ? formatMillisecond
-    : timeMinute(date) < date
+    : utcMinute(date) < date
     ? formatSecond
-    : timeHour(date) < date
+    : utcHour(date) < date
     ? formatMinute
-    : timeDay(date) < date
+    : utcDay(date) < date
     ? formatHour
-    : timeMonth(date) < date
-    ? timeWeek(date) < date
+    : utcMonth(date) < date
+    ? utcWeek(date) < date
       ? formatDay
       : formatWeek
-    : timeYear(date) < date
+    : utcYear(date) < date
     ? formatMonth
     : formatYear)(date);
 }
