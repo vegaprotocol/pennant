@@ -3,6 +3,7 @@ import { CrosshairElement, GridElement } from "../elements";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { bisector, extent } from "d3-array";
 
+import { clamp } from "lodash";
 import { closestIndexTo } from "date-fns";
 
 export interface PlotAreaInterface {
@@ -80,11 +81,9 @@ export const plotArea = (
   plotArea.getIndex = (offset: number): [number, number] => {
     const data = originalData;
     const timeAtMouseX = xScale.invert(offset);
-
     const index = bisector((d: any) => d.date).left(data, timeAtMouseX);
-
-    const firstElement: Date = data[index - 1].date;
-    const secondElement: Date = data[index].date;
+    const firstElement: Date = data[Math.max(0, index - 1)].date;
+    const secondElement: Date = data[Math.min(data.length - 1, index)].date;
 
     let element: Date;
     let indexOffset = 0;
@@ -101,10 +100,9 @@ export const plotArea = (
       element = secondElement;
     }
 
-    return [
-      index + indexOffset - 1,
-      xScale(data[index + indexOffset - 1].date),
-    ];
+    const dataIndex = clamp(index + indexOffset - 1, 0, data.length - 1);
+
+    return [dataIndex, xScale(data[dataIndex].date)];
   };
 
   plotArea.pixelRatio = (ratio: number): PlotAreaInterface => {

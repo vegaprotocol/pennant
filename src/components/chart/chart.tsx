@@ -131,8 +131,6 @@ export const Chart = React.forwardRef(
     // Respond to streaming data
     React.useEffect(() => {
       const fetchData = async () => {
-        console.time("query");
-
         await query(
           new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
           new Date().toISOString(),
@@ -141,7 +139,7 @@ export const Chart = React.forwardRef(
 
         setInternalInterval(interval);
       };
-      
+
       function subscribe() {
         dataSource.subscribeData(interval, (datum) => {
           setData((data) => mergeData([datum], data));
