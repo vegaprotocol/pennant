@@ -1,4 +1,4 @@
-import { ScaleTime } from "../../types";
+import { ScaleTime } from "../types";
 import { Selection } from "d3-selection";
 import { drag as d3Drag } from "d3-drag";
 import { dispatch } from "d3-dispatch";

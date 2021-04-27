@@ -1,7 +1,7 @@
-import { Colors, clearCanvas } from "../../helpers";
-import { XAxisElement, XAxisTooltipElement } from "../../elements";
+import { Colors, clearCanvas } from "../helpers";
+import { XAxisElement, XAxisTooltipElement } from "../elements";
 
-import { ScaleTime } from "../../types";
+import { ScaleTime } from "../types";
 
 export interface xAxisInterface {
   (): void;

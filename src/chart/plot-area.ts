@@ -1,6 +1,6 @@
-import { Colors, clearCanvas } from "../../helpers";
-import { CrosshairElement, GridElement } from "../../elements";
-import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
+import { Colors, clearCanvas } from "../helpers";
+import { CrosshairElement, GridElement } from "../elements";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 import { extent } from "d3-array";
 

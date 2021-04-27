@@ -1,8 +1,8 @@
-import { ScaleLinear, ScaleTime } from "../../../types";
+import { ScaleLinear, ScaleTime } from "../../types";
 import { Selection, select } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
-import { WIDTH } from "../../../constants";
+import { WIDTH } from "../../constants";
 import { xAxisInterface } from "../x-axis";
 
 export function handleXAxisDrag(
@@ -113,6 +113,7 @@ export function measureYAxis(
   yAxis: Record<string, any>
 ) {
   const { height, pixelRatio } = event.detail;
+
   scale.range([height / pixelRatio, 0]);
 
   const yr = yTransform().rescaleY(scale);

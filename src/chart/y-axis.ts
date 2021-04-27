@@ -1,5 +1,5 @@
-import { ScaleLinear, ScaleTime } from "../../types";
-import { YAxisElement, YAxisTooltipElement } from "../../elements";
+import { ScaleLinear, ScaleTime } from "../types";
+import { YAxisElement, YAxisTooltipElement } from "../elements";
 
 export interface yAxisInterface {
   (): void;

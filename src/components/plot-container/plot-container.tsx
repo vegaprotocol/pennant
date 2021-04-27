@@ -5,7 +5,7 @@ import "./plot-container.scss";
 import * as React from "react";
 
 import { ChartElement, Scenegraph } from "../../types";
-import { ChartInterface, chart } from "../experiment/chart";
+import { ChartInterface, chart } from "../../chart";
 import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
 import { useEffect, useRef, useState } from "react";
 

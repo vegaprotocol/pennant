@@ -1,4 +1,4 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import {
   ZoomTransform,
   zoom as d3Zoom,
@@ -26,7 +26,7 @@ import {
 } from "./x-axis-interaction";
 import { yAxis, yAxisInterface } from "./y-axis";
 
-import { WIDTH } from "../../constants";
+import { WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
 import { plotArea } from "./plot-area";
 import { plotAreaInteraction } from "./plot-area-interaction";
@@ -148,7 +148,7 @@ export const chart = (
       value.id,
       (plotAreaInteraction(xScale, yScales[value.id]).on(
         "zoom",
-        (_e, t, point) => {
+        (_e: any, t: any, point: [number, number]) => {
           zoomed(t, point, value.id);
         }
       ) as any)
