@@ -144,9 +144,11 @@ export const VegaProtocol: Story = () => {
         <Chart
           ref={ref}
           dataSource={dataSource}
-          chartType={chartType}
-          study={study === null ? undefined : study}
-          overlay={overlay === null ? undefined : overlay}
+          options={{
+            chartType: chartType,
+            studies: study === null ? [] : [study],
+            overlays: overlay === null ? [] : [overlay],
+          }}
           interval={interval}
         />
       </div>
@@ -198,9 +200,11 @@ export const CryptoCompare: Story = () => {
         <Chart
           ref={ref}
           dataSource={dataSource}
-          chartType={chartType}
-          study={study === null ? undefined : study}
-          overlay={overlay === null ? undefined : overlay}
+          options={{
+            chartType: chartType,
+            studies: study === null ? [] : [study],
+            overlays: overlay === null ? [] : [overlay],
+          }}
           interval={interval}
         />
       </div>

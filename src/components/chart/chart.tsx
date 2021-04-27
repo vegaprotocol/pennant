@@ -13,71 +13,45 @@ import {
 import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CandleInfo } from "../candle-info";
 import { ChartElement } from "../../types";
-import { ChartInfo } from "../chart-info";
 import { ErrorBoundary } from "../error-boundary";
 import { Interval } from "../../stories/api/vega-graphql";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { PriceMonitoringInfo } from "../price-monitoring-info";
-import { StudyInfo } from "../study-info";
 import { extent } from "d3-array";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
 
-export type ChartProps = {
-  dataSource: DataSource;
-  chartType?: ChartType;
-  study?: Study;
-  overlay?: Overlay;
-  interval: Interval;
-  onClick?: (id: string) => void;
+export type Bounds = {
+  date: Date;
+  intervalWidth: number;
 };
 
-const StudyLabel = new Map<
-  Study,
-  { label: string; producedFields: { field: string; label: string }[] }
->([
-  [
-    "eldarRay",
-    {
-      label: "Eldar-ray",
-      producedFields: [
-        { field: "bullPower", label: "Bull" },
-        { field: "bearPower", label: "Bear" },
-      ],
-    },
-  ],
-  [
-    "macd",
-    {
-      label: "MACD",
-      producedFields: [
-        { field: "signal", label: "S" },
-        { field: "macd", label: "M" },
-        { field: "divergence", label: "D" },
-      ],
-    },
-  ],
-  [
-    "volume",
-    {
-      label: "Volume",
-      producedFields: [{ field: "volume", label: "V" }],
-    },
-  ],
-]);
+export type Options = {
+  chartType?: ChartType;
+  overlays?: Overlay[];
+  studies?: Study[];
+};
+
+export type ChartProps = {
+  dataSource: DataSource;
+  initialBounds?: Bounds;
+  interval: Interval;
+  options?: Options;
+  onBoundsChanged?: (bounds: Bounds) => void;
+  onOptionsChanged?: (options: Options) => void;
+};
 
 export const Chart = React.forwardRef(
   (
     {
       dataSource,
-      chartType = "candle",
-      study,
-      overlay,
       interval,
-      onClick = () => {},
+      options: { chartType = "candle", studies = [], overlays = [] } = {
+        chartType: "candle",
+        studies: [],
+        overlays: [],
+      },
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -107,34 +81,42 @@ export const Chart = React.forwardRef(
       priceMonitoringBounds,
       setPriceMonitoringBounds,
     ] = React.useState<PriceMonitoringBounds | null>(null);
+
     const [bounds, setBounds] = React.useState<[Date, Date]>([
       new Date(),
       new Date(),
     ]);
+
     const [selectedIndex, setCandle] = React.useState<number | null>(null);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [internalInterval, setInternalInterval] = React.useState(interval);
 
     const specification = React.useMemo(
       () =>
         constructTopLevelSpec(
           data,
           chartType,
-          overlay,
-          study,
+          overlays[0],
+          studies[0],
           priceMonitoringBounds
         ),
-      [chartType, data, overlay, priceMonitoringBounds, study]
+      [chartType, data, overlays, priceMonitoringBounds, studies]
     );
 
     // Compile data and view specification into scenegraph ready for rendering
     const scenegraph = React.useMemo(() => {
       return parse(
         specification,
-        getCandleWidth(interval),
+        getCandleWidth(internalInterval),
         dataSource.decimalPlaces,
         annotations
       );
-    }, [annotations, dataSource.decimalPlaces, interval, specification]);
+    }, [
+      annotations,
+      dataSource.decimalPlaces,
+      internalInterval,
+      specification,
+    ]);
 
     // Fetch historical data
     const query = React.useCallback(
@@ -148,6 +130,18 @@ export const Chart = React.forwardRef(
 
     // Respond to streaming data
     React.useEffect(() => {
+      const fetchData = async () => {
+        console.time("query");
+
+        await query(
+          new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
+          new Date().toISOString(),
+          false
+        );
+
+        setInternalInterval(interval);
+      };
+      
       function subscribe() {
         dataSource.subscribeData(interval, (datum) => {
           setData((data) => mergeData([datum], data));
@@ -156,12 +150,10 @@ export const Chart = React.forwardRef(
 
       const myDataSource = dataSource;
 
-      query(
-        new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
-        new Date().toISOString(),
-        false
-      );
+      // Initial data fetch
+      fetchData();
 
+      // Set up subscriptions
       subscribe();
 
       return () => {
@@ -221,7 +213,7 @@ export const Chart = React.forwardRef(
           <AutoSizer
             defaultHeight={150}
             defaultWidth={300}
-            style={{ height: "100%", width: "100%" }} // TODO: Find a better method
+            style={{ height: "100%", width: "100%" }}
           >
             {({ height, width }) => (
               <PlotContainer
@@ -230,7 +222,7 @@ export const Chart = React.forwardRef(
                 height={height}
                 specification={specification}
                 scenegraph={scenegraph}
-                interval={interval}
+                interval={internalInterval}
                 initialBounds={extent(data.map((d) => d.date)) as [Date, Date]}
                 onBoundsChanged={setBounds}
                 onMouseMove={setCandle}

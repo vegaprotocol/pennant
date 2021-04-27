@@ -295,7 +295,7 @@ export function parse(
                 : [],
             labels: panelIndex === 0 ? annotations : [],
             yEncodingFields: extractYEncodingFields(panel),
-            yDomain: extractYDomain(panel, newData),
+            yDomain: extractYDomain(panel, newData), // FIXME: duplicate of bounds
           };
         })
       : [], // FIXME: If not a vconcat spec what should we do?

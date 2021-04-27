@@ -38,14 +38,14 @@ export type ChartPanel = {
   ref: React.RefObject<HTMLDivElement>;
   data: any[];
   renderableElements: RenderableElement[];
-  initialBounds: [number, number];
+  yEncodingFields?: string[];
 };
 
 export interface ChartInterface {
   on(
     typenames: string,
     callback?: (this: object, ...args: any[]) => void
-  ): void;
+  ): ChartInterface;
   plotAreas(areas: Record<string, ChartPanel>): ChartInterface;
   reset(): void;
 }
@@ -88,7 +88,7 @@ export const chart = (
   let yScales: Record<string, ScaleLinear> = Object.fromEntries(
     Object.values(panels).map((panel) => [
       panel.id,
-      scaleLinear().domain(panel.initialBounds),
+      scaleLinear().domain([0, 1]), //FIXME: Initialize domain
     ])
   );
 
@@ -133,7 +133,13 @@ export const chart = (
   let plotAreas: Record<string, any> = Object.fromEntries(
     Object.values(panels).map((panel) => [
       panel.id,
-      plotArea(xScale, yScales[panel.id], panel.renderableElements.flat(1)),
+      plotArea(
+        xScale,
+        yScales[panel.id],
+        panel.renderableElements.flat(1),
+        panel.data,
+        panel.yEncodingFields
+      ),
     ])
   );
 
@@ -210,14 +216,30 @@ export const chart = (
   );
 
   function reset() {
-    xElement
-      .call(xZoom.transform, zoomIdentity)
-      .call(xZoom.translateBy, -WIDTH, 0);
-
     const xr = xTransform().rescaleX(xScale);
 
+    xElement.call(
+      xZoom.transform,
+      zoomIdentity.translate(
+        -WIDTH - (xScale(1000 * 60 * 5) - xScale(0)) * 5,
+        0
+      )
+    ); // TODO: Subtract N candle widths
+
     xAxis.xScale(xr);
-    Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
+    Object.entries(plotAreas).forEach(([id, plotArea]) => {
+      plotArea.xScale(xr);
+
+      recalcuateScale(
+        xTransform,
+        xScale,
+        yScales,
+        id,
+        plotAreas,
+        plotAreaElements,
+        yZooms
+      );
+    });
 
     isPinned = true;
     isFreePan = false;
@@ -230,27 +252,57 @@ export const chart = (
     if (t.k === 1) {
       xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
 
-      isFreePan &&
+      if (isFreePan) {
         plotAreaElements[id].call(
           yZooms[id].translateBy,
           0,
           t.y / yTransforms[id]().k
         );
+      } else {
+        recalcuateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          plotAreaElements,
+          yZooms
+        );
+      }
 
       isPinned = false;
     } else {
       xElement.call(
         xZoom.scaleBy,
         t.k,
-        isPinned ? [xScale.range()[1] - WIDTH, 0] : point
+        isPinned
+          ? [
+              xScale.range()[1] -
+                WIDTH -
+                (xScale(1000 * 60 * 5) - xScale(0)) * 5,
+              0,
+            ]
+          : point
       );
+
+      if (!isFreePan) {
+        recalcuateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          plotAreaElements,
+          yZooms
+        );
+      }
     }
 
     const xr = xTransform().rescaleX(xScale);
     const yr = yTransforms[id]().rescaleY(yScales[id]);
 
     xAxis.xScale(xr);
-    Object.entries(plotAreas).forEach(([id, plotArea]) => plotArea.xScale(xr));
+    Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
 
     plotAreas[id].yScale(yr);
     yAxes[id].yScale(yr);
@@ -361,7 +413,7 @@ export const chart = (
         newGPlotAreas[id] = plotAreaElements[id];
         newTs[id] = yTransforms[id];
       } else {
-        newYScales[id] = scaleLinear().domain(areas[id].initialBounds);
+        newYScales[id] = scaleLinear().domain([0, 1]); //FIXME: Initialize domain
         newYAxes[id] = yAxis(xTransform().rescaleX(xScale), newYScales[id]);
         newYAxisInteractions[id] = yAxisInteraction(newYScales[id]).on(
           "drag",
@@ -372,7 +424,9 @@ export const chart = (
         newPlotAreas[id] = plotArea(
           xTransform().rescaleX(xScale),
           newYScales[id],
-          areas[id].renderableElements
+          areas[id].renderableElements,
+          areas[id].data,
+          areas[id].yEncodingFields
         );
         newPlotAreaInteractions[id] = (plotAreaInteraction(
           xTransform().rescaleX(xScale),
@@ -487,15 +541,47 @@ export const chart = (
 
   chart.on = (
     typenames: string,
-    callback?: (this: object, ...args: any[]) => void
-  ) => {
-    if (callback) {
-      listeners.on(typenames, callback);
-      return chart;
-    } else {
-      return listeners.on(typenames);
-    }
+    callback: (this: object, ...args: any[]) => void
+  ): ChartInterface => {
+    listeners.on(typenames, callback);
+    return chart;
   };
 
   return chart;
 };
+
+function recalcuateScale(
+  xTransform: () => ZoomTransform,
+  xScale: ScaleTime,
+  yScales: Record<string, ScaleLinear>,
+  id: string,
+  plotAreas: Record<string, any>,
+  plotAreaElements: any,
+  yZooms: any
+) {
+  const xr = xTransform().rescaleX(xScale);
+  const bounds = xr.domain();
+  const originalExtent = yScales[id].range();
+  const newExtent = plotAreas[id].extent(bounds);
+  const originalHeight = Math.abs(originalExtent[0] - originalExtent[1]);
+
+  const newHeight = Math.abs(
+    yScales[id](newExtent[1]) - yScales[id](newExtent[0])
+  );
+
+  plotAreaElements[id].call(
+    yZooms[id].transform,
+    zoomIdentity
+      .translate(0, originalHeight / 2)
+      .scale(originalHeight / (1.3 * newHeight))
+      .translate(
+        0,
+        -(
+          yScales[id](newExtent[0]) -
+          0.1 * newHeight +
+          yScales[id](newExtent[1]) +
+          0.2 * newHeight
+        ) / 2
+      )
+  );
+}

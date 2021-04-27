@@ -97,7 +97,7 @@ export const PlotContainer = React.forwardRef(
     const chartElement = useRef<ChartInterface | null>(null);
 
     useEffect(() => {
-      chartElement.current = (chart(
+      chartElement.current = chart(
         Object.fromEntries(
           scenegraph.panels.map((panel) => [
             panel.id,
@@ -106,19 +106,24 @@ export const PlotContainer = React.forwardRef(
               ref: refs[panel.id],
               data: panel.originalData,
               renderableElements: panel.renderableElements.flat(1),
-              initialBounds: panel.bounds as [number, number],
+              yEncodingFields: panel.yEncodingFields,
             },
           ])
         ),
         { ref: xAxisRef, data: [] },
         initialBounds
-      ).on("redraw", () => {
-        chartRef.current?.requestRedraw();
-      }) as any).on("bounds_changed", (bounds: [Date, Date]) => {
-        setBounds(bounds);
-      });
+      )
+        .on("redraw", () => {
+          chartRef.current?.requestRedraw();
+        })
+        .on("bounds_changed", (bounds: [Date, Date]) => {
+          setBounds(bounds);
+        });
 
-      chartElement.current?.reset();
+      chartRef.current?.requestRedraw();
+
+      requestAnimationFrame(() => chartElement.current?.reset());
+
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -133,7 +138,7 @@ export const PlotContainer = React.forwardRef(
                 ref: refs[panel.id],
                 data: panel.originalData,
                 renderableElements: panel.renderableElements.flat(1),
-                initialBounds: panel.bounds as [number, number],
+                yEncodingFields: panel.yEncodingFields,
               },
             ])
           )

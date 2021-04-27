@@ -20,7 +20,6 @@ export interface Panel {
   id: string;
   originalData: any[];
   renderableElements: RenderableElement[][];
-  bounds?: [number, number];
   grid?: RenderableElement;
   axis?: RenderableElement;
   axisTooltip?: RenderableElement;

@@ -22,14 +22,16 @@ Simple.args = { dataSource: new JsonDataSource("", 5), interval: Interval.I5M };
 export const Study = Template.bind({});
 Study.args = {
   ...Simple.args,
-  chartType: "area",
-  study: "macd",
+  options: {
+    chartType: "area",
+    studies: ["macd"],
+  },
 };
 
 export const Positions = Template.bind({});
 Positions.args = {
   ...Simple.args,
-  chartType: "area",
+  options: { ...Simple.args.options, chartType: "area" },
 };
 
 export const NoData = Template.bind({});
