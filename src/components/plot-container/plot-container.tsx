@@ -261,7 +261,7 @@ export const PlotContainer = React.forwardRef(
               ></d3fc-svg>
               <div className="plot-container__info_overlay">
                 {index === 0 && <ChartInfo bounds={bounds} />}
-                {dataIndex && (
+                {
                   <StudyInfo
                     title={StudyInfoFields[panel.id].label}
                     info={StudyInfoFields[panel.id].fields.map(
@@ -269,12 +269,14 @@ export const PlotContainer = React.forwardRef(
                         id: field.field,
                         label: field.label,
                         value: formatter(
-                          panel.originalData[dataIndex][field.field]
+                          panel.originalData[
+                            dataIndex ?? panel.originalData.length - 1
+                          ][field.field]
                         ),
                       })
                     )}
                   />
-                )}
+                }
               </div>
             </div>
             <div style={{ height: "1px", backgroundColor: "white" }}></div>
