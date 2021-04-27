@@ -30,7 +30,7 @@ export interface Panel {
   /**
    * Fields to use to determine y axis extent
    */
-  yEncodingFields?: string[];
+  yEncodingFields: string[];
   yDomain?: [number, number];
 }
 

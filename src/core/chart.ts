@@ -46,7 +46,7 @@ export type ChartPanel = {
   ref: React.RefObject<HTMLDivElement>;
   data: any[];
   renderableElements: RenderableElement[];
-  yEncodingFields?: string[];
+  yEncodingFields: string[];
 };
 
 export interface ChartInterface {
@@ -432,7 +432,8 @@ export const chart = (
         newYAxisInteractions[id] = yAxisInteractions[id];
         newPlotAreas[id] = plotAreas[id]
           .data(areas[id].data)
-          .renderableElements(areas[id].renderableElements);
+          .renderableElements(areas[id].renderableElements)
+          .yEncodingFields(areas[id].yEncodingFields);
         newPlotAreaInteractions[id] = plotAreaInteractions[id];
         newZooms[id] = yZooms[id];
         newGPlotAreas[id] = plotAreaElements[id];

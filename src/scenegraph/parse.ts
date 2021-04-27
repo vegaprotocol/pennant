@@ -312,6 +312,7 @@ export function parse(
       ],
       axis: new XAxisElement(),
       axisTooltip: new XAxisTooltipElement(),
+      yEncodingFields: [],
     },
   };
 }
