@@ -298,10 +298,11 @@ export const chart = (
 
     xElement.call(xZoom.scaleBy, 2 ** n, [
       isPinned
-        ? xScale.range()[1] - WIDTH 
+        ? xScale.range()[1] - WIDTH
         : (xScale.range()[0] + xScale.range()[1]) / 2,
       0,
     ]);
+
     xAxis.xScale(xr);
 
     Object.entries(plotAreas).forEach(([id, plotArea]) => {

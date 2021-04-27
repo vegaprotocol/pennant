@@ -81,11 +81,13 @@ export function handleZoomend(
   listeners: any,
   chart: any
 ) {
+  const [_index, x] = plotAreas[id].getIndex(offset[0]);
+
   Object.values(plotAreas).forEach((plotArea) => {
-    plotArea.crosshair(offset);
+    plotArea.crosshair([x, offset[1]]);
   });
 
-  xAxis.crosshair(offset[0]);
+  xAxis.crosshair(x);
   yAxes[id].crosshair(offset[1]);
 
   listeners.call("redraw", chart);
@@ -210,5 +212,3 @@ export function handleMousemove(
   listeners.call("redraw", chart);
   listeners.call("mousemove", chart, index, id);
 }
-
-
