@@ -154,6 +154,7 @@ export const PlotContainer = React.forwardRef(
         { ref: xAxisRef, data: [] },
         initialBounds
       )
+        .interval(1000 * 60 * getSubMinutes(interval, 1))
         .on("redraw", () => {
           chartRef.current?.requestRedraw();
         })
@@ -178,24 +179,26 @@ export const PlotContainer = React.forwardRef(
 
     useEffect(() => {
       if (chartElement.current) {
-        chartElement.current.plotAreas(
-          Object.fromEntries(
-            scenegraph.panels.map((panel) => [
-              panel.id,
-              {
-                id: String(panel.id),
-                ref: refs[panel.id],
-                data: panel.originalData,
-                renderableElements: panel.renderableElements.flat(1),
-                yEncodingFields: panel.yEncodingFields,
-              },
-            ])
-          )
-        );
+        chartElement.current
+          .interval(1000 * 60 * getSubMinutes(interval, 1))
+          .plotAreas(
+            Object.fromEntries(
+              scenegraph.panels.map((panel) => [
+                panel.id,
+                {
+                  id: String(panel.id),
+                  ref: refs[panel.id],
+                  data: panel.originalData,
+                  renderableElements: panel.renderableElements.flat(1),
+                  yEncodingFields: panel.yEncodingFields,
+                },
+              ])
+            )
+          );
 
         chartRef.current?.requestRedraw();
       }
-    }, [chartElement, refs, scenegraph.panels]);
+    }, [chartElement, interval, refs, scenegraph.panels]);
 
     return (
       <d3fc-group

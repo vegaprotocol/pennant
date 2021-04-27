@@ -49,6 +49,7 @@ export type ChartPanel = {
 };
 
 export interface ChartInterface {
+  interval(interval: number): ChartInterface;
   on(
     typenames: string,
     callback?: (this: object, ...args: any[]) => void
@@ -92,6 +93,8 @@ export const chart = (
   let isPinned = true;
   let isFreePan = false;
 
+  let interval: number = 1000 * 60;
+
   let xScale: ScaleTime = scaleTime<number, number, number>().domain(
     initialBounds
   );
@@ -126,7 +129,7 @@ export const chart = (
       listeners,
       chart
     );
-  }) as xAxisInteractionInterface;
+  });
 
   let yAxes: Record<string, yAxisInterface> = Object.fromEntries(
     Object.entries(yScales).map(([id, scale]) => [id, yAxis(xScale, scale)])
@@ -163,12 +166,10 @@ export const chart = (
   > = Object.fromEntries(
     Object.values(panels).map((value) => [
       value.id,
-      (plotAreaInteraction(xScale, yScales[value.id]).on(
-        "zoom",
-        (_e: any, t: any, point: [number, number]) => {
+      plotAreaInteraction(xScale, yScales[value.id])
+        .on("zoom", (_e: any, t: any, point: [number, number]) => {
           zoomed(t, point, value.id);
-        }
-      ) as any)
+        })
         .on("zoomstart", () => {
           handleZoomstart(plotAreas, yAxes, xAxis);
         })
@@ -235,7 +236,7 @@ export const chart = (
   function panBy(n: number) {
     const xr = xTransform().rescaleX(xScale);
 
-    xElement.call(xZoom.translateBy, -(xScale(n * 1000 * 60) - xScale(0)), 0);
+    xElement.call(xZoom.translateBy, -(xScale(n * interval) - xScale(0)), 0);
 
     xAxis.xScale(xr);
 
@@ -460,6 +461,11 @@ export const chart = (
     listeners.call("redraw", chart);
   };
 
+  chart.interval = (ms: number) => {
+    interval = ms;
+    return chart;
+  };
+
   chart.plotAreas = (areas: Record<string, ChartPanel>) => {
     const oldIds = Object.keys(plotAreas);
     const newIds = Object.keys(areas);
@@ -508,12 +514,13 @@ export const chart = (
           areas[id].data,
           areas[id].yEncodingFields
         );
-        newPlotAreaInteractions[id] = (plotAreaInteraction(
+        newPlotAreaInteractions[id] = plotAreaInteraction(
           xTransform().rescaleX(xScale),
           newYScales[id]
-        ).on("zoom", (e, t, point) => {
-          zoomed(t, point, id);
-        }) as any)
+        )
+          .on("zoom", (e, t, point) => {
+            zoomed(t, point, id);
+          })
           .on("zoomstart", () => {
             handleZoomstart(newPlotAreas, newYAxes, xAxis);
           })
