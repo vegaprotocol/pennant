@@ -10,6 +10,7 @@ describe("constructTopLevelSpec", () => {
       transform: [],
       vconcat: [
         {
+          name: "main",
           layer: [
             {
               encoding: {
@@ -59,6 +60,7 @@ describe("constructTopLevelSpec", () => {
       transform: [],
       vconcat: [
         {
+          name: "main",
           layer: [
             {
               encoding: { y: { field: "close", type: "quantitative" } },
@@ -87,6 +89,7 @@ describe("constructTopLevelSpec", () => {
       transform: [],
       vconcat: [
         {
+          name: "main",
           layer: [
             {
               encoding: { y: { field: "close", type: "quantitative" } },
@@ -108,6 +111,7 @@ describe("constructTopLevelSpec", () => {
       transform: [{ indicator: "bollinger", on: "close" }],
       vconcat: [
         {
+          name: "main",
           layer: [
             {
               encoding: { y: { field: "close", type: "quantitative" } },
@@ -144,6 +148,7 @@ describe("constructTopLevelSpec", () => {
       transform: [],
       vconcat: [
         {
+          name: "main",
           layer: [
             {
               encoding: { y: { field: "close", type: "quantitative" } },
@@ -162,6 +167,7 @@ describe("constructTopLevelSpec", () => {
           ],
         },
         {
+          name: "volume",
           layer: [
             {
               encoding: { y: { field: "volume", type: "quantitative" } },
