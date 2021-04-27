@@ -230,7 +230,7 @@ export const chart = (
     Object.entries(plotAreas).forEach(([id, plotArea]) => {
       plotArea.xScale(xr);
 
-      recalcuateScale(
+      recalculateScale(
         xTransform,
         xScale,
         yScales,
@@ -259,15 +259,17 @@ export const chart = (
           t.y / yTransforms[id]().k
         );
       } else {
-        recalcuateScale(
-          xTransform,
-          xScale,
-          yScales,
-          id,
-          plotAreas,
-          plotAreaElements,
-          yZooms
-        );
+        Object.keys(plotAreas).forEach((id) => {
+          recalculateScale(
+            xTransform,
+            xScale,
+            yScales,
+            id,
+            plotAreas,
+            plotAreaElements,
+            yZooms
+          );
+        });
       }
 
       isPinned = false;
@@ -286,15 +288,17 @@ export const chart = (
       );
 
       if (!isFreePan) {
-        recalcuateScale(
-          xTransform,
-          xScale,
-          yScales,
-          id,
-          plotAreas,
-          plotAreaElements,
-          yZooms
-        );
+        Object.keys(plotAreas).forEach((id) => {
+          recalculateScale(
+            xTransform,
+            xScale,
+            yScales,
+            id,
+            plotAreas,
+            plotAreaElements,
+            yZooms
+          );
+        });
       }
     }
 
@@ -550,7 +554,7 @@ export const chart = (
   return chart;
 };
 
-function recalcuateScale(
+function recalculateScale(
   xTransform: () => ZoomTransform,
   xScale: ScaleTime,
   yScales: Record<string, ScaleLinear>,

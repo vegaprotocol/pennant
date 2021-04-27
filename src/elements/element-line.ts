@@ -43,7 +43,7 @@ export class LineElement implements PositionalElement {
 
       ctx.strokeStyle = this.color;
       ctx.lineCap = "butt";
-      ctx.lineWidth = 1 / pixelRatio;
+      ctx.lineWidth = 2 / pixelRatio;
       ctx.stroke();
 
       ctx.closePath();
