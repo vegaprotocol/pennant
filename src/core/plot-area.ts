@@ -79,7 +79,6 @@ export const plotArea = (
   };
 
   plotArea.getIndex = (offset: number): [number, number] => {
-    const data = originalData;
     const timeAtMouseX = xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(data, timeAtMouseX);
     const firstElement: Date = data[Math.max(0, index - 1)].date;

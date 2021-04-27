@@ -1,6 +1,6 @@
 import { ScaleLinear, ScaleTime } from "../types";
 
-import { Colors } from "../helpers";
+import { Colors, multiFormat } from "../helpers";
 import { RenderableElement } from "../types";
 import { format } from "date-fns";
 
@@ -18,7 +18,7 @@ function addXAxisTooltipPath(
 
     const value = xScale.invert(position);
     const xPad = 5;
-    const text = format(value, "HH:mm");
+    const text = multiFormat(value);
     const textWidth = ctx.measureText(text).width;
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;

@@ -5,7 +5,6 @@ import {
   ZoomBehavior,
   ZoomTransform,
   zoom as d3Zoom,
-  zoomIdentity,
   zoomTransform,
 } from "d3-zoom";
 import {
