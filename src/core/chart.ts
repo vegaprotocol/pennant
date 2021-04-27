@@ -21,7 +21,7 @@ import {
   measureXAxis,
   measureYAxis,
   recalculateScale,
-} from "./helpers/chart-event-helpers";
+} from "./helpers";
 import {
   plotAreaInteraction,
   plotAreaInteractionInterface,
