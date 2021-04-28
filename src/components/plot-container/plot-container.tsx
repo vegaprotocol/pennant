@@ -5,7 +5,6 @@ import "./plot-container.scss";
 import * as React from "react";
 
 import { ChartElement, Scenegraph, Study } from "../../types";
-import { ChartInterface, chart } from "../../core";
 import {
   asyncSnapshot,
   formatter,
@@ -29,7 +28,7 @@ import { createRef } from "react";
 import { throttle } from "lodash";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
-import { Core } from "../../core/chart";
+import { Core } from "../../core";
 
 const StudyInfoFields: Record<
   string,
