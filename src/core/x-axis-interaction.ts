@@ -1,46 +1,28 @@
-import { ScaleTime } from "../types";
 import { Selection } from "d3-selection";
-import { drag as d3Drag } from "d3-drag";
-import { dispatch } from "d3-dispatch";
-
-export interface xAxisInteractionInterface {
-  (selection: Selection<SVGSVGElement, any, any, any>): void;
-  xScale(x: ScaleTime): xAxisInteractionInterface;
-  on(
-    typenames: string,
-    callback: (this: object, ...args: any[]) => void
-  ): xAxisInteractionInterface;
-}
+import { drag as d3Drag, DragBehavior } from "d3-drag";
+import { Dispatch, dispatch } from "d3-dispatch";
 
 /**
  * The x-axis interaction component handles dragging interactions.
  */
-export const xAxisInteraction = (x: ScaleTime) => {
-  let listeners = dispatch("drag");
-  let xScale = x.copy();
-
-  let drag = d3Drag<SVGSVGElement, unknown>().on("drag", function (e) {
-    listeners.call("drag", xAxisInteraction, e);
+export class XAxisInteraction {
+  private drag: DragBehavior<Element, unknown, unknown> = d3Drag<
+    Element,
+    unknown
+  >().on("drag", (e) => {
+    this.listeners.call("drag", this, e);
   });
+  private listeners: Dispatch<object> = dispatch("drag");
 
-  const xAxisInteraction: xAxisInteractionInterface = (
-    selection: Selection<SVGSVGElement, any, any, any>
-  ) => {
-    selection.call(drag);
-  };
+  draw(selection: Selection<Element, any, any, any>) {
+    selection.call(this.drag);
+  }
 
-  xAxisInteraction.xScale = (x: ScaleTime): xAxisInteractionInterface => {
-    xScale = x.copy();
-    return xAxisInteraction;
-  };
-
-  xAxisInteraction.on = (
+  on(
     typenames: string,
     callback: (this: object, ...args: any[]) => void
-  ): xAxisInteractionInterface => {
-    listeners.on(typenames, callback);
-    return xAxisInteraction;
-  };
-
-  return xAxisInteraction;
-};
+  ): this {
+    this.listeners.on(typenames, callback);
+    return this;
+  }
+}

@@ -1,47 +1,28 @@
-import { ScaleLinear } from "../types";
 import { Selection } from "d3-selection";
-import { drag as d3Drag } from "d3-drag";
-import { dispatch } from "d3-dispatch";
-
-export interface yAxisInteractionInterface {
-  (selection: Selection<SVGSVGElement, any, any, any>): void;
-  yScale(y: ScaleLinear): yAxisInteractionInterface;
-  on(
-    typenames: string,
-    callback: (this: object, ...args: any[]) => void
-  ): yAxisInteractionInterface;
-}
+import { drag as d3Drag, DragBehavior } from "d3-drag";
+import { Dispatch, dispatch } from "d3-dispatch";
 
 /**
  * The y-axis interaction component handles dragging interactions.
  */
-export const yAxisInteraction = (y: ScaleLinear) => {
-  let listeners = dispatch("drag");
-
-  let yScale = y;
-
-  let drag = d3Drag<SVGSVGElement, unknown>().on("drag", function (e) {
-    listeners.call("drag", yAxisInteraction, e);
+export class YAxisInteraction {
+  private drag: DragBehavior<Element, unknown, unknown> = d3Drag<
+    Element,
+    unknown
+  >().on("drag", (e) => {
+    this.listeners.call("drag", this, e);
   });
+  private listeners: Dispatch<object> = dispatch("drag");
 
-  const yAxisInteraction = (
-    selection: Selection<SVGSVGElement, any, any, any>
-  ) => {
-    selection.call(drag);
-  };
+  draw(selection: Selection<Element, any, any, any>) {
+    selection.call(this.drag);
+  }
 
-  yAxisInteraction.yScale = (y: ScaleLinear): any => {
-    yScale = y;
-    return yAxisInteraction;
-  };
-
-  yAxisInteraction.on = (
+  on(
     typenames: string,
     callback: (this: object, ...args: any[]) => void
-  ): yAxisInteractionInterface => {
-    listeners.on(typenames, callback);
-    return yAxisInteraction;
-  };
-
-  return yAxisInteraction;
-};
+  ): this {
+    this.listeners.on(typenames, callback);
+    return this;
+  }
+}

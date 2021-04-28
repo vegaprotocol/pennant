@@ -15,6 +15,7 @@ import {
   handleMousemove,
   handleMouseout,
   handleXAxisDrag,
+  handleYAxisDrag,
   handleZoomend,
   handleZoomstart,
   measureXAxis,
@@ -24,15 +25,9 @@ import {
 import { PlotAreaInteraction } from "./plot-area-interaction";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { XAxis } from "./x-axis";
-import {
-  xAxisInteraction as xAxisInteractionElement,
-  xAxisInteractionInterface,
-} from "./x-axis-interaction";
+import { XAxisInteraction } from "./x-axis-interaction";
 import { YAxis } from "./y-axis";
-import {
-  yAxisInteraction,
-  yAxisInteractionInterface,
-} from "./y-axis-interaction";
+import { YAxisInteraction } from "./y-axis-interaction";
 
 import { WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
@@ -81,7 +76,7 @@ export class Core {
   private xScale: ScaleTime;
   private xZoom: ZoomBehavior<Element, unknown>;
   private xAxis: XAxis;
-  private xAxisInteraction: xAxisInteractionInterface;
+  private xAxisInteraction: XAxisInteraction;
   private xElement: Selection<Element, unknown, null, undefined>;
   private xTransform: () => ZoomTransform;
 
@@ -89,7 +84,7 @@ export class Core {
   private yScales: Panes<ScaleLinear>;
   private yZooms: Panes<ZoomBehavior<Element, unknown>>;
   private yAxes: Panes<YAxis>;
-  private yAxisInteractions: Panes<yAxisInteractionInterface>;
+  private yAxisInteractions: Panes<YAxisInteraction>;
   private yTransforms: Panes<() => ZoomTransform>;
 
   // plot-area
@@ -111,24 +106,22 @@ export class Core {
       .style("pointer-events", "none");
 
     this.xAxis = new XAxis(this.xScale);
-    this.xAxisInteraction = xAxisInteractionElement(this.xScale).on(
-      "drag",
-      (e) => {
-        handleXAxisDrag(
-          this.xElement,
-          this.xZoom,
-          e,
-          this.xScale,
-          this.isPinned,
-          this.xTransform,
-          this.xAxis,
-          this.plotAreas,
-          this.yAxes,
-          this.listeners,
-          this
-        );
-      }
-    );
+    this.xAxisInteraction = new XAxisInteraction().on("drag", (e) => {
+      handleXAxisDrag(
+        this.xElement,
+        this.xZoom,
+        e,
+        this.xScale,
+        this.isPinned,
+        this.xTransform,
+        this.xAxis,
+        this.plotAreas,
+        this.yAxes,
+        (bounds: [Date, Date]) =>
+          this.listeners.call("bounds_changed", this, bounds),
+        () => this.listeners.call("redraw", this)
+      );
+    });
 
     this.xTransform = () => zoomTransform(this.xElement.node()!);
 
@@ -147,8 +140,19 @@ export class Core {
     this.yAxisInteractions = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
         id,
-        yAxisInteraction(this.yScales[id]).on("drag", (e) => {
-          this.yAxisDragged(e, id);
+        new YAxisInteraction().on("drag", (e) => {
+          handleYAxisDrag(
+            this.plotAreaElements,
+            this.yZooms,
+            e,
+            this.yScales,
+            this.yTransforms,
+            this.plotAreas,
+            this.yAxes,
+            this.isFreePan,
+            id,
+            () => this.listeners.call("redraw", this)
+          );
         }),
       ])
     );
@@ -184,8 +188,7 @@ export class Core {
               this.xAxis,
               this.yAxes,
               value.id,
-              this.listeners,
-              this
+              () => this.listeners.call("redraw", this)
             );
           })
           .on("dblclick", () => {
@@ -199,8 +202,8 @@ export class Core {
               this.yAxes,
               this.xAxis,
               value.id,
-              this.listeners,
-              this
+              (index, id) => this.listeners.call("mousemove", this, index, id),
+              () => this.listeners.call("redraw", this)
             );
           })
           .on("mouseout", () => {
@@ -208,8 +211,8 @@ export class Core {
               this.plotAreas,
               this.xAxis,
               this.yAxes,
-              this.listeners,
-              this
+              () => this.listeners.call("redraw", this),
+              () => this.listeners.call("mouseout", this)
             );
           }),
       ])
@@ -268,9 +271,7 @@ export class Core {
     select<HTMLDivElement, unknown>(axis.ref.current)
       .select(".x-axis-interaction")
       .on("draw", (event) => {
-        select(event.currentTarget)
-          .select<SVGSVGElement>("svg")
-          .call(this.xAxisInteraction);
+        this.xAxisInteraction.draw(select(event.currentTarget).select("svg"));
       });
 
     Object.entries(this.yScales).map(([id, scale]) =>
@@ -294,9 +295,9 @@ export class Core {
       select<HTMLDivElement, unknown>(area.ref.current!)
         .select(".y-axis-interaction")
         .on("draw", (event) => {
-          select(event.currentTarget)
-            .select<SVGSVGElement>("svg")
-            .call(this.yAxisInteractions[id]);
+          this.yAxisInteractions[id].draw(
+            select(event.currentTarget).select("svg")
+          );
         })
     );
 
@@ -404,7 +405,7 @@ export class Core {
 
     const newYScales: Panes<ScaleLinear> = {};
     const newYAxes: Panes<YAxis> = {};
-    const newYAxisInteractions: Panes<yAxisInteractionInterface> = {};
+    const newYAxisInteractions: Panes<YAxisInteraction> = {};
     const newPlotAreas: Panes<PlotArea> = {};
     const newPlotAreaInteractions: Panes<PlotAreaInteraction> = {};
     const newZooms: Panes<ZoomBehavior<Element, unknown>> = {};
@@ -416,26 +417,39 @@ export class Core {
         newYScales[id] = this.yScales[id];
         newYAxes[id] = this.yAxes[id];
         newYAxisInteractions[id] = this.yAxisInteractions[id];
+
         newPlotAreas[id] = this.plotAreas[id]
           .data(areas[id].data)
           .renderableElements(areas[id].renderableElements)
           .yEncodingFields(areas[id].yEncodingFields);
+
         newPlotAreaInteractions[id] = this.plotAreaInteractions[id];
         newZooms[id] = this.yZooms[id];
         newGPlotAreas[id] = this.plotAreaElements[id];
         newTs[id] = this.yTransforms[id];
       } else {
         newYScales[id] = scaleLinear().domain([0, 1]); //FIXME: Initialize domain
+
         newYAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id]
         );
-        newYAxisInteractions[id] = yAxisInteraction(newYScales[id]).on(
-          "drag",
-          (e) => {
-            this.yAxisDragged(e, id);
-          }
-        );
+
+        newYAxisInteractions[id] = new YAxisInteraction().on("drag", (e) => {
+          handleYAxisDrag(
+            newGPlotAreas,
+            newZooms,
+            e,
+            newYScales,
+            newTs,
+            newPlotAreas,
+            newYAxes,
+            this.isFreePan,
+            id,
+            () => this.listeners.call("redraw", this)
+          );
+        });
+
         newPlotAreas[id] = new PlotArea(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id],
@@ -443,6 +457,7 @@ export class Core {
           areas[id].data,
           areas[id].yEncodingFields
         );
+
         newPlotAreaInteractions[id] = new PlotAreaInteraction(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id]
@@ -454,14 +469,8 @@ export class Core {
             handleZoomstart(newPlotAreas, newYAxes, this.xAxis);
           })
           .on("zoomend", (offset: [number, number]) => {
-            handleZoomend(
-              newPlotAreas,
-              offset,
-              this.xAxis,
-              newYAxes,
-              id,
-              this.listeners,
-              this
+            handleZoomend(newPlotAreas, offset, this.xAxis, newYAxes, id, () =>
+              this.listeners.call("redraw", this)
             );
           })
           .on("dblclick", () => {
@@ -475,8 +484,8 @@ export class Core {
               newYAxes,
               this.xAxis,
               id,
-              this.listeners,
-              this
+              (index, id) => this.listeners.call("mousemove", this, index, id),
+              () => this.listeners.call("redraw", this)
             );
           })
           .on("mouseout", () => {
@@ -484,14 +493,14 @@ export class Core {
               newPlotAreas,
               this.xAxis,
               newYAxes,
-              this.listeners,
-              this
+              () => this.listeners.call("mouseout", this),
+              () => this.listeners.call("redraw", this)
             );
           });
+
         newZooms[id] = d3Zoom<Element, unknown>();
         newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
         newTs[id] = () => zoomTransform(newGPlotAreas[id].node()!);
-
         newYScales[id].domain(newPlotAreas[id].extent());
         newPlotAreas[id].yScale(newTs[id]().rescaleY(newYScales[id]));
 
@@ -529,9 +538,9 @@ export class Core {
         select<HTMLDivElement, unknown>(areas[id].ref.current!)
           .select(".y-axis-interaction")
           .on("draw", (event) => {
-            select(event.currentTarget)
-              .select<SVGSVGElement>("svg")
-              .call(newYAxisInteractions[id]);
+            newYAxisInteractions[id].draw(
+              select(event.currentTarget).select("svg")
+            );
           });
 
         select<HTMLDivElement, unknown>(areas[id].ref.current!)
@@ -559,23 +568,6 @@ export class Core {
     this.yTransforms = newTs;
 
     return this;
-  }
-
-  private yAxisDragged(e: any, id: string) {
-    this.plotAreaElements[id].call(
-      this.yZooms[id].scaleBy,
-      1 - e.dy / (this.yScales[id].range()[0] - this.yScales[id].range()[1]),
-      [0, (this.yScales[id].range()[0] - this.yScales[id].range()[1]) / 2]
-    );
-
-    const yr = this.yTransforms[id]().rescaleY(this.yScales[id]);
-
-    this.plotAreas[id].yScale(yr);
-    this.yAxes[id].yScale(yr);
-
-    this.isFreePan = true;
-
-    this.listeners.call("redraw", this);
   }
 
   private zoom(delta: number) {
