@@ -82,6 +82,5 @@ const specification: TopLevelSpec = {
 export const Simple = Template.bind({});
 Simple.args = {
   interval: Interval.I5M,
-  specification: specification,
   scenegraph: parse(specification, 100, 0, []) as Scenegraph,
 };
