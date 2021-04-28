@@ -29,6 +29,7 @@ import { createRef } from "react";
 import { throttle } from "lodash";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
+import { Core } from "../../core/chart";
 
 const StudyInfoFields: Record<
   string,
@@ -71,11 +72,8 @@ export type PlotContainerProps = {
   interval: Interval;
   initialBounds: [Date, Date];
   onBoundsChanged?: (bounds: [Date, Date]) => void;
-  onMouseMove?: (index: number) => void;
-  onMouseOut?: () => void;
-  onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
-  onGetDataRange?: (from: string, to: string) => void;
+  onGetDataRange?: (from: Date, to: Date) => void;
   onClosePanel: (id: string) => void;
 };
 
@@ -86,9 +84,6 @@ export const PlotContainer = forwardRef(
       interval,
       initialBounds,
       onBoundsChanged = () => {},
-      onMouseMove,
-      onMouseOut,
-      onMouseOver,
       onGetDataRange = () => {},
       onClosePanel,
     }: PlotContainerProps,
@@ -150,10 +145,10 @@ export const PlotContainer = forwardRef(
         return acc;
       }, {} as { [index: string]: React.RefObject<HTMLDivElement> });
 
-    const chartElement = useRef<ChartInterface | null>(null);
+    const chartElement = useRef<Core | null>(null);
 
     useEffect(() => {
-      chartElement.current = chart(
+      chartElement.current = new Core(
         Object.fromEntries(
           scenegraph.panels.map((panel) => [
             panel.id,
@@ -166,7 +161,10 @@ export const PlotContainer = forwardRef(
             },
           ])
         ),
-        { ref: xAxisRef, data: [] },
+        {
+          ref: xAxisRef,
+          data: scenegraph.panels[0].originalData.map((d) => d.date),
+        },
         initialBounds
       )
         .interval(1000 * 60 * getSubMinutes(interval, 1))
@@ -181,6 +179,9 @@ export const PlotContainer = forwardRef(
         })
         .on("mouseout", () => {
           handleDataIndexChanged(null);
+        })
+        .on("fetch_data", (from: Date, to: Date) => {
+          onGetDataRangeThrottled(from, to);
         });
 
       chartRef.current?.requestRedraw();
@@ -194,7 +195,7 @@ export const PlotContainer = forwardRef(
       if (chartElement.current) {
         chartElement.current
           .interval(1000 * 60 * getSubMinutes(interval, 1))
-          .plotAreas(
+          .update(
             Object.fromEntries(
               scenegraph.panels.map((panel) => [
                 panel.id,
@@ -206,7 +207,11 @@ export const PlotContainer = forwardRef(
                   yEncodingFields: panel.yEncodingFields,
                 },
               ])
-            )
+            ),
+            {
+              ref: xAxisRef,
+              data: scenegraph.panels[0].originalData.map((d) => d.date),
+            }
           );
 
         chartRef.current?.requestRedraw();
