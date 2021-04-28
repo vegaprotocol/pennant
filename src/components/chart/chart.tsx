@@ -1,7 +1,5 @@
 import "./chart.scss";
 
-import * as React from "react";
-
 import {
   Annotation,
   ChartType,
@@ -21,7 +19,15 @@ import { PlotContainer } from "../plot-container";
 import { extent } from "d3-array";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
-import { useCallback } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export type Bounds = {
   date: Date;
@@ -43,7 +49,7 @@ export type ChartProps = {
   onOptionsChanged?: (options: Options) => void;
 };
 
-export const Chart = React.forwardRef(
+export const Chart = forwardRef(
   (
     {
       dataSource,
@@ -59,7 +65,7 @@ export const Chart = React.forwardRef(
   ) => {
     const { chartType = "candle", studies = [], overlays = [] } = options;
 
-    React.useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartRef.current.panBy(n);
       },
@@ -77,25 +83,25 @@ export const Chart = React.forwardRef(
       },
     }));
 
-    const chartRef = React.useRef<ChartElement>(null!);
-    const [data, setData] = React.useState<any[]>([]);
-    const [annotations, setAnnotations] = React.useState<Annotation[]>([]);
+    const chartRef = useRef<ChartElement>(null!);
+    const [data, setData] = useState<any[]>([]);
+    const [annotations, setAnnotations] = useState<Annotation[]>([]);
 
     const [
       priceMonitoringBounds,
       setPriceMonitoringBounds,
-    ] = React.useState<PriceMonitoringBounds | null>(null);
+    ] = useState<PriceMonitoringBounds | null>(null);
 
-    const [bounds, setBounds] = React.useState<[Date, Date]>([
+    const [bounds, setBounds] = useState<[Date, Date]>([
       new Date(),
       new Date(),
     ]);
 
-    const [selectedIndex, setCandle] = React.useState<number | null>(null);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [internalInterval, setInternalInterval] = React.useState(interval);
+    const [selectedIndex, setCandle] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [internalInterval, setInternalInterval] = useState(interval);
 
-    const specification = React.useMemo(
+    const specification = useMemo(
       () =>
         constructTopLevelSpec(
           data,
@@ -108,7 +114,7 @@ export const Chart = React.forwardRef(
     );
 
     // Compile data and view specification into scenegraph ready for rendering
-    const scenegraph = React.useMemo(() => {
+    const scenegraph = useMemo(() => {
       return parse(
         specification,
         getCandleWidth(internalInterval),
@@ -123,7 +129,7 @@ export const Chart = React.forwardRef(
     ]);
 
     // Fetch historical data
-    const query = React.useCallback(
+    const query = useCallback(
       async (from: string, to: string, merge = true) => {
         const newData = await dataSource.query(interval, from, to);
 
@@ -133,7 +139,7 @@ export const Chart = React.forwardRef(
     );
 
     // Respond to streaming data
-    React.useEffect(() => {
+    useEffect(() => {
       const fetchData = async () => {
         await query(
           new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
@@ -164,7 +170,7 @@ export const Chart = React.forwardRef(
     }, [dataSource, interval, query]);
 
     // Respond to streaming annotations
-    React.useEffect(() => {
+    useEffect(() => {
       function subscribe() {
         if (dataSource.subscribeAnnotations) {
           dataSource.subscribeAnnotations((annotations) => {
@@ -183,11 +189,10 @@ export const Chart = React.forwardRef(
       };
     }, [dataSource]);
 
-    React.useEffect(() => {
+    useEffect(() => {
       setIsLoading(true);
 
       dataSource.onReady().then((configuration) => {
-        console.info(`Data Source ready:`, configuration);
         setIsLoading(false);
 
         if (configuration.priceMonitoringBounds.length > 0) {
@@ -213,7 +218,7 @@ export const Chart = React.forwardRef(
       [onOptionsChanged, options, studies]
     );
 
-    const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
+    const handleOnMouseOut = useCallback(() => setCandle(null), []);
 
     if (isLoading) {
       return <NonIdealState title="Loading" />;
@@ -232,7 +237,6 @@ export const Chart = React.forwardRef(
                 ref={chartRef}
                 width={width}
                 height={height}
-                specification={specification}
                 scenegraph={scenegraph}
                 interval={internalInterval}
                 initialBounds={extent(data.map((d) => d.date)) as [Date, Date]}

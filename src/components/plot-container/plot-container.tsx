@@ -12,7 +12,14 @@ import {
   getCandleWidth,
   getSubMinutes,
 } from "../../helpers";
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
@@ -22,7 +29,7 @@ import { TopLevelSpec } from "../../vega-lite/spec";
 import { createRef } from "react";
 import { throttle } from "lodash";
 import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
-import { WIDTH } from "../../constants";
+import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
 
 const StudyInfoFields: Record<
@@ -62,7 +69,6 @@ const StudyInfoFields: Record<
 export type PlotContainerProps = {
   width: number;
   height: number;
-  specification: TopLevelSpec;
   scenegraph: Scenegraph;
   interval: Interval;
   initialBounds: [Date, Date];
@@ -75,10 +81,9 @@ export type PlotContainerProps = {
   onClosePanel: (id: string) => void;
 };
 
-export const PlotContainer = React.forwardRef(
+export const PlotContainer = forwardRef(
   (
     {
-      specification,
       scenegraph,
       interval,
       initialBounds,
@@ -91,7 +96,7 @@ export const PlotContainer = React.forwardRef(
     }: PlotContainerProps,
     ref: React.Ref<ChartElement>
   ) => {
-    React.useImperativeHandle(ref, () => ({
+    useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartElement.current?.panBy(n);
       },
@@ -124,11 +129,19 @@ export const PlotContainer = React.forwardRef(
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState(initialBounds);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [activePanel, setActivePanel] = useState<string | null>(null);
     const [showPaneControls, setShowPaneControls] = useState(false);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
+    const handleBoundsChanged = useMemo(
+      () => throttle(setBounds, THROTTLE_INTERVAL),
+      []
+    );
+
+    const handleDataIndexChanged = useMemo(
+      () => throttle(setDataIndex, THROTTLE_INTERVAL),
+      []
+    );
     const refs = scenegraph.panels
       .map((panel) => panel.id)
       .reduce((acc, value) => {
@@ -160,15 +173,13 @@ export const PlotContainer = React.forwardRef(
           chartRef.current?.requestRedraw();
         })
         .on("bounds_changed", (bounds: [Date, Date]) => {
-          setBounds(bounds);
+          handleBoundsChanged(bounds);
         })
         .on("mousemove", (index: number, id: string) => {
-          setDataIndex(index);
-          setActivePanel(id);
+          handleDataIndexChanged(index);
         })
         .on("mouseout", () => {
-          setDataIndex(null);
-          setActivePanel(null);
+          handleDataIndexChanged(null);
         });
 
       chartRef.current?.requestRedraw();
