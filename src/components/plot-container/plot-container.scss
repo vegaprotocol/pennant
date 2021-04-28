@@ -31,15 +31,6 @@
   position: relative;
 }
 
-.plot-area:nth-child(1) {
-  flex: 2 2 0;
-}
-
-.plot-area:nth-child(3) {
-  flex: 1 1 0;
-  max-height: 200px;
-}
-
 .x-axis {
   cursor: ew-resize;
   position: relative;
