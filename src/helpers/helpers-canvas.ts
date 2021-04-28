@@ -14,3 +14,11 @@ export function clearCanvas(
 
   ctx.restore();
 }
+
+export function align(x: number, pixelRatio: number = 1) {
+  return Math.round(pixelRatio * Math.round(x)) / pixelRatio + 0.5;
+}
+
+export function alignSpan(x: number, pixelRatio: number = 1) {
+  return Math.round(pixelRatio * Math.round(x)) / pixelRatio;
+}

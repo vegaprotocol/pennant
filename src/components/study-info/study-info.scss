@@ -1,13 +1,20 @@
+@import "../../styles/colors";
+
 .study-info-wrapper {
-  background-color: rgba(0, 0, 0, 0.7);
+  align-items: center;
+  background-color: $overlay-backdrop;
   color: #f5f8fa;
+  cursor: default;
   display: inline-flex;
   flex-direction: row;
   gap: 8px;
   padding: 4px;
+  pointer-events: auto;
+  position: relative;
+  user-select: none;
+  z-index: 1;
 }
 
 .text-muted {
   color: #a7b6c2;
 }
-

@@ -1,11 +1,13 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../types";
+
 import { Annotation } from ".";
 
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale?: ScaleLinear<number, number, never>,
+    xScale: ScaleTime | null,
+    yScale: ScaleLinear | null,
+    pixelRatio?: number,
     ...rest: any[]
   ): void;
 }
@@ -17,7 +19,7 @@ export interface PositionalElement extends RenderableElement {
 export interface Panel {
   id: string;
   originalData: any[];
-  data: PositionalElement[][];
+  renderableElements: RenderableElement[][];
   grid?: RenderableElement;
   axis?: RenderableElement;
   axisTooltip?: RenderableElement;
@@ -28,7 +30,7 @@ export interface Panel {
   /**
    * Fields to use to determine y axis extent
    */
-  yEncodingFields?: string[];
+  yEncodingFields: string[];
   yDomain?: [number, number];
 }
 

@@ -1,12 +1,11 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 import { Colors } from "../helpers";
-import { RenderableElement } from "../types";
 
 function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   position: [number | null, number | null]
 ) {
   const x = position[0];
@@ -18,7 +17,7 @@ function addCrosshairPath(
   ctx.save();
 
   ctx.setLineDash([4, 6]);
-  ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+  ctx.strokeStyle = Colors.WHITE;
 
   if (x) {
     ctx.beginPath();
@@ -42,8 +41,9 @@ function addCrosshairPath(
 export class CrosshairElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1,
     position: [number | null, number | null]
   ) {
     addCrosshairPath(ctx, xScale, yScale, position);

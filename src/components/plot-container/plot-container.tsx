@@ -4,97 +4,113 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartElement, Panel, Scenegraph } from "../../types";
-import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
-import { ZoomTransform, zoom as d3Zoom, zoomIdentity } from "d3-zoom";
-import { asyncSnapshot, getCandleWidth, getSubMinutes } from "../../helpers";
-import { drawChart, drawChartNoTransform } from "../../render";
-import { select, selectAll } from "d3-selection";
+import { ChartElement, Scenegraph, Study } from "../../types";
+import { ChartInterface, chart } from "../../core";
+import {
+  asyncSnapshot,
+  formatter,
+  getCandleWidth,
+  getSubMinutes,
+} from "../../helpers";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
+import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
-import { PlotArea } from "../plot-area";
-import { TopLevelSpec } from "../../vega-lite/spec";
-import { WIDTH } from "../../constants";
-import { XAxis } from "../x-axis/x-axis";
-import { extent } from "d3-array";
-import { interpolateZoom } from "d3-interpolate";
+import { StudyInfo } from "../study-info";
+import { createRef } from "react";
 import { throttle } from "lodash";
+import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
+import { CloseButton } from "./close-button";
+
+const StudyInfoFields: Record<
+  string,
+  { label: string; fields: { field: string; label: string }[] }
+> = {
+  main: {
+    label: "Candle",
+    fields: [
+      { field: "open", label: "O" },
+      { field: "high", label: "H" },
+      { field: "low", label: "L" },
+      { field: "close", label: "C" },
+    ],
+  },
+  eldarRay: {
+    label: "Eldar-ray",
+    fields: [
+      { field: "bullPower", label: "Bull" },
+      { field: "bearPower", label: "Bear" },
+    ],
+  },
+  macd: {
+    label: "MACD",
+    fields: [
+      { field: "signal", label: "S" },
+      { field: "divergence", label: "D" },
+      { field: "macd", label: "MACD" },
+    ],
+  },
+  volume: {
+    label: "Volume",
+    fields: [{ field: "volume", label: "V" }],
+  },
+};
 
 export type PlotContainerProps = {
   width: number;
   height: number;
-  specification: TopLevelSpec;
   scenegraph: Scenegraph;
   interval: Interval;
-  decimalPlaces: number;
-  plotOverlay?: React.ReactNode;
-  studyOverlay?: React.ReactNode;
+  initialBounds: [Date, Date];
   onBoundsChanged?: (bounds: [Date, Date]) => void;
   onMouseMove?: (index: number) => void;
   onMouseOut?: () => void;
   onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: string, to: string) => void;
+  onClosePanel: (id: string) => void;
 };
 
-export const PlotContainer = React.forwardRef(
+export const PlotContainer = forwardRef(
   (
     {
-      specification,
       scenegraph,
       interval,
-      decimalPlaces,
-      plotOverlay,
-      studyOverlay,
+      initialBounds,
       onBoundsChanged = () => {},
       onMouseMove,
       onMouseOut,
       onMouseOver,
       onGetDataRange = () => {},
+      onClosePanel,
     }: PlotContainerProps,
     ref: React.Ref<ChartElement>
   ) => {
-    React.useImperativeHandle(ref, () => ({
-      fitBounds: (bounds: [Date, Date]) => {
-        reset();
-      },
+    useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
-        panBy(n);
-      },
-      panTo: (x: Date) => {
-        reset();
+        chartElement.current?.panBy(n);
       },
       reset: () => {
-        reset();
+        chartElement.current?.reset();
       },
-      snapshot: () => {
+      snapshot: async () => {
         return snapshot();
       },
+      zoomIn: (delta: number) => {
+        chartElement.current?.zoomIn(delta);
+      },
+      zoomOut: (delta: number) => {
+        chartElement.current?.zoomOut(delta);
+      },
     }));
-
-    // Everything is a ref because we are managing this state ourselves
-    // This means we might make this a vanilla JavaScript object in the future
-    const isFirstRun = React.useRef(true);
-    const isPinnedRef = React.useRef(true);
-    const previousZoomTransform = React.useRef(zoomIdentity);
-    const timeScaleRef = React.useRef(scaleTime());
-    const timeScaleRescaledRef = React.useRef(scaleTime()); // A rescaled copy of the time scale which reflects the user panning and scaling
-    const chartRef = React.useRef<FcElement>(null!);
-    const crosshairXRef = React.useRef<number | null>(null);
-    const crosshairsRef = React.useRef<(number | null)[]>([null, null]);
-    const scalesRef = React.useRef<ScaleLinear<number, number, never>[]>([
-      scaleLinear(),
-      scaleLinear(),
-    ]);
-    const zoomControl = React.useRef(d3Zoom<FcElement, unknown>());
-
-    const data: any[] = React.useMemo(() => specification?.data?.values ?? [], [
-      specification,
-    ]);
-
-    const domainRef = React.useRef(extent(data, (d) => d.date) as [Date, Date]);
-    const candleWidth = getCandleWidth(interval);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
@@ -108,255 +124,217 @@ export const PlotContainer = React.forwardRef(
       []
     );
 
-    const requestRedraw = React.useCallback(function requestRedraw() {
-      select(chartRef.current).node()?.requestRedraw();
-    }, []);
-
-    const reset = React.useCallback(
-      function reset() {
-        const latestData = data[data.length - 1].date;
-
-        select(chartRef.current)
-          .transition()
-          .duration(750)
-          .call(
-            zoomControl.current.translateTo,
-            timeScaleRef.current.range()[1],
-            0,
-            [timeScaleRef.current(latestData) - (WIDTH + 26), 0]
-          )
-          .end()
-          .then(() => {
-            isPinnedRef.current = true;
-          })
-          .catch((reason) =>
-            console.warn(`Transition end promise failed: ${reason}`)
-          );
-
-        select(chartRef.current).node()?.requestRedraw();
-      },
-      [data]
-    );
-
-    React.useEffect(() => {
-      const transform: ZoomTransform = zoomIdentity;
-
-      const range = timeScaleRef.current
-        .range()
-        .map(transform.invertX, transform);
-
-      const domain = range.map(
-        timeScaleRef.current.invert,
-        timeScaleRef.current
-      );
-
-      const domainWidth = domain[1].getTime() - domain[0].getTime();
-
-      zoomControl.current
-        // @ts-ignore
-        .interpolate(interpolateZoom.rho(0))
-        .scaleExtent([1 / (1 << 2), domainWidth / (candleWidth * 10)])
-        .translateExtent([
-          [0, 0],
-          [0, 800],
-        ])
-        .constrain(function constrain(transform, extent, translateExtent) {
-          const k = transform.k / previousZoomTransform.current.k;
-          const x = transform.x - previousZoomTransform.current.x;
-
-          let newTransform = transform;
-
-          if (isPinnedRef.current && k === 1 && x !== 0) {
-            isPinnedRef.current = false;
-          } else if (isPinnedRef.current) {
-            const gap =
-              transform.invertX(extent[1][0] - (WIDTH + 26)) -
-              (extent[1][0] - 0);
-
-            newTransform = transform.translate(gap, 0);
-          }
-
-          if (x !== 0) {
-            selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", true);
-          }
-
-          previousZoomTransform.current = transform;
-
-          return newTransform;
-        })
-        .filter(function filter(event) {
-          if (event.type == "dblclick") {
-            reset();
-            return false;
-          }
-
-          return !event.ctrlKey && !event.button;
-        })
-        .on("zoom", (event) => {
-          drawChart(
-            event,
-            timeScaleRef.current,
-            timeScaleRescaledRef.current,
-            scenegraph,
-            scalesRef,
-            requestRedraw,
-            onBoundsChangedThrottled
-          );
-
-          const transform: ZoomTransform = event.transform;
-          const range = timeScaleRef.current
-            .range()
-            .map(transform.invertX, transform);
-          const domain = range.map(
-            timeScaleRef.current.invert,
-            timeScaleRef.current
-          );
-
-          const domainWidth = domain[1].getTime() - domain[0].getTime();
-
-          if (data[0].date.getTime() + domainWidth > domain[0].getTime()) {
-            const to = data[0].date.toISOString();
-            const from = new Date(
-              data[0].date.getTime() - domainWidth
-            ).toISOString();
-
-            onGetDataRangeThrottled(from, to);
-          }
-        })
-        .on("end", (event) => {
-          selectAll(".d3fc-canvas-layer.crosshair").classed("grabbing", false);
-        });
-    }, [
-      candleWidth,
-      data,
-      onBoundsChangedThrottled,
-      onGetDataRangeThrottled,
-      requestRedraw,
-      reset,
-      scenegraph,
-    ]);
-
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
+    const [bounds, setBounds] = useState(initialBounds);
+    const [dataIndex, setDataIndex] = useState<number | null>(null);
+    const [showPaneControls, setShowPaneControls] = useState<string | null>(
+      null
+    );
+    const chartRef = useRef<FcElement>(null!);
+    const xAxisRef = useRef<HTMLDivElement>(null!);
 
-    const panBy = React.useCallback(
-      function panBy(n: number) {
-        const ms = 1000 * 60 * getSubMinutes(interval, n);
-        const offset = -(timeScaleRef.current(ms) - timeScaleRef.current(0));
-
-        select(chartRef.current).call(
-          zoomControl.current.translateBy,
-          offset,
-          0
-        );
-        select(chartRef.current).node()?.requestRedraw();
-      },
-      [interval]
+    const handleBoundsChanged = useMemo(
+      () => throttle(setBounds, THROTTLE_INTERVAL),
+      []
     );
 
-    React.useEffect(() => {
-      const chartContainer = select(chartRef.current)
-        .on(
-          "measure",
-          (event: { detail: { width: number; pixelRatio: number } }) => {
-            const { width, pixelRatio } = event.detail;
-            timeScaleRef.current.range([0, width / pixelRatio]);
+    const handleDataIndexChanged = useMemo(
+      () => throttle(setDataIndex, THROTTLE_INTERVAL),
+      []
+    );
 
-            if (isFirstRun.current) {
-              select(chartRef.current).call(
-                zoomControl.current.transform,
-                zoomIdentity.translate(
-                  timeScaleRef.current(domainRef.current[1]) -
-                    timeScaleRef.current.range()[1] -
-                    WIDTH,
-                  0
-                )
-              );
+    const refs = scenegraph.panels
+      .map((panel) => panel.id)
+      .reduce((acc, value) => {
+        acc[value] = createRef<HTMLDivElement>();
+        return acc;
+      }, {} as { [index: string]: React.RefObject<HTMLDivElement> });
 
-              isFirstRun.current = false;
-            }
-          }
-        )
-        .on("draw", () => {
-          timeScaleRef.current.domain(domainRef.current);
+    const chartElement = useRef<ChartInterface | null>(null);
+
+    useEffect(() => {
+      chartElement.current = chart(
+        Object.fromEntries(
+          scenegraph.panels.map((panel) => [
+            panel.id,
+            {
+              id: String(panel.id),
+              ref: refs[panel.id],
+              data: panel.originalData,
+              renderableElements: panel.renderableElements.flat(1),
+              yEncodingFields: panel.yEncodingFields,
+            },
+          ])
+        ),
+        { ref: xAxisRef, data: [] },
+        initialBounds
+      )
+        .interval(1000 * 60 * getSubMinutes(interval, 1))
+        .on("redraw", () => {
+          chartRef.current?.requestRedraw();
+        })
+        .on("bounds_changed", (bounds: [Date, Date]) => {
+          handleBoundsChanged(bounds);
+        })
+        .on("mousemove", (index: number, id: string) => {
+          handleDataIndexChanged(index);
+        })
+        .on("mouseout", () => {
+          handleDataIndexChanged(null);
         });
 
-      chartContainer.call(zoomControl.current);
-      chartContainer.node()?.requestRedraw();
-    }, [zoomControl]);
+      chartRef.current?.requestRedraw();
 
-    React.useEffect(() => {
-      if (isPinnedRef.current) {
-        const latestData = data[data.length - 1];
+      requestAnimationFrame(() => chartElement.current?.reset());
 
-        if (latestData.date > domainRef.current[1]) {
-          domainRef.current = [domainRef.current[0], latestData.date];
-        }
-      }
-    }, [data]);
-
-    React.useEffect(() => {
-      timeScaleRef.current.domain(domainRef.current);
-      select(chartRef.current).node()?.requestRedraw();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    drawChartNoTransform(
-      timeScaleRescaledRef.current,
-      scenegraph,
-      scalesRef,
-      requestRedraw,
-      onBoundsChangedThrottled
-    );
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current
+          .interval(1000 * 60 * getSubMinutes(interval, 1))
+          .plotAreas(
+            Object.fromEntries(
+              scenegraph.panels.map((panel) => [
+                panel.id,
+                {
+                  id: String(panel.id),
+                  ref: refs[panel.id],
+                  data: panel.originalData,
+                  renderableElements: panel.renderableElements.flat(1),
+                  yEncodingFields: panel.yEncodingFields,
+                },
+              ])
+            )
+          );
+
+        chartRef.current?.requestRedraw();
+      }
+    }, [chartElement, interval, refs, scenegraph.panels]);
 
     return (
-      <d3fc-group ref={chartRef} class="d3fc-group" auto-resize>
-        <div className="plot-area">
-          <PlotArea
-            scenegraph={scenegraph.panels[0]}
-            x={timeScaleRescaledRef.current}
-            y={scalesRef.current![0]}
-            crosshairXRef={crosshairXRef}
-            index={0}
-            crosshairYRef={crosshairsRef}
-            overlay={plotOverlay}
-            requestRedraw={requestRedraw}
-            onMouseMove={onMouseMove}
-            onMouseOut={onMouseOut}
-            onMouseOver={onMouseOver}
-          />
-        </div>
-        {scenegraph.panels.length === 2 && (
-          <>
-            <div className="separator">
-              <div className="handle"></div>
-            </div>
-            <div className="plot-area">
-              <PlotArea
-                scenegraph={scenegraph.panels[1]}
-                x={timeScaleRescaledRef.current}
-                y={scalesRef.current![1]}
-                crosshairXRef={crosshairXRef}
-                index={1}
-                crosshairYRef={crosshairsRef}
-                overlay={studyOverlay}
-                requestRedraw={requestRedraw}
-                onMouseMove={onMouseMove}
-                onMouseOut={onMouseOut}
-                onMouseOver={onMouseOver}
+      <d3fc-group
+        ref={chartRef}
+        id="chart"
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          flexDirection: "column",
+        }}
+      >
+        {scenegraph.panels.map((panel, panelIndex) => (
+          <React.Fragment key={panel.id}>
+            <div
+              ref={refs[panel.id]}
+              className="pane"
+              style={{
+                position: "relative",
+                flex: 1,
+              }}
+              onMouseOver={() => setShowPaneControls(panel.id)}
+              onMouseOut={() => setShowPaneControls(null)}
+            >
+              <d3fc-canvas
+                class="plot-area"
+                use-device-pixel-ratio
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                }}
               />
+              <d3fc-canvas
+                class="y-axis"
+                use-device-pixel-ratio
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+              <d3fc-svg
+                class="plot-area-interaction"
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  cursor: "crosshair",
+                }}
+              />
+              <d3fc-svg
+                class="y-axis-interaction"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  width: `${WIDTH}px`,
+                  height: "100%",
+                  cursor: "ns-resize",
+                }}
+              />
+              {panel.id !== "main" && (
+                <div
+                  className="plot-container__close-button-wrapper"
+                  style={{
+                    right: `${WIDTH}px`,
+                    opacity: showPaneControls === panel.id ? 1 : 0,
+                    visibility:
+                      showPaneControls === panel.id ? "visible" : "hidden",
+                  }}
+                >
+                  <div
+                    className="plot-container__close-button"
+                    onClick={() => {
+                      onClosePanel(panel.id);
+                    }}
+                  >
+                    <CloseButton size={16} />
+                  </div>
+                </div>
+              )}
+              <div className="plot-container__info_overlay">
+                {panelIndex === 0 && <ChartInfo bounds={bounds} />}
+                {
+                  <StudyInfo
+                    title={StudyInfoFields[panel.id].label}
+                    info={StudyInfoFields[panel.id].fields.map(
+                      (field: any) => ({
+                        id: field.field,
+                        label: field.label,
+                        value: formatter(
+                          panel.originalData[
+                            dataIndex ?? panel.originalData.length - 1
+                          ][field.field]
+                        ),
+                      })
+                    )}
+                  />
+                }
+              </div>
             </div>
-          </>
-        )}
-        <div className="separator"></div>
-        <div className="x-axis">
-          <XAxis
-            scenegraph={scenegraph.xAxis}
-            x={timeScaleRescaledRef.current}
-            y={scalesRef.current![0]}
-            crosshairXRef={crosshairXRef}
-            requestRedraw={requestRedraw}
-            onMouseMove={onMouseMove}
-            onMouseOut={onMouseOut}
-            onMouseOver={onMouseOver}
+            <div style={{ height: "1px", backgroundColor: "white" }}></div>
+          </React.Fragment>
+        ))}
+        <div ref={xAxisRef} style={{ height: "24px", position: "relative" }}>
+          <d3fc-canvas
+            class="x-axis"
+            use-device-pixel-ratio
+            style={{
+              position: "absolute",
+              cursor: "ew-resize",
+              width: "100%",
+              height: "100%",
+            }}
+          />
+          <d3fc-svg
+            class="x-axis-interaction"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              cursor: "ew-resize",
+            }}
           />
         </div>
       </d3fc-group>

@@ -1,7 +1,13 @@
 import "./app.stories.scss";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { Button, Intent, MenuItem } from "@blueprintjs/core";
+import {
+  Button,
+  Intent,
+  MenuItem,
+  HotkeysProvider,
+  useHotkeys,
+} from "@blueprintjs/core";
 import { ChartType, Overlay, Study } from "../types";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
@@ -13,7 +19,7 @@ import { ChartControls } from "./components/chart-controls";
 import { ChartElement } from "../types";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
 import { Interval } from "./api/vega-graphql";
-import React from "react";
+import { useMemo, useRef, useState } from "react";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import data from "./app.stories.json";
 import { getMainDefinition } from "@apollo/client/utilities";
@@ -76,21 +82,15 @@ const renderMarket: ItemRenderer<any> = (
 };
 
 export const VegaProtocol: Story = () => {
-  const ref = React.useRef<ChartElement>(null!);
-  const [market, setMarket] = React.useState(data.markets[1].id);
-  const [chartType, setChartType] = React.useState<ChartType>("area");
-  const [study, setStudy] = React.useState<Study | null>(null);
-  const [overlay, setOverlay] = React.useState<Overlay | null>(null);
-  const [interval, setInterval] = React.useState(Interval.I15M);
+  const ref = useRef<ChartElement>(null!);
+  const [market, setMarket] = useState(data.markets[1].id);
+  const [chartType, setChartType] = useState<ChartType>("area");
+  const [study, setStudy] = useState<Study | null>(null);
+  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const [interval, setInterval] = useState(Interval.I15M);
 
-  const dataSource = React.useMemo(
-    () =>
-      new ApolloDataSource(
-        client,
-        market,
-        "",
-        5
-      ),
+  const dataSource = useMemo(
+    () => new ApolloDataSource(client, market, "", 5),
     [market]
   );
 
@@ -150,10 +150,15 @@ export const VegaProtocol: Story = () => {
         <Chart
           ref={ref}
           dataSource={dataSource}
-          chartType={chartType}
-          study={study === null ? undefined : study}
-          overlay={overlay === null ? undefined : overlay}
+          options={{
+            chartType: chartType,
+            studies: study === null ? [] : [study],
+            overlays: overlay === null ? [] : [overlay],
+          }}
           interval={interval}
+          onOptionsChanged={(options) => {
+            setStudy(options.studies?.length === 0 ? null : study);
+          }}
         />
       </div>
     </div>
@@ -161,55 +166,110 @@ export const VegaProtocol: Story = () => {
 };
 
 export const CryptoCompare: Story = () => {
-  const ref = React.useRef<ChartElement>(null!);
-  const [chartType, setChartType] = React.useState<ChartType>("candle");
-  const [study, setStudy] = React.useState<Study | null>(null);
-  const [overlay, setOverlay] = React.useState<Overlay | null>(null);
-  const [interval, setInterval] = React.useState(Interval.I1M);
+  const ref = useRef<ChartElement>(null!);
+  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [study, setStudy] = useState<Study | null>(null);
+  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const [interval, setInterval] = useState(Interval.I1M);
 
-  const dataSource = React.useMemo(() => new CryptoCompareDataSource(), []);
+  const dataSource = useMemo(() => new CryptoCompareDataSource(), []);
+
+  const hotkeys = useMemo(
+    () => [
+      {
+        combo: "down",
+        global: false,
+        preventDefault: true,
+        stopPropagation: true,
+        label: "Zoom out",
+        onKeyDown: () => ref.current.zoomOut(0.1),
+      },
+
+      {
+        combo: "left",
+        global: false,
+        preventDefault: true,
+        stopPropagation: true,
+        label: "Pan left",
+        onKeyDown: () => ref.current.panBy(-1),
+      },
+      {
+        combo: "right",
+        global: false,
+        preventDefault: true,
+        stopPropagation: true,
+        group: "Input",
+        label: "Pan right",
+        onKeyDown: () => ref.current.panBy(1),
+      },
+      {
+        combo: "up",
+        global: false,
+        preventDefault: true,
+        stopPropagation: true,
+        label: "Zoom in",
+        onKeyDown: () => ref.current.zoomIn(0.1),
+      },
+    ],
+    []
+  );
+
+  const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
   return (
-    <div className="container bp3-dark">
-      <h1>Crypto Compare Charts</h1>
-      <ChartControls
-        interval={interval}
-        chartType={chartType}
-        overlay={overlay}
-        study={study}
-        onSetInterval={setInterval}
-        onSetChartType={setChartType}
-        onSetOverlay={setOverlay}
-        onSetStudy={setStudy}
-        onSnapshot={async () => {
-          const blob = await ref.current.snapshot();
-
-          if (blob) {
-            if (navigator.clipboard) {
-              await navigator?.clipboard?.write?.([
-                new ClipboardItem({ "image/png": blob }),
-              ]);
-
-              AppToaster.show({
-                intent: Intent.SUCCESS,
-                message: "Copied to clipboard",
-              });
-            } else {
-              console.log("Clipboard API not found");
-            }
-          }
-        }}
-      />
-      <div style={{ height: "40vh" }}>
-        <Chart
-          ref={ref}
-          dataSource={dataSource}
-          chartType={chartType}
-          study={study === null ? undefined : study}
-          overlay={overlay === null ? undefined : overlay}
+    <HotkeysProvider>
+      <div
+        tabIndex={0}
+        className="container bp3-dark"
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
+      >
+        <h1>Crypto Compare Charts</h1>
+        <ChartControls
           interval={interval}
+          chartType={chartType}
+          overlay={overlay}
+          study={study}
+          onSetInterval={setInterval}
+          onSetChartType={setChartType}
+          onSetOverlay={setOverlay}
+          onSetStudy={setStudy}
+          onSnapshot={async () => {
+            const blob = await ref.current.snapshot();
+
+            if (blob) {
+              if (navigator.clipboard) {
+                await navigator?.clipboard?.write?.([
+                  new ClipboardItem({ "image/png": blob }),
+                ]);
+
+                AppToaster.show({
+                  intent: Intent.SUCCESS,
+                  message: "Copied to clipboard",
+                });
+              } else {
+                console.log("Clipboard API not found");
+              }
+            }
+          }}
         />
+        <div style={{ height: "70vh" }}>
+          <Chart
+            ref={ref}
+            dataSource={dataSource}
+            options={{
+              chartType: chartType,
+              studies: study === null ? [] : [study],
+              overlays: overlay === null ? [] : [overlay],
+            }}
+            interval={interval}
+            onOptionsChanged={(options) => {
+              setStudy(options.studies?.length === 0 ? null : study);
+            }}
+          />
+        </div>
+        <button onClick={() => ref.current.reset()}>reset</button>
       </div>
-    </div>
+    </HotkeysProvider>
   );
 };

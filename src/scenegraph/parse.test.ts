@@ -114,7 +114,7 @@ test("candlestick chart with study", () => {
 
   expect(scenegraph).toHaveProperty("panels");
   expect(scenegraph?.panels).toHaveLength(2);
-  expect(scenegraph?.panels[0].data).toHaveLength(4);
+  expect(scenegraph?.panels[0].renderableElements).toHaveLength(4);
 });
 
 test("recursively parse a layer", () => {

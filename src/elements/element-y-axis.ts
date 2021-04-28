@@ -1,15 +1,17 @@
-import { Colors, getNumYTicks } from "../helpers";
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { Colors, align, alignSpan, getNumYTicks } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
 
 import { RenderableElement } from "../types";
 import { WIDTH } from "../constants";
 
 const MARGIN = 6;
+const FADE_HEIGHT = 6;
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
+  pixelRatio: number
 ) {
   const xRange = xScale.range();
   const yRange = yScale.range();
@@ -29,18 +31,11 @@ function addYAxisPath(
 
   ctx.closePath();
 
-  ctx.beginPath();
-  ctx.strokeStyle = Colors.GRAY_LIGHT;
-  ctx.moveTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[0]);
-  ctx.lineTo(Math.floor(xRange[1] - WIDTH) + 0.5, yRange[1]);
-  ctx.stroke();
-  ctx.closePath();
-
   ctx.strokeStyle = "#fff";
   ctx.fillStyle = Colors.GRAY_LIGHT;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
-  ctx.font = `12px monospace`;
+  ctx.font = `${12}px "Roboto Mono", monospace`;
 
   yTicks.forEach(function drawTick(tick: number) {
     ctx.beginPath();
@@ -53,14 +48,46 @@ function addYAxisPath(
 
     ctx.closePath();
   });
+
+  const gradientTop = ctx.createLinearGradient(0, 0, 0, FADE_HEIGHT);
+  gradientTop.addColorStop(0, "#000");
+  gradientTop.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradientTop;
+  ctx.fillRect(xRange[1] - WIDTH, 0, WIDTH, FADE_HEIGHT);
+
+  const gradientBottom = ctx.createLinearGradient(
+    0,
+    yRange[0] - FADE_HEIGHT,
+    0,
+    yRange[0]
+  );
+  gradientBottom.addColorStop(0, "rgba(0,0,0,0)");
+  gradientBottom.addColorStop(1, "#000");
+
+  ctx.fillStyle = gradientBottom;
+  ctx.fillRect(
+    xRange[1] - WIDTH,
+    yScale.range()[0] - FADE_HEIGHT,
+    WIDTH,
+    FADE_HEIGHT
+  );
+
+  ctx.beginPath();
+  ctx.strokeStyle = Colors.GRAY_LIGHT;
+  ctx.moveTo(align(xRange[1] - WIDTH, pixelRatio), yRange[0]);
+  ctx.lineTo(align(xRange[1] - WIDTH, pixelRatio), yRange[1]);
+  ctx.stroke();
+  ctx.closePath();
 }
 
 export class YAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio = 1
   ) {
-    addYAxisPath(ctx, xScale, yScale);
+    addYAxisPath(ctx, xScale, yScale, pixelRatio);
   }
 }

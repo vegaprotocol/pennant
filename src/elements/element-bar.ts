@@ -1,7 +1,5 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
-
-import { Colors } from "../helpers";
-import { PositionalElement } from "../types";
+import { Colors, align, alignSpan } from "../helpers";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Bar = {
   x: Date;
@@ -14,7 +12,7 @@ export type Bar = {
 
 export class BarElement implements PositionalElement {
   readonly x: Date;
-  readonly y: Date;
+  readonly y: number;
   readonly width: number;
   readonly height: number;
   readonly fill: string;
@@ -33,22 +31,26 @@ export class BarElement implements PositionalElement {
 
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1
   ) {
     ctx.beginPath();
 
+    const pixelWidth = Math.max(xScale(this.width) - xScale(0), 1 / pixelRatio);
+
     ctx.rect(
-      xScale(this.x.getTime() - this.width / 2),
-      yScale(this.y),
-      xScale(this.width) - xScale(0),
-      Math.abs(yScale(this.height) - yScale(0))
+      align(xScale(this.x.getTime() - this.width / 2), pixelRatio),
+      align(yScale(this.y), pixelRatio),
+      alignSpan(pixelWidth, pixelRatio),
+      alignSpan(Math.abs(yScale(this.height) - yScale(0)), pixelRatio)
     );
 
     ctx.fillStyle = this.fill ?? Colors.GRAY;
     ctx.fill();
 
     if (this.stroke) {
+      ctx.lineWidth = 1 / pixelRatio;
       ctx.strokeStyle = this.stroke ?? Colors.GRAY;
       ctx.stroke();
     }

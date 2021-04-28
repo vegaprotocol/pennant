@@ -1,1 +1,1 @@
-export * from "./recalculate-scales";
+export * from "./calculate-scales";

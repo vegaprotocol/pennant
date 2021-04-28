@@ -14,11 +14,20 @@ export interface D3fcCanvasElement
   class?: string;
 }
 
+export interface D3fcSVGElement
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
+  > {
+  class?: string;
+}
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       "d3fc-group": D3fcGroupElement;
       "d3fc-canvas": D3fcCanvasElement;
+      "d3fc-svg": D3fcSVGElement;
     }
   }
 }

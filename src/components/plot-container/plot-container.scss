@@ -1,9 +1,22 @@
 @import "../../styles/colors";
 
-canvas {
-  image-rendering: -moz-crisp-edges; /* Firefox */
-  image-rendering: -webkit-crisp-edges; /* Webkit (Safari) */
-  image-rendering: pixelated; /* Chrome */
+.plot-container__close-button-wrapper {
+  position: absolute;
+  top: 0;
+  margin-top: 4px;
+  margin-right: 8px;
+
+  transition: opacity 0.4s, visibility 0.4s;
+}
+
+.plot-container__close-button {
+  cursor: default;
+}
+
+.plot-container__info_overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .d3fc-group {
@@ -16,15 +29,6 @@ canvas {
 .plot-area {
   overflow: hidden;
   position: relative;
-}
-
-.plot-area:nth-child(1) {
-  flex: 2 2 0;
-}
-
-.plot-area:nth-child(3) {
-  flex: 1 1 0;
-  max-height: 200px;
 }
 
 .x-axis {

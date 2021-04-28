@@ -1,13 +1,14 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
-import { getNumXTicks, getNumYTicks } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
+import { align, getNumXTicks, getNumYTicks } from "../helpers";
 
 import { Colors } from "../helpers";
 import { RenderableElement } from "../types";
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
+  pixelRatio: number = 1
 ) {
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
@@ -22,12 +23,12 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.GRAY;
+    ctx.strokeStyle = Colors.GRAY_DARK_2;
     ctx.fillStyle = "transparent";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1 / pixelRatio;
 
-    ctx.moveTo(Math.round(xScale(tick)), yRange[0]);
-    ctx.lineTo(Math.round(xScale(tick)), yRange[1]);
+    ctx.moveTo(align(xScale(tick)!, pixelRatio), yRange[0]);
+    ctx.lineTo(align(xScale(tick)!, pixelRatio), yRange[1]);
 
     ctx.fill();
     ctx.stroke();
@@ -40,12 +41,12 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.GRAY;
+    ctx.strokeStyle = Colors.GRAY_DARK_2;
     ctx.fillStyle = "transparent";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1 / pixelRatio;
 
-    ctx.moveTo(xRange[0], Math.round(yScale(tick)) + 0.5);
-    ctx.lineTo(xRange[1], Math.round(yScale(tick)) + 0.5);
+    ctx.moveTo(xRange[0], align(yScale(tick)!, pixelRatio));
+    ctx.lineTo(xRange[1], align(yScale(tick)!, pixelRatio));
 
     ctx.fill();
     ctx.stroke();
@@ -58,9 +59,10 @@ function addGridPath(
 export class GridElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1
   ) {
-    addGridPath(ctx, xScale, yScale);
+    addGridPath(ctx, xScale, yScale, pixelRatio);
   }
 }

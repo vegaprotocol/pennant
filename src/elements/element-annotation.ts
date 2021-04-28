@@ -1,12 +1,11 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 import { Colors } from "../helpers";
-import { RenderableElement } from "../types";
 
 function addAnnotationPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  yScale: ScaleLinear<number, number, never>,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   position: number | null,
   decimalPlaces: number
 ) {
@@ -70,11 +69,7 @@ export class AnnotationElement implements RenderableElement {
     this.position = position;
   }
 
-  draw(
-    ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
-  ) {
+  draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
     addAnnotationPath(ctx, xScale, yScale, this.position, this.decimalPlaces);
   }
 }

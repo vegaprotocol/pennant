@@ -1,16 +1,24 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
+import {
+  timeDay,
+  timeHour,
+  timeMinute,
+  timeMonth,
+  timeSecond,
+  timeWeek,
+  timeYear,
+} from "d3-time";
 
-import { Colors } from "../helpers";
-import { RenderableElement } from "../types";
+import { Colors, multiFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>
+  xScale: ScaleTime,
+  pixelRatio: number
 ) {
   ctx.strokeStyle = "#fff";
-
-  const tickFormat = xScale.tickFormat();
 
   const xRange = xScale.range();
   const numXTicks = getNumXTicks(xRange[1] - xRange[0]);
@@ -21,8 +29,8 @@ function addXAxisPath(
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
-    ctx.font = `12px monospace`;
-    ctx.fillText(tickFormat(tick), xScale(tick), 9);
+    ctx.font = `${TICK_LABEL_FONT_SIZE}px ${TICK_LABEL_FONT}`;
+    ctx.fillText(multiFormat(tick), xScale(tick), 9);
     ctx.closePath();
   });
 }
@@ -30,9 +38,10 @@ function addXAxisPath(
 export class XAxisElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    _yScale: ScaleLinear<number, number, never>
+    xScale: ScaleTime,
+    _yScale: ScaleLinear,
+    pixelRatio = 1
   ) {
-    addXAxisPath(ctx, xScale);
+    addXAxisPath(ctx, xScale, pixelRatio);
   }
 }

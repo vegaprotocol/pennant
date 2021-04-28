@@ -10,8 +10,7 @@
   gap: 8px;
   padding: 4px;
   pointer-events: auto;
-}
-
-.interval-select .bp3-menu {
-  min-width: 40px;
+  position: relative;
+  user-select: none;
+  z-index: 1;
 }

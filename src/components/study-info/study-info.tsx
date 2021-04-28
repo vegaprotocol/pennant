@@ -3,10 +3,9 @@ import "./study-info.scss";
 export type StudyInfoProps = {
   title: string;
   info: { id: string; label: string; value: string }[];
-  decimalPlaces: number;
 };
 
-export const StudyInfo = ({ title, info, decimalPlaces }: StudyInfoProps) => {
+export const StudyInfo = ({ title, info }: StudyInfoProps) => {
   return (
     <div className="study-info-wrapper">
       <span className="text-muted">{`${title}: `}</span>

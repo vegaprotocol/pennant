@@ -28,19 +28,9 @@ export const studyLabels: Record<Study, string> = {
 
 export interface ChartElement {
   /**
-   * Sets the viewport to contain the given bounds.
-   */
-  fitBounds(bounds: [Date, Date]): void;
-
-  /**
-   * Changes the center of the chart by the given number of Intervals.
+   * Changes the center of the chart by the given number of intervals.
    */
   panBy(n: number): void;
-
-  /**
-   * Changes the center of the chart to the given Date.
-   */
-  panTo(x: Date): void;
 
   /**
    * Changes the center of the chart to the most recent Date.
@@ -51,4 +41,14 @@ export interface ChartElement {
    * Snapshot of chart as Blob
    */
   snapshot(): Promise<Blob | null>;
+
+  /**
+   * Increases the zoom of the chart by delta.
+   */
+  zoomIn(delta: number): void;
+
+  /**
+   * Decreases the zoom of the chart by delta.
+   */
+  zoomOut(delta: number): void;
 }

@@ -1,48 +1,46 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "../types";
 
-import { Colors } from "../helpers";
+import { Colors, multiFormat } from "../helpers";
 import { RenderableElement } from "../types";
 import { format } from "date-fns";
 
 function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,
-  xScale: ScaleTime<number, number, never>,
-  position: [number | null, number | null]
+  xScale: ScaleTime,
+  position: number | null
 ) {
-  const x = position[0];
-
-  if (x) {
+  if (position) {
     const height = 24.5;
 
-    ctx.font = `12px monospace`;
+    ctx.font = `${12}px monospace`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    const value = xScale.invert(x);
+    const value = xScale.invert(position);
     const xPad = 5;
-    const text = format(value, "HH:mm");
+    const text = multiFormat(value);
     const textWidth = ctx.measureText(text).width;
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;
 
-    let xAdjusted = x;
+    let xAdjusted = position;
 
-    if (x - rectWidth / 2 < 0) {
+    if (position - rectWidth / 2 < 0) {
       xAdjusted = rectWidth / 2;
     }
 
-    if (x + rectWidth / 2 > xScale.range()[1]) {
+    if (position + rectWidth / 2 > xScale.range()[1]) {
       xAdjusted = xScale.range()[1] - rectWidth / 2;
     }
 
     ctx.beginPath();
-    ctx.moveTo(x, height - rectHeight - 5);
-    ctx.lineTo(x + 5, height - rectHeight);
+    ctx.moveTo(position, height - rectHeight - 5);
+    ctx.lineTo(position + 5, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height - rectHeight);
-    ctx.lineTo(x - 5, height - rectHeight);
+    ctx.lineTo(position - 5, height - rectHeight);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -61,9 +59,10 @@ function addXAxisTooltipPath(
 export class XAxisTooltipElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    _yScale: ScaleLinear<number, number, never>,
-    position: [number | null, number | null]
+    xScale: ScaleTime,
+    _yScale: ScaleLinear,
+    pixelRatio: number = 1,
+    position: number | null
   ) {
     addXAxisTooltipPath(ctx, xScale, position);
   }

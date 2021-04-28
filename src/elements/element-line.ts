@@ -1,7 +1,6 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
+import { align, alignSpan } from "../helpers";
 import { curveLinear, line as d3Line } from "d3-shape";
-
-import { PositionalElement } from "../types";
 
 export type Line = {
   points: [Date, number][];
@@ -25,14 +24,15 @@ export class LineElement implements PositionalElement {
 
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: ScaleTime<number, number, never>,
-    yScale: ScaleLinear<number, number, never>
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1
   ) {
     // TODO: Instantiate on construction
     const line = d3Line<[Date, number]>()
       .curve(curveLinear)
-      .x((d) => xScale(d[0]))
-      .y((d) => yScale(d[1]));
+      .x((d) => align(xScale(d[0]), pixelRatio))
+      .y((d) => alignSpan(yScale(d[1]), pixelRatio));
 
     line.context(ctx);
 
@@ -42,6 +42,8 @@ export class LineElement implements PositionalElement {
       line(this.points);
 
       ctx.strokeStyle = this.color;
+      ctx.lineCap = "butt";
+      ctx.lineWidth = 2 / pixelRatio;
       ctx.stroke();
 
       ctx.closePath();
