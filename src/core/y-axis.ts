@@ -8,9 +8,11 @@ import { Colors } from "../helpers";
 export class YAxis {
   private axis: YAxisElement = new YAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
+  private latestPricePosition: number | null = null;
   private _pixelRatio: number = 1;
   private position: number | null = null;
   private tooltip: YAxisTooltipElement = new YAxisTooltipElement(5); // FIXME: Use correct formatting
+  private lastestPriceTooltip: YAxisTooltipElement = new YAxisTooltipElement(5); // FIXME: Use correct formatting
   private _xScale: ScaleTime;
   private _yScale: ScaleLinear;
 
@@ -32,6 +34,15 @@ export class YAxis {
   draw() {
     if (this.ctx) {
       this.axis.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+
+      this.lastestPriceTooltip.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.latestPricePosition
+      );
+
       this.tooltip.draw(
         this.ctx,
         this._xScale,
@@ -40,6 +51,11 @@ export class YAxis {
         this.position
       );
     }
+  }
+
+  latestPrice(price: number | null): this {
+    this.latestPricePosition = price;
+    return this;
   }
 
   pixelRatio(ratio: number): this {

@@ -19,7 +19,7 @@ function addYAxisPath(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
-    const value = yScale.invert(position);
+    const value = yScale.invert(position); // FIXME: Surely better to pass in a value in the domain to avoid any conversion errors
     const xPad = 5;
     const text = formatter(value, decimalPlaces);
     const rectHeight = 18;

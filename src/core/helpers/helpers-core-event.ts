@@ -51,8 +51,8 @@ export function handleYAxisDrag(
   yTransforms: Panes<() => ZoomTransform>,
   plotAreas: Panes<PlotArea>,
   yAxes: Panes<YAxis>,
-  isFreePan: boolean,
   id: string,
+  onFreePanChanged: (isFreePan: boolean) => void,
   onRedraw: () => void
 ): void {
   plotAreaElements[id].call(
@@ -66,8 +66,7 @@ export function handleYAxisDrag(
   plotAreas[id].yScale(yr);
   yAxes[id].yScale(yr);
 
-  isFreePan = true;
-
+  onFreePanChanged(true);
   onRedraw();
 }
 

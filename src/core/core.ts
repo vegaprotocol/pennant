@@ -149,8 +149,10 @@ export class Core {
             this.yTransforms,
             this.plotAreas,
             this.yAxes,
-            this.isFreePan,
             id,
+            (isFreePan: boolean) => {
+              this.isFreePan = isFreePan;
+            },
             () => this.listeners.call("redraw", this)
           );
         }),
@@ -316,6 +318,12 @@ export class Core {
           drawPlotAreaInteraction(event, this.plotAreaInteractions, id);
         });
     });
+
+    const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
+
+    this.yAxes["main"].latestPrice(
+      yr(panels["main"].data[panels["main"].data.length - 1].close)
+    );
   }
 
   draw() {
@@ -397,11 +405,11 @@ export class Core {
   }
 
   update(
-    areas: Panes<ChartPanel>,
+    panels: Panes<ChartPanel>,
     axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] }
   ) {
     const oldIds = Object.keys(this.plotAreas);
-    const newIds = Object.keys(areas);
+    const newIds = Object.keys(panels);
 
     const newYScales: Panes<ScaleLinear> = {};
     const newYAxes: Panes<YAxis> = {};
@@ -419,9 +427,9 @@ export class Core {
         newYAxisInteractions[id] = this.yAxisInteractions[id];
 
         newPlotAreas[id] = this.plotAreas[id]
-          .data(areas[id].data)
-          .renderableElements(areas[id].renderableElements)
-          .yEncodingFields(areas[id].yEncodingFields);
+          .data(panels[id].data)
+          .renderableElements(panels[id].renderableElements)
+          .yEncodingFields(panels[id].yEncodingFields);
 
         newPlotAreaInteractions[id] = this.plotAreaInteractions[id];
         newZooms[id] = this.yZooms[id];
@@ -444,8 +452,10 @@ export class Core {
             newTs,
             newPlotAreas,
             newYAxes,
-            this.isFreePan,
             id,
+            (isFreePan: boolean) => {
+              this.isFreePan = isFreePan;
+            },
             () => this.listeners.call("redraw", this)
           );
         });
@@ -453,9 +463,9 @@ export class Core {
         newPlotAreas[id] = new PlotArea(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id],
-          areas[id].renderableElements,
-          areas[id].data,
-          areas[id].yEncodingFields
+          panels[id].renderableElements,
+          panels[id].data,
+          panels[id].yEncodingFields
         );
 
         newPlotAreaInteractions[id] = new PlotAreaInteraction(
@@ -499,7 +509,7 @@ export class Core {
           });
 
         newZooms[id] = d3Zoom<Element, unknown>();
-        newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
+        newGPlotAreas[id] = select<Element, unknown>(panels[id].ref.current!);
         newTs[id] = () => zoomTransform(newGPlotAreas[id].node()!);
         newYScales[id].domain(newPlotAreas[id].extent());
         newPlotAreas[id].yScale(newTs[id]().rescaleY(newYScales[id]));
@@ -520,7 +530,7 @@ export class Core {
             drawXAxis(event, this.xAxis);
           });
 
-        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+        select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".y-axis")
           .on("measure", (event) => {
             measureYAxis(
@@ -535,7 +545,7 @@ export class Core {
             drawYAxis(event, newYAxes, id);
           });
 
-        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+        select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".y-axis-interaction")
           .on("draw", (event) => {
             newYAxisInteractions[id].draw(
@@ -543,13 +553,13 @@ export class Core {
             );
           });
 
-        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+        select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".plot-area")
           .on("draw", (event) => {
             drawPlotArea(event, this.plotAreas, id);
           });
 
-        select<HTMLDivElement, unknown>(areas[id].ref.current!)
+        select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".plot-area-interaction")
           .on("draw", (event) => {
             drawPlotAreaInteraction(event, newPlotAreaInteractions, id);
@@ -566,6 +576,12 @@ export class Core {
     this.yZooms = newZooms;
     this.plotAreaElements = newGPlotAreas;
     this.yTransforms = newTs;
+
+    const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
+
+    this.yAxes["main"].latestPrice(
+      yr(panels["main"].data[panels["main"].data.length - 1].close)
+    );
 
     return this;
   }
