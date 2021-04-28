@@ -25,10 +25,8 @@ import { ChartInfo } from "../chart-info";
 import { FcElement } from "../../types";
 import { Interval } from "../../stories/api/vega-graphql";
 import { StudyInfo } from "../study-info";
-import { TopLevelSpec } from "../../vega-lite/spec";
 import { createRef } from "react";
 import { throttle } from "lodash";
-import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
 
@@ -129,7 +127,9 @@ export const PlotContainer = forwardRef(
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState(initialBounds);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [showPaneControls, setShowPaneControls] = useState(false);
+    const [showPaneControls, setShowPaneControls] = useState<string | null>(
+      null
+    );
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -142,6 +142,7 @@ export const PlotContainer = forwardRef(
       () => throttle(setDataIndex, THROTTLE_INTERVAL),
       []
     );
+
     const refs = scenegraph.panels
       .map((panel) => panel.id)
       .reduce((acc, value) => {
@@ -232,8 +233,8 @@ export const PlotContainer = forwardRef(
                 position: "relative",
                 flex: 1,
               }}
-              onMouseOver={() => setShowPaneControls(true)}
-              onMouseOut={() => setShowPaneControls(false)}
+              onMouseOver={() => setShowPaneControls(panel.id)}
+              onMouseOut={() => setShowPaneControls(null)}
             >
               <d3fc-canvas
                 class="plot-area"
@@ -243,7 +244,7 @@ export const PlotContainer = forwardRef(
                   width: "100%",
                   height: "100%",
                 }}
-              ></d3fc-canvas>
+              />
               <d3fc-canvas
                 class="y-axis"
                 use-device-pixel-ratio
@@ -252,7 +253,7 @@ export const PlotContainer = forwardRef(
                   width: "100%",
                   height: "100%",
                 }}
-              ></d3fc-canvas>
+              />
               <d3fc-svg
                 class="plot-area-interaction"
                 style={{
@@ -261,24 +262,25 @@ export const PlotContainer = forwardRef(
                   height: "100%",
                   cursor: "crosshair",
                 }}
-              ></d3fc-svg>
+              />
               <d3fc-svg
                 class="y-axis-interaction"
                 style={{
                   position: "absolute",
                   right: 0,
-                  width: "64px",
+                  width: `${WIDTH}px`,
                   height: "100%",
                   cursor: "ns-resize",
                 }}
-              ></d3fc-svg>
+              />
               {panel.id !== "main" && (
                 <div
                   className="plot-container__close-button-wrapper"
                   style={{
                     right: `${WIDTH}px`,
-                    opacity: showPaneControls ? 1 : 0,
-                    visibility: showPaneControls ? "visible" : "hidden",
+                    opacity: showPaneControls === panel.id ? 1 : 0,
+                    visibility:
+                      showPaneControls === panel.id ? "visible" : "hidden",
                   }}
                 >
                   <div
@@ -324,7 +326,7 @@ export const PlotContainer = forwardRef(
               width: "100%",
               height: "100%",
             }}
-          ></d3fc-canvas>
+          />
           <d3fc-svg
             class="x-axis-interaction"
             style={{
@@ -333,7 +335,7 @@ export const PlotContainer = forwardRef(
               height: "100%",
               cursor: "ew-resize",
             }}
-          ></d3fc-svg>
+          />
         </div>
       </d3fc-group>
     );

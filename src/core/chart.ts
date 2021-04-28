@@ -160,6 +160,10 @@ export const chart = (
     ])
   );
 
+  Object.entries(yScales).forEach(([id, scale]) => {
+    scale.domain(plotAreas[id].extent());
+  });
+
   let plotAreaInteractions: Record<
     string,
     plotAreaInteractionInterface
@@ -424,15 +428,7 @@ export const chart = (
     select<HTMLDivElement, unknown>(panels[id].ref.current!)
       .select(".y-axis")
       .on("measure", (event) => {
-        measureYAxis(
-          event,
-          scale,
-          yTransforms[id],
-          plotAreas[id],
-          yAxes[id],
-          plotAreaElements[id],
-          yZooms[id]
-        );
+        measureYAxis(event, scale, yTransforms[id], plotAreas[id], yAxes[id]);
       })
       .on("draw", (event) => {
         drawYAxis(event, yAxes, id);
@@ -565,6 +561,9 @@ export const chart = (
         newGPlotAreas[id] = select<Element, unknown>(areas[id].ref.current!);
         newTs[id] = () => zoomTransform(newGPlotAreas[id].node()!);
 
+        newYScales[id].domain(newPlotAreas[id].extent());
+        newPlotAreas[id].yScale(newTs[id]().rescaleY(newYScales[id]));
+
         select<HTMLDivElement, unknown>(axis.ref.current)
           .select(".x-axis")
           .on("measure", (event) => {
@@ -589,9 +588,7 @@ export const chart = (
               newYScales[id],
               newTs[id],
               newPlotAreas[id],
-              newYAxes[id],
-              newGPlotAreas[id],
-              newZooms[id]
+              newYAxes[id]
             );
           })
           .on("draw", (event) => {
