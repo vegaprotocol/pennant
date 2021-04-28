@@ -130,8 +130,12 @@ export const Chart = forwardRef(
 
     // Fetch historical data
     const query = useCallback(
-      async (from: string, to: string, merge = true) => {
-        const newData = await dataSource.query(interval, from, to);
+      async (from: Date, to: Date, merge = true) => {
+        const newData = await dataSource.query(
+          interval,
+          from.toISOString(),
+          to.toISOString()
+        );
 
         setData((data) => mergeData(newData, merge ? data : []));
       },
@@ -142,8 +146,8 @@ export const Chart = forwardRef(
     useEffect(() => {
       const fetchData = async () => {
         await query(
-          new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
-          new Date().toISOString(),
+          new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          new Date(),
           false
         );
 
@@ -202,7 +206,7 @@ export const Chart = forwardRef(
     }, [dataSource]);
 
     const handleGetDataRange = useCallback(
-      (from: string, to: string) => {
+      (from: Date, to: Date) => {
         query(from, to);
       },
       [query]
@@ -241,8 +245,6 @@ export const Chart = forwardRef(
                 interval={internalInterval}
                 initialBounds={extent(data.map((d) => d.date)) as [Date, Date]}
                 onBoundsChanged={setBounds}
-                onMouseMove={setCandle}
-                onMouseOut={handleOnMouseOut}
                 onGetDataRange={handleGetDataRange}
                 onClosePanel={handleClosePanel}
               />

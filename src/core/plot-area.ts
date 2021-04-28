@@ -6,83 +6,68 @@ import { bisector, extent } from "d3-array";
 import { clamp } from "lodash";
 import { closestIndexTo } from "date-fns";
 
-export interface PlotAreaInterface {
-  (): void;
-  context(context: CanvasRenderingContext2D): PlotAreaInterface;
-  crosshair(pos: [number | null, number | null]): PlotAreaInterface;
-  data(originalData: any[]): PlotAreaInterface;
-  extent(bounds?: [Date, Date]): [number, number];
-  getIndex(offset: number): [number, number];
-  pixelRatio(ratio: number): PlotAreaInterface;
-  renderableElements(elements: RenderableElement[]): PlotAreaInterface;
-  xScale(scale: ScaleTime): PlotAreaInterface;
-  yScale(scale: ScaleLinear): PlotAreaInterface;
-  yEncodingFields(fields: string[]): PlotAreaInterface;
-}
+export class PlotArea {
+  private _crosshair: CrosshairElement = new CrosshairElement();
+  private ctx: CanvasRenderingContext2D | null = null;
+  private _data: any[];
+  private gridline: GridElement = new GridElement();
+  private _pixelRatio: number = 1;
+  private position: [number | null, number | null] = [null, null];
+  private _renderableElements: RenderableElement[];
+  private _xScale: ScaleTime;
+  private _yEncodingFields: string[];
+  private _yScale: ScaleLinear;
 
-export const plotArea = (
-  x: ScaleTime,
-  y: ScaleLinear,
-  elements: RenderableElement[],
-  originalData: any[],
-  fields?: string[]
-) => {
-  let crosshair = new CrosshairElement();
-  let ctx: CanvasRenderingContext2D | null = null;
-  let data: any[] = originalData;
-  let gridline = new GridElement();
-  let pixelRatio: number = 1;
-  let position: [number | null, number | null] = [null, null];
-  let renderableElements: RenderableElement[] = elements;
-  let xScale = x.copy();
-  let yEncodingFields = fields;
-  let yScale = y.copy();
+  constructor(
+    x: ScaleTime,
+    y: ScaleLinear,
+    elements: RenderableElement[],
+    originalData: any[],
+    fields: string[]
+  ) {
+    this._xScale = x.copy();
+    this._yScale = y.copy();
+    this._renderableElements = elements;
+    this._data = originalData;
+    this._yEncodingFields = fields;
+  }
 
-  const plotArea: PlotAreaInterface = () => {
-    if (ctx) {
-      clearCanvas(ctx.canvas, ctx, Colors.BACKGROUND);
-      gridline.draw(ctx, xScale, yScale, pixelRatio);
+  context(context: CanvasRenderingContext2D) {
+    this.ctx = context;
+    return this;
+  }
 
-      renderableElements.forEach((element) =>
-        element.draw(ctx!, xScale, yScale, pixelRatio)
-      );
+  crosshair(pos: [number | null, number | null]) {
+    this.position = pos;
+    return this;
+  }
 
-      crosshair.draw(ctx, xScale, yScale, pixelRatio, position);
-    }
-  };
+  data(originalData: any[]) {
+    this._data = originalData;
+    return this;
+  }
 
-  plotArea.context = (context: CanvasRenderingContext2D): PlotAreaInterface => {
-    ctx = context;
-    return plotArea;
-  };
-
-  plotArea.crosshair = (
-    pos: [number | null, number | null]
-  ): PlotAreaInterface => {
-    position = pos;
-    return plotArea;
-  };
-
-  plotArea.data = (originalData: any[]): PlotAreaInterface => {
-    data = originalData;
-    return plotArea;
-  };
-
-  plotArea.extent = (bounds?: [Date, Date]) => {
+  extent(bounds?: [Date, Date]) {
     return bounds
       ? extent(
-          data
+          this._data
             .filter((d) => d.date >= bounds[0] && d.date <= bounds[1])
-            .flatMap((d) => yEncodingFields?.map((field) => d[field]))
+            .flatMap((d) => this._yEncodingFields?.map((field) => d[field]))
         )
-      : extent(data.flatMap((d) => yEncodingFields?.map((field) => d[field])));
-  };
+      : extent(
+          this._data.flatMap((d) =>
+            this._yEncodingFields?.map((field) => d[field])
+          )
+        );
+  }
 
-  plotArea.getIndex = (offset: number): [number, number] => {
-    const timeAtMouseX = xScale.invert(offset);
-    const index = bisector((d: any) => d.date).left(data, timeAtMouseX);
-    const firstElement: Date = data[Math.max(0, index - 1)].date;
-    const secondElement: Date = data[Math.min(data.length - 1, index)].date;
+  getIndex(offset: number): [number, number] {
+    const timeAtMouseX = this._xScale.invert(offset);
+    const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
+    const firstElement: Date = this._data[Math.max(0, index - 1)].date;
+    const secondElement: Date = this._data[
+      Math.min(this._data.length - 1, index)
+    ].date;
 
     let element: Date;
     let indexOffset = 0;
@@ -99,37 +84,67 @@ export const plotArea = (
       element = secondElement;
     }
 
-    const dataIndex = clamp(index + indexOffset - 1, 0, data.length - 1);
+    const dataIndex = clamp(index + indexOffset - 1, 0, this._data.length - 1);
 
-    return [dataIndex, xScale(data[dataIndex].date)];
-  };
+    return [dataIndex, this._xScale(this._data[dataIndex].date)];
+  }
 
-  plotArea.pixelRatio = (ratio: number): PlotAreaInterface => {
-    pixelRatio = ratio;
-    return plotArea;
-  };
+  pixelRatio(ratio: number) {
+    this._pixelRatio = ratio;
+    return this;
+  }
 
-  plotArea.renderableElements = (
-    elements: RenderableElement[]
-  ): PlotAreaInterface => {
-    renderableElements = elements;
-    return plotArea;
-  };
+  renderableElements(elements: RenderableElement[]) {
+    this._renderableElements = elements;
+    return this;
+  }
 
-  plotArea.xScale = (x: ScaleTime): PlotAreaInterface => {
-    xScale = x.copy();
-    return plotArea;
-  };
+  xScale(x: ScaleTime) {
+    this._xScale = x.copy();
+    return this;
+  }
 
-  plotArea.yEncodingFields = (fields: string[]): PlotAreaInterface => {
-    yEncodingFields = fields;
-    return plotArea;
-  };
+  yEncodingFields(fields: string[]) {
+    this._yEncodingFields = fields;
+    return this;
+  }
 
-  plotArea.yScale = (y: ScaleLinear): PlotAreaInterface => {
-    yScale = y;
-    return plotArea;
-  };
+  yScale(y: ScaleLinear) {
+    this._yScale = y;
+    return this;
+  }
 
-  return plotArea;
-};
+  draw() {
+    if (this.ctx) {
+      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+      
+      this.gridline.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      this._renderableElements[0].draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      this._renderableElements.forEach((element) => {
+        if (this.ctx) {
+          element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+        }
+      });
+
+      this._crosshair.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.position
+      );
+    }
+  }
+}

@@ -1,55 +1,59 @@
 import { ScaleLinear, ScaleTime } from "../types";
 import { YAxisElement, YAxisTooltipElement } from "../elements";
+import { Colors } from "../helpers";
 
-export interface yAxisInterface {
-  (): void;
-  context(context: CanvasRenderingContext2D): yAxisInterface;
-  pixelRatio(ratio: number): yAxisInterface;
-  xScale(x: ScaleTime): yAxisInterface;
-  yScale(y: ScaleLinear): yAxisInterface;
-}
+/**
+ * The y-axis component renders human readable reference marks.
+ */
+export class YAxis {
+  private axis: YAxisElement = new YAxisElement();
+  private ctx: CanvasRenderingContext2D | null = null;
+  private _pixelRatio: number = 1;
+  private position: number | null = null;
+  private tooltip: YAxisTooltipElement = new YAxisTooltipElement(5); // FIXME: Use correct formatting
+  private _xScale: ScaleTime;
+  private _yScale: ScaleLinear;
 
-export const yAxis = (x: ScaleTime, y: ScaleLinear) => {
-  let axis = new YAxisElement();
-  let ctx: CanvasRenderingContext2D | null = null;
-  let pixelRatio: number = 1;
-  let position: number | null = null;
-  let tooltip = new YAxisTooltipElement(5); // FIXME: Use correct formatting
-  let xScale = x.copy();
-  let yScale = y.copy();
+  constructor(x: ScaleTime, y: ScaleLinear) {
+    this._xScale = x.copy();
+    this._yScale = y.copy();
+  }
 
-  const yAxis = () => {
-    if (ctx) {
-      axis.draw(ctx, xScale, yScale, pixelRatio);
-      tooltip.draw(ctx, xScale, yScale, pixelRatio, position);
+  context(context: CanvasRenderingContext2D): this {
+    this.ctx = context;
+    return this;
+  }
+
+  crosshair(pos: number | null): this {
+    this.position = pos;
+    return this;
+  }
+
+  draw() {
+    if (this.ctx) {
+      this.axis.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+      this.tooltip.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.position
+      );
     }
-  };
+  }
 
-  yAxis.context = (context: CanvasRenderingContext2D): yAxisInterface => {
-    ctx = context;
-    return yAxis;
-  };
+  pixelRatio(ratio: number): this {
+    this._pixelRatio = ratio;
+    return this;
+  }
 
-  yAxis.crosshair = (pos: number | null): yAxisInterface => {
-    position = pos;
-    return yAxis;
-  };
+  xScale(x: ScaleTime): this {
+    this._xScale = x.copy();
+    return this;
+  }
 
-  yAxis.pixelRatio = (ratio: number): yAxisInterface => {
-    pixelRatio = ratio;
-    return yAxis;
-  };
-
-  yAxis.xScale = (x: ScaleTime): yAxisInterface => {
-    xScale = x.copy();
-
-    return yAxis;
-  };
-
-  yAxis.yScale = (y: ScaleLinear): yAxisInterface => {
-    yScale = y.copy();
-    return yAxis;
-  };
-
-  return yAxis;
-};
+  yScale(y: ScaleLinear): this {
+    this._yScale = y.copy();
+    return this;
+  }
+}

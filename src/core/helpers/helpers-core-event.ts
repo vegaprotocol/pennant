@@ -1,11 +1,14 @@
 import { ScaleLinear, ScaleTime } from "../../types";
 import { Selection, select } from "d3-selection";
-import { ZoomBehavior, ZoomTransform, zoomIdentity } from "d3-zoom";
+import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
-import { PlotAreaInterface } from "../plot-area";
+import { PlotArea } from "../plot-area";
 import { WIDTH } from "../../constants";
-import { xAxisInterface } from "../x-axis";
-import { yAxisInterface } from "../y-axis";
+import { XAxis } from "../x-axis";
+import { YAxis } from "../y-axis";
+import { Core, Panes } from "../core";
+import { PlotAreaInteraction } from "../plot-area-interaction";
+import { Dispatch } from "d3-dispatch";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,
@@ -14,11 +17,11 @@ export function handleXAxisDrag(
   xScale: ScaleTime,
   isPinned: boolean,
   xTransform: () => ZoomTransform,
-  xAxis: xAxisInterface,
-  plotAreas: Record<string, PlotAreaInterface>,
-  yAxes: Record<string, any>,
-  listeners: any,
-  chart: any
+  xAxis: XAxis,
+  plotAreas: Panes<PlotArea>,
+  yAxes: Panes<YAxis>,
+  onBoundsChanged: (bounds: [Date, Date]) => void,
+  onRedraw: () => void
 ) {
   xElement.call(
     xZoom.scaleBy,
@@ -36,17 +39,45 @@ export function handleXAxisDrag(
   Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
   Object.values(yAxes).forEach((axis) => axis.xScale(xr));
 
-  listeners.call("redraw", chart);
-  listeners.call("bounds_changed", chart, xr.domain());
+  onBoundsChanged(xr.domain() as [Date, Date]);
+  onRedraw();
+}
+
+export function handleYAxisDrag(
+  plotAreaElements: Panes<Selection<Element, any, null, undefined>>,
+  yZooms: Panes<ZoomBehavior<Element, unknown>>,
+  e: any,
+  yScales: Panes<ScaleLinear>,
+  yTransforms: Panes<() => ZoomTransform>,
+  plotAreas: Panes<PlotArea>,
+  yAxes: Panes<YAxis>,
+  isFreePan: boolean,
+  id: string,
+  onRedraw: () => void
+): void {
+  plotAreaElements[id].call(
+    yZooms[id].scaleBy,
+    1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
+    [0, (yScales[id].range()[0] - yScales[id].range()[1]) / 2]
+  );
+
+  const yr = yTransforms[id]().rescaleY(yScales[id]);
+
+  plotAreas[id].yScale(yr);
+  yAxes[id].yScale(yr);
+
+  isFreePan = true;
+
+  onRedraw();
 }
 
 export function measureXAxis(
   event: any,
   xScale: ScaleTime,
   xTransform: () => ZoomTransform,
-  xAxis: xAxisInterface,
-  yAxes: Record<string, any>,
-  plotAreas: Record<string, PlotAreaInterface>
+  xAxis: XAxis,
+  yAxes: Panes<YAxis>,
+  plotAreas: Panes<PlotArea>
 ) {
   const { width, pixelRatio } = event.detail;
   xScale.range([0, width / pixelRatio]);
@@ -57,7 +88,7 @@ export function measureXAxis(
   Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
 }
 
-export function drawXAxis(event: any, xAxis: xAxisInterface) {
+export function drawXAxis(event: any, xAxis: XAxis) {
   const ctx = select(event.currentTarget)
     .select<HTMLCanvasElement>("canvas")
     .node()
@@ -68,18 +99,17 @@ export function drawXAxis(event: any, xAxis: xAxisInterface) {
 
     ctx?.scale(pixelRatio, pixelRatio);
 
-    xAxis.context(ctx).pixelRatio(pixelRatio)();
+    xAxis.context(ctx).pixelRatio(pixelRatio).draw();
   }
 }
 
 export function handleZoomend(
-  plotAreas: Record<string, PlotAreaInterface>,
+  plotAreas: Panes<PlotArea>,
   offset: [number, number],
-  xAxis: xAxisInterface,
-  yAxes: Record<string, any>,
+  xAxis: XAxis,
+  yAxes: Panes<YAxis>,
   id: string,
-  listeners: any,
-  chart: any
+  onRedraw: () => void
 ) {
   const [_index, x] = plotAreas[id].getIndex(offset[0]);
 
@@ -90,13 +120,13 @@ export function handleZoomend(
   xAxis.crosshair(x);
   yAxes[id].crosshair(offset[1]);
 
-  listeners.call("redraw", chart);
+  onRedraw();
 }
 
 export function handleZoomstart(
-  plotAreas: Record<string, PlotAreaInterface>,
-  yAxes: Record<string, any>,
-  xAxis: xAxisInterface
+  plotAreas: Panes<PlotArea>,
+  yAxes: Panes<YAxis>,
+  xAxis: XAxis
 ) {
   Object.values(plotAreas).forEach((plotArea) => {
     plotArea.crosshair([null, null]);
@@ -113,8 +143,8 @@ export function measureYAxis(
   event: any,
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
-  plotArea: PlotAreaInterface,
-  yAxis: yAxisInterface
+  plotArea: PlotArea,
+  yAxis: YAxis
 ) {
   const { height, pixelRatio } = event.detail;
 
@@ -126,17 +156,15 @@ export function measureYAxis(
 
 export function drawPlotAreaInteraction(
   event: any,
-  plotAreaInteractions: Record<string, any>,
+  plotAreaInteractions: Panes<PlotAreaInteraction>,
   id: string
 ) {
-  select(event.currentTarget)
-    .select<SVGSVGElement>("svg")
-    .call(plotAreaInteractions[id]);
+  plotAreaInteractions[id].draw(select(event.currentTarget).select("svg"));
 }
 
 export function drawPlotArea(
   event: any,
-  plotAreas: Record<string, PlotAreaInterface>,
+  plotAreas: Panes<PlotArea>,
   id: string
 ) {
   const ctx = select(event.currentTarget)
@@ -147,29 +175,29 @@ export function drawPlotArea(
   if (ctx) {
     const pixelRatio = event.detail.pixelRatio;
     ctx.scale(pixelRatio, pixelRatio);
-    plotAreas[id].context(ctx).pixelRatio(pixelRatio)();
+    plotAreas[id].context(ctx).pixelRatio(pixelRatio).draw();
   }
 }
 
-export function drawYAxis(event: any, yAxes: Record<string, any>, id: string) {
+export function drawYAxis(event: any, yAxes: Panes<YAxis>, id: string) {
   const ctx = select(event.currentTarget)
     .select<HTMLCanvasElement>("canvas")
     .node()
     ?.getContext("2d");
 
-  const pixelRatio = event.detail.pixelRatio;
-
-  ctx?.scale(pixelRatio, pixelRatio);
-
-  yAxes[id].context(ctx).pixelRatio(pixelRatio)();
+  if (ctx) {
+    const pixelRatio = event.detail.pixelRatio;
+    ctx.scale(pixelRatio, pixelRatio);
+    yAxes[id].context(ctx).pixelRatio(pixelRatio).draw();
+  }
 }
 
 export function handleMouseout(
-  plotAreas: Record<string, PlotAreaInterface>,
-  xAxis: xAxisInterface,
-  yAxes: Record<string, any>,
-  listeners: any,
-  chart: any
+  plotAreas: Panes<PlotArea>,
+  xAxis: XAxis,
+  yAxes: Panes<YAxis>,
+  onMouseout: () => void,
+  onRedraw: () => void
 ) {
   Object.values(plotAreas).forEach((plotArea) =>
     plotArea.crosshair([null, null])
@@ -180,18 +208,18 @@ export function handleMouseout(
     axis.crosshair(null);
   });
 
-  listeners.call("redraw", chart);
-  listeners.call("mousemove", chart);
+  onMouseout();
+  onRedraw();
 }
 
 export function handleMousemove(
-  plotAreas: Record<string, PlotAreaInterface>,
+  plotAreas: Panes<PlotArea>,
   offset: [number, number],
-  yAxes: Record<string, any>,
-  xAxis: xAxisInterface,
+  yAxes: Panes<YAxis>,
+  xAxis: XAxis,
   id: string,
-  listeners: any,
-  chart: any
+  onMousemove: (index: number, id: string) => void,
+  onRedraw: () => void
 ) {
   // Calculate index of data item
   const [index, x] = plotAreas[id].getIndex(offset[0]);
@@ -207,6 +235,6 @@ export function handleMousemove(
   plotAreas[id].crosshair([x, offset[1]]);
   yAxes[id].crosshair(offset[1]);
 
-  listeners.call("redraw", chart);
-  listeners.call("mousemove", chart, index, id);
+  onMousemove(index, id);
+  onRedraw();
 }
