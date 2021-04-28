@@ -1,14 +1,14 @@
 import { ScaleLinear, ScaleTime } from "../../types";
 import { ZoomTransform, zoomIdentity } from "d3-zoom";
 
-import { PlotAreaInterface } from "../plot-area";
+import { PlotArea } from "../plot-area";
 
 export function recalculateScale(
   xTransform: () => ZoomTransform,
   xScale: ScaleTime,
   yScales: Record<string, ScaleLinear>,
   id: string,
-  plotAreas: Record<string, PlotAreaInterface>,
+  plotAreas: { [id: string]: PlotArea },
   plotAreaElements: any,
   yZooms: any
 ) {

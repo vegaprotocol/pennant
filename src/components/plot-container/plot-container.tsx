@@ -4,7 +4,7 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartElement, Scenegraph, Study } from "../../types";
+import { ChartElement, Scenegraph } from "../../types";
 import {
   asyncSnapshot,
   formatter,

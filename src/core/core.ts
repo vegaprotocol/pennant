@@ -1,4 +1,4 @@
-import { PlotAreaInterface, plotArea } from "./plot-area";
+import { PlotArea } from "./plot-area";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { Selection, select } from "d3-selection";
 import {
@@ -21,17 +21,14 @@ import {
   measureYAxis,
   recalculateScale,
 } from "./helpers";
-import {
-  plotAreaInteraction,
-  plotAreaInteractionInterface,
-} from "./plot-area-interaction";
+import { PlotAreaInteraction } from "./plot-area-interaction";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { xAxis as xAxisElement, xAxisInterface } from "./x-axis";
+import { XAxis } from "./x-axis";
 import {
   xAxisInteraction as xAxisInteractionElement,
   xAxisInteractionInterface,
 } from "./x-axis-interaction";
-import { yAxis, yAxisInterface } from "./y-axis";
+import { YAxis } from "./y-axis";
 import {
   yAxisInteraction,
   yAxisInteractionInterface,
@@ -40,6 +37,8 @@ import {
 import { WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
 import { MutableRefObject } from "react";
+
+export type Panes<T> = { [id: string]: T };
 
 export type ChartPanel = {
   id: string;
@@ -81,27 +80,25 @@ export class Core {
   private xDates: Date[];
   private xScale: ScaleTime;
   private xZoom: ZoomBehavior<Element, unknown>;
-  private xAxis: xAxisInterface;
+  private xAxis: XAxis;
   private xAxisInteraction: xAxisInteractionInterface;
   private xElement: Selection<Element, unknown, null, undefined>;
   private xTransform: () => ZoomTransform;
 
   // y-axis
-  private yScales: { [id: string]: ScaleLinear };
-  private yZooms: { [id: string]: ZoomBehavior<Element, unknown> };
-  private yAxes: { [id: string]: yAxisInterface };
-  private yAxisInteractions: { [id: string]: yAxisInteractionInterface };
-  private yTransforms: { [id: string]: () => ZoomTransform };
+  private yScales: Panes<ScaleLinear>;
+  private yZooms: Panes<ZoomBehavior<Element, unknown>>;
+  private yAxes: Panes<YAxis>;
+  private yAxisInteractions: Panes<yAxisInteractionInterface>;
+  private yTransforms: Panes<() => ZoomTransform>;
 
   // plot-area
-  private plotAreas: { [id: string]: PlotAreaInterface };
-  private plotAreaInteractions: { [id: string]: plotAreaInteractionInterface };
-  private plotAreaElements: {
-    [id: string]: Selection<Element, any, null, undefined>;
-  };
+  private plotAreas: Panes<PlotArea>;
+  private plotAreaInteractions: Panes<PlotAreaInteraction>;
+  private plotAreaElements: Panes<Selection<Element, any, null, undefined>>;
 
   constructor(
-    panels: { [id: string]: ChartPanel },
+    panels: Panes<ChartPanel>,
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
     initialBounds: [Date, Date]
   ) {
@@ -113,7 +110,7 @@ export class Core {
       .select<Element>(".x-axis")
       .style("pointer-events", "none");
 
-    this.xAxis = xAxisElement(this.xScale);
+    this.xAxis = new XAxis(this.xScale);
     this.xAxisInteraction = xAxisInteractionElement(this.xScale).on(
       "drag",
       (e) => {
@@ -143,7 +140,7 @@ export class Core {
     this.yAxes = Object.fromEntries(
       Object.entries(this.yScales).map(([id, scale]) => [
         id,
-        yAxis(this.xScale, scale),
+        new YAxis(this.xScale, scale),
       ])
     );
 
@@ -160,7 +157,7 @@ export class Core {
     this.plotAreas = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
         panel.id,
-        plotArea(
+        new PlotArea(
           this.xScale,
           this.yScales[id],
           panel.renderableElements.flat(1),
@@ -173,7 +170,7 @@ export class Core {
     this.plotAreaInteractions = Object.fromEntries(
       Object.entries(panels).map(([id, value]) => [
         value.id,
-        plotAreaInteraction(this.xScale, this.yScales[id])
+        new PlotAreaInteraction(this.xScale, this.yScales[id])
           .on("zoom", (_e: any, t: any, point: [number, number]) => {
             this.zoomed(t, point, value.id);
           })
@@ -399,26 +396,20 @@ export class Core {
   }
 
   update(
-    areas: { [id: string]: ChartPanel },
+    areas: Panes<ChartPanel>,
     axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] }
   ) {
     const oldIds = Object.keys(this.plotAreas);
     const newIds = Object.keys(areas);
 
-    const newYScales: Record<string, ScaleLinear> = {};
-    const newYAxes: Record<string, yAxisInterface> = {};
-    const newYAxisInteractions: Record<string, yAxisInteractionInterface> = {};
-    const newPlotAreas: Record<string, PlotAreaInterface> = {};
-    const newPlotAreaInteractions: Record<
-      string,
-      plotAreaInteractionInterface
-    > = {};
-    const newZooms: Record<string, ZoomBehavior<Element, unknown>> = {};
-    const newGPlotAreas: Record<
-      string,
-      Selection<Element, any, null, undefined>
-    > = {};
-    const newTs: Record<string, () => ZoomTransform> = {};
+    const newYScales: Panes<ScaleLinear> = {};
+    const newYAxes: Panes<YAxis> = {};
+    const newYAxisInteractions: Panes<yAxisInteractionInterface> = {};
+    const newPlotAreas: Panes<PlotArea> = {};
+    const newPlotAreaInteractions: Panes<PlotAreaInteraction> = {};
+    const newZooms: Panes<ZoomBehavior<Element, unknown>> = {};
+    const newGPlotAreas: Panes<Selection<Element, any, null, undefined>> = {};
+    const newTs: Panes<() => ZoomTransform> = {};
 
     for (const id of newIds) {
       if (oldIds.includes(id)) {
@@ -435,7 +426,7 @@ export class Core {
         newTs[id] = this.yTransforms[id];
       } else {
         newYScales[id] = scaleLinear().domain([0, 1]); //FIXME: Initialize domain
-        newYAxes[id] = yAxis(
+        newYAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id]
         );
@@ -445,14 +436,14 @@ export class Core {
             this.yAxisDragged(e, id);
           }
         );
-        newPlotAreas[id] = plotArea(
+        newPlotAreas[id] = new PlotArea(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id],
           areas[id].renderableElements,
           areas[id].data,
           areas[id].yEncodingFields
         );
-        newPlotAreaInteractions[id] = plotAreaInteraction(
+        newPlotAreaInteractions[id] = new PlotAreaInteraction(
           this.xTransform().rescaleX(this.xScale),
           newYScales[id]
         )

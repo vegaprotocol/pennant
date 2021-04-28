@@ -12,6 +12,9 @@ export interface yAxisInteractionInterface {
   ): yAxisInteractionInterface;
 }
 
+/**
+ * The y-axis interaction component handles dragging interactions.
+ */
 export const yAxisInteraction = (y: ScaleLinear) => {
   let listeners = dispatch("drag");
 

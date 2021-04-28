@@ -1,23 +1,17 @@
 import { ScaleLinear, ScaleTime } from "../types";
 import { Selection, pointers } from "d3-selection";
-import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import {
+  zoom as d3Zoom,
+  ZoomBehavior,
+  zoomIdentity,
+  ZoomTransform,
+} from "d3-zoom";
 
-import { dispatch } from "d3-dispatch";
+import { Dispatch, dispatch } from "d3-dispatch";
 import { mean } from "d3-array";
-import { plotArea } from "./plot-area";
 
-export interface plotAreaInteractionInterface {
-  (selection: Selection<SVGSVGElement, any, any, any>): void;
-  xScale(x: ScaleTime): plotAreaInteractionInterface;
-  yScale(y: ScaleLinear): plotAreaInteractionInterface;
-  on(
-    typenames: string,
-    callback: (this: object, ...args: any[]) => void
-  ): plotAreaInteractionInterface;
-}
-
-export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
-  let listeners = dispatch(
+export class PlotAreaInteraction {
+  private listeners: Dispatch<object> = dispatch(
     "zoom",
     "zoomstart",
     "zoomend",
@@ -25,96 +19,90 @@ export const plotAreaInteraction = (x: ScaleTime, y: ScaleLinear) => {
     "mousemove",
     "mouseout"
   );
-  let xScale = x.copy();
-  let yScale = y.copy();
 
-  let zoom = d3Zoom<SVGSVGElement, unknown>()
-    .filter(function filter(e) {
-      if (e.type === "dblclick") {
-        listeners.call("dblclick", plotAreaInteraction, e);
-        return false;
-      }
+  private _xScale: ScaleTime;
+  private _yScale: ScaleLinear;
+  private z: ZoomTransform = zoomIdentity;
 
-      return true;
-    })
-    .on("zoom", function (e) {
-      const t = e.transform;
-      const k = t.k / z.k;
-      const point = center(e, this);
+  private zoom: ZoomBehavior<Element, unknown>;
 
-      listeners.call(
-        "zoom",
-        plotAreaInteraction,
-        e,
-        {
-          x: t.x - z.x,
-          y: t.y - z.y,
-          k: k,
-        },
-        point
-      );
+  constructor(x: ScaleTime, y: ScaleLinear) {
+    this._xScale = x.copy();
+    this._yScale = y.copy();
 
-      z = t;
-    })
-    .on("start", function () {
-      listeners.call("zoomstart", plotArea);
-    })
-    .on("end", function (e) {
-      listeners.call("zoomend", plotArea, [
-        e.sourceEvent.offsetX,
-        e.sourceEvent.offsetY,
-      ]);
-    });
+    this.zoom = d3Zoom()
+      .filter((e: { type: string }) => {
+        if (e.type === "dblclick") {
+          this.listeners.call("dblclick", this, e);
+          return false;
+        }
 
-  // z holds a copy of the previous transform, so we can track its changes
-  let z = zoomIdentity;
+        return true;
+      })
+      .on("zoom", (e) => {
+        const t = e.transform;
+        const k = t.k / this.z.k;
+        const point = this.center(e, this); // TODO: Check if this is still valid
 
-  function center(event: any, target: any) {
+        this.listeners.call(
+          "zoom",
+          this,
+          e,
+          {
+            x: t.x - this.z.x,
+            y: t.y - this.z.y,
+            k: k,
+          },
+          point
+        );
+
+        this.z = t;
+      })
+      .on("start", () => {
+        this.listeners.call("zoomstart", this);
+      })
+      .on("end", (e) => {
+        this.listeners.call("zoomend", this, [
+          e.sourceEvent.offsetX,
+          e.sourceEvent.offsetY,
+        ]);
+      });
+  }
+
+  private center(event: any, target: any) {
     if (event.sourceEvent) {
       const p = pointers(event, target);
       return [mean(p, (d) => d[0]), mean(p, (d) => d[1])];
     }
 
     return [
-      (xScale.range()[1] - xScale.range()[0]) / 2,
-      (yScale.range()[0] - yScale.range()[1]) / 2,
+      (this._xScale.range()[1] - this._xScale.range()[0]) / 2,
+      (this._yScale.range()[0] - this._yScale.range()[1]) / 2,
     ];
   }
 
-  const plotAreaInteraction = (
-    selection: Selection<SVGSVGElement, any, any, any>
-  ): void => {
-    selection.call(zoom);
+  draw(selection: Selection<Element, any, any, any>): void {
+    selection.call(this.zoom);
 
     selection
       .on("mousemove", (event) =>
-        listeners.call("mousemove", plotAreaInteraction, [
-          event.offsetX,
-          event.offsetY,
-        ])
+        this.listeners.call("mousemove", this, [event.offsetX, event.offsetY])
       )
-      .on("mouseout", () => listeners.call("mouseout", plotAreaInteraction));
+      .on("mouseout", () => this.listeners.call("mouseout", this));
+  }
+
+  on(typenames: string, callback: (this: object, ...args: any[]) => void) {
+    this.listeners.on(typenames, callback);
+    return this;
+  }
+
+  xScale = (x: ScaleTime): this => {
+    this._xScale = x.copy();
+    return this;
   };
 
-  plotAreaInteraction.xScale = (x: ScaleTime): plotAreaInteractionInterface => {
-    xScale = x.copy();
-    return plotAreaInteraction;
+  yScale = (y: ScaleLinear): this => {
+    this._yScale = y.copy();
+    return this;
   };
-
-  plotAreaInteraction.yScale = (
-    y: ScaleLinear
-  ): plotAreaInteractionInterface => {
-    yScale = y;
-    return plotAreaInteraction;
-  };
-
-  plotAreaInteraction.on = (
-    typenames: string,
-    callback: (this: object, ...args: any[]) => void
-  ) => {
-    listeners.on(typenames, callback);
-    return plotAreaInteraction;
-  };
-
-  return plotAreaInteraction;
-};
+}

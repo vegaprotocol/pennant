@@ -3,54 +3,52 @@ import { XAxisElement, XAxisTooltipElement } from "../elements";
 
 import { ScaleTime } from "../types";
 
-export interface xAxisInterface {
-  (): void;
-  context(context: CanvasRenderingContext2D): xAxisInterface;
-  crosshair(position: number | null): xAxisInterface;
-  pixelRatio(ratio: number): xAxisInterface;
-  xScale(x: ScaleTime): xAxisInterface;
-}
-
 /**
  * The x-axis component renders human readable reference marks.
- * @param x
- * @returns
  */
-export const xAxis = (x: ScaleTime) => {
-  let axis = new XAxisElement();
-  let tooltip = new XAxisTooltipElement();
-  let ctx: CanvasRenderingContext2D | null = null;
-  let position: number | null = null;
-  let pixelRatio: number = 1;
-  let xScale: any = x.copy();
+export class XAxis {
+  private axis: XAxisElement = new XAxisElement();
+  private ctx: CanvasRenderingContext2D | null = null;
+  private _pixelRatio: number = 1;
+  private position: number | null = null;
+  private tooltip: XAxisTooltipElement = new XAxisTooltipElement();
+  private _xScale: ScaleTime;
 
-  const xAxis: xAxisInterface = () => {
-    if (ctx) {
-      clearCanvas(ctx.canvas, ctx, Colors.BACKGROUND);
-      axis.draw(ctx, xScale, null!, pixelRatio);
-      tooltip.draw(ctx, xScale, null!, pixelRatio, position);
+  constructor(x: ScaleTime) {
+    this._xScale = x.copy();
+  }
+
+  context(context: CanvasRenderingContext2D): this {
+    this.ctx = context;
+    return this;
+  }
+
+  crosshair(pos: number | null): this {
+    this.position = pos;
+    return this;
+  }
+
+  draw() {
+    if (this.ctx) {
+      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+      this.axis.draw(this.ctx, this._xScale, null!, this._pixelRatio);
+      this.tooltip.draw(
+        this.ctx,
+        this._xScale,
+        null!,
+        this._pixelRatio,
+        this.position
+      );
     }
-  };
+  }
 
-  xAxis.context = (context: CanvasRenderingContext2D): xAxisInterface => {
-    ctx = context;
-    return xAxis;
-  };
+  pixelRatio(ratio: number): this {
+    this._pixelRatio = ratio;
+    return this;
+  }
 
-  xAxis.crosshair = (pos: number | null): xAxisInterface => {
-    position = pos;
-    return xAxis;
-  };
-
-  xAxis.pixelRatio = (ratio: number): xAxisInterface => {
-    pixelRatio = ratio;
-    return xAxis;
-  };
-
-  xAxis.xScale = (x: ScaleTime): xAxisInterface => {
-    xScale = x.copy();
-    return xAxis;
-  };
-
-  return xAxis;
-};
+  xScale(x: ScaleTime): this {
+    this._xScale = x.copy();
+    return this;
+  }
+}

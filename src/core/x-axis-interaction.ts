@@ -13,9 +13,7 @@ export interface xAxisInteractionInterface {
 }
 
 /**
- * The x-axis component renders human readable reference marks.
- * @param x
- * @returns
+ * The x-axis interaction component handles dragging interactions.
  */
 export const xAxisInteraction = (x: ScaleTime) => {
   let listeners = dispatch("drag");
