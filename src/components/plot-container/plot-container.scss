@@ -1,5 +1,18 @@
 @import "../../styles/colors";
 
+.plot-container__close-button-wrapper {
+  position: absolute;
+  top: 0;
+  margin-top: 4px;
+  margin-right: 8px;
+
+  transition: opacity 0.4s, visibility 0.4s;
+}
+
+.plot-container__close-button {
+  cursor: default;
+}
+
 .plot-container__info_overlay {
   display: flex;
   flex-direction: column;

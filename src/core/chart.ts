@@ -424,7 +424,15 @@ export const chart = (
     select<HTMLDivElement, unknown>(panels[id].ref.current!)
       .select(".y-axis")
       .on("measure", (event) => {
-        measureYAxis(event, scale, yTransforms[id], plotAreas[id], yAxes[id]);
+        measureYAxis(
+          event,
+          scale,
+          yTransforms[id],
+          plotAreas[id],
+          yAxes[id],
+          plotAreaElements[id],
+          yZooms[id]
+        );
       })
       .on("draw", (event) => {
         drawYAxis(event, yAxes, id);
@@ -581,7 +589,9 @@ export const chart = (
               newYScales[id],
               newTs[id],
               newPlotAreas[id],
-              newYAxes[id]
+              newYAxes[id],
+              newGPlotAreas[id],
+              newZooms[id]
             );
           })
           .on("draw", (event) => {

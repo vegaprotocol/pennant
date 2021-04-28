@@ -21,6 +21,7 @@ import { PlotContainer } from "../plot-container";
 import { extent } from "d3-array";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
+import { useCallback } from "react";
 
 export type Bounds = {
   date: Date;
@@ -47,14 +48,17 @@ export const Chart = React.forwardRef(
     {
       dataSource,
       interval,
-      options: { chartType = "candle", studies = [], overlays = [] } = {
+      options = {
         chartType: "candle",
         studies: [],
         overlays: [],
       },
+      onOptionsChanged = () => {},
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
+    const { chartType = "candle", studies = [], overlays = [] } = options;
+
     React.useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartRef.current.panBy(n);
@@ -192,11 +196,21 @@ export const Chart = React.forwardRef(
       });
     }, [dataSource]);
 
-    const handleGetDataRange = React.useCallback(
+    const handleGetDataRange = useCallback(
       (from: string, to: string) => {
         query(from, to);
       },
       [query]
+    );
+
+    const handleClosePanel = useCallback(
+      (id: string) => {
+        onOptionsChanged({
+          ...options,
+          studies: studies.filter((study) => study !== id),
+        });
+      },
+      [onOptionsChanged, options, studies]
     );
 
     const handleOnMouseOut = React.useCallback(() => setCandle(null), []);
@@ -226,6 +240,7 @@ export const Chart = React.forwardRef(
                 onMouseMove={setCandle}
                 onMouseOut={handleOnMouseOut}
                 onGetDataRange={handleGetDataRange}
+                onClosePanel={handleClosePanel}
               />
             )}
           </AutoSizer>

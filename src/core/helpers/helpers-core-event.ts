@@ -6,6 +6,8 @@ import { PlotAreaInterface } from "../plot-area";
 import { WIDTH } from "../../constants";
 import { xAxisInterface } from "../x-axis";
 import { yAxisInterface } from "../y-axis";
+import { YAxisElement } from "../../elements";
+import { he } from "date-fns/locale";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,
@@ -114,9 +116,43 @@ export function measureYAxis(
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
   plotArea: PlotAreaInterface,
-  yAxis: yAxisInterface
+  yAxis: yAxisInterface,
+  plotAreaElement: any,
+  yZoom: ZoomBehavior<Element, unknown>
 ) {
   const { height, pixelRatio } = event.detail;
+
+  const previousHeight =
+    Math.abs(scale.range()[0] - scale.range()[1]) * pixelRatio;
+
+  const yr1 = yTransform().rescaleY(scale);
+
+  const heightRatio = (yr1.range()[0] * pixelRatio) / height;
+
+  const transform = yTransform();
+
+  const range = scale.range().map(transform.invertY, transform);
+  const domain = range.map(scale.invert, scale);
+
+  //console.log(range, domain, scale.domain());
+
+  if (previousHeight !== height) {
+    //console.log(`Height changed: ${previousHeight} -> ${height}`);
+
+    const yr = yTransform().rescaleY(scale);
+    const originalExtent = scale.range();
+    const newExtent = [height / pixelRatio, 0];
+    const originalHeight = Math.abs(originalExtent[0] - originalExtent[1]);
+    const newHeight = Math.abs(newExtent[1] - newExtent[0]);
+
+    plotAreaElement.call(
+      yZoom.transform,
+      yTransform()
+        .translate(0, -originalHeight / 2 / transform.k)
+        .scale(originalHeight / newHeight)
+        .translate(0, +(newExtent[0] + newExtent[1]) / 2 / transform.k)
+    );
+  }
 
   scale.range([height / pixelRatio, 0]);
 

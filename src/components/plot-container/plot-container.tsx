@@ -22,6 +22,8 @@ import { TopLevelSpec } from "../../vega-lite/spec";
 import { createRef } from "react";
 import { throttle } from "lodash";
 import { useWhyDidYouUpdate } from "../../hooks/useWhyDidYouUpdate";
+import { WIDTH } from "../../constants";
+import { CloseButton } from "./close-button";
 
 const StudyInfoFields: Record<
   string,
@@ -70,6 +72,7 @@ export type PlotContainerProps = {
   onMouseOver?: () => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: string, to: string) => void;
+  onClosePanel: (id: string) => void;
 };
 
 export const PlotContainer = React.forwardRef(
@@ -84,6 +87,7 @@ export const PlotContainer = React.forwardRef(
       onMouseOut,
       onMouseOver,
       onGetDataRange = () => {},
+      onClosePanel,
     }: PlotContainerProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -105,10 +109,6 @@ export const PlotContainer = React.forwardRef(
       },
     }));
 
-    const data: any[] = React.useMemo(() => specification?.data?.values ?? [], [
-      specification,
-    ]);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const onBoundsChangedThrottled = React.useCallback(
       throttle(onBoundsChanged, 200),
@@ -125,6 +125,7 @@ export const PlotContainer = React.forwardRef(
     const [bounds, setBounds] = useState(initialBounds);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const [activePanel, setActivePanel] = useState<string | null>(null);
+    const [showPaneControls, setShowPaneControls] = useState(false);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -211,7 +212,7 @@ export const PlotContainer = React.forwardRef(
           flexDirection: "column",
         }}
       >
-        {scenegraph.panels.map((panel, index) => (
+        {scenegraph.panels.map((panel, panelIndex) => (
           <React.Fragment key={panel.id}>
             <div
               ref={refs[panel.id]}
@@ -220,6 +221,8 @@ export const PlotContainer = React.forwardRef(
                 position: "relative",
                 flex: 1,
               }}
+              onMouseOver={() => setShowPaneControls(true)}
+              onMouseOut={() => setShowPaneControls(false)}
             >
               <d3fc-canvas
                 class="plot-area"
@@ -258,8 +261,27 @@ export const PlotContainer = React.forwardRef(
                   cursor: "ns-resize",
                 }}
               ></d3fc-svg>
+              {panel.id !== "main" && (
+                <div
+                  className="plot-container__close-button-wrapper"
+                  style={{
+                    right: `${WIDTH}px`,
+                    opacity: showPaneControls ? 1 : 0,
+                    visibility: showPaneControls ? "visible" : "hidden",
+                  }}
+                >
+                  <div
+                    className="plot-container__close-button"
+                    onClick={() => {
+                      onClosePanel(panel.id);
+                    }}
+                  >
+                    <CloseButton size={16} />
+                  </div>
+                </div>
+              )}
               <div className="plot-container__info_overlay">
-                {index === 0 && <ChartInfo bounds={bounds} />}
+                {panelIndex === 0 && <ChartInfo bounds={bounds} />}
                 {
                   <StudyInfo
                     title={StudyInfoFields[panel.id].label}

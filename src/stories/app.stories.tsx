@@ -260,6 +260,9 @@ export const CryptoCompare: Story = () => {
               overlays: overlay === null ? [] : [overlay],
             }}
             interval={interval}
+            onOptionsChanged={(options) => {
+              setStudy(options.studies?.length === 0 ? null : study);
+            }}
           />
         </div>
         <button onClick={() => ref.current.reset()}>reset</button>
