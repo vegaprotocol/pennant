@@ -1,5 +1,5 @@
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
-import { ChartType, Overlay, Study } from "../types";
+import { Candle, ChartType, Overlay, Study } from "../types";
 
 import { Colors } from "./helpers-color";
 import { Transform } from "../vega-lite/transform";
@@ -268,7 +268,7 @@ function constructStudyTransform(study: Study): Transform[] {
 }
 
 export function constructTopLevelSpec(
-  data: any[],
+  data: Candle[],
   chartType: ChartType,
   overlay?: Overlay,
   study?: Study,

@@ -1,4 +1,4 @@
-import { Annotation, DataSource, LabelAnnotation } from "../../types";
+import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
 import {
   Interval,
   candleQuery,
@@ -13,9 +13,8 @@ import { marketQuery } from "../api/vega-graphql/queries/markets";
 import { orderSubscription } from "../api/vega-graphql/queries/order";
 import { positionSubscription } from "../api/vega-graphql/queries/position";
 
-export function extendCandle(candle: any, decimalPlaces: number): any {
+export function extendCandle(candle: any, decimalPlaces: number): Candle {
   return {
-    ...candle,
     date: new Date(candle.datetime),
     high: Number(addDecimal(candle.high, decimalPlaces)),
     low: Number(addDecimal(candle.low, decimalPlaces)),
@@ -105,7 +104,11 @@ export class ApolloDataSource implements DataSource {
     };
   }
 
-  async query(interval: Interval, from: string, to: string) {
+  async query(
+    interval: Interval,
+    from: string,
+    _to: string
+  ): Promise<Candle[]> {
     const { data } = await this.client.query<
       candlesQuery,
       candlesQueryVariables

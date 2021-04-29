@@ -1,4 +1,4 @@
-import { DataSource } from "../../types";
+import { Candle, DataSource } from "../../types";
 import { Interval } from "../api/vega-graphql";
 
 const API_KEY =
@@ -22,7 +22,7 @@ export class CryptoCompareDataSource implements DataSource {
     });
   }
 
-  async query(interval: Interval, from: string, to: string) {
+  async query(interval: Interval, from: string, to: string): Promise<Candle[]> {
     const limit = 500;
     const toTs = Math.floor(new Date(to).getTime() / 1000);
     let resolution;

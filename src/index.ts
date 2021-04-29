@@ -7,4 +7,11 @@ export {
   studies,
   studyLabels,
 } from "./types";
-export type { ChartType, DataSource, Overlay, Study } from "./types";
+export type {
+  Candle,
+  ChartElement,
+  ChartType,
+  DataSource,
+  Overlay,
+  Study,
+} from "./types";
