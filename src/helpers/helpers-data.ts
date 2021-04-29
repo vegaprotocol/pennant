@@ -1,10 +1,12 @@
+import { Candle } from "..";
+
 /**
  * Merges two arrays
  * @param a First array. Takes precedence
  * @param b Second array
  * @returns Merged array
  */
-export function mergeData(a: { date: Date }[], b: { date: Date }[]) {
+export function mergeData(a: Candle[], b: Candle[]) {
   let i = 0;
   let j = 0;
 

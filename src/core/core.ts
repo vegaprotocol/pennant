@@ -1,11 +1,12 @@
 import { PlotArea } from "./plot-area";
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { RenderableElement, ScaleLinear, ScaleTime, Viewport } from "../types";
 import { Selection, select } from "d3-selection";
 import {
   ZoomBehavior,
   ZoomTransform,
   zoom as d3Zoom,
   zoomTransform,
+  zoomIdentity,
 } from "d3-zoom";
 import {
   drawPlotArea,
@@ -28,10 +29,11 @@ import { XAxis } from "./x-axis";
 import { XAxisInteraction } from "./x-axis-interaction";
 import { YAxis } from "./y-axis";
 import { YAxisInteraction } from "./y-axis-interaction";
-
-import { WIDTH } from "../constants";
+import { difference, intersection, omit, union } from "lodash";
+import { DEFAULT_INTERVAL_WIDTH, MAX_CANDLE_WIDTH, WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
 import { MutableRefObject } from "react";
+import { extent } from "d3-array";
 
 export type Panes<T> = { [id: string]: T };
 
@@ -49,6 +51,8 @@ export type ChartPanel = {
  * Zooming and panning of plot areas is supported. Dragging the axes will zoom the apprpriate dimension.
  */
 export class Core {
+  private isFirstRun = true;
+
   private listeners = dispatch(
     "bounds_changed",
     "click",
@@ -62,7 +66,8 @@ export class Core {
     "mouseout",
     "mouseover",
     "redraw",
-    "rightclick"
+    "rightclick",
+    "viewport_changed"
   );
 
   private _interval = 1000 * 60;
@@ -71,34 +76,37 @@ export class Core {
   private isPinned = true;
   private isFreePan = false;
 
+  // Data
+  private dates: Date[];
+
   // x-axis
-  private xDates: Date[];
-  private xScale: ScaleTime;
-  private xZoom: ZoomBehavior<Element, unknown>;
   private xAxis: XAxis;
   private xAxisInteraction: XAxisInteraction;
-  private xElement: Selection<Element, unknown, null, undefined>;
+  private xElement: Selection<Element, any, null, any>;
+  private xScale: ScaleTime;
   private xTransform: () => ZoomTransform;
+  private xZoom: ZoomBehavior<Element, unknown>;
 
   // y-axis
-  private yScales: Panes<ScaleLinear>;
-  private yZooms: Panes<ZoomBehavior<Element, unknown>>;
   private yAxes: Panes<YAxis>;
   private yAxisInteractions: Panes<YAxisInteraction>;
+  private yElements: Panes<Selection<Element, any, null, any>>;
+  private yScales: Panes<ScaleLinear>;
   private yTransforms: Panes<() => ZoomTransform>;
+  private yZooms: Panes<ZoomBehavior<Element, unknown>>;
 
   // plot-area
   private plotAreas: Panes<PlotArea>;
   private plotAreaInteractions: Panes<PlotAreaInteraction>;
-  private plotAreaElements: Panes<Selection<Element, any, null, undefined>>;
+  private plotAreaElements: Panes<Selection<Element, any, null, any>>;
 
   constructor(
     panels: Panes<ChartPanel>,
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
-    initialBounds: [Date, Date]
+    initialViewport: Viewport
   ) {
     // x-axis
-    this.xDates = axis.data;
+    this.dates = axis.data;
     this.xScale = scaleTime();
     this.xZoom = d3Zoom();
     this.xElement = select(axis.ref.current)
@@ -106,22 +114,28 @@ export class Core {
       .style("pointer-events", "none");
 
     this.xAxis = new XAxis(this.xScale);
-    this.xAxisInteraction = new XAxisInteraction().on("drag", (e) => {
-      handleXAxisDrag(
-        this.xElement,
-        this.xZoom,
-        e,
-        this.xScale,
-        this.isPinned,
-        this.xTransform,
-        this.xAxis,
-        this.plotAreas,
-        this.yAxes,
-        (bounds: [Date, Date]) =>
-          this.listeners.call("bounds_changed", this, bounds),
-        () => this.listeners.call("redraw", this)
-      );
-    });
+    this.xAxisInteraction = new XAxisInteraction()
+      .on("drag", (e) => {
+        handleXAxisDrag(
+          this.xElement,
+          this.xZoom,
+          e,
+          this.xScale,
+          this.isPinned,
+          this.xTransform,
+          this.xAxis,
+          this.plotAreas,
+          this.yAxes,
+          (bounds: [Date, Date]) =>
+            this.listeners.call("bounds_changed", this, bounds),
+          () => this.listeners.call("redraw")
+        );
+      })
+      .on("dblclick", () => {
+        this.resetXAxis();
+        this.isPinned = true;
+        this.listeners.call("redraw");
+      });
 
     this.xTransform = () => zoomTransform(this.xElement.node()!);
 
@@ -140,22 +154,37 @@ export class Core {
     this.yAxisInteractions = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
         id,
-        new YAxisInteraction().on("drag", (e) => {
-          handleYAxisDrag(
-            this.plotAreaElements,
-            this.yZooms,
-            e,
-            this.yScales,
-            this.yTransforms,
-            this.plotAreas,
-            this.yAxes,
-            id,
-            (isFreePan: boolean) => {
-              this.isFreePan = isFreePan;
-            },
-            () => this.listeners.call("redraw", this)
-          );
-        }),
+        new YAxisInteraction()
+          .on("drag", (e) => {
+            handleYAxisDrag(
+              this.yElements,
+              this.yZooms,
+              e,
+              this.yScales,
+              this.yTransforms,
+              this.plotAreas,
+              this.yAxes,
+              id,
+              (isFreePan: boolean) => {
+                this.isFreePan = isFreePan;
+              },
+              () => this.listeners.call("redraw")
+            );
+          })
+          .on("dblclick", () => {
+            this.resetYAxis(id);
+            this.isFreePan = false;
+            this.listeners.call("redraw");
+          }),
+      ])
+    );
+
+    this.yElements = Object.fromEntries(
+      Object.entries(panels).map(([id, panel]) => [
+        id,
+        select(panel.ref.current)
+          .select<Element>(".y-axis")
+          .style("pointer-events", "none"),
       ])
     );
 
@@ -190,7 +219,7 @@ export class Core {
               this.xAxis,
               this.yAxes,
               value.id,
-              () => this.listeners.call("redraw", this)
+              () => this.listeners.call("redraw")
             );
           })
           .on("dblclick", () => {
@@ -205,7 +234,7 @@ export class Core {
               this.xAxis,
               value.id,
               (index, id) => this.listeners.call("mousemove", this, index, id),
-              () => this.listeners.call("redraw", this)
+              () => this.listeners.call("redraw")
             );
           })
           .on("mouseout", () => {
@@ -213,7 +242,7 @@ export class Core {
               this.plotAreas,
               this.xAxis,
               this.yAxes,
-              () => this.listeners.call("redraw", this),
+              () => this.listeners.call("redraw"),
               () => this.listeners.call("mouseout", this)
             );
           }),
@@ -230,15 +259,13 @@ export class Core {
     );
 
     this.yTransforms = Object.fromEntries(
-      Object.entries(this.plotAreaElements).map(([id, plotAreaElement]) => [
+      Object.entries(this.yElements).map(([id, yElement]) => [
         id,
-        () => zoomTransform(plotAreaElement.node()!),
+        () => zoomTransform(yElement.node()!),
       ])
-    ); // TODO: Why are the transforms put on the plot area and not the y-axis
+    );
 
     // Configure
-    this.xScale.domain(initialBounds);
-
     Object.entries(this.yScales).forEach(([id, scale]) => {
       scale.domain(this.plotAreas[id].extent());
     });
@@ -327,11 +354,14 @@ export class Core {
   }
 
   draw() {
-    this.listeners.call("redraw", this);
+    this.listeners.call("redraw");
   }
 
   interval(interval: number): this {
     this._interval = interval;
+
+    this.initialize();
+
     return this;
   }
 
@@ -361,47 +391,104 @@ export class Core {
           this.yScales,
           id,
           this.plotAreas,
-          this.plotAreaElements,
-          this.yZooms
+          this.yElements,
+          this.yZooms,
+          this.yTransforms
         );
       }
     });
 
     this.isPinned = false;
 
-    this.listeners.call("redraw", this);
+    this.listeners.call("redraw");
     this.listeners.call("bounds_changed", this, xr.domain());
   }
 
-  reset(): void {
-    this.xElement.call(this.xZoom.translateTo, this.xScale.range()[1], 0, [
-      this.xScale.range()[1] - WIDTH,
-      0,
-    ]);
+  initialize(initialViewport?: Viewport): void {
+    console.log("[initialize]");
 
-    const xr = this.xTransform().rescaleX(this.xScale);
+    let viewport = initialViewport;
 
-    this.xAxis.xScale(xr);
+    if (!viewport) {
+      viewport = {
+        date: this.dates[this.dates.length - 1],
+        intervalWidth: 10,
+      };
+    }
 
-    Object.entries(this.plotAreas).forEach(([id, plotArea]) => {
-      plotArea.xScale(xr);
+    this.resetXAxis();
 
-      recalculateScale(
-        this.xTransform,
-        this.xScale,
-        this.yScales,
-        id,
-        this.plotAreas,
-        this.plotAreaElements,
-        this.yZooms
-      );
+    Object.keys(this.yAxes).map((id) => {
+      this.resetYAxis(id);
     });
 
     this.isPinned = true;
     this.isFreePan = false;
 
-    this.listeners.call("redraw", this);
-    this.listeners.call("bounds_changed", this, xr.domain());
+    this.listeners.call("redraw");
+    this.listeners.call(
+      "bounds_changed",
+      this,
+      this.xTransform().rescaleX(this.xScale).domain()
+    );
+  }
+
+  reset(): void {
+    this.resetXAxis();
+
+    Object.keys(this.yAxes).map((id) => {
+      this.resetYAxis(id);
+    });
+
+    this.isPinned = true;
+    this.isFreePan = false;
+
+    this.listeners.call("redraw");
+  }
+
+  resetXAxis(): void {
+    const latestDate = this.dates[this.dates.length - 1];
+    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
+
+    const ratio =
+      (this.xScale.range()[1] - this.xScale.range()[0]) /
+      (this.xScale.range()[1] -
+        WIDTH -
+        intervalWidth * 3 -
+        this.xScale.range()[0]);
+
+    const date0 = new Date(
+      latestDate.getTime() -
+        (Math.abs(
+          this.xScale.range()[1] -
+            this.xScale.range()[0] -
+            WIDTH -
+            3 * intervalWidth
+        ) /
+          intervalWidth) *
+          this._interval
+    );
+
+    const domain = [
+      date0,
+      new Date(
+        latestDate.getTime() +
+          (latestDate.getTime() - date0.getTime()) * (ratio - 1)
+      ),
+    ];
+
+    this.xScale.domain(domain);
+    this.xElement.call(this.xZoom.transform, zoomIdentity);
+  }
+
+  resetYAxis(id: string) {
+    const domain = this.plotAreas[id].extent(
+      this.xTransform().rescaleX(this.xScale).domain() as [Date, Date]
+    );
+
+    this.yScales[id].domain(domain);
+
+    this.yElements[id].call(this.yZooms[id].transform, zoomIdentity);
   }
 
   update(
@@ -411,76 +498,77 @@ export class Core {
     const oldIds = Object.keys(this.plotAreas);
     const newIds = Object.keys(panels);
 
-    const newYScales: Panes<ScaleLinear> = {};
-    const newYAxes: Panes<YAxis> = {};
-    const newYAxisInteractions: Panes<YAxisInteraction> = {};
-    const newPlotAreas: Panes<PlotArea> = {};
-    const newPlotAreaInteractions: Panes<PlotAreaInteraction> = {};
-    const newZooms: Panes<ZoomBehavior<Element, unknown>> = {};
-    const newGPlotAreas: Panes<Selection<Element, any, null, undefined>> = {};
-    const newTs: Panes<() => ZoomTransform> = {};
+    const enteringIds = difference(newIds, oldIds);
+    const updatingIds = intersection(newIds, oldIds);
+    const exitingIds = difference(oldIds, newIds);
 
-    for (const id of newIds) {
-      if (oldIds.includes(id)) {
-        newYScales[id] = this.yScales[id];
-        newYAxes[id] = this.yAxes[id];
-        newYAxisInteractions[id] = this.yAxisInteractions[id];
-
-        newPlotAreas[id] = this.plotAreas[id]
+    for (const id of union(oldIds, newIds)) {
+      if (updatingIds.includes(id)) {
+        this.plotAreas[id]
           .data(panels[id].data)
           .renderableElements(panels[id].renderableElements)
           .yEncodingFields(panels[id].yEncodingFields);
+      } else if (enteringIds.includes(id)) {
+        this.yScales[id] = scaleLinear();
 
-        newPlotAreaInteractions[id] = this.plotAreaInteractions[id];
-        newZooms[id] = this.yZooms[id];
-        newGPlotAreas[id] = this.plotAreaElements[id];
-        newTs[id] = this.yTransforms[id];
-      } else {
-        newYScales[id] = scaleLinear().domain([0, 1]); //FIXME: Initialize domain
+        this.yElements[id] = select(panels[id].ref.current)
+          .select<Element>(".y-axis")
+          .style("pointer-events", "none");
 
-        newYAxes[id] = new YAxis(
+        this.yAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
-          newYScales[id]
+          this.yScales[id]
         );
 
-        newYAxisInteractions[id] = new YAxisInteraction().on("drag", (e) => {
-          handleYAxisDrag(
-            newGPlotAreas,
-            newZooms,
-            e,
-            newYScales,
-            newTs,
-            newPlotAreas,
-            newYAxes,
-            id,
-            (isFreePan: boolean) => {
-              this.isFreePan = isFreePan;
-            },
-            () => this.listeners.call("redraw", this)
-          );
-        });
+        this.yAxisInteractions[id] = new YAxisInteraction()
+          .on("drag", (e) => {
+            handleYAxisDrag(
+              this.yElements,
+              this.yZooms,
+              e,
+              this.yScales,
+              this.yTransforms,
+              this.plotAreas,
+              this.yAxes,
+              id,
+              (isFreePan: boolean) => {
+                this.isFreePan = isFreePan;
+              },
+              () => this.listeners.call("redraw")
+            );
+          })
+          .on("dblclick", () => {
+            this.resetYAxis(id);
+            this.isFreePan = false;
+            this.listeners.call("redraw");
+          });
 
-        newPlotAreas[id] = new PlotArea(
+        this.plotAreas[id] = new PlotArea(
           this.xTransform().rescaleX(this.xScale),
-          newYScales[id],
+          this.yScales[id],
           panels[id].renderableElements,
           panels[id].data,
           panels[id].yEncodingFields
         );
 
-        newPlotAreaInteractions[id] = new PlotAreaInteraction(
+        this.plotAreaInteractions[id] = new PlotAreaInteraction(
           this.xTransform().rescaleX(this.xScale),
-          newYScales[id]
+          this.yScales[id]
         )
           .on("zoom", (e, t, point) => {
             this.zoomed(t, point, id);
           })
           .on("zoomstart", () => {
-            handleZoomstart(newPlotAreas, newYAxes, this.xAxis);
+            handleZoomstart(this.plotAreas, this.yAxes, this.xAxis);
           })
           .on("zoomend", (offset: [number, number]) => {
-            handleZoomend(newPlotAreas, offset, this.xAxis, newYAxes, id, () =>
-              this.listeners.call("redraw", this)
+            handleZoomend(
+              this.plotAreas,
+              offset,
+              this.xAxis,
+              this.yAxes,
+              id,
+              () => this.listeners.call("redraw")
             );
           })
           .on("dblclick", () => {
@@ -489,30 +577,40 @@ export class Core {
           })
           .on("mousemove", (offset: [number, number]) => {
             handleMousemove(
-              newPlotAreas,
+              this.plotAreas,
               offset,
-              newYAxes,
+              this.yAxes,
               this.xAxis,
               id,
               (index, id) => this.listeners.call("mousemove", this, index, id),
-              () => this.listeners.call("redraw", this)
+              () => this.listeners.call("redraw")
             );
           })
           .on("mouseout", () => {
             handleMouseout(
-              newPlotAreas,
+              this.plotAreas,
               this.xAxis,
-              newYAxes,
+              this.yAxes,
               () => this.listeners.call("mouseout", this),
-              () => this.listeners.call("redraw", this)
+              () => this.listeners.call("redraw")
             );
           });
 
-        newZooms[id] = d3Zoom<Element, unknown>();
-        newGPlotAreas[id] = select<Element, unknown>(panels[id].ref.current!);
-        newTs[id] = () => zoomTransform(newGPlotAreas[id].node()!);
-        newYScales[id].domain(newPlotAreas[id].extent());
-        newPlotAreas[id].yScale(newTs[id]().rescaleY(newYScales[id]));
+        const domain = this.xTransform().rescaleX(this.xScale).domain() as [
+          Date,
+          Date
+        ];
+
+        const newExtent = this.plotAreas[id].extent(domain);
+
+        this.yZooms[id] = d3Zoom<Element, unknown>();
+        this.plotAreaElements[id] = select<Element, unknown>(
+          panels[id].ref.current!
+        );
+        this.yTransforms[id] = () => zoomTransform(this.yElements[id].node()!);
+        this.yScales[id].domain(newExtent);
+
+        const originalExtent = this.yScales[id].range();
 
         select<HTMLDivElement, unknown>(axis.ref.current)
           .select(".x-axis")
@@ -522,8 +620,8 @@ export class Core {
               this.xScale,
               this.xTransform,
               this.xAxis,
-              newYAxes,
-              newPlotAreas
+              this.yAxes,
+              this.plotAreas
             );
           })
           .on("draw", (event) => {
@@ -535,20 +633,20 @@ export class Core {
           .on("measure", (event) => {
             measureYAxis(
               event,
-              newYScales[id],
-              newTs[id],
-              newPlotAreas[id],
-              newYAxes[id]
+              this.yScales[id],
+              this.yTransforms[id],
+              this.plotAreas[id],
+              this.yAxes[id]
             );
           })
           .on("draw", (event) => {
-            drawYAxis(event, newYAxes, id);
+            drawYAxis(event, this.yAxes, id);
           });
 
         select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".y-axis-interaction")
           .on("draw", (event) => {
-            newYAxisInteractions[id].draw(
+            this.yAxisInteractions[id].draw(
               select(event.currentTarget).select("svg")
             );
           });
@@ -562,20 +660,25 @@ export class Core {
         select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".plot-area-interaction")
           .on("draw", (event) => {
-            drawPlotAreaInteraction(event, newPlotAreaInteractions, id);
+            drawPlotAreaInteraction(event, this.plotAreaInteractions, id);
           });
+
+        this.resetYAxis(id);
+      } else {
+        this.yScales = omit(this.yScales, id);
+        this.yAxes = omit(this.yAxes, id);
+        this.yAxisInteractions = omit(this.yAxisInteractions, id);
+        this.yElements = omit(this.yElements, id);
+        this.yTransforms = omit(this.yTransforms, id);
+        this.yZooms = omit(this.yZooms, id);
+
+        this.plotAreas = omit(this.plotAreas, id);
+        this.plotAreaInteractions = omit(this.plotAreaInteractions, id);
+        this.plotAreaElements = omit(this.plotAreaElements, id);
       }
     }
 
-    this.xDates = axis.data;
-    this.yScales = newYScales;
-    this.yAxes = newYAxes;
-    this.yAxisInteractions = newYAxisInteractions;
-    this.plotAreas = newPlotAreas;
-    this.plotAreaInteractions = newPlotAreaInteractions;
-    this.yZooms = newZooms;
-    this.plotAreaElements = newGPlotAreas;
-    this.yTransforms = newTs;
+    this.dates = axis.data;
 
     const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
 
@@ -608,13 +711,14 @@ export class Core {
           this.yScales,
           id,
           this.plotAreas,
-          this.plotAreaElements,
-          this.yZooms
+          this.yElements,
+          this.yZooms,
+          this.yTransforms
         );
       }
     });
 
-    this.listeners.call("redraw", this);
+    this.listeners.call("redraw");
     this.listeners.call("bounds_changed", this, xr.domain());
   }
 
@@ -623,7 +727,7 @@ export class Core {
       this.xElement.call(this.xZoom.translateBy, t.x / this.xTransform().k, 0);
 
       if (this.isFreePan) {
-        this.plotAreaElements[id].call(
+        this.yElements[id].call(
           this.yZooms[id].translateBy,
           0,
           t.y / this.yTransforms[id]().k
@@ -636,8 +740,9 @@ export class Core {
             this.yScales,
             id,
             this.plotAreas,
-            this.plotAreaElements,
-            this.yZooms
+            this.yElements,
+            this.yZooms,
+            this.yTransforms
           );
         });
       }
@@ -647,7 +752,9 @@ export class Core {
       this.xElement.call(
         this.xZoom.scaleBy,
         t.k,
-        this.isPinned ? [this.xScale.range()[1] - WIDTH, 0] : point
+        this.isPinned
+          ? [this.xScale.range()[1] - WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
+          : point
       );
 
       if (!this.isFreePan) {
@@ -658,8 +765,9 @@ export class Core {
             this.yScales,
             id,
             this.plotAreas,
-            this.plotAreaElements,
-            this.yZooms
+            this.yElements,
+            this.yZooms,
+            this.yTransforms
           );
         });
       }
@@ -677,14 +785,14 @@ export class Core {
     const domain = xr.domain();
     const domainWidth = domain[1].getTime() - domain[0].getTime();
 
-    if (this.xDates[0].getTime() + domainWidth > domain[0].getTime()) {
-      const to = this.xDates[0];
-      const from = new Date(this.xDates[0].getTime() - domainWidth);
+    if (this.dates[0].getTime() + domainWidth > domain[0].getTime()) {
+      const to = this.dates[0];
+      const from = new Date(this.dates[0].getTime() - domainWidth);
 
       this.listeners.call("fetch_data", this, from, to);
     }
 
-    this.listeners.call("redraw", this);
+    this.listeners.call("redraw");
     this.listeners.call("bounds_changed", this, xr.domain());
   }
 

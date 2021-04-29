@@ -167,11 +167,7 @@ export const ChartControls = ({
           }
           placement="bottom-start"
         >
-          <Button
-            rightIcon="caret-down"
-            icon="function"
-            text="Indicators and studies"
-          />
+          <Button rightIcon="caret-down" icon="function" />
         </Popover2>
       </ButtonGroup>
       <ButtonGroup minimal>

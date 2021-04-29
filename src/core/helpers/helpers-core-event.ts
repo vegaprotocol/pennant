@@ -44,7 +44,7 @@ export function handleXAxisDrag(
 }
 
 export function handleYAxisDrag(
-  plotAreaElements: Panes<Selection<Element, any, null, undefined>>,
+  yElements: Panes<Selection<Element, any, null, undefined>>,
   yZooms: Panes<ZoomBehavior<Element, unknown>>,
   e: any,
   yScales: Panes<ScaleLinear>,
@@ -55,7 +55,7 @@ export function handleYAxisDrag(
   onFreePanChanged: (isFreePan: boolean) => void,
   onRedraw: () => void
 ): void {
-  plotAreaElements[id].call(
+  yElements[id].call(
     yZooms[id].scaleBy,
     1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
     [0, (yScales[id].range()[0] - yScales[id].range()[1]) / 2]
