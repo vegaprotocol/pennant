@@ -7,8 +7,8 @@ import * as React from "react";
 import { Viewport, ChartElement, Scenegraph, Bounds } from "../../types";
 import {
   asyncSnapshot,
+  Colors,
   formatter,
-  getCandleWidth,
   getSubMinutes,
 } from "../../helpers";
 import {
@@ -331,7 +331,9 @@ export const PlotContainer = forwardRef(
                 }
               </div>
             </div>
-            <div style={{ height: "1px", backgroundColor: "white" }}></div>
+            <div
+              style={{ height: "1px", backgroundColor: Colors.GRAY_LIGHT_1 }}
+            ></div>
           </React.Fragment>
         ))}
         <div ref={xAxisRef} style={{ height: "24px", position: "relative" }}>

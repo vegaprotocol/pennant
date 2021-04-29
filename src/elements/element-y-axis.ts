@@ -74,7 +74,7 @@ function addYAxisPath(
   );
 
   ctx.beginPath();
-  ctx.strokeStyle = Colors.GRAY_LIGHT;
+  ctx.strokeStyle = Colors.GRAY_LIGHT_1;
   ctx.moveTo(align(xRange[1] - WIDTH, pixelRatio), yRange[0]);
   ctx.lineTo(align(xRange[1] - WIDTH, pixelRatio), yRange[1]);
   ctx.stroke();
