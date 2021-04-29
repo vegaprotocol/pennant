@@ -405,8 +405,6 @@ export class Core {
   }
 
   initialize(initialViewport?: Viewport): void {
-    console.log("[initialize]");
-
     let viewport = initialViewport;
 
     if (!viewport) {
