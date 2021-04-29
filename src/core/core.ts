@@ -133,6 +133,7 @@ export class Core {
       })
       .on("dblclick", () => {
         this.resetXAxis();
+        this.isPinned = true;
         this.listeners.call("redraw");
       });
 
@@ -172,6 +173,7 @@ export class Core {
           })
           .on("dblclick", () => {
             this.resetYAxis(id);
+            this.isFreePan = false;
             this.listeners.call("redraw");
           }),
       ])
@@ -438,6 +440,9 @@ export class Core {
       this.resetYAxis(id);
     });
 
+    this.isPinned = true;
+    this.isFreePan = false;
+
     this.listeners.call("redraw");
   }
 
@@ -534,6 +539,7 @@ export class Core {
           })
           .on("dblclick", () => {
             this.resetYAxis(id);
+            this.isFreePan = false;
             this.listeners.call("redraw");
           });
 
@@ -746,7 +752,9 @@ export class Core {
       this.xElement.call(
         this.xZoom.scaleBy,
         t.k,
-        this.isPinned ? [this.xScale.range()[1] - WIDTH, 0] : point
+        this.isPinned
+          ? [this.xScale.range()[1] - WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
+          : point
       );
 
       if (!this.isFreePan) {
