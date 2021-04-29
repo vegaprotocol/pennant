@@ -51,8 +51,6 @@ export type ChartPanel = {
  * Zooming and panning of plot areas is supported. Dragging the axes will zoom the apprpriate dimension.
  */
 export class Core {
-  private isFirstRun = true;
-
   private listeners = dispatch(
     "bounds_changed",
     "click",
@@ -71,6 +69,8 @@ export class Core {
   );
 
   private _interval = 1000 * 60;
+
+  private _decimalPlaces = 5;
 
   // Modes
   private isPinned = true;
@@ -103,8 +103,11 @@ export class Core {
   constructor(
     panels: Panes<ChartPanel>,
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
-    initialViewport: Viewport
+    initialViewport: Viewport,
+    decimalPlaces: number = 5
   ) {
+    this._decimalPlaces = decimalPlaces;
+
     // x-axis
     this.dates = axis.data;
     this.xScale = scaleTime();
@@ -147,7 +150,7 @@ export class Core {
     this.yAxes = Object.fromEntries(
       Object.entries(this.yScales).map(([id, scale]) => [
         id,
-        new YAxis(this.xScale, scale),
+        new YAxis(this.xScale, scale, this._decimalPlaces),
       ])
     );
 
@@ -515,7 +518,8 @@ export class Core {
 
         this.yAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
-          this.yScales[id]
+          this.yScales[id],
+          this._decimalPlaces
         );
 
         this.yAxisInteractions[id] = new YAxisInteraction()
@@ -675,6 +679,8 @@ export class Core {
         this.plotAreaElements = omit(this.plotAreaElements, id);
       }
     }
+
+    this.xZoom.scaleExtent([1, 1]);
 
     this.dates = axis.data;
 

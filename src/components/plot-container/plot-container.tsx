@@ -5,12 +5,7 @@ import "./plot-container.scss";
 import * as React from "react";
 
 import { Viewport, ChartElement, Scenegraph, Bounds } from "../../types";
-import {
-  asyncSnapshot,
-  Colors,
-  formatter,
-  getSubMinutes,
-} from "../../helpers";
+import { asyncSnapshot, Colors, formatter, getSubMinutes } from "../../helpers";
 import {
   forwardRef,
   useEffect,
@@ -67,6 +62,7 @@ const StudyInfoFields: Record<
 export type PlotContainerProps = {
   width: number;
   height: number;
+  decimalPlaces: number;
   scenegraph: Scenegraph;
   interval: Interval;
   initialViewport: Viewport;
@@ -82,6 +78,7 @@ export const PlotContainer = forwardRef(
       scenegraph,
       interval,
       initialViewport,
+      decimalPlaces,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePanel,
@@ -169,7 +166,8 @@ export const PlotContainer = forwardRef(
           ref: xAxisRef,
           data: scenegraph.panels[0].originalData.map((d) => d.date),
         },
-        initialViewport
+        initialViewport,
+        decimalPlaces
       )
         .interval(1000 * 60 * getSubMinutes(interval, 1))
         .on("redraw", () => {
@@ -323,7 +321,8 @@ export const PlotContainer = forwardRef(
                         value: formatter(
                           panel.originalData[
                             dataIndex ?? panel.originalData.length - 1
-                          ][field.field]
+                          ][field.field],
+                          decimalPlaces
                         ),
                       })
                     )}

@@ -247,6 +247,7 @@ export const Chart = forwardRef(
                 ref={chartRef}
                 width={width}
                 height={height}
+                decimalPlaces={dataSource.decimalPlaces}
                 scenegraph={scenegraph}
                 interval={internalInterval}
                 initialViewport={

@@ -11,14 +11,16 @@ export class YAxis {
   private latestPricePosition: number | null = null;
   private _pixelRatio: number = 1;
   private position: number | null = null;
-  private tooltip: YAxisTooltipElement = new YAxisTooltipElement(5); // FIXME: Use correct formatting
-  private lastestPriceTooltip: YAxisTooltipElement = new YAxisTooltipElement(5); // FIXME: Use correct formatting
+  private tooltip: YAxisTooltipElement;
+  private latestPriceTooltip: YAxisTooltipElement;
   private _xScale: ScaleTime;
   private _yScale: ScaleLinear;
 
-  constructor(x: ScaleTime, y: ScaleLinear) {
+  constructor(x: ScaleTime, y: ScaleLinear, decimalPlaces: number = 5) {
     this._xScale = x.copy();
     this._yScale = y.copy();
+    this.tooltip = new YAxisTooltipElement(decimalPlaces);
+    this.latestPriceTooltip = new YAxisTooltipElement(decimalPlaces);
   }
 
   context(context: CanvasRenderingContext2D): this {
@@ -35,7 +37,7 @@ export class YAxis {
     if (this.ctx) {
       this.axis.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
 
-      this.lastestPriceTooltip.draw(
+      this.latestPriceTooltip.draw(
         this.ctx,
         this._xScale,
         this._yScale,

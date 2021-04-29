@@ -36,8 +36,8 @@ export function multiFormat(date: Date) {
     ? formatMonth
     : formatYear)(date);
 }
-export const formatter = (value: number, significantFigures: number = 5) =>
+export const formatter = (value: number, fractionDigits: number = 5) =>
   new Intl.NumberFormat("en-GB", {
-    maximumSignificantDigits: significantFigures,
-    minimumSignificantDigits: significantFigures,
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
   }).format(value);
