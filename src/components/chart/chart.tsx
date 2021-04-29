@@ -145,7 +145,8 @@ export const Chart = forwardRef(
       const fetchData = async () => {
         await query(
           new Date(
-            new Date().getTime() - getSubMinutes(interval, INITIAL_NUM_CANDLES)
+            new Date().getTime() -
+              1000 * 60 * getSubMinutes(interval, INITIAL_NUM_CANDLES)
           ),
           new Date(),
           false
