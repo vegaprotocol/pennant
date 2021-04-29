@@ -26,6 +26,13 @@ export const studyLabels: Record<Study, string> = {
   volume: "Volume",
 } as const;
 
+export type Viewport = {
+  date: Date;
+  intervalWidth: number;
+};
+
+export type Bounds = [Date, Date];
+
 export interface ChartElement {
   /**
    * Changes the center of the chart by the given number of intervals.

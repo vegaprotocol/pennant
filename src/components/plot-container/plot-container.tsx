@@ -4,7 +4,7 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { ChartElement, Scenegraph } from "../../types";
+import { Viewport, ChartElement, Scenegraph, Bounds } from "../../types";
 import {
   asyncSnapshot,
   formatter,
@@ -69,8 +69,8 @@ export type PlotContainerProps = {
   height: number;
   scenegraph: Scenegraph;
   interval: Interval;
-  initialBounds: [Date, Date];
-  onBoundsChanged?: (bounds: [Date, Date]) => void;
+  initialViewport: Viewport;
+  onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date) => void;
   onClosePanel: (id: string) => void;
@@ -81,8 +81,8 @@ export const PlotContainer = forwardRef(
     {
       scenegraph,
       interval,
-      initialBounds,
-      onBoundsChanged = () => {},
+      initialViewport,
+      onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePanel,
     }: PlotContainerProps,
@@ -107,8 +107,8 @@ export const PlotContainer = forwardRef(
     }));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onBoundsChangedThrottled = React.useCallback(
-      throttle(onBoundsChanged, 200),
+    const onViewportChangedThrottled = React.useCallback(
+      throttle(onViewportChanged, 200),
       []
     );
 
@@ -119,7 +119,7 @@ export const PlotContainer = forwardRef(
     );
 
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
-    const [bounds, setBounds] = useState(initialBounds);
+    const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
       null
@@ -135,6 +135,11 @@ export const PlotContainer = forwardRef(
     const handleDataIndexChanged = useMemo(
       () => throttle(setDataIndex, THROTTLE_INTERVAL),
       []
+    );
+
+    const handleViewportChanged = useMemo(
+      () => throttle(onViewportChanged, THROTTLE_INTERVAL),
+      [onViewportChanged]
     );
 
     const refs = scenegraph.panels
@@ -164,14 +169,17 @@ export const PlotContainer = forwardRef(
           ref: xAxisRef,
           data: scenegraph.panels[0].originalData.map((d) => d.date),
         },
-        initialBounds
+        initialViewport
       )
         .interval(1000 * 60 * getSubMinutes(interval, 1))
         .on("redraw", () => {
           chartRef.current?.requestRedraw();
         })
-        .on("bounds_changed", (bounds: [Date, Date]) => {
+        .on("bounds_changed", (bounds: Bounds) => {
           handleBoundsChanged(bounds);
+        })
+        .on("viewport_changed", (viewport: Viewport) => {
+          handleViewportChanged(viewport);
         })
         .on("mousemove", (index: number, id: string) => {
           handleDataIndexChanged(index);
@@ -185,37 +193,43 @@ export const PlotContainer = forwardRef(
 
       chartRef.current?.requestRedraw();
 
-      requestAnimationFrame(() => chartElement.current?.reset());
+      requestAnimationFrame(() =>
+        chartElement.current?.initialize(initialViewport)
+      );
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
       if (chartElement.current) {
-        chartElement.current
-          .interval(1000 * 60 * getSubMinutes(interval, 1))
-          .update(
-            Object.fromEntries(
-              scenegraph.panels.map((panel) => [
-                panel.id,
-                {
-                  id: String(panel.id),
-                  ref: refs[panel.id],
-                  data: panel.originalData,
-                  renderableElements: panel.renderableElements.flat(1),
-                  yEncodingFields: panel.yEncodingFields,
-                },
-              ])
-            ),
-            {
-              ref: xAxisRef,
-              data: scenegraph.panels[0].originalData.map((d) => d.date),
-            }
-          );
+        chartElement.current.update(
+          Object.fromEntries(
+            scenegraph.panels.map((panel) => [
+              panel.id,
+              {
+                id: String(panel.id),
+                ref: refs[panel.id],
+                data: panel.originalData,
+                renderableElements: panel.renderableElements.flat(1),
+                yEncodingFields: panel.yEncodingFields,
+              },
+            ])
+          ),
+          {
+            ref: xAxisRef,
+            data: scenegraph.panels[0].originalData.map((d) => d.date),
+          }
+        );
 
         chartRef.current?.requestRedraw();
       }
-    }, [chartElement, interval, refs, scenegraph.panels]);
+    }, [chartElement, refs, scenegraph.panels]);
+
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current.interval(1000 * 60 * getSubMinutes(interval, 1));
+      }
+    }, [interval]);
 
     return (
       <d3fc-group
@@ -298,7 +312,7 @@ export const PlotContainer = forwardRef(
                 </div>
               )}
               <div className="plot-container__info_overlay">
-                {panelIndex === 0 && <ChartInfo bounds={bounds} />}
+                {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
                 {
                   <StudyInfo
                     title={StudyInfoFields[panel.id].label}

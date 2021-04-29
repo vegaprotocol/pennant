@@ -1,5 +1,5 @@
 import { ScaleLinear, ScaleTime } from "../../types";
-import { ZoomTransform, zoomIdentity } from "d3-zoom";
+import { ZoomTransform, zoomIdentity, zoomTransform } from "d3-zoom";
 
 import { PlotArea } from "../plot-area";
 
@@ -9,32 +9,28 @@ export function recalculateScale(
   yScales: Record<string, ScaleLinear>,
   id: string,
   plotAreas: { [id: string]: PlotArea },
-  plotAreaElements: any,
-  yZooms: any
+  yElements: any,
+  yZooms: any,
+  yTransforms: any
 ) {
   const xr = xTransform().rescaleX(xScale);
-  const bounds = xr.domain() as [Date, Date];
+  const domain = xr.domain() as [Date, Date];
   const originalExtent = yScales[id].range();
-  const newExtent = plotAreas[id].extent(bounds);
+  const newExtent = plotAreas[id].extent(domain);
   const originalHeight = Math.abs(originalExtent[0] - originalExtent[1]);
 
   const newHeight = Math.abs(
     yScales[id](newExtent[1]) - yScales[id](newExtent[0])
   );
 
-  plotAreaElements[id].call(
+  yElements[id].call(
     yZooms[id].transform,
     zoomIdentity
       .translate(0, originalHeight / 2)
-      .scale(originalHeight / (1.3 * newHeight))
+      .scale(originalHeight / newHeight)
       .translate(
         0,
-        -(
-          yScales[id](newExtent[0]) -
-          0.1 * newHeight +
-          yScales[id](newExtent[1]) +
-          0.2 * newHeight
-        ) / 2
+        -(yScales[id](newExtent[0]) + yScales[id](newExtent[1])) / 2
       )
   );
 }

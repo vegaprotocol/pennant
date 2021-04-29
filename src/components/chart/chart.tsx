@@ -2,13 +2,19 @@ import "./chart.scss";
 
 import {
   Annotation,
+  Viewport,
+  Candle,
   ChartType,
   DataSource,
   Overlay,
   PriceMonitoringBounds,
   Study,
 } from "../../types";
-import { constructTopLevelSpec, getCandleWidth } from "../../helpers";
+import {
+  constructTopLevelSpec,
+  getCandleWidth,
+  getSubMinutes,
+} from "../../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { ChartElement } from "../../types";
@@ -28,11 +34,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-
-export type Bounds = {
-  date: Date;
-  intervalWidth: number;
-};
+import { INITIAL_NUM_CANDLES } from "../../constants";
 
 export type Options = {
   chartType?: ChartType;
@@ -42,11 +44,11 @@ export type Options = {
 
 export type ChartProps = {
   dataSource: DataSource;
-  initialBounds?: Bounds;
+  initialViewport?: Viewport;
   interval: Interval;
   options?: Options;
-  onBoundsChanged?: (bounds: Bounds) => void;
   onOptionsChanged?: (options: Options) => void;
+  onViewportChanged?: (viewport: Viewport) => void;
 };
 
 export const Chart = forwardRef(
@@ -59,7 +61,9 @@ export const Chart = forwardRef(
         studies: [],
         overlays: [],
       },
+      initialViewport,
       onOptionsChanged = () => {},
+      onViewportChanged = () => {},
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -84,7 +88,7 @@ export const Chart = forwardRef(
     }));
 
     const chartRef = useRef<ChartElement>(null!);
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
 
     const [
@@ -92,12 +96,6 @@ export const Chart = forwardRef(
       setPriceMonitoringBounds,
     ] = useState<PriceMonitoringBounds | null>(null);
 
-    const [bounds, setBounds] = useState<[Date, Date]>([
-      new Date(),
-      new Date(),
-    ]);
-
-    const [selectedIndex, setCandle] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);
 
@@ -146,7 +144,9 @@ export const Chart = forwardRef(
     useEffect(() => {
       const fetchData = async () => {
         await query(
-          new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          new Date(
+            new Date().getTime() - getSubMinutes(interval, INITIAL_NUM_CANDLES)
+          ),
           new Date(),
           false
         );
@@ -205,6 +205,13 @@ export const Chart = forwardRef(
       });
     }, [dataSource]);
 
+    const handleViewportChanged = useCallback(
+      (viewport: Viewport) => {
+        onViewportChanged(viewport);
+      },
+      [onViewportChanged]
+    );
+
     const handleGetDataRange = useCallback(
       (from: Date, to: Date) => {
         query(from, to);
@@ -221,8 +228,6 @@ export const Chart = forwardRef(
       },
       [onOptionsChanged, options, studies]
     );
-
-    const handleOnMouseOut = useCallback(() => setCandle(null), []);
 
     if (isLoading) {
       return <NonIdealState title="Loading" />;
@@ -243,8 +248,13 @@ export const Chart = forwardRef(
                 height={height}
                 scenegraph={scenegraph}
                 interval={internalInterval}
-                initialBounds={extent(data.map((d) => d.date)) as [Date, Date]}
-                onBoundsChanged={setBounds}
+                initialViewport={
+                  initialViewport ?? {
+                    date: data[data.length - 1].date,
+                    intervalWidth: 10,
+                  }
+                }
+                onViewportChanged={handleViewportChanged}
                 onGetDataRange={handleGetDataRange}
                 onClosePanel={handleClosePanel}
               />

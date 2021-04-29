@@ -12,10 +12,12 @@ export class XAxisInteraction {
   >().on("drag", (e) => {
     this.listeners.call("drag", this, e);
   });
-  private listeners: Dispatch<object> = dispatch("drag");
+  private listeners: Dispatch<object> = dispatch("dblclick", "drag");
 
   draw(selection: Selection<Element, any, any, any>) {
-    selection.call(this.drag);
+    selection.call(this.drag).on("dblclick", () => {
+      this.listeners.call("dblclick");
+    });
   }
 
   on(
