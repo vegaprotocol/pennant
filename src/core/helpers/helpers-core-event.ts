@@ -143,14 +143,22 @@ export function measureYAxis(
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
   plotArea: PlotArea,
-  yAxis: YAxis
+  yAxis: YAxis,
+  isPinned: boolean,
+  id: string,
+  resetYAxis: (id: string) => void
 ) {
   const { height, pixelRatio } = event.detail;
 
-  const yr = yTransform().rescaleY(scale.range([height / pixelRatio, 0]));
+  scale.range([height / pixelRatio, 0]);
+  const yr = yTransform().rescaleY(scale);
 
   plotArea.yScale(yr);
   yAxis.yScale(yr);
+
+  if (isPinned) {
+    resetYAxis(id);
+  }
 }
 
 export function drawPlotAreaInteraction(

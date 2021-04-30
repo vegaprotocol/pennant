@@ -53,12 +53,12 @@ export class RuleElement implements PositionalElement {
 
     ctx.beginPath();
 
-    ctx.moveTo(align(x, pixelRatio), alignSpan(y, pixelRatio));
-    ctx.lineTo(align(x2, pixelRatio), alignSpan(y2, pixelRatio));
+    ctx.moveTo(align(x, pixelRatio), align(y, pixelRatio));
+    ctx.lineTo(align(x2, pixelRatio), align(y2, pixelRatio));
 
     ctx.strokeStyle = this.color;
     ctx.lineCap = "butt";
-    ctx.lineWidth = 1 / pixelRatio;
+    ctx.lineWidth = 2 / pixelRatio;
     ctx.stroke();
     ctx.closePath();
   }

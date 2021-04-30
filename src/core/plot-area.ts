@@ -11,6 +11,8 @@ export class PlotArea {
   private ctx: CanvasRenderingContext2D | null = null;
   private _data: any[];
   private gridline: GridElement = new GridElement();
+  private latestPriceCrosshair: CrosshairElement = new CrosshairElement();
+  private latestPricePosition: number | null = null;
   private _pixelRatio: number = 1;
   private position: [number | null, number | null] = [null, null];
   private _renderableElements: RenderableElement[];
@@ -45,6 +47,48 @@ export class PlotArea {
   data(originalData: any[]) {
     this._data = originalData;
     return this;
+  }
+
+  draw() {
+    if (this.ctx) {
+      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+
+      this.gridline.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      this._renderableElements[0].draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      this._renderableElements.forEach((element) => {
+        if (this.ctx) {
+          element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+        }
+      });
+
+      this.latestPriceCrosshair.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        [null, this.latestPricePosition]
+      );
+
+      this._crosshair.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.position
+      );
+    }
   }
 
   extent(bounds?: [Date, Date]) {
@@ -94,6 +138,11 @@ export class PlotArea {
     return this;
   }
 
+  latestPrice(price: number | null): this {
+    this.latestPricePosition = price;
+    return this;
+  }
+
   renderableElements(elements: RenderableElement[]) {
     this._renderableElements = elements;
     return this;
@@ -112,39 +161,5 @@ export class PlotArea {
   yScale(y: ScaleLinear) {
     this._yScale = y;
     return this;
-  }
-
-  draw() {
-    if (this.ctx) {
-      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
-      
-      this.gridline.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio
-      );
-
-      this._renderableElements[0].draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio
-      );
-
-      this._renderableElements.forEach((element) => {
-        if (this.ctx) {
-          element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
-        }
-      });
-
-      this._crosshair.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        this.position
-      );
-    }
   }
 }

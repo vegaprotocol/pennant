@@ -315,7 +315,10 @@ export class Core {
             scale,
             this.yTransforms[id],
             this.plotAreas[id],
-            this.yAxes[id]
+            this.yAxes[id],
+            this.isPinned,
+            id,
+            this.resetYAxis.bind(this)
           );
         })
         .on("draw", (event) => {
@@ -349,11 +352,13 @@ export class Core {
         });
     });
 
+    // Update latest price
     const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
+    const latestPrice =
+      panels["main"].data[panels["main"].data.length - 1].close;
 
-    this.yAxes["main"].latestPrice(
-      yr(panels["main"].data[panels["main"].data.length - 1].close)
-    );
+    this.yAxes["main"].latestPrice(yr(latestPrice));
+    this.plotAreas["main"].latestPrice(yr(latestPrice));
   }
 
   draw() {
@@ -638,7 +643,10 @@ export class Core {
               this.yScales[id],
               this.yTransforms[id],
               this.plotAreas[id],
-              this.yAxes[id]
+              this.yAxes[id],
+              this.isPinned,
+              id,
+              this.resetYAxis
             );
           })
           .on("draw", (event) => {
@@ -680,15 +688,15 @@ export class Core {
       }
     }
 
-    this.xZoom.scaleExtent([1, 1]);
-
     this.dates = axis.data;
 
+    // Update latest price
     const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
+    const latestPrice =
+      panels["main"].data[panels["main"].data.length - 1].close;
 
-    this.yAxes["main"].latestPrice(
-      yr(panels["main"].data[panels["main"].data.length - 1].close)
-    );
+    this.yAxes["main"].latestPrice(yr(latestPrice));
+    this.plotAreas["main"].latestPrice(yr(latestPrice));
 
     return this;
   }

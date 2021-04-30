@@ -16,7 +16,7 @@ export function clearCanvas(
 }
 
 export function align(x: number, pixelRatio: number = 1) {
-  return Math.round(pixelRatio * Math.round(x)) / pixelRatio + 0.5;
+  return Math.round(pixelRatio * Math.round(x)) / pixelRatio + 0.5 / pixelRatio;
 }
 
 export function alignSpan(x: number, pixelRatio: number = 1) {
