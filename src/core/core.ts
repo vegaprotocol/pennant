@@ -316,7 +316,7 @@ export class Core {
             this.yTransforms[id],
             this.plotAreas[id],
             this.yAxes[id],
-            this.isPinned,
+            this.isFreePan,
             id,
             this.resetYAxis.bind(this)
           );
@@ -660,7 +660,7 @@ export class Core {
               this.yTransforms[id],
               this.plotAreas[id],
               this.yAxes[id],
-              this.isPinned,
+              this.isFreePan,
               id,
               this.resetYAxis
             );

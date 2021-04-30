@@ -144,7 +144,7 @@ export function measureYAxis(
   yTransform: () => ZoomTransform,
   plotArea: PlotArea,
   yAxis: YAxis,
-  isPinned: boolean,
+  isFreePan: boolean,
   id: string,
   resetYAxis: (id: string) => void
 ) {
@@ -156,7 +156,7 @@ export function measureYAxis(
   plotArea.yScale(yr);
   yAxis.yScale(yr);
 
-  if (isPinned) {
+  if (!isFreePan) {
     resetYAxis(id);
   }
 }
