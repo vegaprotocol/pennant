@@ -127,7 +127,7 @@ export const Chart = forwardRef(
 
     // Fetch historical data
     const query = useCallback(
-      async (from: Date, to: Date, merge = true) => {
+      async (from: Date, to: Date, interval: Interval, merge = true) => {
         const newData = await dataSource.query(
           interval,
           from.toISOString(),
@@ -136,25 +136,26 @@ export const Chart = forwardRef(
 
         setData((data) => mergeData(newData, merge ? data : []));
       },
-      [dataSource, interval]
+      [dataSource]
     );
 
     // Respond to streaming data
     useEffect(() => {
-      const fetchData = async () => {
+      const fetchData = async (interval: Interval) => {
         await query(
           new Date(
             new Date().getTime() -
               1000 * 60 * getSubMinutes(interval, INITIAL_NUM_CANDLES)
           ),
           new Date(),
+          interval,
           false
         );
 
         setInternalInterval(interval);
       };
 
-      function subscribe() {
+      function subscribe(interval: Interval) {
         dataSource.subscribeData(interval, (datum) => {
           setData((data) => mergeData([datum], data));
         });
@@ -163,10 +164,10 @@ export const Chart = forwardRef(
       const myDataSource = dataSource;
 
       // Initial data fetch
-      fetchData();
+      fetchData(interval);
 
       // Set up subscriptions
-      subscribe();
+      subscribe(interval);
 
       return () => {
         myDataSource.unsubscribeData();
@@ -213,8 +214,8 @@ export const Chart = forwardRef(
     );
 
     const handleGetDataRange = useCallback(
-      (from: Date, to: Date) => {
-        query(from, to);
+      (from: Date, to: Date, interval: Interval) => {
+        query(from, to, interval);
       },
       [query]
     );

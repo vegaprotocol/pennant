@@ -68,7 +68,7 @@ export type PlotContainerProps = {
   initialViewport: Viewport;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
-  onGetDataRange?: (from: Date, to: Date) => void;
+  onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePanel: (id: string) => void;
 };
 
@@ -109,10 +109,10 @@ export const PlotContainer = forwardRef(
       []
     );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const onGetDataRangeThrottled = React.useCallback(
-      throttle(onGetDataRange, 800),
-      []
+      (from: Date, to: Date, interval: Interval) =>
+        throttle(() => onGetDataRange(from, to, interval), 800),
+      [onGetDataRange]
     );
 
     const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
@@ -190,7 +190,7 @@ export const PlotContainer = forwardRef(
           handleDataIndexChanged(null);
         })
         .on("fetch_data", (from: Date, to: Date) => {
-          onGetDataRangeThrottled(from, to);
+          onGetDataRangeThrottled(from, to, interval);
         });
 
       chartRef.current?.requestRedraw();
