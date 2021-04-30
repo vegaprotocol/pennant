@@ -36,6 +36,8 @@ import React, {
 } from "react";
 import { INITIAL_NUM_CANDLES } from "../../constants";
 
+const noop = () => {};
+
 export type Options = {
   chartType?: ChartType;
   overlays?: Overlay[];
@@ -62,8 +64,8 @@ export const Chart = forwardRef(
         overlays: [],
       },
       initialViewport,
-      onOptionsChanged = () => {},
-      onViewportChanged = () => {},
+      onOptionsChanged = noop,
+      onViewportChanged = noop,
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -112,19 +114,16 @@ export const Chart = forwardRef(
     );
 
     // Compile data and view specification into scenegraph ready for rendering
-    const scenegraph = useMemo(() => {
-      return parse(
-        specification,
-        getCandleWidth(internalInterval),
-        dataSource.decimalPlaces,
-        annotations
-      );
-    }, [
-      annotations,
-      dataSource.decimalPlaces,
-      internalInterval,
-      specification,
-    ]);
+    const scenegraph = useMemo(
+      () =>
+        parse(
+          specification,
+          getCandleWidth(internalInterval),
+          dataSource.decimalPlaces,
+          annotations
+        ),
+      [annotations, dataSource.decimalPlaces, internalInterval, specification]
+    );
 
     // Fetch historical data
     const query = useCallback(
@@ -230,6 +229,15 @@ export const Chart = forwardRef(
       [onOptionsChanged, options, studies]
     );
 
+    const viewport = useMemo(
+      () =>
+        initialViewport ?? {
+          date: data.length > 0 ? data[data.length - 1].date : new Date(),
+          intervalWidth: 10,
+        },
+      [data, initialViewport]
+    );
+
     if (isLoading) {
       return <NonIdealState title="Loading" />;
     }
@@ -250,12 +258,7 @@ export const Chart = forwardRef(
                 decimalPlaces={dataSource.decimalPlaces}
                 scenegraph={scenegraph}
                 interval={internalInterval}
-                initialViewport={
-                  initialViewport ?? {
-                    date: data[data.length - 1].date,
-                    intervalWidth: 10,
-                  }
-                }
+                initialViewport={viewport}
                 onViewportChanged={handleViewportChanged}
                 onGetDataRange={handleGetDataRange}
                 onClosePanel={handleClosePanel}
