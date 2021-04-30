@@ -84,10 +84,10 @@ const renderMarket: ItemRenderer<any> = (
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState(data.markets[1].id);
-  const [chartType, setChartType] = useState<ChartType>("area");
+  const [chartType, setChartType] = useState<ChartType>("candle");
   const [study, setStudy] = useState<Study | null>(null);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
-  const [interval, setInterval] = useState(Interval.I15M);
+  const [interval, setInterval] = useState(Interval.I1M);
 
   const dataSource = useMemo(
     () => new ApolloDataSource(client, market, "", 5),

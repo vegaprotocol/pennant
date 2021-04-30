@@ -33,7 +33,7 @@ import { difference, intersection, omit, union } from "lodash";
 import { DEFAULT_INTERVAL_WIDTH, MAX_CANDLE_WIDTH, WIDTH } from "../constants";
 import { dispatch } from "d3-dispatch";
 import { MutableRefObject } from "react";
-import { extent } from "d3-array";
+import { compareAsc } from "date-fns";
 
 export type Panes<T> = { [id: string]: T };
 
@@ -452,6 +452,23 @@ export class Core {
     this.listeners.call("redraw");
   }
 
+  pinXAxis(): void {
+    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
+    const xr = this.xTransform().rescaleX(this.xScale);
+
+    const latestDate = this.dates[this.dates.length - 1];
+    const previousLatestDate = xr.invert(
+      xr.range()[1] - WIDTH - intervalWidth * 3
+    );
+
+    if (compareAsc(latestDate, previousLatestDate) === 1) {
+      const difference =
+        this.xScale(latestDate) - this.xScale(previousLatestDate);
+
+      this.xElement.call(this.xZoom.translateBy, -difference, 0);
+    }
+  }
+
   resetXAxis(): void {
     const latestDate = this.dates[this.dates.length - 1];
     const intervalWidth = DEFAULT_INTERVAL_WIDTH;
@@ -506,7 +523,6 @@ export class Core {
 
     const enteringIds = difference(newIds, oldIds);
     const updatingIds = intersection(newIds, oldIds);
-    const exitingIds = difference(oldIds, newIds);
 
     for (const id of union(oldIds, newIds)) {
       if (updatingIds.includes(id)) {
@@ -675,6 +691,7 @@ export class Core {
 
         this.resetYAxis(id);
       } else {
+        // Must be exiting
         this.yScales = omit(this.yScales, id);
         this.yAxes = omit(this.yAxes, id);
         this.yAxisInteractions = omit(this.yAxisInteractions, id);
@@ -697,6 +714,11 @@ export class Core {
 
     this.yAxes["main"].latestPrice(yr(latestPrice));
     this.plotAreas["main"].latestPrice(yr(latestPrice));
+
+    // Ensure latest data is visible
+    if (this.isPinned) {
+      this.pinXAxis();
+    }
 
     return this;
   }

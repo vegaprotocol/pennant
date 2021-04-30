@@ -139,12 +139,16 @@ export const PlotContainer = forwardRef(
       [onViewportChanged]
     );
 
-    const refs = scenegraph.panels
-      .map((panel) => panel.id)
-      .reduce((acc, value) => {
-        acc[value] = createRef<HTMLDivElement>();
-        return acc;
-      }, {} as { [index: string]: React.RefObject<HTMLDivElement> });
+    const refs = useMemo(
+      () =>
+        scenegraph.panels
+          .map((panel) => panel.id)
+          .reduce((acc, value) => {
+            acc[value] = createRef<HTMLDivElement>();
+            return acc;
+          }, {} as { [index: string]: React.RefObject<HTMLDivElement> }),
+      [scenegraph.panels]
+    );
 
     const chartElement = useRef<Core | null>(null);
 

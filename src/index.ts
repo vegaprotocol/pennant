@@ -8,10 +8,12 @@ export {
   studyLabels,
 } from "./types";
 export type {
+  Annotation,
   Candle,
   ChartElement,
   ChartType,
   DataSource,
+  LabelAnnotation,
   Overlay,
   Study,
 } from "./types";
