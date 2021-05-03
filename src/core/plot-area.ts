@@ -92,7 +92,7 @@ export class PlotArea {
   }
 
   extent(bounds?: [Date, Date]) {
-    return bounds
+    const domain = bounds
       ? extent(
           this._data
             .filter((d) => d.date >= bounds[0] && d.date <= bounds[1])
@@ -103,6 +103,10 @@ export class PlotArea {
             this._yEncodingFields?.map((field) => d[field])
           )
         );
+
+    const domainWidth = Math.abs(domain[1] - domain[0]);
+
+    return [domain[0] - domainWidth * 0.1, domain[1] + domainWidth * 0.2];
   }
 
   getIndex(offset: number): [number, number] {
