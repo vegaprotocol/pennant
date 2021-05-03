@@ -668,7 +668,7 @@ export class Core {
               this.yAxes[id],
               this.isFreePan,
               id,
-              this.resetYAxis
+              this.resetYAxis.bind(this)
             );
           })
           .on("draw", (event) => {
