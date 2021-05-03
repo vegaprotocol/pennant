@@ -293,7 +293,10 @@ export class Core {
           this.xTransform,
           this.xAxis,
           this.yAxes,
-          this.plotAreas
+          this.plotAreas,
+          (bounds: [Date, Date]) => {
+            this.listeners.call("bounds_changed", this, bounds);
+          }
         );
       })
       .on("draw", (event) => {
@@ -644,7 +647,10 @@ export class Core {
               this.xTransform,
               this.xAxis,
               this.yAxes,
-              this.plotAreas
+              this.plotAreas,
+              (bounds: [Date, Date]) => {
+                this.listeners.call("bounds_changed", this, bounds);
+              }
             );
           })
           .on("draw", (event) => {

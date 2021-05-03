@@ -71,14 +71,28 @@ export function handleYAxisDrag(
 }
 
 export function measureXAxis(
-  event: any,
+  event: { detail: { width: number; pixelRatio: number } },
   xScale: ScaleTime,
   xTransform: () => ZoomTransform,
   xAxis: XAxis,
   yAxes: Panes<YAxis>,
-  plotAreas: Panes<PlotArea>
+  plotAreas: Panes<PlotArea>,
+  onBoundsChanged: (bounds: [Date, Date]) => void
 ) {
   const { width, pixelRatio } = event.detail;
+  const ratio = width / pixelRatio / (xScale.range()[1] - xScale.range()[0]);
+
+  if (ratio !== 1) {
+    const domainWidth =
+      xScale.domain()[1].getTime() - xScale.domain()[0].getTime();
+
+    const domain0 = xScale.domain()[1].getTime() - ratio * domainWidth;
+    const domain1 = xScale.domain()[1].getTime();
+
+    xScale.domain([new Date(domain0), new Date(domain1)]);
+    onBoundsChanged([new Date(domain0), new Date(domain1)]);
+  }
+
   xScale.range([0, width / pixelRatio]);
 
   const xr = xTransform().rescaleX(xScale);
