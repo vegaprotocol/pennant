@@ -7,40 +7,41 @@ import { format } from "date-fns";
 function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
-  position: number | null
+  position: Date | null
 ) {
   if (position) {
+    const x = xScale(position);
     const height = 24.5;
 
     ctx.font = `${12}px monospace`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    const value = xScale.invert(position);
+    const value = xScale.invert(x);
     const xPad = 5;
     const text = multiFormat(value);
     const textWidth = ctx.measureText(text).width;
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;
 
-    let xAdjusted = position;
+    let xAdjusted = x;
 
-    if (position - rectWidth / 2 < 0) {
+    if (x - rectWidth / 2 < 0) {
       xAdjusted = rectWidth / 2;
     }
 
-    if (position + rectWidth / 2 > xScale.range()[1]) {
+    if (x + rectWidth / 2 > xScale.range()[1]) {
       xAdjusted = xScale.range()[1] - rectWidth / 2;
     }
 
     ctx.beginPath();
-    ctx.moveTo(position, height - rectHeight - 5);
-    ctx.lineTo(position + 5, height - rectHeight);
+    ctx.moveTo(x, height - rectHeight - 5);
+    ctx.lineTo(x + 5, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height - rectHeight);
     ctx.lineTo(xAdjusted + rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height);
     ctx.lineTo(xAdjusted - rectWidth / 2, height - rectHeight);
-    ctx.lineTo(position - 5, height - rectHeight);
+    ctx.lineTo(x - 5, height - rectHeight);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -62,7 +63,7 @@ export class XAxisTooltipElement implements RenderableElement {
     xScale: ScaleTime,
     _yScale: ScaleLinear,
     pixelRatio: number = 1,
-    position: number | null
+    position: Date | null
   ) {
     addXAxisTooltipPath(ctx, xScale, position);
   }

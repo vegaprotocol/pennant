@@ -10,7 +10,7 @@ export class XAxis {
   private axis: XAxisElement = new XAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private _pixelRatio: number = 1;
-  private position: number | null = null;
+  private position: Date | null = null;
   private tooltip: XAxisTooltipElement = new XAxisTooltipElement();
   private _xScale: ScaleTime;
 
@@ -23,7 +23,7 @@ export class XAxis {
     return this;
   }
 
-  crosshair(pos: number | null): this {
+  crosshair(pos: Date | null): this {
     this.position = pos;
     return this;
   }

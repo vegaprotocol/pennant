@@ -233,6 +233,8 @@ export class Core {
             handleMousemove(
               this.plotAreas,
               offset,
+              this.xScale,
+              this.yScales[id],
               this.yAxes,
               this.xAxis,
               value.id,
@@ -356,12 +358,11 @@ export class Core {
     });
 
     // Update latest price
-    const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
     const latestPrice =
       panels["main"].data[panels["main"].data.length - 1].close;
 
-    this.yAxes["main"].latestPrice(yr(latestPrice));
-    this.plotAreas["main"].latestPrice(yr(latestPrice));
+    this.yAxes["main"].latestPrice(latestPrice);
+    this.plotAreas["main"].latestPrice(latestPrice);
   }
 
   draw() {
@@ -605,6 +606,8 @@ export class Core {
             handleMousemove(
               this.plotAreas,
               offset,
+              this.xScale,
+              this.yScales[id],
               this.yAxes,
               this.xAxis,
               id,
@@ -714,12 +717,11 @@ export class Core {
     this.dates = axis.data;
 
     // Update latest price
-    const yr = this.yTransforms["main"]().rescaleY(this.yScales["main"]);
     const latestPrice =
       panels["main"].data[panels["main"].data.length - 1].close;
 
-    this.yAxes["main"].latestPrice(yr(latestPrice));
-    this.plotAreas["main"].latestPrice(yr(latestPrice));
+    this.yAxes["main"].latestPrice(latestPrice);
+    this.plotAreas["main"].latestPrice(latestPrice);
 
     // Ensure latest data is visible
     if (this.isPinned) {

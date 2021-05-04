@@ -131,7 +131,7 @@ export function handleZoomend(
   });
 
   xAxis.crosshair(x);
-  yAxes[id].crosshair(offset[1]);
+  yAxes[id].crosshair(offset[1]); // TODO: Should be scaled number
 
   onRedraw();
 }
@@ -236,6 +236,8 @@ export function handleMouseout(
 export function handleMousemove(
   plotAreas: Panes<PlotArea>,
   offset: [number, number],
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   yAxes: Panes<YAxis>,
   xAxis: XAxis,
   id: string,
@@ -253,8 +255,8 @@ export function handleMousemove(
 
   xAxis.crosshair(x);
 
-  plotAreas[id].crosshair([x, offset[1]]);
-  yAxes[id].crosshair(offset[1]);
+  plotAreas[id].crosshair([x, yScale.invert(offset[1])]);
+  yAxes[id].crosshair(yScale.invert(offset[1]));
 
   onMousemove(index, id);
   onRedraw();

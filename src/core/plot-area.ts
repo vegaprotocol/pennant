@@ -14,7 +14,7 @@ export class PlotArea {
   private latestPriceCrosshair: CrosshairElement = new CrosshairElement();
   private latestPricePosition: number | null = null;
   private _pixelRatio: number = 1;
-  private position: [number | null, number | null] = [null, null];
+  private position: [Date | null, number | null] = [null, null];
   private _renderableElements: RenderableElement[];
   private _xScale: ScaleTime;
   private _yEncodingFields: string[];
@@ -39,7 +39,7 @@ export class PlotArea {
     return this;
   }
 
-  crosshair(pos: [number | null, number | null]) {
+  crosshair(pos: [Date | null, number | null]) {
     this.position = pos;
     return this;
   }
@@ -109,7 +109,7 @@ export class PlotArea {
     return [domain[0] - domainWidth * 0.1, domain[1] + domainWidth * 0.2];
   }
 
-  getIndex(offset: number): [number, number] {
+  getIndex(offset: number): [number, Date] {
     const timeAtMouseX = this._xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
     const firstElement: Date = this._data[Math.max(0, index - 1)].date;
@@ -134,7 +134,7 @@ export class PlotArea {
 
     const dataIndex = clamp(index + indexOffset - 1, 0, this._data.length - 1);
 
-    return [dataIndex, this._xScale(this._data[dataIndex].date)];
+    return [dataIndex, this._data[dataIndex].date];
   }
 
   pixelRatio(ratio: number) {
@@ -163,7 +163,7 @@ export class PlotArea {
   }
 
   yScale(y: ScaleLinear) {
-    this._yScale = y;
+    this._yScale = y.copy();
     return this;
   }
 }

@@ -25,11 +25,11 @@ function addYAxisPath(
     const rectHeight = 18;
 
     ctx.beginPath();
-    ctx.moveTo(width - WIDTH - 10, position);
-    ctx.lineTo(width - WIDTH, position - rectHeight / 2);
-    ctx.lineTo(width, position - rectHeight / 2);
-    ctx.lineTo(width, position + rectHeight / 2);
-    ctx.lineTo(width - WIDTH, position + rectHeight / 2);
+    ctx.moveTo(width - WIDTH - 10, yScale(position));
+    ctx.lineTo(width - WIDTH, yScale(position) - rectHeight / 2);
+    ctx.lineTo(width, yScale(position) - rectHeight / 2);
+    ctx.lineTo(width, yScale(position) + rectHeight / 2);
+    ctx.lineTo(width - WIDTH, yScale(position) + rectHeight / 2);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -40,7 +40,7 @@ function addYAxisPath(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, width - WIDTH + xPad, position);
+    ctx.fillText(text, width - WIDTH + xPad, yScale(position));
     ctx.closePath();
   }
 }
