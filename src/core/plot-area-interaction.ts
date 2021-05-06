@@ -42,7 +42,7 @@ export class PlotAreaInteraction {
       .on("zoom", (e) => {
         const t = e.transform;
         const k = t.k / this.z.k;
-        const point = this.center(e, this); // TODO: Check if this is still valid
+        const point = this.center(e); // TODO: Check if this is still valid
 
         this.listeners.call(
           "zoom",
@@ -69,9 +69,9 @@ export class PlotAreaInteraction {
       });
   }
 
-  private center(event: any, target: any) {
+  private center(event: any) {
     if (event.sourceEvent) {
-      const p = pointers(event, target);
+      const p = pointers(event);
       return [mean(p, (d) => d[0]), mean(p, (d) => d[1])];
     }
 

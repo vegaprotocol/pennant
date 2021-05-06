@@ -25,28 +25,24 @@ function addYAxisPath(
     const text = formatter(value, decimalPlaces);
     const rectHeight = 18;
 
-    let yAdjusted = position;
-
-    if (position - rectHeight / 2 < 0) {
-      yAdjusted = rectHeight / 2;
-    }
-
-    if (position + rectHeight / 2 > yScale.range()[0]) {
-      yAdjusted = yScale.range()[0] - rectHeight / 2;
-    }
-
     ctx.beginPath();
-    ctx.moveTo(width - WIDTH - 10, yAdjusted);
-    ctx.lineTo(width - WIDTH, align(yAdjusted - rectHeight / 2, pixelRatio));
+    ctx.moveTo(width - WIDTH - 10, yScale(position));
     ctx.lineTo(
-      align(width, pixelRatio),
-      align(yAdjusted - rectHeight / 2, pixelRatio)
+      width - WIDTH,
+      align(yScale(position) - rectHeight / 2, pixelRatio)
     );
     ctx.lineTo(
       align(width, pixelRatio),
-      align(yAdjusted + rectHeight / 2, pixelRatio)
+      align(yScale(position) - rectHeight / 2, pixelRatio)
     );
-    ctx.lineTo(width - WIDTH, align(yAdjusted + rectHeight / 2, pixelRatio));
+    ctx.lineTo(
+      align(width, pixelRatio),
+      align(yScale(position) + rectHeight / 2, pixelRatio)
+    );
+    ctx.lineTo(
+      width - WIDTH,
+      align(yScale(position) + rectHeight / 2, pixelRatio)
+    );
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -58,7 +54,11 @@ function addYAxisPath(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, align(width - WIDTH + xPad, pixelRatio), yAdjusted);
+    ctx.fillText(
+      text,
+      align(width - WIDTH + xPad, pixelRatio),
+      yScale(position)
+    );
     ctx.closePath();
   }
 }

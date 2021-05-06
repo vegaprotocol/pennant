@@ -7,7 +7,7 @@ function addCrosshairPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   pixelRatio: number,
-  position: [number | null, number | null]
+  position: [Date | null, number | null]
 ) {
   const x = position[0];
   const y = position[1];
@@ -18,14 +18,15 @@ function addCrosshairPath(
   ctx.save();
 
   ctx.setLineDash([4, 6]);
+  ctx.lineWidth = 1;
   ctx.strokeStyle = Colors.WHITE;
   ctx.lineWidth = 1 / pixelRatio;
   ctx.lineCap = "square";
 
   if (x) {
     ctx.beginPath();
-    ctx.moveTo(align(x, pixelRatio), align(yRange[0], pixelRatio));
-    ctx.lineTo(align(x, pixelRatio), align(yRange[1], pixelRatio));
+    ctx.moveTo(align(xScale(x), pixelRatio), align(yRange[0], pixelRatio));
+    ctx.lineTo(align(xScale(x), pixelRatio), align(yRange[1], pixelRatio));
     ctx.stroke();
     ctx.closePath();
   }
@@ -47,7 +48,7 @@ export class CrosshairElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio: number = 1,
-    position: [number | null, number | null]
+    position: [Date | null, number | null]
   ) {
     addCrosshairPath(ctx, xScale, yScale, pixelRatio, position);
   }
