@@ -18,7 +18,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 const Template: Story<ChartControlsProps> = (args) => {
   const [interval, setInterval] = React.useState<Interval>(Interval.I5M);
-  const [chartType, setChartType] = React.useState<ChartType>("area");
+  const [chartType, setChartType] = React.useState<ChartType>("ohlc");
   const [overlay, setOverlay] = React.useState<Overlay | null>(null);
   const [study, setStudy] = React.useState<Study | null>(null);
 

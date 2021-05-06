@@ -84,7 +84,7 @@ const renderMarket: ItemRenderer<any> = (
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState(data.markets[1].id);
-  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [study, setStudy] = useState<Study | null>(null);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
   const [interval, setInterval] = useState(Interval.I1M);
@@ -167,7 +167,7 @@ export const VegaProtocol: Story = () => {
 
 export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
-  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [study, setStudy] = useState<Study | null>(null);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
   const [interval, setInterval] = useState(Interval.I1M);

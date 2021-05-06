@@ -1,4 +1,10 @@
-import { AreaElement, BarElement, LineElement, RuleElement } from "../elements";
+import {
+  AreaElement,
+  BarElement,
+  LineElement,
+  RuleElement,
+  TickElement,
+} from "../elements";
 import { Color, Gradient, Mark } from "../vega-lite/mark";
 import {
   Predicate,
@@ -20,6 +26,8 @@ export function createElement(type: Mark, options: any): PositionalElement {
     return new LineElement(options);
   } else if (type === "rule") {
     return new RuleElement(options);
+  } else if (type === "tick") {
+    return new TickElement(options);
   }
 
   throw new Error(`Element type not recognized: ${type}`);
@@ -119,6 +127,23 @@ export function getRuleConfig(
     y: d[y],
     y2: d[y2],
     color,
+  };
+}
+
+export function getTickConfig(
+  d: any,
+  x: string,
+  y: string,
+  width: number,
+  color: string | null,
+  orient: "left" | "right"
+) {
+  return {
+    x: d[x],
+    y: d[y],
+    width: width * (1 - PADDING_INNER),
+    color,
+    orient,
   };
 }
 

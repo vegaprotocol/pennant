@@ -19,6 +19,7 @@ const chartTypeIcon = new Map<ChartType, IconName>([
   ["area", "timeline-area-chart"],
   ["candle", "waterfall-chart"],
   ["line", "timeline-line-chart"],
+  ["ohlc", "timeline-line-chart"],
 ]);
 
 export type ChartControlsProps = {
@@ -116,6 +117,12 @@ export const ChartControls = ({
                 text="Mountain"
                 icon="timeline-area-chart"
                 onClick={() => onSetChartType("area")}
+              />
+              <MenuItem
+                active={chartType === "ohlc"}
+                text="OHLC"
+                icon="timeline-area-chart"
+                onClick={() => onSetChartType("ohlc")}
               />
             </Menu>
           }
