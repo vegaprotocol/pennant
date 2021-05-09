@@ -200,6 +200,17 @@ export const PlotContainer = forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Update interval and fetch data callback
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current
+          .interval(1000 * 60 * getSubMinutes(interval, 1))
+          .on("fetch_data", (from: Date, to: Date) => {
+            onGetDataRangeThrottled(from, to, interval);
+          });
+      }
+    }, [interval, onGetDataRangeThrottled]);
+
     useEffect(() => {
       if (chartElement.current) {
         chartElement.current.update(
