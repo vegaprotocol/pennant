@@ -103,15 +103,13 @@ export const PlotContainer = forwardRef(
       },
     }));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onViewportChangedThrottled = React.useCallback(
-      throttle(onViewportChanged, 200),
-      []
+    const onViewportChangedThrottled = useMemo(
+      () => throttle(onViewportChanged, 200),
+      [onViewportChanged]
     );
 
-    const onGetDataRangeThrottled = React.useCallback(
-      (from: Date, to: Date, interval: Interval) =>
-        throttle(() => onGetDataRange(from, to, interval), 800),
+    const onGetDataRangeThrottled = useMemo(
+      () => throttle(onGetDataRange, 800),
       [onGetDataRange]
     );
 
