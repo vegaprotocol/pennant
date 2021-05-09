@@ -233,8 +233,7 @@ export class Core {
             handleMousemove(
               this.plotAreas,
               offset,
-              this.xScale,
-              this.yScales[id],
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.yAxes,
               this.xAxis,
               value.id,
@@ -606,8 +605,7 @@ export class Core {
             handleMousemove(
               this.plotAreas,
               offset,
-              this.xScale,
-              this.yScales[id],
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.yAxes,
               this.xAxis,
               id,

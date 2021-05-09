@@ -236,7 +236,6 @@ export function handleMouseout(
 export function handleMousemove(
   plotAreas: Panes<PlotArea>,
   offset: [number, number],
-  xScale: ScaleTime,
   yScale: ScaleLinear,
   yAxes: Panes<YAxis>,
   xAxis: XAxis,
