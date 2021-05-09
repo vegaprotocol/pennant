@@ -19,17 +19,18 @@ function addYAxisPath(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
-    const value = yScale.invert(position); // FIXME: Surely better to pass in a value in the domain to avoid any conversion errors
     const xPad = 5;
-    const text = formatter(value, decimalPlaces);
+    const text = formatter(position, decimalPlaces);
     const rectHeight = 18;
 
+    let y = yScale(position);
+
     ctx.beginPath();
-    ctx.moveTo(width - WIDTH - 10, yScale(position));
-    ctx.lineTo(width - WIDTH, yScale(position) - rectHeight / 2);
-    ctx.lineTo(width, yScale(position) - rectHeight / 2);
-    ctx.lineTo(width, yScale(position) + rectHeight / 2);
-    ctx.lineTo(width - WIDTH, yScale(position) + rectHeight / 2);
+    ctx.moveTo(width - WIDTH - 10, y);
+    ctx.lineTo(width - WIDTH, y - rectHeight / 2);
+    ctx.lineTo(width, y - rectHeight / 2);
+    ctx.lineTo(width, y + rectHeight / 2);
+    ctx.lineTo(width - WIDTH, y + rectHeight / 2);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -40,7 +41,7 @@ function addYAxisPath(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, width - WIDTH + xPad, yScale(position));
+    ctx.fillText(text, width - WIDTH + xPad, y);
     ctx.closePath();
   }
 }
