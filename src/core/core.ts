@@ -1,5 +1,11 @@
 import { PlotArea } from "./plot-area";
-import { RenderableElement, ScaleLinear, ScaleTime, Viewport } from "../types";
+import {
+  Interval,
+  RenderableElement,
+  ScaleLinear,
+  ScaleTime,
+  Viewport,
+} from "../types";
 import { Selection, select } from "d3-selection";
 import {
   ZoomBehavior,
@@ -39,6 +45,7 @@ import {
 import { dispatch } from "d3-dispatch";
 import { MutableRefObject } from "react";
 import { compareAsc } from "date-fns";
+import { getSubMinutes } from "../helpers";
 
 export type Panes<T> = { [id: string]: T };
 
@@ -73,7 +80,7 @@ export class Core {
     "viewport_changed"
   );
 
-  private _interval = 1000 * 60;
+  private _interval = Interval.I1M;
 
   private _decimalPlaces = 5;
 
@@ -121,7 +128,7 @@ export class Core {
       .select<Element>(".x-axis")
       .style("pointer-events", "none");
 
-    this.xAxis = new XAxis(this.xScale);
+    this.xAxis = new XAxis(this.xScale, this._interval);
     this.xAxisInteraction = new XAxisInteraction()
       .on("drag", (e) => {
         handleXAxisDrag(
@@ -373,9 +380,9 @@ export class Core {
     this.listeners.call("redraw");
   }
 
-  interval(interval: number): this {
+  interval(interval: Interval): this {
     this._interval = interval;
-
+    this.xAxis.interval(interval);
     this.initialize();
 
     return this;
@@ -391,7 +398,10 @@ export class Core {
 
     this.xElement.call(
       this.xZoom.translateBy,
-      -(this.xScale(n * this._interval) - this.xScale(0)),
+      -(
+        this.xScale(1000 * 60 * getSubMinutes(this._interval, n)) -
+        this.xScale(0)
+      ),
       0
     );
 
@@ -497,7 +507,9 @@ export class Core {
             3 * intervalWidth
         ) /
           intervalWidth) *
-          this._interval
+          1000 *
+          60 *
+          getSubMinutes(this._interval, 1)
     );
 
     const domain = [

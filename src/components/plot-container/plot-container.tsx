@@ -17,8 +17,7 @@ import {
 } from "react";
 
 import { ChartInfo } from "../chart-info";
-import { FcElement } from "../../types";
-import { Interval } from "../../stories/api/vega-graphql";
+import { FcElement, Interval } from "../../types";
 import { StudyInfo } from "../study-info";
 import { createRef } from "react";
 import { throttle } from "lodash";
@@ -139,7 +138,7 @@ export const PlotContainer = forwardRef(
         initialViewport,
         decimalPlaces
       )
-        .interval(1000 * 60 * getSubMinutes(interval, 1))
+        .interval(interval)
         .on("redraw", () => {
           chartRef.current?.requestRedraw();
         })
@@ -172,7 +171,7 @@ export const PlotContainer = forwardRef(
     useEffect(() => {
       if (chartElement.current) {
         chartElement.current
-          .interval(1000 * 60 * getSubMinutes(interval, 1))
+          .interval(interval)
           .on("fetch_data", (from: Date, to: Date) => {
             onGetDataRangeThrottled(from, to, interval);
           });
@@ -206,7 +205,7 @@ export const PlotContainer = forwardRef(
 
     useEffect(() => {
       if (chartElement.current) {
-        chartElement.current.interval(1000 * 60 * getSubMinutes(interval, 1));
+        chartElement.current.interval(interval);
       }
     }, [interval]);
 

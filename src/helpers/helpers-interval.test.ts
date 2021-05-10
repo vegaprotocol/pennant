@@ -10,7 +10,7 @@ import {
 } from "./helpers-interval";
 import { subHours, subMinutes } from "date-fns";
 
-import { Interval } from "../stories/api/vega-graphql";
+import { Interval } from "../types";
 
 const intervals: GQLInterval[] = ["I15M", "I1D", "I1H", "I1M", "I5M", "I6H"];
 

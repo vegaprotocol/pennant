@@ -2,13 +2,15 @@ import "./chart.scss";
 
 import {
   Annotation,
-  Viewport,
   Candle,
+  ChartElement,
   ChartType,
   DataSource,
+  Interval,
   Overlay,
   PriceMonitoringBounds,
   Study,
+  Viewport,
 } from "../../types";
 import {
   constructTopLevelSpec,
@@ -17,12 +19,9 @@ import {
 } from "../../helpers";
 
 import AutoSizer from "react-virtualized-auto-sizer";
-import { ChartElement } from "../../types";
 import { ErrorBoundary } from "../error-boundary";
-import { Interval } from "../../stories/api/vega-graphql";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { extent } from "d3-array";
 import { mergeData } from "../../helpers";
 import { parse } from "../../scenegraph/parse";
 import React, {
