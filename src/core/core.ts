@@ -30,7 +30,12 @@ import { XAxisInteraction } from "./x-axis-interaction";
 import { YAxis } from "./y-axis";
 import { YAxisInteraction } from "./y-axis-interaction";
 import { difference, intersection, omit, union } from "lodash";
-import { DEFAULT_INTERVAL_WIDTH, MAX_CANDLE_WIDTH, WIDTH } from "../constants";
+import {
+  DEFAULT_INTERVAL_WIDTH,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  WIDTH,
+} from "../constants";
 import { dispatch } from "d3-dispatch";
 import { MutableRefObject } from "react";
 import { compareAsc } from "date-fns";
@@ -111,7 +116,7 @@ export class Core {
     // x-axis
     this.dates = axis.data;
     this.xScale = scaleTime();
-    this.xZoom = d3Zoom();
+    this.xZoom = d3Zoom().scaleExtent([MIN_ZOOM, MAX_ZOOM]);
     this.xElement = select(axis.ref.current)
       .select<Element>(".x-axis")
       .style("pointer-events", "none");
