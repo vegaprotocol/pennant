@@ -24,6 +24,7 @@ import { throttle } from "lodash";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
 import { Core } from "../../core";
+import { getStudyInfoFieldValue } from "./helpers";
 
 const studyInfoFields: Record<
   string,
@@ -371,21 +372,3 @@ export const PlotContainer = forwardRef(
     );
   }
 );
-
-function getStudyInfoFieldValue(
-  data: any[],
-  index: number | null,
-  id: string
-): number {
-  const length = data.length;
-
-  if (length === 0) {
-    return NaN;
-  }
-
-  if (index === null || index >= length || index < 0) {
-    return data[length - 1][id];
-  }
-
-  return data[index][id];
-}
