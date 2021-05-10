@@ -8,6 +8,7 @@ import { Viewport, ChartElement, Scenegraph, Bounds, Panel } from "../../types";
 import { asyncSnapshot, formatter, getSubMinutes } from "../../helpers";
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -80,7 +81,7 @@ export const PlotContainer = forwardRef(
       [onGetDataRange]
     );
 
-    const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
+    const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
