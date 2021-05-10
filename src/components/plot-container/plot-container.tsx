@@ -4,7 +4,7 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { Viewport, ChartElement, Scenegraph, Bounds } from "../../types";
+import { Viewport, ChartElement, Scenegraph, Bounds, Panel } from "../../types";
 import { asyncSnapshot, Colors, formatter, getSubMinutes } from "../../helpers";
 import {
   forwardRef,
@@ -27,35 +27,35 @@ import { Core } from "../../core";
 
 const studyInfoFields: Record<
   string,
-  { label: string; fields: { field: string; label: string }[] }
+  { label: string; fields: { id: string; label: string }[] }
 > = {
   main: {
     label: "Candle",
     fields: [
-      { field: "open", label: "O" },
-      { field: "high", label: "H" },
-      { field: "low", label: "L" },
-      { field: "close", label: "C" },
+      { id: "open", label: "O" },
+      { id: "high", label: "H" },
+      { id: "low", label: "L" },
+      { id: "close", label: "C" },
     ],
   },
   eldarRay: {
     label: "Eldar-ray",
     fields: [
-      { field: "bullPower", label: "Bull" },
-      { field: "bearPower", label: "Bear" },
+      { id: "bullPower", label: "Bull" },
+      { id: "bearPower", label: "Bear" },
     ],
   },
   macd: {
     label: "MACD",
     fields: [
-      { field: "signal", label: "S" },
-      { field: "divergence", label: "D" },
-      { field: "macd", label: "MACD" },
+      { id: "signal", label: "S" },
+      { id: "divergence", label: "D" },
+      { id: "macd", label: "MACD" },
     ],
   },
   volume: {
     label: "Volume",
-    fields: [{ field: "volume", label: "V" }],
+    fields: [{ id: "volume", label: "V" }],
   },
 };
 
@@ -324,23 +324,21 @@ export const PlotContainer = forwardRef(
               )}
               <div className="plot-container__info_overlay">
                 {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
-                {
-                  <StudyInfo
-                    title={studyInfoFields[panel.id].label}
-                    info={studyInfoFields[panel.id].fields.map(
-                      (field: any) => ({
-                        id: field.field,
-                        label: field.label,
-                        value: formatter(
-                          panel.originalData[
-                            dataIndex ?? panel.originalData.length - 1
-                          ][field.field],
-                          decimalPlaces
-                        ),
-                      })
-                    )}
-                  />
-                }
+                <StudyInfo
+                  title={studyInfoFields[panel.id].label}
+                  info={studyInfoFields[panel.id].fields.map((field) => ({
+                    id: field.id,
+                    label: field.label,
+                    value: formatter(
+                      getStudyInfoFieldValue(
+                        panel.originalData,
+                        dataIndex,
+                        field.id
+                      ),
+                      decimalPlaces
+                    ),
+                  }))}
+                />
               </div>
             </div>
             <div
@@ -373,3 +371,21 @@ export const PlotContainer = forwardRef(
     );
   }
 );
+
+function getStudyInfoFieldValue(
+  data: any[],
+  index: number | null,
+  id: string
+): number {
+  const length = data.length;
+
+  if (length === 0) {
+    return NaN;
+  }
+
+  if (index === null || index >= length || index < 0) {
+    return data[length - 1][id];
+  }
+
+  return data[index][id];
+}
