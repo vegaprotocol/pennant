@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { scaleLinear, scaleTime } from "d3-scale";
 
-import React from "react";
+import { useEffect, useRef } from "react";
 import { RuleElement } from ".";
 
 export default {
@@ -19,9 +19,9 @@ export default {
 } as Meta;
 
 export const RuleMark: Story = ({ y, ...rest }) => {
-  const ref = React.useRef<HTMLCanvasElement>(null!);
+  const ref = useRef<HTMLCanvasElement>(null!);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const ctx = ref.current.getContext("2d");
 
     if (ctx) {

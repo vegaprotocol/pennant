@@ -4,10 +4,11 @@ import "./plot-container.scss";
 
 import * as React from "react";
 
-import { Viewport, ChartElement, Scenegraph, Bounds } from "../../types";
-import { asyncSnapshot, Colors, formatter, getSubMinutes } from "../../helpers";
+import { Viewport, ChartElement, Scenegraph, Bounds, Panel } from "../../types";
+import { asyncSnapshot, formatter, getSubMinutes } from "../../helpers";
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -24,40 +25,7 @@ import { throttle } from "lodash";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
 import { Core } from "../../core";
-
-const StudyInfoFields: Record<
-  string,
-  { label: string; fields: { field: string; label: string }[] }
-> = {
-  main: {
-    label: "Candle",
-    fields: [
-      { field: "open", label: "O" },
-      { field: "high", label: "H" },
-      { field: "low", label: "L" },
-      { field: "close", label: "C" },
-    ],
-  },
-  eldarRay: {
-    label: "Eldar-ray",
-    fields: [
-      { field: "bullPower", label: "Bull" },
-      { field: "bearPower", label: "Bear" },
-    ],
-  },
-  macd: {
-    label: "MACD",
-    fields: [
-      { field: "signal", label: "S" },
-      { field: "divergence", label: "D" },
-      { field: "macd", label: "MACD" },
-    ],
-  },
-  volume: {
-    label: "Volume",
-    fields: [{ field: "volume", label: "V" }],
-  },
-};
+import { getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PlotContainerProps = {
   width: number;
@@ -103,19 +71,17 @@ export const PlotContainer = forwardRef(
       },
     }));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onViewportChangedThrottled = React.useCallback(
-      throttle(onViewportChanged, 200),
-      []
+    const onViewportChangedThrottled = useMemo(
+      () => throttle(onViewportChanged, 200),
+      [onViewportChanged]
     );
 
-    const onGetDataRangeThrottled = React.useCallback(
-      (from: Date, to: Date, interval: Interval) =>
-        throttle(() => onGetDataRange(from, to, interval), 800),
+    const onGetDataRangeThrottled = useMemo(
+      () => throttle(onGetDataRange, 800),
       [onGetDataRange]
     );
 
-    const snapshot = React.useCallback(() => asyncSnapshot(chartRef), []);
+    const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
@@ -202,6 +168,17 @@ export const PlotContainer = forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Update interval and fetch data callback
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current
+          .interval(1000 * 60 * getSubMinutes(interval, 1))
+          .on("fetch_data", (from: Date, to: Date) => {
+            onGetDataRangeThrottled(from, to, interval);
+          });
+      }
+    }, [interval, onGetDataRangeThrottled]);
+
     useEffect(() => {
       if (chartElement.current) {
         chartElement.current.update(
@@ -234,63 +211,22 @@ export const PlotContainer = forwardRef(
     }, [interval]);
 
     return (
-      <d3fc-group
-        ref={chartRef}
-        id="chart"
-        style={{
-          display: "flex",
-          height: "100%",
-          width: "100%",
-          flexDirection: "column",
-        }}
-      >
+      <d3fc-group ref={chartRef} class="plot-container__chart">
         {scenegraph.panels.map((panel, panelIndex) => (
           <React.Fragment key={panel.id}>
             <div
               ref={refs[panel.id]}
-              className="pane"
-              style={{
-                position: "relative",
-                flex: 1,
-              }}
+              className="plot-container__pane"
               onMouseOver={() => setShowPaneControls(panel.id)}
               onMouseOut={() => setShowPaneControls(null)}
             >
-              <d3fc-canvas
-                class="plot-area"
-                use-device-pixel-ratio
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-              <d3fc-canvas
-                class="y-axis"
-                use-device-pixel-ratio
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-              <d3fc-svg
-                class="plot-area-interaction"
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  cursor: "crosshair",
-                }}
-              />
+              <d3fc-canvas class="plot-area" use-device-pixel-ratio />
+              <d3fc-canvas class="y-axis" use-device-pixel-ratio />
+              <d3fc-svg class="plot-area-interaction" />
               <d3fc-svg
                 class="y-axis-interaction"
                 style={{
-                  position: "absolute",
-                  right: 0,
                   width: `${WIDTH}px`,
-                  height: "100%",
-                  cursor: "ns-resize",
                 }}
               />
               {panel.id !== "main" && (
@@ -313,52 +249,31 @@ export const PlotContainer = forwardRef(
                   </div>
                 </div>
               )}
-              <div className="plot-container__info_overlay">
+              <div className="plot-container__info-overlay">
                 {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
-                {
-                  <StudyInfo
-                    title={StudyInfoFields[panel.id].label}
-                    info={StudyInfoFields[panel.id].fields.map(
-                      (field: any) => ({
-                        id: field.field,
-                        label: field.label,
-                        value: formatter(
-                          panel.originalData[
-                            dataIndex ?? panel.originalData.length - 1
-                          ][field.field],
-                          decimalPlaces
-                        ),
-                      })
-                    )}
-                  />
-                }
+                <StudyInfo
+                  title={studyInfoFields[panel.id].label}
+                  info={studyInfoFields[panel.id].fields.map((field) => ({
+                    id: field.id,
+                    label: field.label,
+                    value: formatter(
+                      getStudyInfoFieldValue(
+                        panel.originalData,
+                        dataIndex,
+                        field.id
+                      ),
+                      decimalPlaces
+                    ),
+                  }))}
+                />
               </div>
             </div>
-            <div
-              style={{ height: "1px", backgroundColor: Colors.GRAY_LIGHT_1 }}
-            ></div>
+            <div className="plot-container__separator" />
           </React.Fragment>
         ))}
-        <div ref={xAxisRef} style={{ height: "24px", position: "relative" }}>
-          <d3fc-canvas
-            class="x-axis"
-            use-device-pixel-ratio
-            style={{
-              position: "absolute",
-              cursor: "ew-resize",
-              width: "100%",
-              height: "100%",
-            }}
-          />
-          <d3fc-svg
-            class="x-axis-interaction"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              cursor: "ew-resize",
-            }}
-          />
+        <div ref={xAxisRef} className="plot-container__x-axis-container">
+          <d3fc-canvas class="x-axis" use-device-pixel-ratio />
+          <d3fc-svg class="x-axis-interaction" />
         </div>
       </d3fc-group>
     );

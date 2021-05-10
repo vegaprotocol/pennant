@@ -245,7 +245,7 @@ export const Chart = forwardRef(
 
     return !isLoading && scenegraph ? (
       <ErrorBoundary>
-        <div className="chart-wrapper">
+        <div className="chart__wrapper">
           <AutoSizer
             defaultHeight={150}
             defaultWidth={300}
