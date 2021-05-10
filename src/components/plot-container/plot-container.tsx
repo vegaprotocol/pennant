@@ -25,7 +25,7 @@ import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
 import { CloseButton } from "./close-button";
 import { Core } from "../../core";
 
-const StudyInfoFields: Record<
+const studyInfoFields: Record<
   string,
   { label: string; fields: { field: string; label: string }[] }
 > = {
@@ -326,8 +326,8 @@ export const PlotContainer = forwardRef(
                 {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
                 {
                   <StudyInfo
-                    title={StudyInfoFields[panel.id].label}
-                    info={StudyInfoFields[panel.id].fields.map(
+                    title={studyInfoFields[panel.id].label}
+                    info={studyInfoFields[panel.id].fields.map(
                       (field: any) => ({
                         id: field.field,
                         label: field.label,
