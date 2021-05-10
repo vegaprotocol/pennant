@@ -113,6 +113,8 @@ yarn storybook
 
 Open [http://localhost:6006](http://localhost:6006) to view in the browser.
 
+We try our best to follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. This lets use [standard-version](https://github.com/conventional-changelog/standard-version) for semantic versioning and CHANGELOG generation.
+
 ### Building
 
 To build the library run
@@ -129,6 +131,12 @@ To run the tests
 
 ```sh
 yarn test
+```
+
+### Releasing a new version
+
+```sh
+yarn release
 ```
 
 ## License

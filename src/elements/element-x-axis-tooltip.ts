@@ -1,13 +1,12 @@
-import { ScaleLinear, ScaleTime } from "../types";
-
-import { Colors, multiFormat } from "../helpers";
-import { RenderableElement } from "../types";
-import { format } from "date-fns";
+import { Colors, dateFormat } from "../helpers";
+import { RenderableElement, Interval, ScaleLinear, ScaleTime } from "../types";
 
 function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
-  position: Date | null
+  pixelRatio: number,
+  position: Date | null,
+  interval: Interval
 ) {
   if (position) {
     const x = xScale(position);
@@ -19,7 +18,7 @@ function addXAxisTooltipPath(
 
     const value = xScale.invert(x);
     const xPad = 5;
-    const text = multiFormat(value);
+    const text = dateFormat(value, interval);
     const textWidth = ctx.measureText(text).width;
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;
@@ -63,8 +62,9 @@ export class XAxisTooltipElement implements RenderableElement {
     xScale: ScaleTime,
     _yScale: ScaleLinear,
     pixelRatio: number = 1,
-    position: Date | null
+    position: Date | null,
+    interval: Interval
   ) {
-    addXAxisTooltipPath(ctx, xScale, position);
+    addXAxisTooltipPath(ctx, xScale, pixelRatio, position, interval);
   }
 }

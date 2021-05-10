@@ -8,15 +8,33 @@ import {
   utcYear,
 } from "d3-time";
 import { timeFormat } from "d3-time-format";
+import { Interval } from "../types";
 
 const formatMillisecond = timeFormat(".%L");
 const formatSecond = timeFormat(":%S");
 const formatMinute = timeFormat("%H:%M");
 const formatHour = timeFormat("%H:%M");
-const formatDay = timeFormat("%a %d");
+const formatDay = timeFormat("%b %d");
 const formatWeek = timeFormat("%b %d");
 const formatMonth = timeFormat("%B");
 const formatYear = timeFormat("%Y");
+
+export function dateFormat(date: Date, interval: Interval) {
+  switch (interval) {
+    case Interval.I1M:
+      return formatMinute(date);
+    case Interval.I5M:
+      return formatMinute(date);
+    case Interval.I15M:
+      return formatMinute(date);
+    case Interval.I1H:
+      return formatHour(date);
+    case Interval.I6H:
+      return formatHour(date);
+    case Interval.I1D:
+      return formatDay(date);
+  }
+}
 
 // FIXME: UTC is not correct
 export function multiFormat(date: Date) {

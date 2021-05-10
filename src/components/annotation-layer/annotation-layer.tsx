@@ -1,32 +1,31 @@
 import "./annotation-layer.scss";
 
-import * as React from "react";
-
 import { Label } from "../label";
 import { Annotation } from "../../types";
 import { Colors } from "../../helpers";
+import { createRef, useLayoutEffect, useMemo, useState } from "react";
 
 export type AnnotationLayerProps = {
   annotations: Annotation[];
 };
 
 export const AnnotationLayer = ({ annotations }: AnnotationLayerProps) => {
-  const [widths, setWidths] = React.useState<{
+  const [widths, setWidths] = useState<{
     [index: string]: number;
   } | null>(null);
 
   const refs: {
     [index: string]: React.RefObject<HTMLDivElement>;
-  } = React.useMemo(
+  } = useMemo(
     () =>
       annotations.reduce((acc, value) => {
-        acc[value.id] = React.createRef<HTMLDivElement>();
+        acc[value.id] = createRef<HTMLDivElement>();
         return acc;
       }, {} as { [index: string]: React.RefObject<HTMLDivElement> }),
     [annotations]
   );
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     setWidths(
       Object.fromEntries(
         Object.entries(refs).map(([key, value]) => [
