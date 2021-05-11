@@ -1,10 +1,20 @@
 import * as React from "react";
 
+// TODO: Make non-visible
+function createCanvas(width: number, height: number) {
+  const canvas = document.createElement("canvas");
+
+  canvas.width = width;
+  canvas.height = height;
+
+  return canvas;
+}
+
 /**
  * Produces an image of the chart.
  *
  * @param chartRef React ref to chart component
- * @returns A promise that will fulfill with a new Blob object represnting a file containing an image.
+ * @returns A promise that will fulfill with a new Blob object represnting a file containing an image or null.
  */
 export async function asyncSnapshot(
   chartRef: React.RefObject<HTMLElement>
@@ -67,10 +77,10 @@ export async function asyncSnapshot(
 
       // TODO: Replace with user-defined type-guard
       if ("OffscreenCanvas" in window) {
-        return await (<OffscreenCanvas>offscreen).convertToBlob();
+        return await (offscreen as OffscreenCanvas).convertToBlob();
       } else {
         return new Promise<Blob | null>(function (resolve, reject) {
-          (<HTMLCanvasElement>offscreen).toBlob(function (blob) {
+          (offscreen as HTMLCanvasElement).toBlob(function (blob) {
             resolve(blob);
           });
         });
@@ -81,12 +91,4 @@ export async function asyncSnapshot(
   } else {
     return null;
   }
-}
-function createCanvas(width: number, height: number) {
-  const canvas = document.createElement("canvas");
-
-  canvas.width = width;
-  canvas.height = height;
-
-  return canvas;
 }
