@@ -1,6 +1,8 @@
 import { Intent, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { align, alignSpan, Colors } from "../helpers";
 
+const HEIGHT = 44;
+
 export type Cell = {
   label: string;
   stroke?: boolean;
@@ -44,13 +46,13 @@ export class LabelAnnotationElement implements RenderableElement {
       ctx.fillStyle = cell.fill ? fill : "black";
       ctx.fillRect(
         currentWidth,
-        yScale(this.y) - 22,
+        yScale(this.y) - HEIGHT / 2,
         width + 8 * pixelRatio,
         44
       );
       ctx.strokeRect(
         currentWidth,
-        yScale(this.y) - 22,
+        yScale(this.y) - HEIGHT / 2,
         width + 8 * pixelRatio,
         44
       );
