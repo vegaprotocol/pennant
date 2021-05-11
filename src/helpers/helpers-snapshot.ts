@@ -51,8 +51,6 @@ export async function asyncSnapshot(
 
         offset += paneElement.plotArea!.height;
 
-        console.log(width, offset + 0.5);
-
         offScreenContext.save();
         offScreenContext.lineWidth = 2;
         offScreenContext.beginPath();
