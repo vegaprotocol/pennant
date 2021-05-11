@@ -1519,10 +1519,10 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
-"@blueprintjs/popover2@0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-0.7.2.tgz#23eae51dfa12ba10a582415b599de266ed6eb75a"
-  integrity sha512-UnZq8PSrMk/tzjXvfCM+J+v1QyoUUfWgx/HmA5iG6XFJjK8lMwhZRxe4czfY4nXsgO5LcRkrPzdIpr447h0rLw==
+"@blueprintjs/popover2@0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-0.8.0.tgz#6412cf5eb92766a069c544cb6424a05f7bb3091d"
+  integrity sha512-fN1CBR7GdCGInipdaghq1SCEc9/gvUXx9i18LSiytAd3Chr//E3WgvvyTUDEeYQAoMz54oGoV8ostas2sqSyRw==
   dependencies:
     "@blueprintjs/core" "^3.44.2"
     "@popperjs/core" "^2.5.4"
