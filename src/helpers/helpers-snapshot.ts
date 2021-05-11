@@ -6,26 +6,25 @@ import * as React from "react";
  * @param chartRef React ref to chart component
  * @returns A promise that will fulfill with a new Blob object represnting a file containing an image.
  */
-export async function asyncSnapshot(chartRef: React.RefObject<HTMLElement>) {
+export async function asyncSnapshot(
+  chartRef: React.RefObject<HTMLElement>
+): Promise<Blob | null> {
   if (chartRef.current) {
     const bbox = chartRef.current.getBoundingClientRect();
 
     // FIXME: These queries are extremely brittle. Replace with something more robust.
-    const mainPlotAreaCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".pane .plot-area canvas"
-    ) as HTMLCanvasElement;
-
-    const mainYAxisCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".pane .y-axis canvas"
-    ) as HTMLCanvasElement;
-
-    const studyBaseCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".plot-area:nth-child(3) d3fc-canvas.base canvas"
+    const panes = chartRef.current.querySelectorAll<HTMLDivElement>(
+      ".plot-container__pane"
     );
 
-    const studyForegroundCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".plot-area:nth-child(3) d3fc-canvas.foreground canvas"
-    );
+    const paneElements = [];
+
+    for (const pane of panes) {
+      paneElements.push({
+        plotArea: pane.querySelector<HTMLCanvasElement>(".plot-area canvas"),
+        yAxis: pane.querySelector<HTMLCanvasElement>(".y-axis canvas"),
+      });
+    }
 
     const xAxisCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
       ".x-axis canvas"
@@ -33,53 +32,63 @@ export async function asyncSnapshot(chartRef: React.RefObject<HTMLElement>) {
 
     const devicePixelRatio = window.devicePixelRatio;
 
-    const offscreen = new OffscreenCanvas(
-      devicePixelRatio * bbox.width,
-      devicePixelRatio * bbox.height
-    );
+    const width = devicePixelRatio * bbox.width;
+    const height = devicePixelRatio * bbox.height;
+
+    const offscreen =
+      "OffscreenCanvas" in window
+        ? new OffscreenCanvas(width, height)
+        : createCanvas(width, height);
 
     const offScreenContext = offscreen.getContext("2d");
 
     if (offScreenContext) {
-      offScreenContext.drawImage(mainPlotAreaCanvas, 0, 0);
-      offScreenContext.drawImage(mainYAxisCanvas, 0, 0);
+      let offset = 0;
 
-      let offset = mainPlotAreaCanvas.height;
+      for (const paneElement of paneElements) {
+        offScreenContext.drawImage(paneElement.plotArea!, 0, offset);
+        offScreenContext.drawImage(paneElement.yAxis!, 0, offset);
 
-      if (studyBaseCanvas && studyForegroundCanvas) {
-        offScreenContext.drawImage(studyBaseCanvas, 0, mainPlotAreaCanvas.height);
-        offScreenContext.drawImage(studyForegroundCanvas, 0, mainPlotAreaCanvas.height);
+        offset += paneElement.plotArea!.height;
+
+        console.log(width, offset + 0.5);
 
         offScreenContext.save();
+        offScreenContext.lineWidth = 2;
         offScreenContext.beginPath();
-        offScreenContext.moveTo(0, mainPlotAreaCanvas.height + 0.5);
-        offScreenContext.lineTo(mainPlotAreaCanvas.width, mainPlotAreaCanvas.height + 0.5);
+        offScreenContext.moveTo(0, offset + 0.5);
+        offScreenContext.lineTo(width, offset + 0.5);
 
         offScreenContext.strokeStyle = "#fff";
         offScreenContext.stroke();
         offScreenContext.closePath();
         offScreenContext.restore();
-
-        offset += studyBaseCanvas.height;
       }
 
       offScreenContext.drawImage(xAxisCanvas, 0, offset);
 
-      offScreenContext.save();
-      offScreenContext.beginPath();
-      offScreenContext.moveTo(0, offset + 0.5);
-      offScreenContext.lineTo(mainPlotAreaCanvas.width, offset + 0.5);
-
-      offScreenContext.strokeStyle = "#fff";
-      offScreenContext.stroke();
-      offScreenContext.closePath();
-      offScreenContext.restore();
-
-      return await offscreen.convertToBlob();
+      // TODO: Replace with user-defined type-guard
+      if ("OffscreenCanvas" in window) {
+        return await (<OffscreenCanvas>offscreen).convertToBlob();
+      } else {
+        return new Promise<Blob | null>(function (resolve, reject) {
+          (<HTMLCanvasElement>offscreen).toBlob(function (blob) {
+            resolve(blob);
+          });
+        });
+      }
     } else {
       return null;
     }
   } else {
     return null;
   }
+}
+function createCanvas(width: number, height: number) {
+  const canvas = document.createElement("canvas");
+
+  canvas.width = width;
+  canvas.height = height;
+
+  return canvas;
 }
