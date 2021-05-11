@@ -54,8 +54,15 @@ export function multiFormat(date: Date) {
     ? formatMonth
     : formatYear)(date);
 }
-export const formatter = (value: number, fractionDigits: number = 5) =>
-  new Intl.NumberFormat("en-GB", {
+
+// TODO: Don't create a new Intl.NumberFormat instance on every invocation
+export const formatter = (value: number, fractionDigits: number = 5) => {
+  if (isNaN(value)) {
+    return "-";
+  }
+  
+  return new Intl.NumberFormat("en-GB", {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
   }).format(value);
+};
