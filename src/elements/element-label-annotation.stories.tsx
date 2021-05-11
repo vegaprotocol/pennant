@@ -2,23 +2,16 @@ import { Meta, Story } from "@storybook/react";
 import { scaleLinear, scaleTime } from "d3-scale";
 
 import React from "react";
-import { LabelAnnotationElement } from ".";
+import { Cell, LabelAnnotationElement } from ".";
+import { Intent } from "../types";
 
 export default {
   title: "Elements/LabelAnnotationElement",
-  argTypes: {
-    y: {
-      control: {
-        type: "range",
-        min: 0,
-        max: 150,
-        step: 10,
-      },
-    },
-  },
 } as Meta;
 
-export const Position: Story = ({ y, ...rest }) => {
+const Template: Story<{ cells: Cell[]; intent: Intent; y: number }> = (
+  args
+) => {
   const ref = React.useRef<HTMLCanvasElement>(null!);
 
   React.useEffect(() => {
@@ -26,18 +19,62 @@ export const Position: Story = ({ y, ...rest }) => {
 
     if (ctx) {
       const element = new LabelAnnotationElement({
-        y: y,
+        ...args,
       });
 
-      const xScale = scaleTime().range([0, 300]);
-      const yScale = scaleLinear().domain([0, 150]).range([150, 0]);
+      const xScale = scaleTime().range([0, 600]);
+      const yScale = scaleLinear().domain([0, 150]).range([300, 0]);
 
-      element.draw(ctx, xScale, yScale);
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, 600, 300);
+
+      element.draw(ctx, xScale, yScale, window.devicePixelRatio);
     }
-  }, [y]);
+  }, [args]);
 
-  return <canvas ref={ref} />;
+  return (
+    <canvas
+      ref={ref}
+      width={600}
+      height={300}
+      style={{ width: "300px", height: "150px" }}
+    />
+  );
 };
+
+export const Position = Template.bind({});
 Position.args = {
-  y: 100,
+  cells: [
+    { label: "Position" },
+    { label: "33,684.11" },
+    { label: "+100", fill: true },
+    { label: "PnL +12,943.01", stroke: true },
+    { label: "Close", onClick: console.log },
+  ],
+  intent: "success",
+  y: 60,
+};
+
+export const Limit = Template.bind({});
+Limit.args = {
+  cells: [
+    { label: "Limit GTC", stroke: true },
+    { label: "33,300.00" },
+    { label: "+100", stroke: true },
+    { label: "Cancel", onClick: console.log },
+  ],
+  intent: "success",
+  y: 60,
+};
+
+export const LimitGt = Template.bind({});
+LimitGt.args = {
+  cells: [
+    { label: "Limit GT16:00", stroke: true },
+    { label: "41,100.00" },
+    { label: "-50", stroke: true },
+    { label: "Cancel", onClick: console.log },
+  ],
+  intent: "danger",
+  y: 60,
 };

@@ -1,12 +1,23 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
-import { align, alignSpan } from "../helpers";
+import { Intent, RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { align, alignSpan, Colors } from "../helpers";
+
+export type Cell = {
+  label: string;
+  stroke?: boolean;
+  fill?: boolean;
+  onClick?: () => void;
+};
 
 export class LabelAnnotationElement implements RenderableElement {
+  readonly cells: Cell[];
+  readonly intent: Intent;
   readonly y: number;
 
   constructor(cfg: any) {
-    const { y } = cfg;
+    const { cells, intent, y } = cfg;
 
+    this.cells = cells;
+    this.intent = intent;
     this.y = y;
   }
 
@@ -16,17 +27,39 @@ export class LabelAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    ctx.font = "18px sans-serif";
-    ctx.fillStyle = "white";
-    ctx.fillText("Position", 0, yScale(this.y));
+    const stroke = this.intent === "success" ? Colors.GREEN : Colors.RED;
+    const fill = this.intent === "success" ? Colors.GREEN : Colors.RED;
 
-    const { width } = ctx.measureText("Position");
+    ctx.font = "28px sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.lineWidth = 2 * pixelRatio;
 
-    ctx.fillText("33,684.11", width, yScale(this.y));
+    let currentWidth = 0;
 
-    ctx.strokeStyle = "red";
-    ctx.lineCap = "butt";
-    ctx.lineWidth = 2 / pixelRatio;
-    ctx.stroke();
+    for (const cell of this.cells) {
+      const { width } = ctx.measureText(cell.label);
+
+      // Border and background
+      ctx.strokeStyle = stroke;
+      ctx.fillStyle = cell.fill ? fill : "black";
+      ctx.fillRect(
+        currentWidth,
+        yScale(this.y) - 22,
+        width + 8 * pixelRatio,
+        44
+      );
+      ctx.strokeRect(
+        currentWidth,
+        yScale(this.y) - 22,
+        width + 8 * pixelRatio,
+        44
+      );
+
+      // Text
+      ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
+      ctx.fillText(cell.label, 4 * pixelRatio + currentWidth, yScale(this.y));
+
+      currentWidth += width + 8 * pixelRatio;
+    }
   }
 }
