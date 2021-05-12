@@ -233,6 +233,7 @@ export class Core {
             handleZoomend(
               this.plotAreas,
               offset,
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
               this.yAxes,
               value.id,
@@ -612,6 +613,7 @@ export class Core {
             handleZoomend(
               this.plotAreas,
               offset,
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
               this.yAxes,
               id,
