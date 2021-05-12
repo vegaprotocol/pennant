@@ -66,7 +66,7 @@ export class JsonDataSource implements DataSource {
             { label: "Position" },
             { label: `${averageEntryPrice.toFixed(2)}` },
             {
-              label: `PnL ${10000}`,
+              label: `PnL ${10000000000}`,
               stroke: true,
             },
           ],
@@ -76,9 +76,16 @@ export class JsonDataSource implements DataSource {
         {
           type: "label",
           id: "1",
-          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${600}` }],
+          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596}` }],
           intent: "danger",
           y: 596,
+        },
+        {
+          type: "label",
+          id: "1",
+          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596.5}` }],
+          intent: "danger",
+          y: 596.01,
         },
       ]);
     }, 2000);

@@ -1,8 +1,19 @@
-import { Intent, RenderableElement, ScaleLinear, ScaleTime } from "../types";
-import { align, alignSpan, Colors } from "../helpers";
+import {
+  LabelAnnotation,
+  RenderableElement,
+  ScaleLinear,
+  ScaleTime,
+} from "../types";
+import { Colors } from "../helpers";
+import { sum, zip } from "d3-array";
 
 const HEIGHT = 10;
 const PADDING = 2;
+
+export function cumsum(values: number[]) {
+  let sum = 0;
+  return Array.from(values, (v) => (sum += v || 0));
+}
 
 export type Cell = {
   label: string;
@@ -11,17 +22,76 @@ export type Cell = {
   onClick?: () => void;
 };
 
+function addLabel(
+  ctx: CanvasRenderingContext2D,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
+  pixelRatio: number,
+  label: LabelAnnotation,
+  y: number
+) {
+  const stroke = label.intent === "success" ? Colors.GREEN : Colors.RED;
+  const fill = label.intent === "success" ? Colors.GREEN : Colors.RED;
+
+  ctx.font = `${14}px sans-serif`;
+  ctx.textBaseline = "middle";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = stroke;
+
+  // Calculate widths of cells
+  const widths = label.cells.map(
+    (cell) => ctx.measureText(cell.label).width + 2 * PADDING * pixelRatio
+  );
+
+  const xPositions = [0, ...cumsum(widths).slice(0, -1)];
+  const totalWidth = sum(widths);
+
+  // Dashed price line
+  ctx.beginPath();
+  ctx.setLineDash([2 * pixelRatio, 3 * pixelRatio]);
+  ctx.moveTo(totalWidth, y);
+  ctx.lineTo(Math.max(xScale.range()[1] / 2, totalWidth), yScale(label.y));
+  ctx.lineTo(xScale.range()[1], yScale(label.y));
+  ctx.stroke();
+  ctx.closePath();
+
+  for (const element of zip<any>(label.cells, widths, xPositions)) {
+    const cell = element[0] as Cell;
+    const width = element[1] as number;
+    const xPosition = element[2] as number;
+
+    // Border and background
+    ctx.setLineDash([]);
+    ctx.strokeStyle = stroke;
+    ctx.fillStyle = cell.fill ? fill : "black";
+
+    ctx.fillRect(
+      xPosition,
+      y - (HEIGHT * pixelRatio) / 2,
+      width,
+      HEIGHT * pixelRatio
+    );
+
+    ctx.strokeRect(
+      xPosition,
+      y - (HEIGHT * pixelRatio) / 2,
+      width,
+      HEIGHT * pixelRatio
+    );
+
+    // Text
+    ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
+    ctx.fillText(cell.label, PADDING * pixelRatio + xPosition, y);
+  }
+}
+
 export class LabelAnnotationElement implements RenderableElement {
-  readonly cells: Cell[];
-  readonly intent: Intent;
-  readonly y: number;
+  readonly labels: LabelAnnotation[];
 
-  constructor(cfg: { cells: Cell[]; intent: Intent; y: number }) {
-    const { cells, intent, y } = cfg;
+  constructor(cfg: { labels: LabelAnnotation[] }) {
+    const { labels } = cfg;
 
-    this.cells = cells;
-    this.intent = intent;
-    this.y = y;
+    this.labels = [...labels].sort((a, b) => b.y - a.y);
   }
 
   draw(
@@ -30,55 +100,35 @@ export class LabelAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    const stroke = this.intent === "success" ? Colors.GREEN : Colors.RED;
-    const fill = this.intent === "success" ? Colors.GREEN : Colors.RED;
+    let previousY = -HEIGHT * pixelRatio;
 
-    ctx.font = `${14}px sans-serif`;
-    ctx.textBaseline = "middle";
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = stroke;
+    const yPositions = this.labels.map((label) => yScale(label.y));
+    const sortedYPositions = [...yPositions].sort((a, b) => a - b);
+    const shiftedYPositions = sortedYPositions.reduce<number[]>((p, y) => {
+      const ypx = y;
 
-    // Dashed price line
-    ctx.beginPath();
-    ctx.setLineDash([2 * pixelRatio, 6 * pixelRatio]);
-    ctx.moveTo(0, yScale(this.y));
-    ctx.lineTo(xScale.range()[1], yScale(this.y));
-    ctx.stroke();
-    ctx.closePath();
+      let ny = ypx;
 
-    let currentWidth = 0;
+      if (ypx - previousY < HEIGHT * pixelRatio) {
+        ny = previousY + HEIGHT * pixelRatio;
+      }
 
-    for (const cell of this.cells) {
-      const { width } = ctx.measureText(cell.label);
+      p.push(ny);
 
-      // Border and background
-      ctx.setLineDash([]);
-      ctx.strokeStyle = stroke;
-      ctx.fillStyle = cell.fill ? fill : "black";
+      previousY = ny || ypx;
 
-      ctx.fillRect(
-        currentWidth,
-        yScale(this.y) - (HEIGHT * pixelRatio) / 2,
-        width + 2 * PADDING * pixelRatio,
-        HEIGHT * pixelRatio
+      return p;
+    }, []);
+
+    for (const label of zip<any>(this.labels, shiftedYPositions)) {
+      addLabel(
+        ctx,
+        xScale,
+        yScale,
+        pixelRatio,
+        label[0] as LabelAnnotation,
+        label[1] as number
       );
-
-      ctx.strokeRect(
-        currentWidth,
-        yScale(this.y) - (HEIGHT * pixelRatio) / 2,
-        width + 2 * PADDING * pixelRatio,
-        HEIGHT * pixelRatio
-      );
-
-      // Text
-      ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
-      ctx.fillText(
-        cell.label,
-        PADDING * pixelRatio + currentWidth,
-        yScale(this.y)
-      );
-
-      currentWidth += width + 2 * PADDING * pixelRatio;
     }
   }
 }

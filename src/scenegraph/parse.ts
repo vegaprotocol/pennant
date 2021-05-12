@@ -296,14 +296,11 @@ export function parse(
                 : [],
             labels:
               panelIndex === 0
-                ? annotations.map(
-                    (annotation) =>
-                      new LabelAnnotationElement({
-                        cells: annotation.cells,
-                        intent: annotation.intent,
-                        y: annotation.y,
-                      })
-                  )
+                ? [
+                    new LabelAnnotationElement({
+                      labels: annotations,
+                    }),
+                  ]
                 : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData), // FIXME: duplicate of bounds

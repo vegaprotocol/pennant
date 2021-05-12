@@ -1,7 +1,5 @@
 import { ScaleLinear, ScaleTime } from "../types";
 
-import { Annotation } from ".";
-
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
@@ -15,6 +13,7 @@ export interface RenderableElement {
 export interface PositionalElement extends RenderableElement {
   readonly x: Date;
 }
+
 
 export interface Panel {
   id: string;
