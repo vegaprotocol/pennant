@@ -1,7 +1,5 @@
 import { ScaleLinear, ScaleTime } from "../types";
 
-import { Annotation } from ".";
-
 export interface RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
@@ -16,6 +14,7 @@ export interface PositionalElement extends RenderableElement {
   readonly x: Date;
 }
 
+
 export interface Panel {
   id: string;
   originalData: any[];
@@ -25,7 +24,7 @@ export interface Panel {
   axisTooltip?: RenderableElement;
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
-  labels?: Annotation[];
+  labels?: RenderableElement[];
 
   /**
    * Fields to use to determine y axis extent

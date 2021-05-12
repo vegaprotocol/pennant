@@ -55,6 +55,7 @@ export type ChartPanel = {
   data: any[];
   renderableElements: RenderableElement[];
   yEncodingFields: string[];
+  labels: RenderableElement[];
 };
 
 /**
@@ -212,7 +213,8 @@ export class Core {
           this.yScales[id],
           panel.renderableElements.flat(1),
           panel.data,
-          panel.yEncodingFields
+          panel.yEncodingFields,
+          panel.labels
         ),
       ])
     );
@@ -231,6 +233,7 @@ export class Core {
             handleZoomend(
               this.plotAreas,
               offset,
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
               this.yAxes,
               value.id,
@@ -549,7 +552,8 @@ export class Core {
         this.plotAreas[id]
           .data(panels[id].data)
           .renderableElements(panels[id].renderableElements)
-          .yEncodingFields(panels[id].yEncodingFields);
+          .yEncodingFields(panels[id].yEncodingFields)
+          .labels(panels[id].labels);
       } else if (enteringIds.includes(id)) {
         this.yScales[id] = scaleLinear();
 
@@ -591,7 +595,8 @@ export class Core {
           this.yScales[id],
           panels[id].renderableElements,
           panels[id].data,
-          panels[id].yEncodingFields
+          panels[id].yEncodingFields,
+          panels[id].labels
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
@@ -608,6 +613,7 @@ export class Core {
             handleZoomend(
               this.plotAreas,
               offset,
+              this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
               this.yAxes,
               id,

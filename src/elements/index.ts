@@ -4,6 +4,7 @@ export * from "./element-bar";
 export * from "./element-dummy";
 export * from "./element-crosshair";
 export * from "./element-grid";
+export * from "./element-label-annotation";
 export * from "./element-line";
 export * from "./element-rule";
 export * from "./element-x-axis-tooltip";

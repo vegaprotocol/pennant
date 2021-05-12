@@ -119,6 +119,7 @@ export function drawXAxis(event: any, xAxis: XAxis) {
 export function handleZoomend(
   plotAreas: Panes<PlotArea>,
   offset: [number, number],
+  yScale: ScaleLinear,
   xAxis: XAxis,
   yAxes: Panes<YAxis>,
   id: string,
@@ -127,11 +128,11 @@ export function handleZoomend(
   const [_index, x] = plotAreas[id].getIndex(offset[0]);
 
   Object.values(plotAreas).forEach((plotArea) => {
-    plotArea.crosshair([x, offset[1]]);
+    plotArea.crosshair([x, yScale.invert(offset[1])]);
   });
 
   xAxis.crosshair(x);
-  yAxes[id].crosshair(offset[1]); // TODO: Should be scaled number
+  yAxes[id].crosshair(yScale.invert(offset[1]));
 
   onRedraw();
 }
