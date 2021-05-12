@@ -25,7 +25,7 @@ export interface Panel {
   axisTooltip?: RenderableElement;
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
-  labels?: Annotation[];
+  labels?: RenderableElement[];
 
   /**
    * Fields to use to determine y axis extent

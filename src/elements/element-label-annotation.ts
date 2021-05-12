@@ -1,7 +1,8 @@
 import { Intent, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { align, alignSpan, Colors } from "../helpers";
 
-const HEIGHT = 44;
+const HEIGHT = 10;
+const PADDING = 2;
 
 export type Cell = {
   label: string;
@@ -15,7 +16,7 @@ export class LabelAnnotationElement implements RenderableElement {
   readonly intent: Intent;
   readonly y: number;
 
-  constructor(cfg: any) {
+  constructor(cfg: { cells: Cell[]; intent: Intent; y: number }) {
     const { cells, intent, y } = cfg;
 
     this.cells = cells;
@@ -32,9 +33,9 @@ export class LabelAnnotationElement implements RenderableElement {
     const stroke = this.intent === "success" ? Colors.GREEN : Colors.RED;
     const fill = this.intent === "success" ? Colors.GREEN : Colors.RED;
 
-    ctx.font = "28px sans-serif";
+    ctx.font = `${14}px sans-serif`;
     ctx.textBaseline = "middle";
-    ctx.lineWidth = 2 * pixelRatio;
+    ctx.lineWidth = 2;
 
     let currentWidth = 0;
 
@@ -44,24 +45,30 @@ export class LabelAnnotationElement implements RenderableElement {
       // Border and background
       ctx.strokeStyle = stroke;
       ctx.fillStyle = cell.fill ? fill : "black";
+
       ctx.fillRect(
         currentWidth,
-        yScale(this.y) - HEIGHT / 2,
-        width + 8 * pixelRatio,
-        44
+        yScale(this.y) - (HEIGHT * pixelRatio) / 2,
+        width + 2 * PADDING * pixelRatio,
+        HEIGHT * pixelRatio
       );
+
       ctx.strokeRect(
         currentWidth,
-        yScale(this.y) - HEIGHT / 2,
-        width + 8 * pixelRatio,
-        44
+        yScale(this.y) - (HEIGHT * pixelRatio) / 2,
+        width + 2 * PADDING * pixelRatio,
+        HEIGHT * pixelRatio
       );
 
       // Text
       ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
-      ctx.fillText(cell.label, 4 * pixelRatio + currentWidth, yScale(this.y));
+      ctx.fillText(
+        cell.label,
+        PADDING * pixelRatio + currentWidth,
+        yScale(this.y)
+      );
 
-      currentWidth += width + 8 * pixelRatio;
+      currentWidth += width + 2 * PADDING * pixelRatio;
     }
   }
 }
