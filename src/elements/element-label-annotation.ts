@@ -36,6 +36,15 @@ export class LabelAnnotationElement implements RenderableElement {
     ctx.font = `${14}px sans-serif`;
     ctx.textBaseline = "middle";
     ctx.lineWidth = 2;
+    ctx.strokeStyle = stroke;
+
+    // Dashed price line
+    ctx.beginPath();
+    ctx.setLineDash([2 * pixelRatio, 6 * pixelRatio]);
+    ctx.moveTo(0, yScale(this.y));
+    ctx.lineTo(xScale.range()[1], yScale(this.y));
+    ctx.stroke();
+    ctx.closePath();
 
     let currentWidth = 0;
 
@@ -43,6 +52,7 @@ export class LabelAnnotationElement implements RenderableElement {
       const { width } = ctx.measureText(cell.label);
 
       // Border and background
+      ctx.setLineDash([]);
       ctx.strokeStyle = stroke;
       ctx.fillStyle = cell.fill ? fill : "black";
 
