@@ -4,6 +4,7 @@ import {
   CrosshairElement,
   DummyElement,
   GridElement,
+  LabelAnnotationElement,
   XAxisElement,
   XAxisTooltipElement,
   YAxisAnnotationElement,
@@ -303,7 +304,14 @@ export function parse(
                     ),
                   ]
                 : [],
-            labels: panelIndex === 0 ? annotations : [],
+            labels:
+              panelIndex === 0
+                ? [
+                    new LabelAnnotationElement({
+                      labels: annotations,
+                    }),
+                  ]
+                : [],
             yEncodingFields: extractYEncodingFields(panel),
             yDomain: extractYDomain(panel, newData), // FIXME: duplicate of bounds
           };

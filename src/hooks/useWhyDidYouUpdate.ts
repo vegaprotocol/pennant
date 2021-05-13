@@ -1,12 +1,12 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 
 export function useWhyDidYouUpdate(
   name: string,
   props: { [index: string]: any }
 ) {
-  const previousProps = React.useRef<{ [index: string]: any }>({});
+  const previousProps = useRef<{ [index: string]: any }>({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (previousProps.current) {
       const allKeys = Object.keys({ ...previousProps.current, ...props });
       const changesObj = {} as { [index: string]: any };

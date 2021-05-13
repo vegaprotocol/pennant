@@ -1,22 +1,13 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
-import {
-  timeDay,
-  timeHour,
-  timeMinute,
-  timeMonth,
-  timeSecond,
-  timeWeek,
-  timeYear,
-} from "d3-time";
-
-import { Colors, multiFormat } from "../helpers";
+import { Colors, dateFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
-  pixelRatio: number
+  pixelRatio: number,
+  interval: Interval
 ) {
   ctx.strokeStyle = "#fff";
 
@@ -30,7 +21,7 @@ function addXAxisPath(
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     ctx.font = `${TICK_LABEL_FONT_SIZE}px ${TICK_LABEL_FONT}`;
-    ctx.fillText(multiFormat(tick), xScale(tick), 9);
+    ctx.fillText(dateFormat(tick, interval), xScale(tick), 9);
     ctx.closePath();
   });
 }
@@ -40,8 +31,9 @@ export class XAxisElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     _yScale: ScaleLinear,
-    pixelRatio = 1
+    pixelRatio = 1,
+    interval: Interval
   ) {
-    addXAxisPath(ctx, xScale, pixelRatio);
+    addXAxisPath(ctx, xScale, pixelRatio, interval);
   }
 }

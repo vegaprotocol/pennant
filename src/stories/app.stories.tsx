@@ -239,15 +239,28 @@ export const CryptoCompare: Story = () => {
 
             if (blob) {
               if (navigator.clipboard) {
-                await navigator?.clipboard?.write?.([
-                  new ClipboardItem({ "image/png": blob }),
-                ]);
+                try {
+                  // @ts-ignore
+                  await navigator.clipboard.write([
+                    new ClipboardItem({ "image/png": blob }),
+                  ]);
 
-                AppToaster.show({
-                  intent: Intent.SUCCESS,
-                  message: "Copied to clipboard",
-                });
+                  AppToaster.show({
+                    intent: Intent.SUCCESS,
+                    message: "Copied to clipboard",
+                  });
+                } catch (error) {
+                  AppToaster.show({
+                    intent: Intent.WARNING,
+                    message: "Unable to copy to clipboard",
+                  });
+                  console.log(error);
+                }
               } else {
+                AppToaster.show({
+                  intent: Intent.WARNING,
+                  message: "Unable to copy to clipboard",
+                });
                 console.log("Clipboard API not found");
               }
             }

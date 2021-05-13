@@ -1,7 +1,6 @@
 import { Colors, clearCanvas } from "../helpers";
 import { XAxisElement, XAxisTooltipElement } from "../elements";
-
-import { ScaleTime } from "../types";
+import { Interval, ScaleTime } from "../types";
 
 /**
  * The x-axis component renders human readable reference marks.
@@ -9,12 +8,14 @@ import { ScaleTime } from "../types";
 export class XAxis {
   private axis: XAxisElement = new XAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
+  private _interval: Interval;
   private _pixelRatio: number = 1;
   private position: Date | null = null;
   private tooltip: XAxisTooltipElement = new XAxisTooltipElement();
   private _xScale: ScaleTime;
 
-  constructor(x: ScaleTime) {
+  constructor(x: ScaleTime, interval: Interval) {
+    this._interval = interval;
     this._xScale = x.copy();
   }
 
@@ -31,15 +32,29 @@ export class XAxis {
   draw() {
     if (this.ctx) {
       clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
-      this.axis.draw(this.ctx, this._xScale, null!, this._pixelRatio);
+      
+      this.axis.draw(
+        this.ctx,
+        this._xScale,
+        null!,
+        this._pixelRatio,
+        this._interval
+      );
+
       this.tooltip.draw(
         this.ctx,
         this._xScale,
         null!,
         this._pixelRatio,
-        this.position
+        this.position,
+        this._interval
       );
     }
+  }
+
+  interval(interval: Interval) {
+    this._interval = interval;
+    return this;
   }
 
   pixelRatio(ratio: number): this {

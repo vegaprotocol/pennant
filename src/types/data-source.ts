@@ -1,5 +1,4 @@
-import { Annotation, Candle } from ".";
-import { Interval } from "../stories/api/vega-graphql";
+import { Annotation, Candle, Interval } from ".";
 
 export interface DataSource {
   readonly decimalPlaces: number;

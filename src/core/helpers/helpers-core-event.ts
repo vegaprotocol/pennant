@@ -3,12 +3,11 @@ import { Selection, select } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
 import { PlotArea } from "../plot-area";
-import { WIDTH } from "../../constants";
+import { DEFAULT_INTERVAL_WIDTH, WIDTH } from "../../constants";
 import { XAxis } from "../x-axis";
 import { YAxis } from "../y-axis";
-import { Core, Panes } from "../core";
+import { Panes } from "../core";
 import { PlotAreaInteraction } from "../plot-area-interaction";
-import { Dispatch } from "d3-dispatch";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,
@@ -73,10 +72,12 @@ export function handleYAxisDrag(
 export function measureXAxis(
   event: { detail: { width: number; pixelRatio: number } },
   xScale: ScaleTime,
+  xZoom: ZoomBehavior<Element, unknown>,
   xTransform: () => ZoomTransform,
   xAxis: XAxis,
   yAxes: Panes<YAxis>,
   plotAreas: Panes<PlotArea>,
+  dates: Date[],
   onBoundsChanged: (bounds: [Date, Date]) => void
 ) {
   const { width, pixelRatio } = event.detail;
@@ -94,6 +95,16 @@ export function measureXAxis(
   }
 
   xScale.range([0, width / pixelRatio]);
+
+  const k = xTransform().k;
+
+  const offset =
+    (width / pixelRatio - (WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+
+  xZoom.translateExtent([
+    [xScale(dates[0]) - offset, -Infinity],
+    [xScale(dates[dates.length - 1]) + offset, Infinity],
+  ]);
 
   const xr = xTransform().rescaleX(xScale);
   xAxis.xScale(xr);
@@ -119,6 +130,7 @@ export function drawXAxis(event: any, xAxis: XAxis) {
 export function handleZoomend(
   plotAreas: Panes<PlotArea>,
   offset: [number, number],
+  yScale: ScaleLinear,
   xAxis: XAxis,
   yAxes: Panes<YAxis>,
   id: string,
@@ -127,11 +139,11 @@ export function handleZoomend(
   const [_index, x] = plotAreas[id].getIndex(offset[0]);
 
   Object.values(plotAreas).forEach((plotArea) => {
-    plotArea.crosshair([x, offset[1]]);
+    plotArea.crosshair([x, yScale.invert(offset[1])]);
   });
 
   xAxis.crosshair(x);
-  yAxes[id].crosshair(offset[1]); // TODO: Should be scaled number
+  yAxes[id].crosshair(yScale.invert(offset[1]));
 
   onRedraw();
 }
@@ -236,7 +248,6 @@ export function handleMouseout(
 export function handleMousemove(
   plotAreas: Panes<PlotArea>,
   offset: [number, number],
-  xScale: ScaleTime,
   yScale: ScaleLinear,
   yAxes: Panes<YAxis>,
   xAxis: XAxis,

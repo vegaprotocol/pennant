@@ -56,7 +56,7 @@ export class JsonDataSource implements DataSource {
     onSubscriptionAnnotation: (annotations: Annotation[]) => void
   ) {
     setInterval(() => {
-      const averageEntryPrice = 605 + 5 * Math.random();
+      const averageEntryPrice = 595 + Math.random();
 
       onSubscriptionAnnotation([
         {
@@ -64,9 +64,9 @@ export class JsonDataSource implements DataSource {
           id: "0",
           cells: [
             { label: "Position" },
-            { label: `${averageEntryPrice}` },
+            { label: `${averageEntryPrice.toFixed(2)}` },
             {
-              label: `PnL ${10000}`,
+              label: `PnL ${10000000000}`,
               stroke: true,
             },
           ],
@@ -76,9 +76,16 @@ export class JsonDataSource implements DataSource {
         {
           type: "label",
           id: "1",
-          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${600}` }],
+          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596}` }],
           intent: "danger",
-          y: 600,
+          y: 596,
+        },
+        {
+          type: "label",
+          id: "1",
+          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596.5}` }],
+          intent: "danger",
+          y: 596.01,
         },
       ]);
     }, 2000);

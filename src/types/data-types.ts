@@ -4,5 +4,5 @@ export type Candle = {
   high: number;
   low: number;
   close: number;
-  volume: number;
+  volume: number; // TODO: Should be optional
 };
