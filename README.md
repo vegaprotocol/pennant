@@ -139,6 +139,10 @@ yarn test
 yarn release
 ```
 
+### Adding a new chart type
+
+Add the new chart type in `chart-types.ts`. Add a new case in `helpers-spec.ts` which specifies how to draw the new chart type.
+
 ## License
 
 Pennant is available under the [MIT license](https://opensource.org/licenses/MIT).

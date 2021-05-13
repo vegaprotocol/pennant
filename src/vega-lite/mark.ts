@@ -50,6 +50,7 @@ export type ColorValueRef =
 
 export interface MarkDef {
   type: string | Mark;
+  orient?: "left" | "right";
   line?: { color: Color };
   color?: Color | Gradient;
 }

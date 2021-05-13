@@ -19,6 +19,7 @@ import {
   getConditionalColor,
   getLineConfig,
   getRuleConfig,
+  getTickConfig,
 } from "../helpers";
 import {
   indicatorBollingerBands,
@@ -96,6 +97,15 @@ export function compileLayer(
           encoding.y?.field!,
           encoding.y2?.field!,
           getConditionalColor(encoding?.color)(d)
+        );
+      } else if (markType === "tick") {
+        cfg = getTickConfig(
+          d,
+          encoding.x?.field!,
+          encoding.y?.field!,
+          candleWidth,
+          getConditionalColor(encoding?.color)(d),
+          (mark as MarkDef).orient ?? "left" // FIXME: Type this correctly
         );
       }
 

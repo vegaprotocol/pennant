@@ -45,6 +45,57 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
           },
         },
       ];
+    case "ohlc":
+      return [
+        {
+          encoding: {
+            y: { field: "low", type: "quantitative" },
+            y2: { field: "high", type: "quantitative" },
+            color: {
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: Colors.GREEN,
+              },
+              value: Colors.RED,
+            },
+          },
+          mark: {
+            type: "rule",
+          },
+        },
+        {
+          encoding: {
+            y: { field: "open", type: "quantitative" },
+            color: {
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: Colors.GREEN,
+              },
+              value: Colors.RED,
+            },
+          },
+          mark: {
+            type: "tick",
+            orient: "left",
+          },
+        },
+        {
+          encoding: {
+            y: { field: "close", type: "quantitative" },
+            color: {
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: Colors.GREEN,
+              },
+              value: Colors.RED,
+            },
+          },
+          mark: {
+            type: "tick",
+            orient: "right",
+          },
+        },
+      ];
     case "candle":
     default:
       return [
