@@ -60,7 +60,7 @@ export const formatter = (value: number, fractionDigits: number = 5) => {
   if (isNaN(value)) {
     return "-";
   }
-  
+
   return new Intl.NumberFormat("en-GB", {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,

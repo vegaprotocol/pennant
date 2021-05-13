@@ -17,7 +17,7 @@ test("simple case", () => {
     ],
   };
 
-  const scenegraph = parse(input, 10, 0,[]);
+  const scenegraph = parse(input, 10, 0, []);
 
   expect(scenegraph).toHaveProperty("panels");
   expect(scenegraph?.panels).toHaveLength(1);

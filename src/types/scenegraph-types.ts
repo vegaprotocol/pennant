@@ -14,7 +14,6 @@ export interface PositionalElement extends RenderableElement {
   readonly x: Date;
 }
 
-
 export interface Panel {
   id: string;
   originalData: any[];

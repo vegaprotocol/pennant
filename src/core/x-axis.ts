@@ -32,7 +32,7 @@ export class XAxis {
   draw() {
     if (this.ctx) {
       clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
-      
+
       this.axis.draw(
         this.ctx,
         this._xScale,
