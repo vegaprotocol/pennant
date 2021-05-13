@@ -306,10 +306,12 @@ export class Core {
         measureXAxis(
           event,
           this.xScale,
+          this.xZoom,
           this.xTransform,
           this.xAxis,
           this.yAxes,
           this.plotAreas,
+          this.dates,
           (bounds: [Date, Date]) => {
             this.listeners.call("bounds_changed", this, bounds);
           }
@@ -668,10 +670,12 @@ export class Core {
             measureXAxis(
               event,
               this.xScale,
+              this.xZoom,
               this.xTransform,
               this.xAxis,
               this.yAxes,
               this.plotAreas,
+              this.dates,
               (bounds: [Date, Date]) => {
                 this.listeners.call("bounds_changed", this, bounds);
               }
@@ -812,6 +816,16 @@ export class Core {
 
       this.isPinned = false;
     } else {
+      const k = this.xTransform().k * t.k;
+
+      const offset =
+        (this.xScale.range()[1] - (WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+
+      this.xZoom.translateExtent([
+        [this.xScale(this.dates[0]) - offset, -Infinity],
+        [this.xScale(this.dates[this.dates.length - 1]) + offset, Infinity],
+      ]);
+
       this.xElement.call(
         this.xZoom.scaleBy,
         t.k,
