@@ -122,19 +122,15 @@ export class PlotArea {
       Math.min(this._data.length - 1, index)
     ].date;
 
-    let element: Date;
     let indexOffset = 0;
 
     if (firstElement && secondElement) {
       const nearestCandleDates = [firstElement, secondElement];
       indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
-      element = [firstElement, secondElement][indexOffset];
     } else if (firstElement) {
       indexOffset = 0;
-      element = firstElement;
     } else {
       indexOffset = 1;
-      element = secondElement;
     }
 
     const dataIndex = clamp(index + indexOffset - 1, 0, this._data.length - 1);
