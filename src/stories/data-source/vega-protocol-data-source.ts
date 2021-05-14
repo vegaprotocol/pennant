@@ -1,4 +1,5 @@
 import { ApolloClient } from "@apollo/client";
+import { formatter } from "../../helpers";
 import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
 
 import {
@@ -238,7 +239,10 @@ export class VegaDataSource implements DataSource {
               stroke: true,
             },
             {
-              label: `${Number(addDecimal(order.price, this._decimalPlaces))}`,
+              label: `${formatter(
+                Number(addDecimal(order.price, this._decimalPlaces)),
+                this._decimalPlaces
+              )}`,
             },
             {
               label: `${order.side === Side.Buy ? "+" : "-"}${Number(
@@ -275,13 +279,19 @@ export class VegaDataSource implements DataSource {
         cells: [
           { label: "Position" },
           {
-            label: `${Number(
-              addDecimal(position.averageEntryPrice, this._decimalPlaces)
+            label: `${formatter(
+              Number(
+                addDecimal(position.averageEntryPrice, this._decimalPlaces)
+              ),
+              this._decimalPlaces
             )}`,
           },
           { label: `+${Number(position.openVolume)}`, fill: true },
           {
-            label: `PnL ${Number(position.unrealisedPNL)}`,
+            label: `PnL ${formatter(
+              Number(addDecimal(position.unrealisedPNL, this._decimalPlaces)),
+              this._decimalPlaces
+            )}`,
             stroke: true,
           },
           { label: "Close" },
