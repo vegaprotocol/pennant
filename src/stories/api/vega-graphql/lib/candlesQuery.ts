@@ -25,7 +25,6 @@ export interface candlesQuery_market_tradableInstrument {
 }
 
 export interface candlesQuery_market_candles {
-  __typename: "Candle";
   /**
    * ISO-8601 RFC3339+Nano formatted data and time for the candle
    */

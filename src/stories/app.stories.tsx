@@ -12,7 +12,7 @@ import { ChartType, Overlay, Study } from "../types";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 
-import { ApolloDataSource } from "./data-source/vega-protocol-data-source";
+import { VegaDataSource } from "./data-source/vega-protocol-data-source";
 import { AppToaster } from "./components/toaster";
 import { Chart } from "../components/chart";
 import { ChartControls } from "./components/chart-controls";
@@ -90,7 +90,12 @@ export const VegaProtocol: Story = () => {
   const [interval, setInterval] = useState(Interval.I1M);
 
   const dataSource = useMemo(
-    () => new ApolloDataSource(client, market, "", 5),
+    () =>
+      new VegaDataSource(
+        client,
+        market,
+        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
+      ),
     [market]
   );
 
