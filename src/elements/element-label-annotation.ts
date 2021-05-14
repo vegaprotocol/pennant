@@ -7,8 +7,8 @@ import {
 import { Colors } from "../helpers";
 import { sum, zip } from "d3-array";
 
-const HEIGHT = 10;
-const PADDING = 2;
+const HEIGHT = 18;
+const PADDING = 4;
 
 export function cumsum(values: number[]) {
   let sum = 0;
@@ -40,7 +40,7 @@ function addLabel(
 
   // Calculate widths of cells
   const widths = label.cells.map(
-    (cell) => ctx.measureText(cell.label).width + 2 * PADDING * pixelRatio
+    (cell) => ctx.measureText(cell.label).width + 2 * PADDING
   );
 
   const xPositions = [0, ...cumsum(widths).slice(0, -1)];
@@ -65,23 +65,13 @@ function addLabel(
     ctx.strokeStyle = stroke;
     ctx.fillStyle = cell.fill ? fill : "black";
 
-    ctx.fillRect(
-      xPosition,
-      y - (HEIGHT * pixelRatio) / 2,
-      width,
-      HEIGHT * pixelRatio
-    );
+    ctx.fillRect(xPosition, y - HEIGHT / 2 - 1, width, HEIGHT);
 
-    ctx.strokeRect(
-      xPosition,
-      y - (HEIGHT * pixelRatio) / 2,
-      width,
-      HEIGHT * pixelRatio
-    );
+    ctx.strokeRect(xPosition, y - HEIGHT / 2 - 1, width, HEIGHT);
 
     // Text
     ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
-    ctx.fillText(cell.label, PADDING * pixelRatio + xPosition, y);
+    ctx.fillText(cell.label, PADDING + xPosition, y);
   }
 }
 
