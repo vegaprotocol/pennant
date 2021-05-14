@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.18](https://github.com/vegaprotocol/pennant/compare/v0.2.17...v0.2.18) (2021-05-14)
+
+
+### Bug Fixes
+
+* remove erroneous vertical gap between label annotations ([0d0eef8](https://github.com/vegaprotocol/pennant/commit/0d0eef82037a6f9a18d59ce27d76eb76a7690118))
+
 ### [0.2.17](https://github.com/vegaprotocol/pennant/compare/v0.2.16...v0.2.17) (2021-05-14)
 
 
