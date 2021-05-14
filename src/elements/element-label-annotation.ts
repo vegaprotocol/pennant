@@ -65,9 +65,9 @@ function addLabel(
     ctx.strokeStyle = stroke;
     ctx.fillStyle = cell.fill ? fill : "black";
 
-    ctx.fillRect(xPosition, y - HEIGHT / 2 - 1, width, HEIGHT);
+    ctx.fillRect(xPosition + 1, y - HEIGHT / 2 - 1, width, HEIGHT);
 
-    ctx.strokeRect(xPosition, y - HEIGHT / 2 - 1, width, HEIGHT);
+    ctx.strokeRect(xPosition + 1, y - HEIGHT / 2 - 1, width, HEIGHT);
 
     // Text
     ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
@@ -90,7 +90,7 @@ export class LabelAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    let previousY = -HEIGHT * pixelRatio;
+    let previousY = -HEIGHT;
 
     const yPositions = this.labels.map((label) => yScale(label.y));
     const sortedYPositions = [...yPositions].sort((a, b) => a - b);
@@ -99,8 +99,8 @@ export class LabelAnnotationElement implements RenderableElement {
 
       let ny = ypx;
 
-      if (ypx - previousY < HEIGHT * pixelRatio) {
-        ny = previousY + HEIGHT * pixelRatio;
+      if (ypx - previousY < HEIGHT) {
+        ny = previousY + HEIGHT;
       }
 
       p.push(ny);
