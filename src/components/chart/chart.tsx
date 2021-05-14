@@ -92,10 +92,8 @@ export const Chart = forwardRef(
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
 
-    const [
-      priceMonitoringBounds,
-      setPriceMonitoringBounds,
-    ] = useState<PriceMonitoringBounds | null>(null);
+    const [priceMonitoringBounds, setPriceMonitoringBounds] =
+      useState<PriceMonitoringBounds | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);
@@ -170,6 +168,7 @@ export const Chart = forwardRef(
 
       return () => {
         myDataSource.unsubscribeData();
+        setData([]);
       };
     }, [dataSource, interval, query]);
 
@@ -190,6 +189,7 @@ export const Chart = forwardRef(
       return () => {
         myDataSource.unsubscribeAnnotations &&
           myDataSource.unsubscribeAnnotations();
+        setAnnotations([]);
       };
     }, [dataSource]);
 
