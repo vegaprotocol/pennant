@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.19](https://github.com/vegaprotocol/pennant/compare/v0.2.18...v0.2.19) (2021-05-16)
+
+
+### Bug Fixes
+
+* label annotations no longer get stuck at top of chart ([f668392](https://github.com/vegaprotocol/pennant/commit/f668392478d01e0080700464adaa2fa54daade69))
+* return null if unable to take snapshot ([dd74cb8](https://github.com/vegaprotocol/pennant/commit/dd74cb8e5f23304378edc6fa1294cbb801583a4d))
+
 ### [0.2.18](https://github.com/vegaprotocol/pennant/compare/v0.2.17...v0.2.18) (2021-05-14)
 
 
