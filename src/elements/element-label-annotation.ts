@@ -90,7 +90,7 @@ export class LabelAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    let previousY = -HEIGHT;
+    let previousY = -Infinity;
 
     const yPositions = this.labels.map((label) => yScale(label.y));
     const sortedYPositions = [...yPositions].sort((a, b) => a - b);
