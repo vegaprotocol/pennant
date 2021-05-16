@@ -77,8 +77,8 @@ export const Chart = forwardRef(
       reset: () => {
         chartRef.current.reset();
       },
-      snapshot: () => {
-        return chartRef.current.snapshot();
+      snapshot: async () => {
+        return chartRef.current ? await chartRef.current.snapshot() : null;
       },
       zoomIn: (delta: number) => {
         chartRef.current.zoomIn(delta);
