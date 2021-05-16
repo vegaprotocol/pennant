@@ -1,8 +1,8 @@
-import { Colors, align, alignSpan, getNumYTicks } from "../helpers";
+import { Colors, align, getNumYTicks } from "../helpers";
 import { ScaleLinear, ScaleTime } from "../types";
 
 import { RenderableElement } from "../types";
-import { WIDTH } from "../constants";
+import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
 
 const MARGIN = 6;
 const FADE_HEIGHT = 6;
@@ -35,7 +35,7 @@ function addYAxisPath(
   ctx.fillStyle = Colors.GRAY_LIGHT;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
-  ctx.font = `${12}px "Roboto Mono", monospace`;
+  ctx.font = `${TICK_LABEL_FONT_SIZE}px monospace`;
 
   yTicks.forEach(function drawTick(tick: number) {
     ctx.beginPath();
