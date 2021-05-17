@@ -201,6 +201,18 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
         },
       ];
+    case "relativeStrengthIndex":
+      return [
+        {
+          encoding: {
+            y: { field: "index", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+      ];
     case "volume":
       return [
         {
@@ -261,6 +273,30 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
         },
       ];
+    case "exponentialMovingAverage":
+      return [
+        {
+          encoding: {
+            y: { field: "movingAverage", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+      ];
+    case "movingAverage":
+      return [
+        {
+          encoding: {
+            y: { field: "movingAverage", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+      ];
     case "priceMonitoringBounds":
       return [
         {
@@ -302,6 +338,10 @@ function constructOverlayTransform(overlay: Overlay): Transform[] {
       return [{ indicator: "bollinger", on: "close" }];
     case "envelope":
       return [{ indicator: "envelope", on: "close" }];
+    case "exponentialMovingAverage":
+      return [{ indicator: "exponentialMovingAverage", on: "close" }];
+    case "movingAverage":
+      return [{ indicator: "movingAverage", on: "close" }];
     default:
       return [];
   }
@@ -313,6 +353,8 @@ function constructStudyTransform(study: Study): Transform[] {
       return [{ indicator: "eldarRay", on: "close" }];
     case "macd":
       return [{ indicator: "macd", on: "close" }];
+    case "relativeStrengthIndex":
+      return [{ indicator: "relativeStrengthIndex", on: "close" }];
     default:
       return [];
   }

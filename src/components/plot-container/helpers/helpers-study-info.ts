@@ -50,6 +50,10 @@ export const studyInfoFields: Record<
       { id: "lower", label: "Lower" },
     ],
   },
+  exponentialMovingAverage: {
+    label: "EMA",
+    fields: [{ id: "movingAverage", label: "" }],
+  },
   macd: {
     label: "MACD",
     fields: [
@@ -57,6 +61,10 @@ export const studyInfoFields: Record<
       { id: "divergence", label: "D" },
       { id: "macd", label: "MACD" },
     ],
+  },
+  movingAverage: {
+    label: "Moving average",
+    fields: [{ id: "movingAverage", label: "" }],
   },
   priceMonitoringBounds: {
     label: "Price Monitoring Bounds",
@@ -66,8 +74,12 @@ export const studyInfoFields: Record<
       { id: "referencePrice", label: "Reference" },
     ],
   },
+  relativeStrengthIndex: {
+    label: "RSI",
+    fields: [{ id: "index", label: "" }],
+  },
   volume: {
     label: "Volume",
-    fields: [{ id: "volume", label: "V" }],
+    fields: [{ id: "volume", label: "" }],
   },
 };

@@ -142,6 +142,26 @@ export const ChartControls = ({
                 }
               />
               <MenuItem
+                active={overlay === "exponentialMovingAverage"}
+                text="EMA"
+                onClick={() =>
+                  onSetOverlay(
+                    overlay === "exponentialMovingAverage"
+                      ? null
+                      : "exponentialMovingAverage"
+                  )
+                }
+              />
+              <MenuItem
+                active={overlay === "movingAverage"}
+                text="Moving average"
+                onClick={() =>
+                  onSetOverlay(
+                    overlay === "movingAverage" ? null : "movingAverage"
+                  )
+                }
+              />
+              <MenuItem
                 active={overlay === "priceMonitoringBounds"}
                 text="Price monitoring bounds"
                 onClick={() =>
@@ -164,6 +184,11 @@ export const ChartControls = ({
                 active={study === "macd"}
                 text="MACD"
                 onClick={() => onSetStudy(study === "macd" ? null : "macd")}
+              />
+              <MenuItem
+                active={study === "relativeStrengthIndex"}
+                text="RSI"
+                onClick={() => onSetStudy(study === "relativeStrengthIndex" ? null : "relativeStrengthIndex")}
               />
               <MenuItem
                 active={study === "volume"}

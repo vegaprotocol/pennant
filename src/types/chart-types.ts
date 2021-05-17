@@ -10,20 +10,25 @@ export const chartTypeLabels: Record<ChartType, string> = {
 export const overlays = [
   "bollinger",
   "envelope",
+  "exponentialMovingAverage",
+  "movingAverage",
   "priceMonitoringBounds",
 ] as const;
 export type Overlay = typeof overlays[number];
 export const overlayLabels: Record<Overlay, string> = {
   bollinger: "Bollinger bands",
   envelope: "Envelope",
+  exponentialMovingAverage: "EMA",
+  movingAverage: "Moving average",
   priceMonitoringBounds: "Price monitoring bounds",
 } as const;
 
-export const studies = ["eldarRay", "macd", "volume"] as const;
+export const studies = ["eldarRay", "macd", "relativeStrengthIndex", "volume"] as const;
 export type Study = typeof studies[number];
 export const studyLabels: Record<Study, string> = {
   eldarRay: "Eldar-ray",
   macd: "MACD",
+  relativeStrengthIndex: "RSI",
   volume: "Volume",
 } as const;
 
