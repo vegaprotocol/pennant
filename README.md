@@ -143,10 +143,6 @@ yarn release
 
 Add the new chart type in `chart-types.ts`. Add a new case in `helpers-spec.ts` which specifies how to draw the new chart type.
 
-### Adding a new technical indicator
-
-
-
 ## License
 
 Pennant is available under the [MIT license](https://opensource.org/licenses/MIT).
