@@ -5,7 +5,7 @@ import "./plot-container.scss";
 import * as React from "react";
 
 import { Viewport, ChartElement, Scenegraph, Bounds, Panel } from "../../types";
-import { asyncSnapshot, formatter, getSubMinutes } from "../../helpers";
+import { asyncSnapshot, formatter } from "../../helpers";
 import {
   forwardRef,
   useCallback,
@@ -33,6 +33,7 @@ export type PlotContainerProps = {
   scenegraph: Scenegraph;
   interval: Interval;
   initialViewport: Viewport;
+  overlays: string[];
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -46,6 +47,7 @@ export const PlotContainer = forwardRef(
       interval,
       initialViewport,
       decimalPlaces,
+      overlays,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePanel,
@@ -83,9 +85,8 @@ export const PlotContainer = forwardRef(
     const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [showPaneControls, setShowPaneControls] = useState<string | null>(
-      null
-    );
+    const [showPaneControls, setShowPaneControls] =
+      useState<string | null>(null);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -267,6 +268,24 @@ export const PlotContainer = forwardRef(
                     ),
                   }))}
                 />
+                {panelIndex === 0 &&
+                  overlays.map((overlay) => (
+                    <StudyInfo
+                      title={studyInfoFields[overlay].label}
+                      info={studyInfoFields[overlay].fields.map((field) => ({
+                        id: field.id,
+                        label: field.label,
+                        value: formatter(
+                          getStudyInfoFieldValue(
+                            panel.originalData,
+                            dataIndex,
+                            field.id
+                          ),
+                          decimalPlaces
+                        ),
+                      }))}
+                    />
+                  ))}
               </div>
             </div>
             <div className="plot-container__separator" />

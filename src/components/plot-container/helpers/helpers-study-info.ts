@@ -29,11 +29,25 @@ export const studyInfoFields: Record<
       { id: "close", label: "C" },
     ],
   },
+  bollinger: {
+    label: "Bollinger",
+    fields: [
+      { id: "upper", label: "Upper" },
+      { id: "lower", label: "Lower" },
+    ],
+  },
   eldarRay: {
     label: "Eldar-ray",
     fields: [
       { id: "bullPower", label: "Bull" },
       { id: "bearPower", label: "Bear" },
+    ],
+  },
+  envelope: {
+    label: "Envelope",
+    fields: [
+      { id: "upper", label: "Upper" },
+      { id: "lower", label: "Lower" },
     ],
   },
   macd: {
@@ -42,6 +56,14 @@ export const studyInfoFields: Record<
       { id: "signal", label: "S" },
       { id: "divergence", label: "D" },
       { id: "macd", label: "MACD" },
+    ],
+  },
+  priceMonitoringBounds: {
+    label: "Price Monitoring Bounds",
+    fields: [
+      { id: "minValidPrice", label: "Min" },
+      { id: "maxValidPrice", label: "Max" },
+      { id: "referencePrice", label: "Reference" },
     ],
   },
   volume: {

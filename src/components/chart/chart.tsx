@@ -259,6 +259,7 @@ export const Chart = forwardRef(
                 scenegraph={scenegraph}
                 interval={internalInterval}
                 initialViewport={viewport}
+                overlays={overlays}
                 onViewportChanged={handleViewportChanged}
                 onGetDataRange={handleGetDataRange}
                 onClosePanel={handleClosePanel}
