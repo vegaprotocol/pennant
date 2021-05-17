@@ -25,8 +25,10 @@ import {
   indicatorBollingerBands,
   indicatorElderRay,
   indicatorEnvelope,
+  indicatorExponentialMovingAverage,
   indicatorMacd,
   indicatorMovingAverage,
+  indicatorRelativeStrengthIndex,
 } from "@d3fc/d3fc-technical-indicator";
 
 import { Data } from "../vega-lite/data";
@@ -151,7 +153,7 @@ export function parseLayer(
 
 function extractYDomain(layer: BaseSpec, data: any[]) {
   const mappedData = extractYEncodingFields(layer).flatMap(
-    (field: any) => (data.map((d: any) => d[field]) as unknown) as number
+    (field: any) => data.map((d: any) => d[field]) as unknown as number
   );
 
   const domain = extent(mappedData) as [number, number];
@@ -245,6 +247,18 @@ export function parse(
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
           break;
+        case "exponentialMovingAverage":
+          {
+            const indicatorData = indicatorExponentialMovingAverage()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({
+              ...d,
+              movingAverage: indicatorData[i],
+            }));
+          }
+          break;
         case "movingAverage":
           {
             const indicatorData = indicatorMovingAverage()(
@@ -264,6 +278,18 @@ export function parse(
             );
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+          }
+          break;
+        case "relativeStrengthIndex":
+          {
+            const indicatorData = indicatorRelativeStrengthIndex()(
+              data.map((d) => d[transform.on])
+            );
+
+            newData = newData.map((d, i) => ({
+              ...d,
+              index: indicatorData[i],
+            }));
           }
           break;
       }

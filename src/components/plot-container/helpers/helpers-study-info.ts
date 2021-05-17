@@ -44,6 +44,10 @@ export const studyInfoFields: Record<
       { id: "macd", label: "MACD" },
     ],
   },
+  relativeStrengthIndex: {
+    label: "RSI",
+    fields: [{ id: "index", label: "Index" }],
+  },
   volume: {
     label: "Volume",
     fields: [{ id: "volume", label: "V" }],
