@@ -1,11 +1,11 @@
-import "./study-info.scss";
+import "./indicator-info.scss";
 
-export type StudyInfoProps = {
+export type IndicatorInfoProps = {
   title: string;
   info: { id: string; label: string; value: string }[];
 };
 
-export const StudyInfo = ({ title, info }: StudyInfoProps) => {
+export const IndicatorInfo = ({ title, info }: IndicatorInfoProps) => {
   return (
     <div className="study-info-wrapper">
       <span className="text-muted">{`${title}: `}</span>

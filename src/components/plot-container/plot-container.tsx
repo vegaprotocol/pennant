@@ -18,7 +18,7 @@ import {
 
 import { ChartInfo } from "../chart-info";
 import { FcElement, Interval } from "../../types";
-import { StudyInfo } from "../study-info";
+import { IndicatorInfo } from "../indicator-info";
 import { createRef } from "react";
 import { throttle } from "lodash";
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
@@ -253,7 +253,7 @@ export const PlotContainer = forwardRef(
               )}
               <div className="plot-container__info-overlay">
                 {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
-                <StudyInfo
+                <IndicatorInfo
                   title={studyInfoFields[panel.id].label}
                   info={studyInfoFields[panel.id].fields.map((field) => ({
                     id: field.id,
@@ -270,7 +270,7 @@ export const PlotContainer = forwardRef(
                 />
                 {panelIndex === 0 &&
                   overlays.map((overlay) => (
-                    <StudyInfo
+                    <IndicatorInfo
                       title={studyInfoFields[overlay].label}
                       info={studyInfoFields[overlay].fields.map((field) => ({
                         id: field.id,
