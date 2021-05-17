@@ -9,7 +9,17 @@ import {
   MenuDivider,
   MenuItem,
 } from "@blueprintjs/core";
-import { ChartType, Overlay, Study } from "../../../types";
+import {
+  ChartType,
+  chartTypeLabels,
+  chartTypes,
+  Overlay,
+  overlayLabels,
+  overlays,
+  studies,
+  Study,
+  studyLabels,
+} from "../../../types";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 
 import { INTERVALS } from "../../../helpers";
@@ -44,169 +54,113 @@ export const ChartControls = ({
   onSetOverlay,
   onSetStudy,
   onSnapshot,
-}: ChartControlsProps) => {
-  return (
-    <div className="chart-controls">
-      <ButtonGroup minimal style={{ minWidth: "120px" }}>
-        <Popover2
-          content={
-            <Menu>
-              <MenuDivider title="Minutes" />
-              <MenuItem
-                active={INTERVALS[interval] === "1m"}
-                text="1m"
-                onClick={() => onSetInterval(Interval.I1M)}
-              />
-              <MenuItem
-                active={INTERVALS[interval] === "5m"}
-                text="5m"
-                onClick={() => onSetInterval(Interval.I5M)}
-              />
-              <MenuItem
-                active={INTERVALS[interval] === "15m"}
-                text="15m"
-                onClick={() => onSetInterval(Interval.I15M)}
-              />
-              <MenuDivider title="Hours" />
-              <MenuItem
-                active={INTERVALS[interval] === "1h"}
-                text="1h"
-                onClick={() => onSetInterval(Interval.I1H)}
-              />
-              <MenuItem
-                active={INTERVALS[interval] === "6h"}
-                text="6h"
-                onClick={() => onSetInterval(Interval.I6H)}
-              />
-              <MenuDivider title="Days" />
-              <MenuItem
-                active={INTERVALS[interval] === "1d"}
-                text="1d"
-                onClick={() => onSetInterval(Interval.I1D)}
-              />
-            </Menu>
-          }
-          placement="bottom-start"
-        >
-          <div style={{ minWidth: "70px" }}>
-            <Button
-              alignText={Alignment.LEFT}
-              fill
-              rightIcon="caret-down"
-              text={INTERVALS[interval]}
+}: ChartControlsProps) => (
+  <div className="chart-controls">
+    <ButtonGroup className="chart-controls__button-group" minimal>
+      <Popover2
+        minimal={true}
+        content={
+          <Menu>
+            <MenuDivider title="Minutes" />
+            <MenuItem
+              icon={INTERVALS[interval] === "1m" ? "tick" : "blank"}
+              text="1m"
+              onClick={() => onSetInterval(Interval.I1M)}
             />
-          </div>
-        </Popover2>
-        <Popover2
-          content={
-            <Menu>
+            <MenuItem
+              icon={INTERVALS[interval] === "5m" ? "tick" : "blank"}
+              text="5m"
+              onClick={() => onSetInterval(Interval.I5M)}
+            />
+            <MenuItem
+              icon={INTERVALS[interval] === "15m" ? "tick" : "blank"}
+              text="15m"
+              onClick={() => onSetInterval(Interval.I15M)}
+            />
+            <MenuDivider title="Hours" />
+            <MenuItem
+              icon={INTERVALS[interval] === "1h" ? "tick" : "blank"}
+              text="1h"
+              onClick={() => onSetInterval(Interval.I1H)}
+            />
+            <MenuItem
+              icon={INTERVALS[interval] === "6h" ? "tick" : "blank"}
+              text="6h"
+              onClick={() => onSetInterval(Interval.I6H)}
+            />
+            <MenuDivider title="Days" />
+            <MenuItem
+              icon={INTERVALS[interval] === "1d" ? "tick" : "blank"}
+              text="1d"
+              onClick={() => onSetInterval(Interval.I1D)}
+            />
+          </Menu>
+        }
+        placement="bottom-start"
+      >
+        <div className="chart-controls__menu-button-wrapper">
+          <Button
+            alignText={Alignment.LEFT}
+            fill
+            rightIcon="caret-down"
+            text={INTERVALS[interval]}
+          />
+        </div>
+      </Popover2>
+      <Popover2
+        minimal={true}
+        content={
+          <Menu>
+            {chartTypes.map((item: ChartType) => (
               <MenuItem
-                active={chartType === "candle"}
-                text="Candlestick"
-                icon="waterfall-chart"
-                onClick={() => onSetChartType("candle")}
+                key={item}
+                text={chartTypeLabels[item]}
+                icon={chartType === item ? "tick" : "blank"}
+                onClick={() => onSetChartType(item)}
               />
+            ))}
+          </Menu>
+        }
+        placement="bottom-start"
+      >
+        <Button
+          rightIcon="caret-down"
+          icon={chartTypeIcon.get(chartType) ?? "waterfall-chart"}
+        />
+      </Popover2>
+      <Popover2
+        minimal={true}
+        content={
+          <Menu>
+            <MenuDivider title="Overlays" />
+            {overlays.map((item: Overlay) => (
               <MenuItem
-                active={chartType === "line"}
-                text="Line"
-                icon="timeline-line-chart"
-                onClick={() => onSetChartType("line")}
+                key={item}
+                icon={overlay === item ? "tick" : "blank"}
+                text={overlayLabels[item]}
+                onClick={() => onSetOverlay(overlay === item ? null : item)}
               />
+            ))}
+            <MenuDivider title="Studies" />
+            {studies.map((item: Study) => (
               <MenuItem
-                active={chartType === "area"}
-                text="Mountain"
-                icon="timeline-area-chart"
-                onClick={() => onSetChartType("area")}
+                key={item}
+                icon={study === item ? "tick" : "blank"}
+                text={studyLabels[item]}
+                onClick={() => onSetStudy(study === item ? null : item)}
               />
-              <MenuItem
-                active={chartType === "ohlc"}
-                text="OHLC"
-                icon="timeline-area-chart"
-                onClick={() => onSetChartType("ohlc")}
-              />
-            </Menu>
-          }
-          placement="bottom-start"
-        >
-          <Button rightIcon="caret-down" icon={chartTypeIcon.get(chartType)} />
-        </Popover2>
-        <Popover2
-          content={
-            <Menu>
-              <MenuDivider title="Overlays" />
-              <MenuItem
-                active={overlay === "bollinger"}
-                text="Bollinger bands"
-                onClick={() =>
-                  onSetOverlay(overlay === "bollinger" ? null : "bollinger")
-                }
-              />
-              <MenuItem
-                active={overlay === "exponentialMovingAverage"}
-                text="EMA"
-                onClick={() =>
-                  onSetOverlay(
-                    overlay === "exponentialMovingAverage"
-                      ? null
-                      : "exponentialMovingAverage"
-                  )
-                }
-              />
-              <MenuItem
-                active={overlay === "movingAverage"}
-                text="Moving average"
-                onClick={() =>
-                  onSetOverlay(
-                    overlay === "movingAverage" ? null : "movingAverage"
-                  )
-                }
-              />
-              <MenuItem
-                active={overlay === "priceMonitoringBounds"}
-                text="Price monitoring bounds"
-                onClick={() =>
-                  onSetOverlay(
-                    overlay === "priceMonitoringBounds"
-                      ? null
-                      : "priceMonitoringBounds"
-                  )
-                }
-              />
-              <MenuDivider title="Studies" />
-              <MenuItem
-                active={study === "eldarRay"}
-                text="Eldar-ray"
-                onClick={() =>
-                  onSetStudy(study === "eldarRay" ? null : "eldarRay")
-                }
-              />
-              <MenuItem
-                active={study === "macd"}
-                text="MACD"
-                onClick={() => onSetStudy(study === "macd" ? null : "macd")}
-              />
-              <MenuItem
-                active={study === "relativeStrengthIndex"}
-                text="RSI"
-                onClick={() => onSetStudy(study === "relativeStrengthIndex" ? null : "relativeStrengthIndex")}
-              />
-              <MenuItem
-                active={study === "volume"}
-                text="Volume"
-                onClick={() => onSetStudy(study === "volume" ? null : "volume")}
-              />
-            </Menu>
-          }
-          placement="bottom-start"
-        >
-          <Button rightIcon="caret-down" icon="function" />
-        </Popover2>
-      </ButtonGroup>
-      <ButtonGroup minimal>
-        <Tooltip2 content="Save image">
-          <Button icon="camera" onClick={onSnapshot} />
-        </Tooltip2>
-      </ButtonGroup>
-    </div>
-  );
-};
+            ))}
+          </Menu>
+        }
+        placement="bottom-start"
+      >
+        <Button rightIcon="caret-down" icon="function" />
+      </Popover2>
+    </ButtonGroup>
+    <ButtonGroup minimal>
+      <Tooltip2 content="Save image">
+        <Button icon="camera" onClick={onSnapshot} />
+      </Tooltip2>
+    </ButtonGroup>
+  </div>
+);

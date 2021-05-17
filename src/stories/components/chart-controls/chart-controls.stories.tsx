@@ -38,5 +38,5 @@ const Template: Story<ChartControlsProps> = (args) => {
   );
 };
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Basic = Template.bind({});
+Basic.args = {};
