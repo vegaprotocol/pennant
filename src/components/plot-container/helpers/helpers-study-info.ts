@@ -29,12 +29,30 @@ export const studyInfoFields: Record<
       { id: "close", label: "C" },
     ],
   },
+  bollinger: {
+    label: "Bollinger",
+    fields: [
+      { id: "upper", label: "Upper" },
+      { id: "lower", label: "Lower" },
+    ],
+  },
   eldarRay: {
     label: "Eldar-ray",
     fields: [
       { id: "bullPower", label: "Bull" },
       { id: "bearPower", label: "Bear" },
     ],
+  },
+  envelope: {
+    label: "Envelope",
+    fields: [
+      { id: "upper", label: "Upper" },
+      { id: "lower", label: "Lower" },
+    ],
+  },
+  exponentialMovingAverage: {
+    label: "EMA",
+    fields: [{ id: "movingAverage", label: "" }],
   },
   macd: {
     label: "MACD",
@@ -44,12 +62,24 @@ export const studyInfoFields: Record<
       { id: "macd", label: "MACD" },
     ],
   },
+  movingAverage: {
+    label: "Moving average",
+    fields: [{ id: "movingAverage", label: "" }],
+  },
+  priceMonitoringBounds: {
+    label: "Price Monitoring Bounds",
+    fields: [
+      { id: "minValidPrice", label: "Min" },
+      { id: "maxValidPrice", label: "Max" },
+      { id: "referencePrice", label: "Reference" },
+    ],
+  },
   relativeStrengthIndex: {
     label: "RSI",
-    fields: [{ id: "index", label: "Index" }],
+    fields: [{ id: "index", label: "" }],
   },
   volume: {
     label: "Volume",
-    fields: [{ id: "volume", label: "V" }],
+    fields: [{ id: "volume", label: "" }],
   },
 };
