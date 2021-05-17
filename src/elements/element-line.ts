@@ -11,6 +11,9 @@ export class LineElement implements PositionalElement {
   readonly points: [Date, number][];
   readonly color: string;
 
+  // TODO: Make curve interploation configurable
+  lineGenerator = d3Line<[Date, number]>().curve(curveLinear);
+
   get x() {
     return this.points[0][0];
   }
@@ -28,18 +31,16 @@ export class LineElement implements PositionalElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    // TODO: Instantiate on construction
-    const line = d3Line<[Date, number]>()
-      .curve(curveLinear)
+    this.lineGenerator
       .x((d) => align(xScale(d[0]), pixelRatio))
       .y((d) => alignSpan(yScale(d[1]), pixelRatio));
 
-    line.context(ctx);
+    this.lineGenerator.context(ctx);
 
     if (this.points.length > 1) {
       ctx.beginPath();
 
-      line(this.points);
+      this.lineGenerator(this.points);
 
       ctx.strokeStyle = this.color;
       ctx.lineCap = "butt";

@@ -14,6 +14,10 @@ export class AreaElement implements PositionalElement {
   readonly fill: string | Gradient;
   readonly line: string | undefined;
 
+  // TODO: Make curve interploation configurable
+  areaGenerator = d3Area<[Date, number, number]>().curve(curveLinear);
+  lineGenerator = d3Line<[Date, number, number]>().curve(curveLinear);
+
   get x() {
     return this.points[0][0];
   }
@@ -27,17 +31,12 @@ export class AreaElement implements PositionalElement {
   }
 
   draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
-    // TODO: Instantiate on construction
-    const area = d3Area<[Date, number, number]>()
-      .curve(curveLinear)
+    this.areaGenerator
       .x((d) => xScale(d[0]))
       .y0((d) => yScale(d[1]))
       .y1((d) => yScale(d[2]));
 
-    const line = d3Line<[Date, number, number]>()
-      .curve(curveLinear)
-      .x((d) => xScale(d[0]))
-      .y((d) => yScale(d[2]));
+    this.lineGenerator.x((d) => xScale(d[0])).y((d) => yScale(d[2]));
 
     let fill: string | CanvasGradient;
 
@@ -56,13 +55,13 @@ export class AreaElement implements PositionalElement {
       }
     }
 
-    area.context(ctx);
-    line.context(ctx);
+    this.areaGenerator.context(ctx);
+    this.lineGenerator.context(ctx);
 
     if (this.points.length > 1) {
       ctx.beginPath();
 
-      area(this.points);
+      this.areaGenerator(this.points);
 
       ctx.fillStyle = fill;
       ctx.globalAlpha = 0.7;
@@ -74,7 +73,7 @@ export class AreaElement implements PositionalElement {
       if (this.line) {
         ctx.beginPath();
 
-        line(this.points);
+        this.lineGenerator(this.points);
 
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.line;
