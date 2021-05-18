@@ -215,7 +215,7 @@ export class Core {
           panel.renderableElements.flat(1),
           panel.data,
           panel.yEncodingFields,
-          panel.labels
+          panel.labels,
         ),
       ])
     );

@@ -1,9 +1,11 @@
 import { bisector, extent } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { clamp } from "lodash";
+import { Application } from "../app";
+import { Graphics } from "../display";
 
 import { CrosshairElement, GridElement } from "../elements";
-import { clearCanvas,Colors } from "../helpers";
+import { clearCanvas, Colors } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 export class PlotArea {
@@ -21,13 +23,17 @@ export class PlotArea {
   private _yEncodingFields: string[];
   private _yScale: ScaleLinear;
 
+  private application: Application;
+
   constructor(
     x: ScaleTime,
     y: ScaleLinear,
     elements: RenderableElement[],
     originalData: any[],
     fields: string[],
-    labels: RenderableElement[]
+    labels: RenderableElement[],
+    resolution: number,
+    canvas: HTMLCanvasElement
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -35,6 +41,15 @@ export class PlotArea {
     this._data = originalData;
     this._yEncodingFields = fields;
     this._labels = labels;
+
+    this.application = new Application({
+      resolution: resolution,
+      view: canvas,
+    });
+
+    const graphics = new Graphics();
+
+    this.application.stage.addChild(graphics);
   }
 
   context(context: CanvasRenderingContext2D) {
@@ -53,47 +68,7 @@ export class PlotArea {
   }
 
   draw() {
-    if (this.ctx) {
-      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
-
-      this.gridline.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio
-      );
-
-      this._renderableElements[0].draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio
-      );
-
-      for (const element of this._renderableElements) {
-        element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
-      }
-
-      this.latestPriceCrosshair.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        [null, this.latestPricePosition]
-      );
-
-      this._crosshair.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        this.position
-      );
-
-      for (const label of this._labels) {
-        label.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
-      }
-    }
+    this.application.render();
   }
 
   extent(bounds?: [Date, Date]) {
@@ -118,9 +93,8 @@ export class PlotArea {
     const timeAtMouseX = this._xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
     const firstElement: Date = this._data[Math.max(0, index - 1)].date;
-    const secondElement: Date = this._data[
-      Math.min(this._data.length - 1, index)
-    ].date;
+    const secondElement: Date =
+      this._data[Math.min(this._data.length - 1, index)].date;
 
     let indexOffset = 0;
 
