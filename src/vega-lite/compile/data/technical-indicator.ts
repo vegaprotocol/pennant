@@ -1,5 +1,5 @@
-import { DataFlowNode } from "./dataflow";
 import { TechnicalIndicatorTransform } from "../../transform";
+import { DataFlowNode } from "./dataflow";
 
 export class TechnicalIndicatorTransformNode extends DataFlowNode {
   constructor(

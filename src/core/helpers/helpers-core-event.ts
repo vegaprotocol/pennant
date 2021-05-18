@@ -1,13 +1,13 @@
-import { ScaleLinear, ScaleTime } from "../../types";
-import { Selection, select } from "d3-selection";
+import { select,Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
-import { PlotArea } from "../plot-area";
 import { DEFAULT_INTERVAL_WIDTH, WIDTH } from "../../constants";
+import { ScaleLinear, ScaleTime } from "../../types";
+import { Panes } from "../core";
+import { PlotArea } from "../plot-area";
+import { PlotAreaInteraction } from "../plot-area-interaction";
 import { XAxis } from "../x-axis";
 import { YAxis } from "../y-axis";
-import { Panes } from "../core";
-import { PlotAreaInteraction } from "../plot-area-interaction";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,

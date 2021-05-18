@@ -1,6 +1,6 @@
-import { ScaleLinear, ScaleTime } from "../../types";
-import { ZoomTransform, zoomIdentity, zoomTransform } from "d3-zoom";
+import { zoomIdentity, ZoomTransform } from "d3-zoom";
 
+import { ScaleLinear, ScaleTime } from "../../types";
 import { PlotArea } from "../plot-area";
 
 export function recalculateScale(

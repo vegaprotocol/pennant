@@ -1,6 +1,6 @@
 import { ApolloClient } from "@apollo/client";
-import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
 
+import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
 import {
   CandleDetails,
   candleQuery,
@@ -13,13 +13,13 @@ import {
   marketDetailVariables,
   order,
   orderQuery,
-  OrderStatus,
   orders_orders,
+  OrderStatus,
   orderVariables,
   positionQuery,
   positions,
-  positionsVariables,
   positions_party_positions,
+  positionsVariables,
 } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
 import {

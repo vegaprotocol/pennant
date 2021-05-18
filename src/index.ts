@@ -1,12 +1,4 @@
 export { Chart } from "./components/chart";
-export {
-  chartTypes,
-  chartTypeLabels,
-  overlays,
-  overlayLabels,
-  studies,
-  studyLabels,
-} from "./types";
 export type {
   Annotation,
   Candle,
@@ -16,4 +8,12 @@ export type {
   LabelAnnotation,
   Overlay,
   Study,
+} from "./types";
+export {
+  chartTypeLabels,
+  chartTypes,
+  overlayLabels,
+  overlays,
+  studies,
+  studyLabels,
 } from "./types";

@@ -1,7 +1,7 @@
 import { Data } from "../data";
-import { DataComponent } from "./data";
 import { BaseSpec } from "../spec";
 import { Transform } from "../transform";
+import { DataComponent } from "./data";
 import { parseData } from "./data/parse";
 
 export interface Component {

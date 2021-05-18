@@ -1,8 +1,8 @@
-import { Model } from "../model";
-import { PlaceholderDataFlowNode } from "./util";
-import { TechnicalIndicatorTransformNode } from "./technical-indicator";
 import { Transform } from "../../transform";
+import { Model } from "../model";
 import { parseTransformArray } from "./parse";
+import { TechnicalIndicatorTransformNode } from "./technical-indicator";
+import { PlaceholderDataFlowNode } from "./util";
 
 describe("compile/data/parse", () => {
   describe("parseTransformArray()", () => {

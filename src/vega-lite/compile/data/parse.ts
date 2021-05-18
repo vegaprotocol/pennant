@@ -1,8 +1,7 @@
-import { DataFlowNode, OutputNode } from "./dataflow";
 import { TechnicalIndicatorTransform, Transform } from "../../transform";
-
-import { DataComponent } from ".";
 import { Model } from "../model";
+import { DataComponent } from ".";
+import { DataFlowNode } from "./dataflow";
 import { SourceNode } from "./source";
 import { TechnicalIndicatorTransformNode } from "./technical-indicator";
 

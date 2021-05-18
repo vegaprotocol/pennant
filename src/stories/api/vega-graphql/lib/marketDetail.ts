@@ -1,8 +1,8 @@
 import {
+  AccountType,
+  AuctionTrigger,
   MarketState,
   MarketTradingMode,
-  AuctionTrigger,
-  AccountType,
 } from "./globalTypes";
 
 // ====================================================
