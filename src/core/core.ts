@@ -1,4 +1,24 @@
-import { PlotArea } from "./plot-area";
+import { dispatch } from "d3-dispatch";
+import { scaleLinear, scaleTime } from "d3-scale";
+import { select,Selection } from "d3-selection";
+import {
+  zoom as d3Zoom,
+  ZoomBehavior,
+  zoomIdentity,
+  ZoomTransform,
+  zoomTransform,
+} from "d3-zoom";
+import { compareAsc } from "date-fns";
+import { difference, intersection, omit, union } from "lodash";
+import { MutableRefObject } from "react";
+
+import {
+  DEFAULT_INTERVAL_WIDTH,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  WIDTH,
+} from "../constants";
+import { getSubMinutes } from "../helpers";
 import {
   Interval,
   RenderableElement,
@@ -6,14 +26,6 @@ import {
   ScaleTime,
   Viewport,
 } from "../types";
-import { Selection, select } from "d3-selection";
-import {
-  ZoomBehavior,
-  ZoomTransform,
-  zoom as d3Zoom,
-  zoomTransform,
-  zoomIdentity,
-} from "d3-zoom";
 import {
   drawPlotArea,
   drawPlotAreaInteraction,
@@ -29,23 +41,12 @@ import {
   measureYAxis,
   recalculateScale,
 } from "./helpers";
+import { PlotArea } from "./plot-area";
 import { PlotAreaInteraction } from "./plot-area-interaction";
-import { scaleLinear, scaleTime } from "d3-scale";
 import { XAxis } from "./x-axis";
 import { XAxisInteraction } from "./x-axis-interaction";
 import { YAxis } from "./y-axis";
 import { YAxisInteraction } from "./y-axis-interaction";
-import { difference, intersection, omit, union } from "lodash";
-import {
-  DEFAULT_INTERVAL_WIDTH,
-  MAX_ZOOM,
-  MIN_ZOOM,
-  WIDTH,
-} from "../constants";
-import { dispatch } from "d3-dispatch";
-import { MutableRefObject } from "react";
-import { compareAsc } from "date-fns";
-import { getSubMinutes } from "../helpers";
 
 export type Panes<T> = { [id: string]: T };
 

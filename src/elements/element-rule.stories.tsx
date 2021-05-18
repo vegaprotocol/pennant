@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { scaleLinear, scaleTime } from "d3-scale";
-
 import { useEffect, useRef } from "react";
+
 import { RuleElement } from ".";
 
 export default {

@@ -1,8 +1,7 @@
-import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Candle, ChartType, Overlay, Study } from "../types";
-
-import { Colors } from "./helpers-color";
+import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";
+import { Colors } from "./helpers-color";
 
 function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   switch (chartType) {

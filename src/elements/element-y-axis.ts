@@ -1,8 +1,7 @@
-import { Colors, align, getNumYTicks } from "../helpers";
-import { ScaleLinear, ScaleTime } from "../types";
-
-import { RenderableElement } from "../types";
 import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
+import { align, Colors, getNumYTicks } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
+import { RenderableElement } from "../types";
 
 const MARGIN = 6;
 const FADE_HEIGHT = 6;

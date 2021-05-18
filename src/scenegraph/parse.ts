@@ -1,5 +1,14 @@
-import { Annotation, Scenegraph } from "../types";
-import { BaseSpec, TopLevelSpec, isVConcatSpec } from "../vega-lite/spec";
+import {
+  indicatorBollingerBands,
+  indicatorElderRay,
+  indicatorEnvelope,
+  indicatorExponentialMovingAverage,
+  indicatorMacd,
+  indicatorMovingAverage,
+  indicatorRelativeStrengthIndex,
+} from "@d3fc/d3fc-technical-indicator";
+import { extent } from "d3-array";
+
 import {
   CrosshairElement,
   DummyElement,
@@ -11,7 +20,6 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../elements";
-import { Mark, MarkDef } from "../vega-lite/mark";
 import {
   createElement,
   getAreaConfig,
@@ -21,24 +29,16 @@ import {
   getRuleConfig,
   getTickConfig,
 } from "../helpers";
-import {
-  indicatorBollingerBands,
-  indicatorElderRay,
-  indicatorEnvelope,
-  indicatorExponentialMovingAverage,
-  indicatorMacd,
-  indicatorMovingAverage,
-  indicatorRelativeStrengthIndex,
-} from "@d3fc/d3fc-technical-indicator";
-
-import { Data } from "../vega-lite/data";
-import { Encoding } from "../vega-lite/encoding";
+import { calculateScales } from "../scales";
+import { Annotation, Scenegraph } from "../types";
 import { Field } from "../vega-lite/channeldef";
+import { compile } from "../vega-lite/compile/compile";
 import { OutputNode } from "../vega-lite/compile/data/dataflow";
 import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
-import { calculateScales } from "../scales";
-import { compile } from "../vega-lite/compile/compile";
-import { extent } from "d3-array";
+import { Data } from "../vega-lite/data";
+import { Encoding } from "../vega-lite/encoding";
+import { Mark, MarkDef } from "../vega-lite/mark";
+import { BaseSpec, isVConcatSpec,TopLevelSpec } from "../vega-lite/spec";
 
 export function compileLayer(
   data: Data,

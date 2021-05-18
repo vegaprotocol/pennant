@@ -1,6 +1,6 @@
-import { Selection } from "d3-selection";
-import { drag as d3Drag, DragBehavior } from "d3-drag";
 import { Dispatch, dispatch } from "d3-dispatch";
+import { drag as d3Drag, DragBehavior } from "d3-drag";
+import { Selection } from "d3-selection";
 
 /**
  * The y-axis interaction component handles dragging interactions.

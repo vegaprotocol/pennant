@@ -1,9 +1,8 @@
-import { ScaleLinear, ScaleTime } from "../types";
 import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
-
 import { Colors } from "../helpers";
-import { RenderableElement } from "../types";
 import { formatter } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
+import { RenderableElement } from "../types";
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,

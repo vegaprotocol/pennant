@@ -1,6 +1,5 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
-
 import { Colors } from "../helpers";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addAnnotationPath(
   ctx: CanvasRenderingContext2D,

@@ -1,5 +1,5 @@
-import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { align } from "../helpers";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export class TickElement implements PositionalElement {
   readonly x: Date;

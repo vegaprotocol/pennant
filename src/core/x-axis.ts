@@ -1,5 +1,5 @@
-import { Colors, clearCanvas } from "../helpers";
 import { XAxisElement, XAxisTooltipElement } from "../elements";
+import { clearCanvas,Colors } from "../helpers";
 import { Interval, ScaleTime } from "../types";
 
 /**

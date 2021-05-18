@@ -1,4 +1,4 @@
-import { Colors, align, alignSpan } from "../helpers";
+import { align, alignSpan,Colors } from "../helpers";
 import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Bar = {

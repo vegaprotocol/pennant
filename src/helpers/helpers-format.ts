@@ -8,6 +8,7 @@ import {
   utcYear,
 } from "d3-time";
 import { timeFormat } from "d3-time-format";
+
 import { Interval } from "../types";
 
 const formatMillisecond = timeFormat(".%L");

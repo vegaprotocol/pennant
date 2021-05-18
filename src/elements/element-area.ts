@@ -1,6 +1,6 @@
-import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
-import { curveLinear, area as d3Area, line as d3Line } from "d3-shape";
+import { area as d3Area, curveLinear, line as d3Line } from "d3-shape";
 
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { Gradient } from "../vega-lite/mark";
 
 export type Area = {

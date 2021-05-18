@@ -1,11 +1,12 @@
+import { sum, zip } from "d3-array";
+
+import { Colors } from "../helpers";
 import {
   LabelAnnotation,
   RenderableElement,
   ScaleLinear,
   ScaleTime,
 } from "../types";
-import { Colors } from "../helpers";
-import { sum, zip } from "d3-array";
 
 const HEIGHT = 18;
 const PADDING = 4;

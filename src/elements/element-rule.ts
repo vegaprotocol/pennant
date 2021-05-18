@@ -1,5 +1,5 @@
-import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 import { align, alignSpan } from "../helpers";
+import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Rule = {
   points: [Date, number][];

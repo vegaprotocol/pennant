@@ -1,28 +1,28 @@
 import "./app.stories.scss";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 import {
   Button,
+  HotkeysProvider,
   Intent,
   MenuItem,
-  HotkeysProvider,
   useHotkeys,
 } from "@blueprintjs/core";
-import { ChartType, Overlay, Study } from "../types";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
-
-import { VegaDataSource } from "./data-source/vega-protocol-data-source";
-import { AppToaster } from "./components/toaster";
-import { Chart } from "../components/chart";
-import { ChartControls } from "./components/chart-controls";
-import { ChartElement } from "../types";
-import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
-import { Interval } from "./api/vega-graphql";
 import { useMemo, useRef, useState } from "react";
-import { WebSocketLink } from "@apollo/client/link/ws";
+
+import { Chart } from "../components/chart";
+import { ChartType, Overlay, Study } from "../types";
+import { ChartElement } from "../types";
+import { Interval } from "./api/vega-graphql";
 import data from "./app.stories.json";
-import { getMainDefinition } from "@apollo/client/utilities";
+import { ChartControls } from "./components/chart-controls";
+import { AppToaster } from "./components/toaster";
+import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
+import { VegaDataSource } from "./data-source/vega-protocol-data-source";
 
 export default {
   title: "Overview/Application Examples",

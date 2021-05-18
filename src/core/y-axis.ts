@@ -1,6 +1,6 @@
-import { ScaleLinear, ScaleTime } from "../types";
 import { YAxisElement, YAxisTooltipElement } from "../elements";
 import { Colors } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
 
 /**
  * The y-axis component renders human readable reference marks.

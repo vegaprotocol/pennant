@@ -2,11 +2,11 @@ import "@d3fc/d3fc-element";
 
 import { Meta, Story } from "@storybook/react";
 import { scaleLinear, scaleTime } from "d3-scale";
+import { select } from "d3-selection";
 import { useEffect, useRef } from "react";
 
 import { BarElement } from "../elements";
 import { FcElement } from "../types";
-import { select } from "d3-selection";
 
 export default {
   title: "Elements/Pixel perfection",

@@ -1,10 +1,10 @@
-import { Colors, clearCanvas } from "../helpers";
-import { CrosshairElement, GridElement } from "../elements";
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { bisector, extent } from "d3-array";
-
-import { clamp } from "lodash";
 import { closestIndexTo } from "date-fns";
+import { clamp } from "lodash";
+
+import { CrosshairElement, GridElement } from "../elements";
+import { clearCanvas,Colors } from "../helpers";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 export class PlotArea {
   private _crosshair: CrosshairElement = new CrosshairElement();

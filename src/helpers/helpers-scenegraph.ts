@@ -5,15 +5,14 @@ import {
   RuleElement,
   TickElement,
 } from "../elements";
+import { PositionalElement } from "../types";
 import { Color, Gradient, Mark } from "../vega-lite/mark";
 import {
-  Predicate,
   isFieldGTPredicate,
   isFieldLTPredicate,
+  Predicate,
 } from "../vega-lite/predicate";
-
 import { Colors } from ".";
-import { PositionalElement } from "../types";
 
 export const PADDING_INNER = 0.4;
 

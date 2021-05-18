@@ -1,7 +1,6 @@
-import { ScaleLinear, ScaleTime } from "../types";
 import { align, getNumXTicks, getNumYTicks } from "../helpers";
-
 import { Colors } from "../helpers";
+import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
 
 function addGridPath(

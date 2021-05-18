@@ -1,7 +1,7 @@
-import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
 import { Colors, dateFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";
+import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,

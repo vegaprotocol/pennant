@@ -1,5 +1,5 @@
 import { Colors, dateFormat } from "../helpers";
-import { RenderableElement, Interval, ScaleLinear, ScaleTime } from "../types";
+import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,
