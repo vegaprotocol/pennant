@@ -64,3 +64,103 @@ export enum AuctionTrigger {
   Price = "Price",
   Unspecified = "Unspecified",
 }
+
+/**
+ * Valid order types, these determine what happens when an order is added to the book
+ */
+export enum OrderTimeInForce {
+  FOK = "FOK",
+  GFA = "GFA",
+  GFN = "GFN",
+  GTC = "GTC",
+  GTT = "GTT",
+  IOC = "IOC",
+}
+
+/**
+ * Valid order statuses, these determine several states for an order that cannot be expressed with other fields in Order.
+ */
+export enum OrderStatus {
+  Active = "Active",
+  Cancelled = "Cancelled",
+  Expired = "Expired",
+  Filled = "Filled",
+  Parked = "Parked",
+  PartiallyFilled = "PartiallyFilled",
+  Rejected = "Rejected",
+  Stopped = "Stopped",
+}
+
+export enum OrderType {
+  Limit = "Limit",
+  Market = "Market",
+  Network = "Network",
+}
+
+/**
+ * Reason for the order being rejected by the core node
+ */
+export enum OrderRejectionReason {
+  AmendToGTTWithoutExpiryAt = "AmendToGTTWithoutExpiryAt",
+  CannotAmendFromGFAOrGFN = "CannotAmendFromGFAOrGFN",
+  CannotAmendPeggedOrderDetailsOnNonPeggedOrder = "CannotAmendPeggedOrderDetailsOnNonPeggedOrder",
+  CannotAmendToFOKOrIOC = "CannotAmendToFOKOrIOC",
+  CannotAmendToGFAOrGFN = "CannotAmendToGFAOrGFN",
+  EditNotAllowed = "EditNotAllowed",
+  ExpiryAtBeforeCreatedAt = "ExpiryAtBeforeCreatedAt",
+  FOKOrderDuringAuction = "FOKOrderDuringAuction",
+  GFAOrderDuringContinuousTrading = "GFAOrderDuringContinuousTrading",
+  GFNOrderDuringAuction = "GFNOrderDuringAuction",
+  GTCWithExpiryAtNotValid = "GTCWithExpiryAtNotValid",
+  IOCOrderDuringAuction = "IOCOrderDuringAuction",
+  InsufficientAssetBalance = "InsufficientAssetBalance",
+  InsufficientFundsToPayFees = "InsufficientFundsToPayFees",
+  InternalError = "InternalError",
+  InvalidExpirationTime = "InvalidExpirationTime",
+  InvalidMarketId = "InvalidMarketId",
+  InvalidMarketType = "InvalidMarketType",
+  InvalidOrderId = "InvalidOrderId",
+  InvalidOrderReference = "InvalidOrderReference",
+  InvalidPartyId = "InvalidPartyId",
+  InvalidPersistence = "InvalidPersistence",
+  InvalidRemainingSize = "InvalidRemainingSize",
+  InvalidSize = "InvalidSize",
+  InvalidTimeInForce = "InvalidTimeInForce",
+  InvalidType = "InvalidType",
+  MarginCheckFailed = "MarginCheckFailed",
+  MarketClosed = "MarketClosed",
+  MissingGeneralAccount = "MissingGeneralAccount",
+  NonPersistentOrderExceedsPriceBounds = "NonPersistentOrderExceedsPriceBounds",
+  OrderAmendFailure = "OrderAmendFailure",
+  OrderNotFound = "OrderNotFound",
+  OrderOutOfSequence = "OrderOutOfSequence",
+  OrderRemovalFailure = "OrderRemovalFailure",
+  PeggedOrderBuyCannotReferenceBestAskPrice = "PeggedOrderBuyCannotReferenceBestAskPrice",
+  PeggedOrderMustBeGTTOrGTC = "PeggedOrderMustBeGTTOrGTC",
+  PeggedOrderMustBeLimitOrder = "PeggedOrderMustBeLimitOrder",
+  PeggedOrderOffsetMustBeGreaterOrEqualToZero = "PeggedOrderOffsetMustBeGreaterOrEqualToZero",
+  PeggedOrderOffsetMustBeGreaterThanZero = "PeggedOrderOffsetMustBeGreaterThanZero",
+  PeggedOrderOffsetMustBeLessOrEqualToZero = "PeggedOrderOffsetMustBeLessOrEqualToZero",
+  PeggedOrderOffsetMustBeLessThanZero = "PeggedOrderOffsetMustBeLessThanZero",
+  PeggedOrderSellCannotReferenceBestBidPrice = "PeggedOrderSellCannotReferenceBestBidPrice",
+  PeggedOrderWithoutReferencePrice = "PeggedOrderWithoutReferencePrice",
+  SelfTrading = "SelfTrading",
+  TimeFailure = "TimeFailure",
+  UnableToAmendPeggedOrderPrice = "UnableToAmendPeggedOrderPrice",
+  UnableToRepricePeggedOrder = "UnableToRepricePeggedOrder",
+}
+
+export enum PendingAction {
+  Cancel = "Cancel",
+  None = "None",
+  Submit = "Submit",
+}
+
+/**
+ * Valid references used for pegged orders.
+ */
+export enum PeggedReference {
+  BestAsk = "BestAsk",
+  BestBid = "BestBid",
+  Mid = "Mid",
+}

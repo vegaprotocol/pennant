@@ -1,5 +1,4 @@
 import { ApolloClient } from "@apollo/client";
-import { formatter } from "../../helpers";
 import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
 
 import {
@@ -12,13 +11,21 @@ import {
   marketDetail,
   marketDetailQuery,
   marketDetailVariables,
+  order,
   orderQuery,
-  orderSubscription,
+  OrderStatus,
+  orders_orders,
+  orderVariables,
   positionQuery,
-  positionSubscription,
-  Side,
+  positions,
+  positionsVariables,
+  positions_party_positions,
 } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
+import {
+  createOrderLabelAnnotation,
+  createPositionLabelAnnotation,
+} from "./create-annotations";
 
 const defaultConfig = {
   decimalPlaces: 5,
@@ -32,6 +39,13 @@ const defaultConfig = {
   ],
   priceMonitoringBounds: [],
 };
+
+function isActiveOrPartiallyFilled(order: orders_orders) {
+  return (
+    order.status === OrderStatus.Active ||
+    order.status === OrderStatus.PartiallyFilled
+  );
+}
 
 function parseCandle(candle: CandleDetails, decimalPlaces: number): Candle {
   return {
@@ -54,8 +68,8 @@ export class VegaDataSource implements DataSource {
 
   candlesSub: ZenObservable.Subscription | null = null;
   marketDataSub: ZenObservable.Subscription | null = null;
-  positionsUnsubscribe: (() => void) | null = null;
-  ordersUnsubscribe: (() => void) | null = null;
+  positionsSub: ZenObservable.Subscription | null = null;
+  ordersSub: ZenObservable.Subscription | null = null;
   partyId: string;
   orderAnnotations: Annotation[] = [];
   positionAnnotations: Annotation[] = [];
@@ -72,8 +86,6 @@ export class VegaDataSource implements DataSource {
     this.client = client;
     this.marketId = marketId;
     this.partyId = partyId;
-
-    console.log("New DataSource");
   }
 
   /**
@@ -187,75 +199,78 @@ export class VegaDataSource implements DataSource {
     onSubscriptionAnnotation: (annotations: Annotation[]) => void
   ) {
     if (this.partyId !== "") {
-      this.positionsUnsubscribe = this.client
-        .watchQuery({
-          query: positionQuery,
-          variables: { partyId: this.partyId },
-          fetchPolicy: "cache-and-network",
-        })
-        .subscribeToMore({
-          document: positionSubscription,
-          variables: { partyId: this.partyId },
-          updateQuery: (_prev, { subscriptionData }) => {
-            this.updatePositionsQuery(
-              subscriptionData,
-              onSubscriptionAnnotation
-            );
-          },
-        });
-
-      this.ordersUnsubscribe = this.client
-        .watchQuery({
+      this.ordersSub = this.client
+        .watchQuery<order, orderVariables>({
           query: orderQuery,
           variables: { partyId: this.partyId },
-          fetchPolicy: "cache-and-network",
+          fetchPolicy: "cache-first",
         })
-        .subscribeToMore({
-          document: orderSubscription,
+        .subscribe(({ data }) => {
+          if (data.party?.orders) {
+            this.updateOrders(data.party.orders, onSubscriptionAnnotation);
+          }
+        });
+
+      this.positionsSub = this.client
+        .watchQuery<positions, positionsVariables>({
+          query: positionQuery,
           variables: { partyId: this.partyId },
-          updateQuery: (_prev, { subscriptionData }) => {
-            this.updateOrdersQuery(subscriptionData, onSubscriptionAnnotation);
-          },
+          fetchPolicy: "cache-first",
+        })
+        .subscribe(({ data }) => {
+          if (data.party?.positions) {
+            this.updatePositions(
+              data.party.positions,
+              onSubscriptionAnnotation
+            );
+          }
         });
     }
   }
 
-  private updateOrdersQuery(
-    subscriptionData: { data: any },
+  unsubscribeAnnotations() {
+    this.ordersSub && this.ordersSub.unsubscribe();
+    this.positionsSub && this.positionsSub.unsubscribe();
+  }
+
+  private updatePositions(
+    positions: positions_party_positions[],
     onSubscriptionAnnotation: (annotations: Annotation[]) => void
   ) {
-    const orders = subscriptionData.data.orders;
+    const validPositions = positions.filter(
+      (position) => position.market.id === this.marketId
+    );
+
+    const positionAnnotations: LabelAnnotation[] = [];
+
+    for (const position of validPositions) {
+      positionAnnotations.push(
+        createPositionLabelAnnotation(position, this._decimalPlaces)
+      );
+    }
+
+    this.positionAnnotations = positionAnnotations;
+
+    onSubscriptionAnnotation([
+      ...this.positionAnnotations,
+      ...this.orderAnnotations,
+    ]);
+  }
+
+  private updateOrders(
+    orders: orders_orders[],
+    onSubscriptionAnnotation: (annotations: Annotation[]) => void
+  ) {
+    const validOrders = orders
+      .filter((order) => order.market?.id === this.marketId)
+      .filter(isActiveOrPartiallyFilled);
 
     const orderAnnotations: LabelAnnotation[] = [];
 
-    for (const order of orders) {
-      if (order.market.id === this.marketId) {
-        orderAnnotations.push({
-          type: "label",
-          id: order.id,
-          cells: [
-            {
-              label: `${order.type} ${order.timeInForce}`,
-              stroke: true,
-            },
-            {
-              label: `${formatter(
-                Number(addDecimal(order.price, this._decimalPlaces)),
-                this._decimalPlaces
-              )}`,
-            },
-            {
-              label: `${order.side === Side.Buy ? "+" : "-"}${Number(
-                order.size
-              )}`,
-              stroke: true,
-            },
-            { label: "Cancel" },
-          ],
-          intent: "danger",
-          y: Number(addDecimal(order.price, this._decimalPlaces)),
-        });
-      }
+    for (const order of validOrders) {
+      orderAnnotations.push(
+        createOrderLabelAnnotation(order, this._decimalPlaces)
+      );
     }
 
     this.orderAnnotations = orderAnnotations;
@@ -264,55 +279,5 @@ export class VegaDataSource implements DataSource {
       ...this.positionAnnotations,
       ...this.orderAnnotations,
     ]);
-  }
-
-  private updatePositionsQuery(
-    subscriptionData: { data: any },
-    onSubscriptionAnnotation: (annotations: Annotation[]) => void
-  ) {
-    const position = subscriptionData.data.positions;
-
-    if (position.market.id === this.marketId) {
-      const positionAnnotation: LabelAnnotation = {
-        type: "label",
-        id: "position",
-        cells: [
-          { label: "Position" },
-          {
-            label: `${formatter(
-              Number(
-                addDecimal(position.averageEntryPrice, this._decimalPlaces)
-              ),
-              this._decimalPlaces
-            )}`,
-          },
-          { label: `+${Number(position.openVolume)}`, fill: true },
-          {
-            label: `PnL ${formatter(
-              Number(addDecimal(position.unrealisedPNL, this._decimalPlaces)),
-              this._decimalPlaces
-            )}`,
-            stroke: true,
-          },
-          { label: "Close" },
-        ],
-        intent: "success",
-        y: Number(addDecimal(position.averageEntryPrice, this._decimalPlaces)),
-      };
-
-      this.positionAnnotations = [positionAnnotation];
-
-      onSubscriptionAnnotation([
-        ...this.positionAnnotations,
-        ...this.orderAnnotations,
-      ]);
-    }
-  }
-
-  unsubscribeAnnotations() {
-    if (this.partyId) {
-      this.ordersUnsubscribe && this.ordersUnsubscribe();
-      this.positionsUnsubscribe && this.positionsUnsubscribe();
-    }
   }
 }
