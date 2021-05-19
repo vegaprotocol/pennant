@@ -13,7 +13,7 @@ import {
   CrosshairElement,
   DummyElement,
   GridElement,
-  LabelAnnotationElement,
+  LabelAnnotationHtmlElement,
   XAxisElement,
   XAxisTooltipElement,
   YAxisAnnotationElement,
@@ -333,7 +333,7 @@ export function parse(
             labels:
               panelIndex === 0
                 ? [
-                    new LabelAnnotationElement({
+                    new LabelAnnotationHtmlElement({
                       labels: annotations,
                     }),
                   ]

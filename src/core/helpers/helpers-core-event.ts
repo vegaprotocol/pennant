@@ -1,10 +1,11 @@
-import { select,Selection } from "d3-selection";
+import { select, Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
 import { DEFAULT_INTERVAL_WIDTH, WIDTH } from "../../constants";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { Panes } from "../core";
 import { PlotArea } from "../plot-area";
+import { PlotAreaAnnotations } from "../plot-area-annotations";
 import { PlotAreaInteraction } from "../plot-area-interaction";
 import { XAxis } from "../x-axis";
 import { YAxis } from "../y-axis";
@@ -169,6 +170,7 @@ export function measureYAxis(
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
   plotArea: PlotArea,
+  plotAreaAnnotations: PlotAreaAnnotations,
   yAxis: YAxis,
   isFreePan: boolean,
   id: string,
@@ -180,6 +182,7 @@ export function measureYAxis(
   const yr = yTransform().rescaleY(scale);
 
   plotArea.yScale(yr);
+  plotAreaAnnotations.yScale(yr);
   yAxis.yScale(yr);
 
   if (!isFreePan) {

@@ -69,6 +69,12 @@ export class JsonDataSource implements DataSource {
               label: `PnL ${10000000000}`,
               stroke: true,
             },
+            {
+              label: "Close",
+              onClick: () => {
+                console.log({ type: "position", id: "0" });
+              },
+            },
           ],
           intent: "success",
           y: averageEntryPrice,
@@ -76,14 +82,32 @@ export class JsonDataSource implements DataSource {
         {
           type: "label",
           id: "1",
-          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596}` }],
+          cells: [
+            { label: `Limit GTT`, stroke: true },
+            { label: `${596}` },
+            {
+              label: "Cancel",
+              onClick: () => {
+                console.log({ type: "order", id: "1" });
+              },
+            },
+          ],
           intent: "danger",
           y: 596,
         },
         {
           type: "label",
-          id: "1",
-          cells: [{ label: `Limit GTT`, stroke: true }, { label: `${596.5}` }],
+          id: "2",
+          cells: [
+            { label: `Limit GTT`, stroke: true },
+            { label: `${596.5}` },
+            {
+              label: "Cancel",
+              onClick: () => {
+                console.log({ type: "order", id: "2" });
+              },
+            },
+          ],
           intent: "danger",
           y: 596.01,
         },
