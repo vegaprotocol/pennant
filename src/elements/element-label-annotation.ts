@@ -8,7 +8,7 @@ import {
   ScaleTime,
 } from "../types";
 
-const HEIGHT = 18;
+const HEIGHT = 22;
 const PADDING = 4;
 
 export function cumsum(values: number[]) {
@@ -32,7 +32,6 @@ function addLabel(
   y: number
 ) {
   const stroke = label.intent === "success" ? Colors.GREEN : Colors.RED;
-  const fill = label.intent === "success" ? Colors.GREEN : Colors.RED;
 
   ctx.font = `${14}px sans-serif`;
   ctx.textBaseline = "middle";
@@ -44,7 +43,6 @@ function addLabel(
     (cell) => ctx.measureText(cell.label).width + 2 * PADDING
   );
 
-  const xPositions = [0, ...cumsum(widths).slice(0, -1)];
   const totalWidth = sum(widths);
 
   // Dashed price line
@@ -55,25 +53,6 @@ function addLabel(
   ctx.lineTo(xScale.range()[1], yScale(label.y));
   ctx.stroke();
   ctx.closePath();
-
-  for (const element of zip<any>(label.cells, widths, xPositions)) {
-    const cell = element[0] as Cell;
-    const width = element[1] as number;
-    const xPosition = element[2] as number;
-
-    // Border and background
-    ctx.setLineDash([]);
-    ctx.strokeStyle = stroke;
-    ctx.fillStyle = cell.fill ? fill : "black";
-
-    ctx.fillRect(xPosition + 1, y - HEIGHT / 2 - 1, width, HEIGHT);
-
-    ctx.strokeRect(xPosition + 1, y - HEIGHT / 2 - 1, width, HEIGHT);
-
-    // Text
-    ctx.fillStyle = cell.stroke ? stroke : cell.fill ? "black" : "white";
-    ctx.fillText(cell.label, PADDING + xPosition, y);
-  }
 }
 
 export class LabelAnnotationElement implements RenderableElement {

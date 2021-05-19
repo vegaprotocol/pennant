@@ -130,6 +130,7 @@ export const PlotContainer = forwardRef(
               renderableElements: panel.renderableElements.flat(1),
               yEncodingFields: panel.yEncodingFields,
               labels: panel.labels ?? [],
+              labelLines: panel.labelLines ?? [],
             },
           ])
         ),
@@ -193,6 +194,7 @@ export const PlotContainer = forwardRef(
                 renderableElements: panel.renderableElements.flat(1),
                 yEncodingFields: panel.yEncodingFields,
                 labels: panel.labels ?? [],
+                labelLines: panel.labelLines ?? [],
               },
             ])
           ),

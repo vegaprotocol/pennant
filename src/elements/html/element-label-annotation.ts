@@ -1,11 +1,9 @@
 import "./element-label-annotation.scss";
-
 import classNames from "classnames";
 import { Selection } from "d3-selection";
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
 
 const HEIGHT = 22;
-const PADDING = 4;
 
 export interface RenderableHTMLElement {
   draw(
@@ -62,13 +60,17 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
       y: shiftedYPositions[labelIndex],
     }));
 
+    const line = selection
+      .selectAll<Element, LabelAnnotation>("div")
+      .data<LabelAnnotation>(data, (d: LabelAnnotation) => d.id);
+
     const label = selection
       .selectAll<Element, LabelAnnotation>("div")
       .data<LabelAnnotation>(data, (d: LabelAnnotation) => d.id)
       .join("div")
       .attr("class", (d) => `annotation intent-${d.intent}`)
       .style("left", `0px`)
-      .style("top", (d) => `${d.y}px`)
+      .style("top", (d) => `${d.y - HEIGHT / 2}px`)
       .style("height", `22px`)
       .style("position", "absolute")
       .style("pointer-events", "auto");

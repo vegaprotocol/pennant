@@ -59,6 +59,7 @@ export type ChartPanel = {
   renderableElements: RenderableElement[];
   yEncodingFields: string[];
   labels: RenderableHTMLElement[];
+  labelLines: RenderableElement[];
 };
 
 /**
@@ -208,6 +209,8 @@ export class Core {
       ])
     );
 
+    console.log(panels);
+
     // plot-area
     this.plotAreas = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
@@ -218,7 +221,7 @@ export class Core {
           panel.renderableElements.flat(1),
           panel.data,
           panel.yEncodingFields,
-          panel.labels
+          panel.labelLines
         ),
       ])
     );
@@ -394,7 +397,6 @@ export class Core {
           drawPlotAreaInteraction(event, this.plotAreaInteractions, id);
         });
     });
-
 
     // Update latest price
     const latestPrice =
@@ -577,7 +579,8 @@ export class Core {
         this.plotAreas[id]
           .data(panels[id].data)
           .renderableElements(panels[id].renderableElements)
-          .yEncodingFields(panels[id].yEncodingFields);
+          .yEncodingFields(panels[id].yEncodingFields)
+          .labels(panels[id].labelLines);
 
         this.plotAreaAnnotations[id].labels(panels[id].labels);
       } else if (enteringIds.includes(id)) {
@@ -622,7 +625,7 @@ export class Core {
           panels[id].renderableElements,
           panels[id].data,
           panels[id].yEncodingFields,
-          panels[id].labels
+          panels[id].labelLines
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(

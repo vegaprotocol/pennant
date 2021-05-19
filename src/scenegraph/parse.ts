@@ -13,6 +13,7 @@ import {
   CrosshairElement,
   DummyElement,
   GridElement,
+  LabelAnnotationElement,
   LabelAnnotationHtmlElement,
   XAxisElement,
   XAxisTooltipElement,
@@ -38,7 +39,7 @@ import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/techn
 import { Data } from "../vega-lite/data";
 import { Encoding } from "../vega-lite/encoding";
 import { Mark, MarkDef } from "../vega-lite/mark";
-import { BaseSpec, isVConcatSpec,TopLevelSpec } from "../vega-lite/spec";
+import { BaseSpec, isVConcatSpec, TopLevelSpec } from "../vega-lite/spec";
 
 export function compileLayer(
   data: Data,
@@ -334,6 +335,14 @@ export function parse(
               panelIndex === 0
                 ? [
                     new LabelAnnotationHtmlElement({
+                      labels: annotations,
+                    }),
+                  ]
+                : [],
+            labelLines:
+              panelIndex === 0
+                ? [
+                    new LabelAnnotationElement({
                       labels: annotations,
                     }),
                   ]

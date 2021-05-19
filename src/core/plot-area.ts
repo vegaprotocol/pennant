@@ -15,7 +15,7 @@ export class PlotArea {
   private ctx: CanvasRenderingContext2D | null = null;
   private _data: any[];
   private gridline: GridElement = new GridElement();
-  private _labels: RenderableHTMLElement[];
+  private _labels: RenderableElement[];
   private latestPriceCrosshair: CrosshairElement = new CrosshairElement();
   private latestPricePosition: number | null = null;
   private _pixelRatio: number = 1;
@@ -31,7 +31,7 @@ export class PlotArea {
     elements: RenderableElement[],
     originalData: any[],
     fields: string[],
-    labels: RenderableHTMLElement[]
+    labels: RenderableElement[]
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -93,6 +93,10 @@ export class PlotArea {
         this._pixelRatio,
         this.position
       );
+
+      for (const label of this._labels) {
+        label.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+      }
     }
   }
 
@@ -142,7 +146,7 @@ export class PlotArea {
     return this;
   }
 
-  labels(elements: RenderableHTMLElement[]) {
+  labels(elements: RenderableElement[]) {
     this._labels = elements;
     return this;
   }

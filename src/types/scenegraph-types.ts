@@ -25,6 +25,7 @@ export interface Panel {
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
   labels?: RenderableHTMLElement[];
+  labelLines?: RenderableElement[];
 
   /**
    * Fields to use to determine y axis extent
