@@ -1,4 +1,4 @@
-import { CanvasRenderer } from "../renderer";
+import { Renderer } from "../canvas";
 
 export class Point {
   public x: number;
@@ -39,6 +39,7 @@ export class Transform {
  * The base class for all objects that are rendered on the screen
  */
 export abstract class DisplayObject {
+  public interactive: boolean = false;
   /**
    * The display object that contains this display object
    */
@@ -53,7 +54,7 @@ export abstract class DisplayObject {
    *
    * @param renderer - The renderer
    */
-  abstract render(renderer: CanvasRenderer): void;
+  abstract render(renderer: Renderer): void;
 
   /**
    * The coordinate of the object relative to the local coordinates of the parent.

@@ -1,5 +1,5 @@
-import { CanvasRenderer } from "../renderer";
-import { DisplayObject } from ".";
+import { Renderer } from "../canvas";
+import { DisplayObject } from "./display-object";
 
 /**
  * Remove items from a javascript array without generating garbage
@@ -36,14 +36,10 @@ export function removeItems(
  * Container is a general-purpose display object that holds children.
  */
 export class Container extends DisplayObject {
-  /**
+  /**DisplayObject
    * The array of children of this container.
    */
   public readonly children: DisplayObject[] = [];
-
-  constructor() {
-    super();
-  }
 
   /**
    * Adds one or more children to the container.
@@ -99,7 +95,7 @@ export class Container extends DisplayObject {
     return children[0];
   }
 
-  render(renderer: CanvasRenderer): void {
+  render(renderer: Renderer): void {
     this._render(renderer);
 
     for (const child of this.children) {
@@ -112,5 +108,5 @@ export class Container extends DisplayObject {
    *
    * @param _renderer - The renderer
    */
-  protected _render(_renderer: CanvasRenderer): void {}
+  protected _render(_renderer: Renderer): void {}
 }

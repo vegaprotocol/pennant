@@ -1,6 +1,6 @@
 import { mean } from "d3-array";
 import { Dispatch, dispatch } from "d3-dispatch";
-import { pointers,Selection } from "d3-selection";
+import { pointers, Selection } from "d3-selection";
 import {
   zoom as d3Zoom,
   ZoomBehavior,
@@ -17,7 +17,8 @@ export class PlotAreaInteraction {
     "zoomend",
     "dblclick",
     "mousemove",
-    "mouseout"
+    "mouseout",
+    "click"
   );
 
   private _xScale: ScaleTime;
@@ -88,7 +89,10 @@ export class PlotAreaInteraction {
       .on("mousemove", (event) =>
         this.listeners.call("mousemove", this, [event.offsetX, event.offsetY])
       )
-      .on("mouseout", () => this.listeners.call("mouseout", this));
+      .on("mouseout", () => this.listeners.call("mouseout", this))
+      .on("click", (event) =>
+        this.listeners.call("click", this, [event.offsetX, event.offsetY])
+      );
   }
 
   on(typenames: string, callback: (this: object, ...args: any[]) => void) {

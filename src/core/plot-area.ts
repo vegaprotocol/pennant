@@ -1,12 +1,17 @@
 import { bisector, extent } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { clamp } from "lodash";
-import { Application } from "../app";
-import { Graphics } from "../display";
 
+import { Application } from "../app/application";
+import { Container } from "../display";
+import { Point } from "../display/display-object";
+import { Graphics } from "../graphics/graphics";
 import { CrosshairElement, GridElement } from "../elements";
 import { clearCanvas, Colors } from "../helpers";
+import { InteractionManager } from "../interaction/interaction-manager";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { GraphicsGeometry } from "../graphics";
+import { Rectangle } from "../math";
 
 export class PlotArea {
   private _crosshair: CrosshairElement = new CrosshairElement();
@@ -23,17 +28,17 @@ export class PlotArea {
   private _yEncodingFields: string[];
   private _yScale: ScaleLinear;
 
-  private application: Application;
+  private app: Application;
+  private interactionManager: InteractionManager;
 
   constructor(
+    canvas: HTMLCanvasElement,
     x: ScaleTime,
     y: ScaleLinear,
     elements: RenderableElement[],
     originalData: any[],
     fields: string[],
-    labels: RenderableElement[],
-    resolution: number,
-    canvas: HTMLCanvasElement
+    labels: RenderableElement[]
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -42,14 +47,31 @@ export class PlotArea {
     this._yEncodingFields = fields;
     this._labels = labels;
 
-    this.application = new Application({
-      resolution: resolution,
+    this.app = new Application({
+      resolution: 1.5,
       view: canvas,
     });
 
-    const graphics = new Graphics();
+    const container = new Container();
 
-    this.application.stage.addChild(graphics);
+    const rectangle = new Rectangle(100, 100, 100, 100);
+    const graphicsGeometry = new GraphicsGeometry().drawShape(
+      rectangle,
+      {
+        color: "red",
+        visible: true,
+      },
+      { alignment: 0.5, color: "white", visible: true, width: 1 }
+    );
+
+    const graphics = new Graphics(graphicsGeometry);
+    graphics.interactive = true;
+
+    container.addChild(graphics);
+
+    this.app.stage.addChild(container);
+
+    this.interactionManager = new InteractionManager(this.app.renderer);
   }
 
   context(context: CanvasRenderingContext2D) {
@@ -68,7 +90,49 @@ export class PlotArea {
   }
 
   draw() {
-    this.application.render();
+    if (this.ctx) {
+      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+
+      this.gridline.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      this._renderableElements[0].draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio
+      );
+
+      for (const element of this._renderableElements) {
+        element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+      }
+
+      this.latestPriceCrosshair.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        [null, this.latestPricePosition]
+      );
+
+      this._crosshair.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.position
+      );
+
+      for (const label of this._labels) {
+        label.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+      }
+
+      this.app.render();
+    }
   }
 
   extent(bounds?: [Date, Date]) {
@@ -145,5 +209,15 @@ export class PlotArea {
   yScale(y: ScaleLinear) {
     this._yScale = y.copy();
     return this;
+  }
+
+  hitTest(offset: [number, number]) {
+    console.log(offset);
+    console.log(
+      this.interactionManager.hitTest(
+        new Point(offset[0], offset[1]),
+        this.app.stage
+      )
+    );
   }
 }

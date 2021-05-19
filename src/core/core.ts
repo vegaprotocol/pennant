@@ -1,6 +1,6 @@
 import { dispatch } from "d3-dispatch";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { select,Selection } from "d3-selection";
+import { select, Selection } from "d3-selection";
 import {
   zoom as d3Zoom,
   ZoomBehavior,
@@ -210,12 +210,15 @@ export class Core {
       Object.entries(panels).map(([id, panel]) => [
         panel.id,
         new PlotArea(
+          select<HTMLDivElement, unknown>(panel.ref.current!)
+            .select<HTMLCanvasElement>(".plot-area > canvas")
+            .node() as any,
           this.xScale,
           this.yScales[id],
           panel.renderableElements.flat(1),
           panel.data,
           panel.yEncodingFields,
-          panel.labels,
+          panel.labels
         ),
       ])
     );
@@ -240,6 +243,9 @@ export class Core {
               value.id,
               () => this.listeners.call("redraw")
             );
+          })
+          .on("click", (offset: [number, number]) => {
+            this.plotAreas[id].hitTest(offset);
           })
           .on("dblclick", () => {
             this.reset();
@@ -594,6 +600,9 @@ export class Core {
           });
 
         this.plotAreas[id] = new PlotArea(
+          select<HTMLDivElement, unknown>(panels[id].ref.current!)
+            .select<HTMLCanvasElement>(".plot-area > canvas")
+            .node() as any,
           this.xTransform().rescaleX(this.xScale),
           this.yScales[id],
           panels[id].renderableElements,

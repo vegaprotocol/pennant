@@ -1,5 +1,5 @@
+import { CanvasRenderer, Renderer } from "../canvas";
 import { Container } from "../display";
-import { CanvasRenderer } from "../renderer";
 
 export interface ApplicationOptions {
   view: HTMLCanvasElement;
@@ -16,7 +16,7 @@ export class Application {
   /**
    * Canvas renderer.
    */
-  public renderer: CanvasRenderer;
+  public renderer: Renderer;
 
   constructor(options: ApplicationOptions) {
     this.renderer = new CanvasRenderer(options);
