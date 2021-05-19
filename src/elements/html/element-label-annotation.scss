@@ -111,10 +111,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   animation: spinner-animation 0.5s linear infinite;
+}
 
-  .no-spin > & {
-    animation: none;
-  }
+.no-spin {
+  animation: none;
 }
 
 @keyframes spinner-animation {
@@ -122,6 +122,6 @@
     transform: translate(-50%, -50%) rotate(0deg);
   }
   to {
-    transform: translate(-50%, -50% )rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }

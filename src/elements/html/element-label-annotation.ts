@@ -95,97 +95,80 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
         }
       );
 
-    const cell = label
-      .selectAll<Element, Cell>("div.cell")
-      .data<Cell>((d) => d.cells)
+    label
+      .selectAll("span.cell")
+      .data((d) => [...d.cells].slice(0, -1))
+      .join("span")
+      .attr("class", (d) =>
+        classNames("cell", { fill: d.fill }, { stroke: d.stroke })
+      )
+      .text((d) => d.label);
 
-      .join(
-        (enter) =>
-          enter
-            .append("div")
-            .attr("class", (d) =>
-              classNames("cell", { fill: d.fill }, { stroke: d.stroke })
-            ),
-        (update) =>
-          update.attr("class", (d) =>
-            classNames("cell", { fill: d.fill }, { stroke: d.stroke })
-          ),
-        (exit) => {
-          return exit.remove();
-        }
-      );
-
-    cell
-      .selectAll(".content")
-      .data((d) => [d])
+    label
+      .selectAll("div.cell")
+      .data((d) => [...d.cells].slice(-1))
       .join(
         (enter) => {
-          enter.append((d: Cell) => {
-            if (d.spinner) {
-              const div = document.createElement("div");
+          const div = enter.append("div").attr("class", "cell");
 
-              select(div)
-                .append("span")
-                .style("visibility", "hidden")
-                .text(d.label);
+          div
+            .append("button")
+            .attr("class", "content action")
+            .on("click", (_event, d) => {
+              d.onClick?.();
+            })
+            .style("visibility", (d) => (d.spinner ? "hidden" : "visible"))
+            .text((d) => d.label);
 
-              select(div)
-                .append("div")
-                .attr("class", "content spinner-animation")
-                .selectAll("svg")
-                .data((d) => [d])
-                .join("svg")
-                .attr("width", size)
-                .attr("height", size)
-                .attr(
-                  "viewBox",
-                  `${viewBoxX} ${viewBoxX} ${viewBoxWidth} ${viewBoxWidth}`
-                )
-                .selectAll("path")
-                .data([null, null])
-                .join("path")
-                .attr("d", SPINNER_TRACK)
-                .attr("class", (d, i) =>
-                  i === 1 ? "spinner-head" : "spinner-track"
-                )
-                .attr("stroke-width", strokeWidth)
-                .attr("fill-pacity", 0)
-                .attr("pathLength", (d, i) => (i === 1 ? "280" : null))
-                .attr("stroke-dasharray", (d, i) =>
-                  i === 1 ? "280 280" : null
-                )
-                .attr("stroke-dashoffset", (d, i) => (i === 1 ? "210" : null));
+          div
+            .append("div")
+            .attr("class", (d) =>
+              classNames("content", "spinner-animation", {
+                "no-spin": !d.spinner,
+              })
+            )
+            .style("visibility", (d) => (d.spinner ? "visible" : "hidden"))
+            .selectAll("svg")
+            .data((d) => [d])
+            .join("svg")
+            .attr("width", size)
+            .attr("height", size)
+            .attr(
+              "viewBox",
+              `${viewBoxX} ${viewBoxX} ${viewBoxWidth} ${viewBoxWidth}`
+            )
+            .selectAll("path")
+            .data([null, null])
+            .join("path")
+            .attr("d", SPINNER_TRACK)
+            .attr("class", (d, i) =>
+              i === 1 ? "spinner-head" : "spinner-track"
+            )
+            .attr("stroke-width", strokeWidth)
+            .attr("fill-pacity", 0)
+            .attr("pathLength", (d, i) => (i === 1 ? "280" : null))
+            .attr("stroke-dasharray", (d, i) => (i === 1 ? "280 280" : null))
+            .attr("stroke-dashoffset", (d, i) => (i === 1 ? "210" : null));
 
-              return div;
-            } else if (d.onClick) {
-              const button = document.createElement("button");
-
-              select(button)
-                .attr("class", "content action")
-                .on("click", () => {
-                  d.onClick?.();
-                })
-                .text(d.label);
-
-              return button;
-            } else {
-              const span = document.createElement("span");
-
-              select(span).attr("class", "content").text(d.label);
-
-              return span;
-            }
-          });
-
-          return enter;
+          return div;
         },
         (update) => {
-          update.each(function (p, j) {
-            console.log(p, j, this);
-          });
+          update
+            .select("button")
+            .style("visibility", (d) => (d.spinner ? "hidden" : "visible"));
+
+          update
+            .select("div")
+            .attr("class", (d) =>
+              classNames("content", "spinner-animation", {
+                "no-spin": !d.spinner,
+              })
+            )
+            .style("visibility", (d) => (d.spinner ? "visible" : "hidden"));
 
           return update;
-        }
+        },
+        (exit) => exit.remove()
       );
   }
 }
