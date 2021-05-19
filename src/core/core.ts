@@ -209,8 +209,6 @@ export class Core {
       ])
     );
 
-    console.log(panels);
-
     // plot-area
     this.plotAreas = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
