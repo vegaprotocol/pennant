@@ -1,5 +1,6 @@
-import { ChartInfo, ChartInfoProps } from "./chart-info";
 import { Meta, Story } from "@storybook/react";
+
+import { ChartInfo, ChartInfoProps } from "./chart-info";
 
 export default {
   title: "Components/ChartInfo",

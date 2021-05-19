@@ -1,5 +1,6 @@
-import { CandleInfo, CandleInfoProps } from "./candle-info";
 import { Meta, Story } from "@storybook/react";
+
+import { CandleInfo, CandleInfoProps } from "./candle-info";
 
 export default {
   title: "Components/CandleInfo",

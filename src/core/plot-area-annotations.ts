@@ -1,7 +1,7 @@
 import { Dispatch, dispatch } from "d3-dispatch";
 import { Selection } from "d3-selection";
-import { RenderableHTMLElement } from "../elements";
 
+import { RenderableHTMLElement } from "../elements";
 import { ScaleLinear, ScaleTime } from "../types";
 
 export class PlotAreaAnnotations {

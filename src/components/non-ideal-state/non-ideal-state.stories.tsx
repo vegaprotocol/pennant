@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react";
+
 import { NonIdealState, NonIdealStateProps } from "./non-ideal-state";
 
 export default {

@@ -1,12 +1,12 @@
 import "./chart-controls.stories.scss";
 
-import { ChartControls, ChartControlsProps } from "./chart-controls";
-import { ChartType, Overlay, Study } from "../../../types";
-import { Meta, Story } from "@storybook/react";
-
 import { FocusStyleManager } from "@blueprintjs/core";
-import { Interval } from "../../api/vega-graphql";
+import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
+
+import { ChartType, Overlay, Study } from "../../../types";
+import { Interval } from "../../api/vega-graphql";
+import { ChartControls, ChartControlsProps } from "./chart-controls";
 
 export default {
   title: "Example components/ChartControls",

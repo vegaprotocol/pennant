@@ -1,5 +1,24 @@
 import "./chart.scss";
 
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
+
+import { INITIAL_NUM_CANDLES } from "../../constants";
+import {
+  constructTopLevelSpec,
+  getCandleWidth,
+  getSubMinutes,
+} from "../../helpers";
+import { mergeData } from "../../helpers";
+import { parse } from "../../scenegraph/parse";
 import {
   Annotation,
   Candle,
@@ -12,28 +31,9 @@ import {
   Study,
   Viewport,
 } from "../../types";
-import {
-  constructTopLevelSpec,
-  getCandleWidth,
-  getSubMinutes,
-} from "../../helpers";
-
-import AutoSizer from "react-virtualized-auto-sizer";
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { mergeData } from "../../helpers";
-import { parse } from "../../scenegraph/parse";
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { INITIAL_NUM_CANDLES } from "../../constants";
 
 const noop = () => {};
 

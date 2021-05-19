@@ -1,4 +1,5 @@
 import renderer from "react-test-renderer";
+
 import { CandleInfo } from ".";
 
 test("CandleInfo renders correctly", () => {

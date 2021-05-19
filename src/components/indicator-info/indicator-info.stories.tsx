@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react";
+
 import { IndicatorInfo, IndicatorInfoProps } from "./indicator-info";
 
 export default {

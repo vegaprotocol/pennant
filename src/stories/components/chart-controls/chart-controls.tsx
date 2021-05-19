@@ -9,6 +9,9 @@ import {
   MenuDivider,
   MenuItem,
 } from "@blueprintjs/core";
+import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
+
+import { INTERVALS } from "../../../helpers";
 import {
   ChartType,
   chartTypeLabels,
@@ -20,9 +23,6 @@ import {
   Study,
   studyLabels,
 } from "../../../types";
-import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
-
-import { INTERVALS } from "../../../helpers";
 import { Interval } from "../../api/vega-graphql";
 
 const chartTypeIcon = new Map<ChartType, IconName>([

@@ -1,7 +1,8 @@
 import "./candle-info.scss";
 
-import { CandleDetailsExtended } from "../../types";
 import { format } from "date-fns";
+
+import { CandleDetailsExtended } from "../../types";
 
 export type CandleInfoProps = {
   candle: CandleDetailsExtended;

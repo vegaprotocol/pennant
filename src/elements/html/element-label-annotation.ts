@@ -1,6 +1,8 @@
 import "./element-label-annotation.scss";
+
 import classNames from "classnames";
 import { Selection } from "d3-selection";
+
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
 
 const HEIGHT = 22;
