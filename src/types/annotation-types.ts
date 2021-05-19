@@ -16,6 +16,7 @@ export type LabelAnnotation = {
     stroke?: boolean;
     fill?: boolean;
     onClick?: () => void;
+    spinner?: boolean;
   }[];
   intent: Intent;
   y: number;
