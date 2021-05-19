@@ -1,3 +1,4 @@
+import { RenderableHTMLElement } from "../elements";
 import { ScaleLinear, ScaleTime } from "../types";
 
 export interface RenderableElement {
@@ -23,7 +24,8 @@ export interface Panel {
   axisTooltip?: RenderableElement;
   crosshair?: RenderableElement;
   annotations?: RenderableElement[];
-  labels?: RenderableElement[];
+  labels?: RenderableHTMLElement[];
+  labelLines?: RenderableElement[];
 
   /**
    * Fields to use to determine y axis extent

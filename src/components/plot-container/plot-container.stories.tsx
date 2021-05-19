@@ -1,14 +1,14 @@
 import "./plot-container.stories.scss";
 
 import { Meta, Story } from "@storybook/react/types-6-0";
-import { PlotContainer, PlotContainerProps } from "./plot-container";
 
-import { Interval } from "../../stories/api/vega-graphql";
-import { extendCandle } from "../../stories/data-source/json-data-source";
-import json from "../../stories/data-source/data.json";
-import { TopLevelSpec } from "../../vega-lite/spec";
 import { parse } from "../../scenegraph/parse";
+import { Interval } from "../../stories/api/vega-graphql";
+import json from "../../stories/data-source/data.json";
+import { extendCandle } from "../../stories/data-source/json-data-source";
 import { Scenegraph } from "../../types";
+import { TopLevelSpec } from "../../vega-lite/spec";
+import { PlotContainer, PlotContainerProps } from "./plot-container";
 
 export default {
   title: "Components/PlotContainer",

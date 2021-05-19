@@ -1,6 +1,6 @@
 import { dispatch } from "d3-dispatch";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { select,Selection } from "d3-selection";
+import { select, Selection } from "d3-selection";
 import {
   zoom as d3Zoom,
   ZoomBehavior,
@@ -18,6 +18,7 @@ import {
   MIN_ZOOM,
   WIDTH,
 } from "../constants";
+import { RenderableHTMLElement } from "../elements";
 import { getSubMinutes } from "../helpers";
 import {
   Interval,
@@ -42,6 +43,7 @@ import {
   recalculateScale,
 } from "./helpers";
 import { PlotArea } from "./plot-area";
+import { PlotAreaAnnotations } from "./plot-area-annotations";
 import { PlotAreaInteraction } from "./plot-area-interaction";
 import { XAxis } from "./x-axis";
 import { XAxisInteraction } from "./x-axis-interaction";
@@ -56,7 +58,8 @@ export type ChartPanel = {
   data: any[];
   renderableElements: RenderableElement[];
   yEncodingFields: string[];
-  labels: RenderableElement[];
+  labels: RenderableHTMLElement[];
+  labelLines: RenderableElement[];
 };
 
 /**
@@ -112,6 +115,7 @@ export class Core {
   // plot-area
   private plotAreas: Panes<PlotArea>;
   private plotAreaInteractions: Panes<PlotAreaInteraction>;
+  private plotAreaAnnotations: Panes<PlotAreaAnnotations>;
   private plotAreaElements: Panes<Selection<Element, any, null, any>>;
 
   constructor(
@@ -205,6 +209,8 @@ export class Core {
       ])
     );
 
+    console.log(panels);
+
     // plot-area
     this.plotAreas = Object.fromEntries(
       Object.entries(panels).map(([id, panel]) => [
@@ -215,7 +221,7 @@ export class Core {
           panel.renderableElements.flat(1),
           panel.data,
           panel.yEncodingFields,
-          panel.labels
+          panel.labelLines
         ),
       ])
     );
@@ -266,6 +272,17 @@ export class Core {
               () => this.listeners.call("mouseout", this)
             );
           }),
+      ])
+    );
+
+    this.plotAreaAnnotations = Object.fromEntries(
+      Object.entries(panels).map(([id, value]) => [
+        value.id,
+        new PlotAreaAnnotations(
+          this.xScale,
+          this.yScales[id],
+          panels[id].labels
+        ),
       ])
     );
 
@@ -337,6 +354,7 @@ export class Core {
             scale,
             this.yTransforms[id],
             this.plotAreas[id],
+            this.plotAreaAnnotations[id],
             this.yAxes[id],
             this.isFreePan,
             id,
@@ -359,10 +377,16 @@ export class Core {
     );
 
     Object.entries(panels).forEach(([id, area]) => {
+      const selection = select<Element, any>(area.ref.current!).select<Element>(
+        ".plot-area-annotations"
+      );
+
       select<HTMLDivElement, unknown>(area.ref.current!)
         .select(".plot-area")
         .on("draw", (event) => {
           drawPlotArea(event, this.plotAreas, id);
+
+          this.plotAreaAnnotations[id].draw(selection);
         });
     });
 
@@ -556,7 +580,9 @@ export class Core {
           .data(panels[id].data)
           .renderableElements(panels[id].renderableElements)
           .yEncodingFields(panels[id].yEncodingFields)
-          .labels(panels[id].labels);
+          .labels(panels[id].labelLines);
+
+        this.plotAreaAnnotations[id].labels(panels[id].labels);
       } else if (enteringIds.includes(id)) {
         this.yScales[id] = scaleLinear();
 
@@ -599,7 +625,7 @@ export class Core {
           panels[id].renderableElements,
           panels[id].data,
           panels[id].yEncodingFields,
-          panels[id].labels
+          panels[id].labelLines
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
@@ -694,6 +720,7 @@ export class Core {
               this.yScales[id],
               this.yTransforms[id],
               this.plotAreas[id],
+              this.plotAreaAnnotations[id],
               this.yAxes[id],
               this.isFreePan,
               id,
@@ -716,6 +743,10 @@ export class Core {
           .select(".plot-area")
           .on("draw", (event) => {
             drawPlotArea(event, this.plotAreas, id);
+
+            this.plotAreaAnnotations[id].draw(
+              select(panels[id].ref.current).select(".plot-area-annotations")
+            );
           });
 
         select<HTMLDivElement, unknown>(panels[id].ref.current!)

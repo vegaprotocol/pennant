@@ -2,10 +2,8 @@ import "d3-transition";
 import "@d3fc/d3fc-element";
 import "./plot-container.scss";
 
+import { throttle } from "lodash";
 import * as React from "react";
-
-import { Viewport, ChartElement, Scenegraph, Bounds, Panel } from "../../types";
-import { asyncSnapshot, formatter } from "../../helpers";
 import {
   forwardRef,
   useCallback,
@@ -15,15 +13,16 @@ import {
   useRef,
   useState,
 } from "react";
-
-import { ChartInfo } from "../chart-info";
-import { FcElement, Interval } from "../../types";
-import { IndicatorInfo } from "../indicator-info";
 import { createRef } from "react";
-import { throttle } from "lodash";
+
 import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
-import { CloseButton } from "./close-button";
 import { Core } from "../../core";
+import { asyncSnapshot, formatter } from "../../helpers";
+import { Bounds, ChartElement, Panel,Scenegraph, Viewport } from "../../types";
+import { FcElement, Interval } from "../../types";
+import { ChartInfo } from "../chart-info";
+import { IndicatorInfo } from "../indicator-info";
+import { CloseButton } from "./close-button";
 import { getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PlotContainerProps = {
@@ -130,6 +129,7 @@ export const PlotContainer = forwardRef(
               renderableElements: panel.renderableElements.flat(1),
               yEncodingFields: panel.yEncodingFields,
               labels: panel.labels ?? [],
+              labelLines: panel.labelLines ?? [],
             },
           ])
         ),
@@ -193,6 +193,7 @@ export const PlotContainer = forwardRef(
                 renderableElements: panel.renderableElements.flat(1),
                 yEncodingFields: panel.yEncodingFields,
                 labels: panel.labels ?? [],
+                labelLines: panel.labelLines ?? [],
               },
             ])
           ),
@@ -223,8 +224,9 @@ export const PlotContainer = forwardRef(
               onMouseOut={() => setShowPaneControls(null)}
             >
               <d3fc-canvas class="plot-area" use-device-pixel-ratio />
-              <d3fc-canvas class="y-axis" use-device-pixel-ratio />
               <d3fc-svg class="plot-area-interaction" />
+              <div className="plot-area-annotations" />
+              <d3fc-canvas class="y-axis" use-device-pixel-ratio />
               <d3fc-svg
                 class="y-axis-interaction"
                 style={{

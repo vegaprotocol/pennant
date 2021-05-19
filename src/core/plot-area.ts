@@ -2,8 +2,12 @@ import { bisector, extent } from "d3-array";
 import { closestIndexTo } from "date-fns";
 import { clamp } from "lodash";
 
-import { CrosshairElement, GridElement } from "../elements";
-import { clearCanvas,Colors } from "../helpers";
+import {
+  CrosshairElement,
+  GridElement,
+  RenderableHTMLElement,
+} from "../elements";
+import { clearCanvas, Colors } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 export class PlotArea {
@@ -118,9 +122,8 @@ export class PlotArea {
     const timeAtMouseX = this._xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
     const firstElement: Date = this._data[Math.max(0, index - 1)].date;
-    const secondElement: Date = this._data[
-      Math.min(this._data.length - 1, index)
-    ].date;
+    const secondElement: Date =
+      this._data[Math.min(this._data.length - 1, index)].date;
 
     let indexOffset = 0;
 

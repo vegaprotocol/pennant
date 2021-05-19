@@ -13,3 +13,4 @@ export * from "./element-x-axis-tooltip";
 export * from "./element-y-axis";
 export * from "./element-y-axis-annotation";
 export * from "./element-y-axis-tooltip";
+export * from "./html/element-label-annotation";

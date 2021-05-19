@@ -1,9 +1,9 @@
-import { Chart, ChartProps } from "./chart";
 import { Meta, Story } from "@storybook/react/types-6-0";
 
-import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { Interval } from "../../stories/api/vega-graphql";
+import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
+import { Chart, ChartProps } from "./chart";
 
 export default {
   title: "Components/Chart",
