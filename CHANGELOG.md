@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.22](https://github.com/vegaprotocol/pennant/compare/v0.2.21...v0.2.22) (2021-05-19)
+
+
+### Features
+
+* interactive annotation labels ([#203](https://github.com/vegaprotocol/pennant/issues/203)) ([c5c9606](https://github.com/vegaprotocol/pennant/commit/c5c960635e8cfb706b349e5e3532330f387312dc))
+
+
+### Bug Fixes
+
+* remove console.log statement ([f38d3bd](https://github.com/vegaprotocol/pennant/commit/f38d3bd69aeb1e59f6270dde1a3586165da6c0b8))
+
 ### [0.2.21](https://github.com/vegaprotocol/pennant/compare/v0.2.20...v0.2.21) (2021-05-19)
 
 
