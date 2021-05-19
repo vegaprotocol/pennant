@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.21](https://github.com/vegaprotocol/pennant/compare/v0.2.20...v0.2.21) (2021-05-19)
+
+
+### Features
+
+* label annotations with buttons ([#199](https://github.com/vegaprotocol/pennant/issues/199)) ([2478fc9](https://github.com/vegaprotocol/pennant/commit/2478fc98a663074296ea19b72b56e84c23d7393b))
+
 ### [0.2.20](https://github.com/vegaprotocol/pennant/compare/v0.2.19...v0.2.20) (2021-05-17)
 
 
