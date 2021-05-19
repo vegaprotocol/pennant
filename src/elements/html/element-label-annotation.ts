@@ -1,7 +1,7 @@
 import "./element-label-annotation.scss";
 
 import classNames from "classnames";
-import { select, Selection } from "d3-selection";
+import { Selection } from "d3-selection";
 
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
 
@@ -25,14 +25,6 @@ export interface RenderableHTMLElement {
     yScale: ScaleLinear
   ): void;
 }
-
-type Cell = {
-  label: string;
-  stroke?: boolean;
-  fill?: boolean;
-  onClick?: () => void;
-  spinner?: boolean;
-};
 
 export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
   readonly labels: LabelAnnotation[];
@@ -145,10 +137,10 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
               i === 1 ? "spinner-head" : "spinner-track"
             )
             .attr("stroke-width", strokeWidth)
-            .attr("fill-pacity", 0)
-            .attr("pathLength", (d, i) => (i === 1 ? "280" : null))
-            .attr("stroke-dasharray", (d, i) => (i === 1 ? "280 280" : null))
-            .attr("stroke-dashoffset", (d, i) => (i === 1 ? "210" : null));
+            .attr("fill-opacity", 0)
+            .attr("pathLength", (_d, i) => (i === 1 ? "280" : null))
+            .attr("stroke-dasharray", (_d, i) => (i === 1 ? "280 280" : null))
+            .attr("stroke-dashoffset", (_d, i) => (i === 1 ? "210" : null));
 
           return div;
         },
