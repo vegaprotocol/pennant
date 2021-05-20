@@ -1,6 +1,6 @@
-import { sum, zip } from "d3-array";
+import { sum } from "d3-array";
 
-import { Colors } from "../helpers";
+import { calculateShiftedPositions, Colors } from "../helpers";
 import {
   LabelAnnotation,
   RenderableElement,
@@ -28,8 +28,7 @@ function addLabel(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   pixelRatio: number,
-  label: LabelAnnotation,
-  y: number
+  label: LabelAnnotation
 ) {
   const stroke = label.intent === "success" ? Colors.GREEN : Colors.RED;
 
@@ -48,7 +47,7 @@ function addLabel(
   // Dashed price line
   ctx.beginPath();
   ctx.setLineDash([2 * pixelRatio, 3 * pixelRatio]);
-  ctx.moveTo(totalWidth, y);
+  ctx.moveTo(totalWidth, label.y);
   ctx.lineTo(Math.max(xScale.range()[1] / 2, totalWidth), yScale(label.y));
   ctx.lineTo(xScale.range()[1], yScale(label.y));
   ctx.stroke();
@@ -70,35 +69,16 @@ export class LabelAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    let previousY = -Infinity;
-
     const yPositions = this.labels.map((label) => yScale(label.y));
-    const sortedYPositions = [...yPositions].sort((a, b) => a - b);
-    const shiftedYPositions = sortedYPositions.reduce<number[]>((p, y) => {
-      const ypx = y;
+    const shiftedYPositions = calculateShiftedPositions(yPositions, HEIGHT);
 
-      let ny = ypx;
+    const data: LabelAnnotation[] = this.labels.map((label, labelIndex) => ({
+      ...label,
+      y: shiftedYPositions[labelIndex],
+    }));
 
-      if (ypx - previousY < HEIGHT) {
-        ny = previousY + HEIGHT;
-      }
-
-      p.push(ny);
-
-      previousY = ny || ypx;
-
-      return p;
-    }, []);
-
-    for (const label of zip<any>(this.labels, shiftedYPositions)) {
-      addLabel(
-        ctx,
-        xScale,
-        yScale,
-        pixelRatio,
-        label[0] as LabelAnnotation,
-        label[1] as number
-      );
+    for (const label of data) {
+      addLabel(ctx, xScale, yScale, pixelRatio, label);
     }
   }
 }

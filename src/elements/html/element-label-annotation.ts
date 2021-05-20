@@ -3,6 +3,7 @@ import "./element-label-annotation.scss";
 import classNames from "classnames";
 import { Selection } from "d3-selection";
 
+import { calculateShiftedPositions } from "../../helpers";
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
 
 const HEIGHT = 22;
@@ -40,26 +41,8 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
     xScale: ScaleTime,
     yScale: ScaleLinear
   ): void {
-    let previousY = -Infinity;
-
     const yPositions = this.labels.map((label) => yScale(label.y));
-
-    const sortedYPositions = [...yPositions].sort((a, b) => a - b);
-    const shiftedYPositions = sortedYPositions.reduce<number[]>((p, y) => {
-      const ypx = y;
-
-      let ny = ypx;
-
-      if (ypx - previousY < HEIGHT) {
-        ny = previousY + HEIGHT;
-      }
-
-      p.push(ny);
-
-      previousY = ny || ypx;
-
-      return p;
-    }, []);
+    const shiftedYPositions = calculateShiftedPositions(yPositions, HEIGHT);
 
     const data: LabelAnnotation[] = this.labels.map((label, labelIndex) => ({
       ...label,

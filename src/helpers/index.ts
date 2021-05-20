@@ -5,6 +5,7 @@ export * from "./helpers-color";
 export * from "./helpers-data";
 export * from "./helpers-format";
 export * from "./helpers-interval";
+export * from "./helpers-math";
 export * from "./helpers-scenegraph";
 export * from "./helpers-snapshot";
 export * from "./helpers-spec";
