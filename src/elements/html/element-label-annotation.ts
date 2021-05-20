@@ -5,10 +5,9 @@ import { Selection } from "d3-selection";
 
 import { calculateShiftedPositions } from "../../helpers";
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
+import { LABEL_ANNOTATION_HEIGHT } from "../../constants";
 
-const HEIGHT = 22;
-
-const size = HEIGHT - 8;
+const size = LABEL_ANNOTATION_HEIGHT - 8;
 const strokeWidth = 16;
 const R = 45;
 const radius = R + strokeWidth / 2;
@@ -38,11 +37,14 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
 
   draw(
     selection: Selection<Element, any, any, any>,
-    xScale: ScaleTime,
+    _xScale: ScaleTime,
     yScale: ScaleLinear
   ): void {
     const yPositions = this.labels.map((label) => yScale(label.y));
-    const shiftedYPositions = calculateShiftedPositions(yPositions, HEIGHT);
+    const shiftedYPositions = calculateShiftedPositions(
+      yPositions,
+      LABEL_ANNOTATION_HEIGHT
+    );
 
     const data: LabelAnnotation[] = this.labels.map((label, labelIndex) => ({
       ...label,
@@ -61,7 +63,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
           .style("position", "absolute")
           .style("pointer-events", "auto")
       )
-      .style("top", (d) => `${d.y - HEIGHT / 2}px`);
+      .style("top", (d) => `${d.y - LABEL_ANNOTATION_HEIGHT / 2}px`);
 
     label
       .selectAll("span.cell")
