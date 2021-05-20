@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.24](https://github.com/vegaprotocol/pennant/compare/v0.2.23...v0.2.24) (2021-05-20)
+
+
+### Bug Fixes
+
+* place label annotations in correct place on first render ([5aa775b](https://github.com/vegaprotocol/pennant/commit/5aa775b423e22c0df71916e5a9c6348649bb9369))
+
 ### [0.2.23](https://github.com/vegaprotocol/pennant/compare/v0.2.22...v0.2.23) (2021-05-19)
 
 
