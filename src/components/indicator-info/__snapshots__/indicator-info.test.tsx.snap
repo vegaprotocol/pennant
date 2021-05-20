@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IndicatorInfo renders correctly 1`] = `
+<div
+  className="study-info-wrapper"
+>
+  <span
+    className="text-muted"
+  >
+    RSI: 
+  </span>
+  <div>
+    <span
+      className="text-muted"
+    >
+       
+    </span>
+    <span
+      className="monospace-text"
+    >
+      100
+    </span>
+  </div>
+</div>
+`;
