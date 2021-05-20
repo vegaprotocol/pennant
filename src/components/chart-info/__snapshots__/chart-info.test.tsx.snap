@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartInfo renders correctly 1`] = `
+<div
+  className="chart-info-wrapper"
+>
+  <div>
+    <span>
+      00:00 01 Mar 2021
+    </span>
+    <span
+      className="text-muted"
+    >
+       to 
+    </span>
+    <span>
+      00:00 02 Mar 2021
+    </span>
+  </div>
+</div>
+`;
