@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.25](https://github.com/vegaprotocol/pennant/compare/v0.2.24...v0.2.25) (2021-05-20)
+
+
+### Bug Fixes
+
+* export types associated with annotations ([845d9cf](https://github.com/vegaprotocol/pennant/commit/845d9cf770ea0b5f3fd38cc3f9790192d7f06fe2))
+
 ### [0.2.24](https://github.com/vegaprotocol/pennant/compare/v0.2.23...v0.2.24) (2021-05-20)
 
 
