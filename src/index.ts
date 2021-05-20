@@ -5,7 +5,9 @@ export type {
   ChartElement,
   ChartType,
   DataSource,
+  Intent,
   LabelAnnotation,
+  LabelAnnotationCell,
   Overlay,
   Study,
 } from "./types";

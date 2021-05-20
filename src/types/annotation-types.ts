@@ -8,16 +8,18 @@ export declare const Intent: {
 
 export type Intent = typeof Intent[keyof typeof Intent];
 
+export type LabelAnnotationCell = {
+  label: string;
+  stroke?: boolean;
+  fill?: boolean;
+  onClick?: () => void;
+  spinner?: boolean;
+};
+
 export type LabelAnnotation = {
   type: "label";
   id: string;
-  cells: {
-    label: string;
-    stroke?: boolean;
-    fill?: boolean;
-    onClick?: () => void;
-    spinner?: boolean;
-  }[];
+  cells: LabelAnnotationCell[];
   intent: Intent;
   y: number;
 };
