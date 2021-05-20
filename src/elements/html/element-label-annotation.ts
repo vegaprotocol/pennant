@@ -69,27 +69,20 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
     const label = selection
       .selectAll<Element, LabelAnnotation>("div.annotation")
       .data(data, (d) => d.id)
-      .join(
-        (enter) => {
-          return enter
-            .append("div")
-            .attr("class", (d) => `annotation intent-${d.intent}`)
-            .style("left", `0px`)
-            .style("height", `22px`)
-            .style("position", "absolute")
-            .style("pointer-events", "auto");
-        },
-        (update) => {
-          return update.style("top", (d) => `${d.y - HEIGHT / 2}px`);
-        },
-        (exit) => {
-          return exit.remove();
-        }
-      );
+      .join((enter) =>
+        enter
+          .append("div")
+          .attr("class", (d) => `annotation intent-${d.intent}`)
+          .style("left", `0px`)
+          .style("height", `22px`)
+          .style("position", "absolute")
+          .style("pointer-events", "auto")
+      )
+      .style("top", (d) => `${d.y - HEIGHT / 2}px`);
 
     label
       .selectAll("span.cell")
-      .data((d) => [...d.cells].slice(0, -1))
+      .data((d) => d.cells.filter((d) => !("onClick" in d)))
       .join("span")
       .attr("class", (d) =>
         classNames("cell", { fill: d.fill }, { stroke: d.stroke })
@@ -98,7 +91,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
 
     label
       .selectAll("div.cell")
-      .data((d) => [...d.cells].slice(-1))
+      .data((d) => d.cells.filter((d) => "onClick" in d))
       .join(
         (enter) => {
           const div = enter.append("div").attr("class", "cell");
@@ -159,8 +152,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
             .style("visibility", (d) => (d.spinner ? "visible" : "hidden"));
 
           return update;
-        },
-        (exit) => exit.remove()
+        }
       );
   }
 }
