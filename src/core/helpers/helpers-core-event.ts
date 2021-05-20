@@ -36,8 +36,14 @@ export function handleXAxisDrag(
 
   const xr = xTransform().rescaleX(xScale);
   xAxis.xScale(xr);
-  Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
-  Object.values(yAxes).forEach((axis) => axis.xScale(xr));
+
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.xScale(xr);
+  }
+
+  for (const axis of Object.values(yAxes)) {
+    axis.xScale(xr);
+  }
 
   onBoundsChanged(xr.domain() as [Date, Date]);
   onRedraw();
@@ -50,8 +56,7 @@ export function handleYAxisDrag(
   yScale: ScaleLinear,
   yTransform: () => ZoomTransform,
   plotArea: PlotArea,
-  yAxis
-  : YAxis,
+  yAxis: YAxis,
   onFreePanChanged: (isFreePan: boolean) => void,
   onRedraw: () => void
 ): void {
@@ -109,8 +114,14 @@ export function measureXAxis(
 
   const xr = xTransform().rescaleX(xScale);
   xAxis.xScale(xr);
-  Object.values(yAxes).forEach((axis) => axis.xScale(xr));
-  Object.values(plotAreas).forEach((plotArea) => plotArea.xScale(xr));
+
+  for (const axis of Object.values(yAxes)) {
+    axis.xScale(xr);
+  }
+
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.xScale(xr);
+  }
 }
 
 export function drawXAxis(event: any, xAxis: XAxis) {
@@ -133,18 +144,18 @@ export function handleZoomend(
   offset: [number, number],
   yScale: ScaleLinear,
   xAxis: XAxis,
-  yAxes: Panes<YAxis>,
+  yAxis: YAxis,
   id: string,
   onRedraw: () => void
 ) {
   const [_index, x] = plotAreas[id].getIndex(offset[0]);
 
-  Object.values(plotAreas).forEach((plotArea) => {
+  for (const plotArea of Object.values(plotAreas)) {
     plotArea.crosshair([x, yScale.invert(offset[1])]);
-  });
+  }
 
   xAxis.crosshair(x);
-  yAxes[id].crosshair(yScale.invert(offset[1]));
+  yAxis.crosshair(yScale.invert(offset[1]));
 
   onRedraw();
 }
@@ -154,13 +165,13 @@ export function handleZoomstart(
   yAxes: Panes<YAxis>,
   xAxis: XAxis
 ) {
-  Object.values(plotAreas).forEach((plotArea) => {
+  for (const plotArea of Object.values(plotAreas)) {
     plotArea.crosshair([null, null]);
-  });
+  }
 
-  Object.values(yAxes).forEach((axis) => {
+  for (const axis of Object.values(yAxes)) {
     axis.crosshair(null);
-  });
+  }
 
   xAxis.crosshair(null);
 }
@@ -192,17 +203,12 @@ export function measureYAxis(
 
 export function drawPlotAreaInteraction(
   event: any,
-  plotAreaInteractions: Panes<PlotAreaInteraction>,
-  id: string
+  plotAreaInteraction: PlotAreaInteraction
 ) {
-  plotAreaInteractions[id].draw(select(event.currentTarget).select("svg"));
+  plotAreaInteraction.draw(select(event.currentTarget).select("svg"));
 }
 
-export function drawPlotArea(
-  event: any,
-  plotAreas: Panes<PlotArea>,
-  id: string
-) {
+export function drawPlotArea(event: any, plotArea: PlotArea) {
   const ctx = select(event.currentTarget)
     .select<HTMLCanvasElement>("canvas")
     .node()
@@ -211,11 +217,11 @@ export function drawPlotArea(
   if (ctx) {
     const pixelRatio = event.detail.pixelRatio;
     ctx.scale(pixelRatio, pixelRatio);
-    plotAreas[id].context(ctx).pixelRatio(pixelRatio).draw();
+    plotArea.context(ctx).pixelRatio(pixelRatio).draw();
   }
 }
 
-export function drawYAxis(event: any, yAxes: Panes<YAxis>, id: string) {
+export function drawYAxis(event: any, yAxis: YAxis) {
   const ctx = select(event.currentTarget)
     .select<HTMLCanvasElement>("canvas")
     .node()
@@ -224,7 +230,7 @@ export function drawYAxis(event: any, yAxes: Panes<YAxis>, id: string) {
   if (ctx) {
     const pixelRatio = event.detail.pixelRatio;
     ctx.scale(pixelRatio, pixelRatio);
-    yAxes[id].context(ctx).pixelRatio(pixelRatio).draw();
+    yAxis.context(ctx).pixelRatio(pixelRatio).draw();
   }
 }
 
@@ -235,14 +241,15 @@ export function handleMouseout(
   onMouseout: () => void,
   onRedraw: () => void
 ) {
-  Object.values(plotAreas).forEach((plotArea) =>
-    plotArea.crosshair([null, null])
-  );
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.crosshair([null, null]);
+  }
 
   xAxis.crosshair(null);
-  Object.values(yAxes).forEach((axis) => {
+
+  for (const axis of Object.values(yAxes)) {
     axis.crosshair(null);
-  });
+  }
 
   onMouseout();
   onRedraw();
@@ -261,11 +268,13 @@ export function handleMousemove(
   // Calculate index of data item
   const [index, x] = plotAreas[id].getIndex(offset[0]);
 
-  Object.values(plotAreas).forEach((plotArea) => plotArea.crosshair([x, null]));
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.crosshair([x, null]);
+  }
 
-  Object.values(yAxes).forEach((axis) => {
+  for (const axis of Object.values(yAxes)) {
     axis.crosshair(null);
-  });
+  }
 
   xAxis.crosshair(x);
 

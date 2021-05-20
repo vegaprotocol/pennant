@@ -5,6 +5,7 @@ export const MAX_CANDLE_WIDTH = 20;
 export const DEFAULT_INTERVAL_WIDTH = 10;
 export const MIN_ZOOM = 0.1;
 export const MAX_ZOOM = 10;
+export const LABEL_ANNOTATION_HEIGHT = 22;
 
 // Axes
 export const MIN_NUM_TICKS = 3;

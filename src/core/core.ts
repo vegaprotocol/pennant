@@ -239,7 +239,7 @@ export class Core {
               offset,
               this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
-              this.yAxes,
+              this.yAxes[id],
               value.id,
               () => this.listeners.call("redraw")
             );
@@ -359,7 +359,7 @@ export class Core {
           );
         })
         .on("draw", (event) => {
-          drawYAxis(event, this.yAxes, id);
+          drawYAxis(event, this.yAxes[id]);
         })
     );
 
@@ -381,7 +381,7 @@ export class Core {
       select<HTMLDivElement, unknown>(area.ref.current!)
         .select(".plot-area")
         .on("draw", (event) => {
-          drawPlotArea(event, this.plotAreas, id);
+          drawPlotArea(event, this.plotAreas[id]);
 
           this.plotAreaAnnotations[id].draw(selection);
         });
@@ -391,7 +391,7 @@ export class Core {
       select<HTMLDivElement, unknown>(area.ref.current!)
         .select(".plot-area-interaction")
         .on("draw", (event) => {
-          drawPlotAreaInteraction(event, this.plotAreaInteractions, id);
+          drawPlotAreaInteraction(event, this.plotAreaInteractions[id]);
         });
     });
 
@@ -640,7 +640,7 @@ export class Core {
               offset,
               this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
-              this.yAxes,
+              this.yAxes[id],
               id,
               () => this.listeners.call("redraw")
             );
@@ -724,7 +724,7 @@ export class Core {
             );
           })
           .on("draw", (event) => {
-            drawYAxis(event, this.yAxes, id);
+            drawYAxis(event, this.yAxes[id]);
           });
 
         select<HTMLDivElement, unknown>(panels[id].ref.current!)
@@ -738,7 +738,7 @@ export class Core {
         select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".plot-area")
           .on("draw", (event) => {
-            drawPlotArea(event, this.plotAreas, id);
+            drawPlotArea(event, this.plotAreas[id]);
 
             this.plotAreaAnnotations[id].draw(
               select(panels[id].ref.current).select(".plot-area-annotations")
@@ -748,7 +748,7 @@ export class Core {
         select<HTMLDivElement, unknown>(panels[id].ref.current!)
           .select(".plot-area-interaction")
           .on("draw", (event) => {
-            drawPlotAreaInteraction(event, this.plotAreaInteractions, id);
+            drawPlotAreaInteraction(event, this.plotAreaInteractions[id]);
           });
 
         this.resetYAxis(id);
