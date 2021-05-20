@@ -15,7 +15,7 @@ import {
 } from "react";
 import { createRef } from "react";
 
-import { THROTTLE_INTERVAL, WIDTH } from "../../constants";
+import { THROTTLE_INTERVAL, Y_AXIS_WIDTH } from "../../constants";
 import { Core } from "../../core";
 import { asyncSnapshot, formatter } from "../../helpers";
 import { Bounds, ChartElement, Panel,Scenegraph, Viewport } from "../../types";
@@ -230,14 +230,14 @@ export const PlotContainer = forwardRef(
               <d3fc-svg
                 class="y-axis-interaction"
                 style={{
-                  width: `${WIDTH}px`,
+                  width: `${Y_AXIS_WIDTH}px`,
                 }}
               />
               {panel.id !== "main" && (
                 <div
                   className="plot-container__close-button-wrapper"
                   style={{
-                    right: `${WIDTH}px`,
+                    right: `${Y_AXIS_WIDTH}px`,
                     opacity: showPaneControls === panel.id ? 1 : 0,
                     visibility:
                       showPaneControls === panel.id ? "visible" : "hidden",

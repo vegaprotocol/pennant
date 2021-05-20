@@ -1,7 +1,7 @@
 import { select, Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
-import { DEFAULT_INTERVAL_WIDTH, WIDTH } from "../../constants";
+import { DEFAULT_INTERVAL_WIDTH, Y_AXIS_WIDTH } from "../../constants";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { Panes } from "../core";
 import { PlotArea } from "../plot-area";
@@ -28,7 +28,7 @@ export function handleXAxisDrag(
     1 - e.dx / (xScale.range()[1] - xScale.range()[0]),
     [
       isPinned
-        ? xScale.range()[1] - WIDTH
+        ? xScale.range()[1] - Y_AXIS_WIDTH
         : (xScale.range()[1] - xScale.range()[0]) / 2,
       0,
     ]
@@ -100,7 +100,7 @@ export function measureXAxis(
   const k = xTransform().k;
 
   const offset =
-    (width / pixelRatio - (WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+    (width / pixelRatio - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
 
   xZoom.translateExtent([
     [xScale(dates[0]) - offset, -Infinity],

@@ -1,4 +1,4 @@
-import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
+import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
 import { align, Colors, getNumYTicks } from "../helpers";
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
@@ -22,9 +22,9 @@ function addYAxisPath(
   ctx.fillStyle = "rgba(0,0,0,0.6)";
 
   ctx.fillRect(
-    xScale.range()[1] - WIDTH,
+    xScale.range()[1] - Y_AXIS_WIDTH,
     yRange[1],
-    WIDTH,
+    Y_AXIS_WIDTH,
     yRange[0] - yRange[1]
   );
 
@@ -41,7 +41,7 @@ function addYAxisPath(
 
     ctx.fillText(
       tickFormat(tick),
-      xRange[1] - WIDTH + MARGIN,
+      xRange[1] - Y_AXIS_WIDTH + MARGIN,
       Math.round(yScale(tick))
     );
 
@@ -53,7 +53,7 @@ function addYAxisPath(
   gradientTop.addColorStop(1, "rgba(0,0,0,0)");
 
   ctx.fillStyle = gradientTop;
-  ctx.fillRect(xRange[1] - WIDTH, 0, WIDTH, FADE_HEIGHT);
+  ctx.fillRect(xRange[1] - Y_AXIS_WIDTH, 0, Y_AXIS_WIDTH, FADE_HEIGHT);
 
   const gradientBottom = ctx.createLinearGradient(
     0,
@@ -66,16 +66,16 @@ function addYAxisPath(
 
   ctx.fillStyle = gradientBottom;
   ctx.fillRect(
-    xRange[1] - WIDTH,
+    xRange[1] - Y_AXIS_WIDTH,
     yScale.range()[0] - FADE_HEIGHT,
-    WIDTH,
+    Y_AXIS_WIDTH,
     FADE_HEIGHT
   );
 
   ctx.beginPath();
   ctx.strokeStyle = Colors.GRAY_LIGHT_1;
-  ctx.moveTo(align(xRange[1] - WIDTH, pixelRatio), yRange[0]);
-  ctx.lineTo(align(xRange[1] - WIDTH, pixelRatio), yRange[1]);
+  ctx.moveTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[0]);
+  ctx.lineTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[1]);
   ctx.stroke();
   ctx.closePath();
 }

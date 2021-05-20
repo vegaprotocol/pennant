@@ -1,4 +1,4 @@
-import { TICK_LABEL_FONT_SIZE, WIDTH } from "../constants";
+import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
 import { align, Colors, formatter } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
@@ -36,11 +36,11 @@ function addYAxisPath(
     ctx.restore();
 
     ctx.beginPath();
-    ctx.moveTo(width - WIDTH - 10, y);
-    ctx.lineTo(width - WIDTH, y - rectHeight / 2);
+    ctx.moveTo(width - Y_AXIS_WIDTH - 10, y);
+    ctx.lineTo(width - Y_AXIS_WIDTH, y - rectHeight / 2);
     ctx.lineTo(width, y - rectHeight / 2);
     ctx.lineTo(width, y + rectHeight / 2);
-    ctx.lineTo(width - WIDTH, y + rectHeight / 2);
+    ctx.lineTo(width - Y_AXIS_WIDTH, y + rectHeight / 2);
     ctx.closePath();
 
     ctx.fillStyle = Colors.GRAY_DARK_1;
@@ -51,7 +51,7 @@ function addYAxisPath(
 
     ctx.beginPath();
     ctx.fillStyle = Colors.WHITE;
-    ctx.fillText(text, width - WIDTH + xPad, y);
+    ctx.fillText(text, width - Y_AXIS_WIDTH + xPad, y);
     ctx.closePath();
   }
 }

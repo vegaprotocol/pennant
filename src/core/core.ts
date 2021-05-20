@@ -16,7 +16,7 @@ import {
   DEFAULT_INTERVAL_WIDTH,
   MAX_ZOOM,
   MIN_ZOOM,
-  WIDTH,
+  Y_AXIS_WIDTH,
 } from "../constants";
 import { RenderableHTMLElement } from "../elements";
 import { getSubMinutes } from "../helpers";
@@ -504,7 +504,7 @@ export class Core {
 
     const latestDate = this.dates[this.dates.length - 1];
     const previousLatestDate = xr.invert(
-      xr.range()[1] - WIDTH - intervalWidth * 3
+      xr.range()[1] - Y_AXIS_WIDTH - intervalWidth * 3
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
@@ -522,7 +522,7 @@ export class Core {
     const ratio =
       (this.xScale.range()[1] - this.xScale.range()[0]) /
       (this.xScale.range()[1] -
-        WIDTH -
+        Y_AXIS_WIDTH -
         intervalWidth * 3 -
         this.xScale.range()[0]);
 
@@ -531,7 +531,7 @@ export class Core {
         (Math.abs(
           this.xScale.range()[1] -
             this.xScale.range()[0] -
-            WIDTH -
+            Y_AXIS_WIDTH -
             3 * intervalWidth
         ) /
           intervalWidth) *
@@ -791,7 +791,7 @@ export class Core {
 
     this.xElement.call(this.xZoom.scaleBy, 2 ** delta, [
       this.isPinned
-        ? this.xScale.range()[1] - WIDTH
+        ? this.xScale.range()[1] - Y_AXIS_WIDTH
         : (this.xScale.range()[0] + this.xScale.range()[1]) / 2,
       0,
     ]);
@@ -849,7 +849,7 @@ export class Core {
       const k = this.xTransform().k * t.k;
 
       const offset =
-        (this.xScale.range()[1] - (WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+        (this.xScale.range()[1] - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
 
       this.xZoom.translateExtent([
         [this.xScale(this.dates[0]) - offset, -Infinity],
@@ -860,7 +860,7 @@ export class Core {
         this.xZoom.scaleBy,
         t.k,
         this.isPinned
-          ? [this.xScale.range()[1] - WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
+          ? [this.xScale.range()[1] - Y_AXIS_WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
           : point
       );
 
