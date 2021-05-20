@@ -1,5 +1,6 @@
 import { select, Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
+import { recalculateScale } from ".";
 
 import { DEFAULT_INTERVAL_WIDTH, Y_AXIS_WIDTH } from "../../constants";
 import { ScaleLinear, ScaleTime } from "../../types";
@@ -283,4 +284,108 @@ export function handleMousemove(
 
   onMousemove(index, id);
   onRedraw();
+}
+
+export function handleZoom(
+  xScale: ScaleTime,
+  yScales: Panes<ScaleLinear>,
+  xAxis: XAxis,
+  yAxes: Panes<YAxis>,
+  xElement: Selection<Element, unknown, null, undefined>,
+  xZoom: ZoomBehavior<Element, unknown>,
+  xTransform: () => ZoomTransform,
+  yElements: Panes<Selection<Element, unknown, null, undefined>>,
+  yTransforms: Panes<() => ZoomTransform>,
+  yZooms: Panes<ZoomBehavior<Element, unknown>>,
+  plotAreas: Panes<PlotArea>,
+  isPinned: boolean,
+  isFreePan: boolean,
+  dates: Date[],
+  t: ZoomTransform,
+  point: [number, number],
+  id: string,
+  onBoundsChanged: (bounds: [Date, Date]) => void,
+  onRedraw: () => void,
+  onFetchData: (from: Date, to: Date) => void
+) {
+  if (t.k === 1) {
+    xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
+
+    if (isFreePan) {
+      yElements[id].call(yZooms[id].translateBy, 0, t.y / yTransforms[id]().k);
+    } else {
+      Object.keys(plotAreas).forEach((id) => {
+        recalculateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          yElements,
+          yZooms,
+          yTransforms
+        );
+      });
+    }
+
+    isPinned = false;
+  } else {
+    const k = xTransform().k * t.k;
+
+    const offset =
+      (xScale.range()[1] - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+
+    xZoom.translateExtent([
+      [xScale(dates[0]) - offset, -Infinity],
+      [xScale(dates[dates.length - 1]) + offset, Infinity],
+    ]);
+
+    xElement.call(
+      xZoom.scaleBy,
+      t.k,
+      isPinned
+        ? [xScale.range()[1] - Y_AXIS_WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
+        : point
+    );
+
+    if (!isFreePan) {
+      Object.keys(plotAreas).forEach((id) => {
+        recalculateScale(
+          xTransform,
+          xScale,
+          yScales,
+          id,
+          plotAreas,
+          yElements,
+          yZooms,
+          yTransforms
+        );
+      });
+    }
+  }
+
+  const xr = xTransform().rescaleX(xScale);
+  const yr = yTransforms[id]().rescaleY(yScales[id]);
+
+  xAxis.xScale(xr);
+
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.xScale(xr);
+  }
+
+  plotAreas[id].yScale(yr);
+  yAxes[id].yScale(yr);
+
+  const domain = xr.domain();
+  const domainWidth = domain[1].getTime() - domain[0].getTime();
+
+  if (dates[0].getTime() + domainWidth > domain[0].getTime()) {
+    const to = dates[0];
+    const from = new Date(dates[0].getTime() - domainWidth);
+
+    onFetchData(from, to);
+  }
+
+  onRedraw();
+  onBoundsChanged(xr.domain() as [Date, Date]);
 }

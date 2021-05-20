@@ -36,6 +36,7 @@ import {
   handleMouseout,
   handleXAxisDrag,
   handleYAxisDrag,
+  handleZoom,
   handleZoomend,
   handleZoomstart,
   measureXAxis,
@@ -224,11 +225,35 @@ export class Core {
     );
 
     this.plotAreaInteractions = Object.fromEntries(
-      Object.entries(panels).map(([id, value]) => [
-        value.id,
+      Object.keys(panels).map((id) => [
+        id,
         new PlotAreaInteraction(this.xScale, this.yScales[id])
           .on("zoom", (_e: any, t: any, point: [number, number]) => {
-            this.zoomed(t, point, value.id);
+            handleZoom(
+              this.xScale,
+              this.yScales,
+              this.xAxis,
+              this.yAxes,
+              this.xElement,
+              this.xZoom,
+              this.xTransform,
+              this.yElements,
+              this.yTransforms,
+              this.yZooms,
+              this.plotAreas,
+              this.isPinned,
+              this.isFreePan,
+              this.dates,
+              t,
+              point,
+              id,
+              (bounds: [Date, Date]) => {
+                this.listeners.call("bounds_changed", this, bounds);
+              },
+              () => this.listeners.call("redraw"),
+              (from: Date, to: Date) =>
+                this.listeners.call("fetch_data", this, from, to)
+            );
           })
           .on("zoomstart", () => {
             handleZoomstart(this.plotAreas, this.yAxes, this.xAxis);
@@ -240,7 +265,7 @@ export class Core {
               this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.xAxis,
               this.yAxes[id],
-              value.id,
+              id,
               () => this.listeners.call("redraw")
             );
           })
@@ -255,7 +280,7 @@ export class Core {
               this.yTransforms[id]().rescaleY(this.yScales[id]),
               this.yAxes,
               this.xAxis,
-              value.id,
+              id,
               (index, id) => this.listeners.call("mousemove", this, index, id),
               () => this.listeners.call("redraw")
             );
@@ -629,7 +654,31 @@ export class Core {
           this.yScales[id]
         )
           .on("zoom", (e, t, point) => {
-            this.zoomed(t, point, id);
+            handleZoom(
+              this.xScale,
+              this.yScales,
+              this.xAxis,
+              this.yAxes,
+              this.xElement,
+              this.xZoom,
+              this.xTransform,
+              this.yElements,
+              this.yTransforms,
+              this.yZooms,
+              this.plotAreas,
+              this.isPinned,
+              this.isFreePan,
+              this.dates,
+              t,
+              point,
+              id,
+              (bounds: [Date, Date]) => {
+                this.listeners.call("bounds_changed", this, bounds);
+              },
+              () => this.listeners.call("redraw"),
+              (from: Date, to: Date) =>
+                this.listeners.call("fetch_data", this, from, to)
+            );
           })
           .on("zoomstart", () => {
             handleZoomstart(this.plotAreas, this.yAxes, this.xAxis);
@@ -812,96 +861,6 @@ export class Core {
         );
       }
     });
-
-    this.listeners.call("redraw");
-    this.listeners.call("bounds_changed", this, xr.domain());
-  }
-
-  private zoomed(t: ZoomTransform, point: [number, number], id: string) {
-    if (t.k === 1) {
-      this.xElement.call(this.xZoom.translateBy, t.x / this.xTransform().k, 0);
-
-      if (this.isFreePan) {
-        this.yElements[id].call(
-          this.yZooms[id].translateBy,
-          0,
-          t.y / this.yTransforms[id]().k
-        );
-      } else {
-        Object.keys(this.plotAreas).forEach((id) => {
-          recalculateScale(
-            this.xTransform,
-            this.xScale,
-            this.yScales,
-            id,
-            this.plotAreas,
-            this.yElements,
-            this.yZooms,
-            this.yTransforms
-          );
-        });
-      }
-
-      this.isPinned = false;
-    } else {
-      const k = this.xTransform().k * t.k;
-
-      const offset =
-        (this.xScale.range()[1] - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) /
-        k;
-
-      this.xZoom.translateExtent([
-        [this.xScale(this.dates[0]) - offset, -Infinity],
-        [this.xScale(this.dates[this.dates.length - 1]) + offset, Infinity],
-      ]);
-
-      this.xElement.call(
-        this.xZoom.scaleBy,
-        t.k,
-        this.isPinned
-          ? [
-              this.xScale.range()[1] -
-                Y_AXIS_WIDTH -
-                3 * DEFAULT_INTERVAL_WIDTH,
-              0,
-            ]
-          : point
-      );
-
-      if (!this.isFreePan) {
-        Object.keys(this.plotAreas).forEach((id) => {
-          recalculateScale(
-            this.xTransform,
-            this.xScale,
-            this.yScales,
-            id,
-            this.plotAreas,
-            this.yElements,
-            this.yZooms,
-            this.yTransforms
-          );
-        });
-      }
-    }
-
-    const xr = this.xTransform().rescaleX(this.xScale);
-    const yr = this.yTransforms[id]().rescaleY(this.yScales[id]);
-
-    this.xAxis.xScale(xr);
-    Object.values(this.plotAreas).forEach((plotArea) => plotArea.xScale(xr));
-
-    this.plotAreas[id].yScale(yr);
-    this.yAxes[id].yScale(yr);
-
-    const domain = xr.domain();
-    const domainWidth = domain[1].getTime() - domain[0].getTime();
-
-    if (this.dates[0].getTime() + domainWidth > domain[0].getTime()) {
-      const to = this.dates[0];
-      const from = new Date(this.dates[0].getTime() - domainWidth);
-
-      this.listeners.call("fetch_data", this, from, to);
-    }
 
     this.listeners.call("redraw");
     this.listeners.call("bounds_changed", this, xr.domain());
