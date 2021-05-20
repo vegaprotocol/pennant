@@ -135,8 +135,18 @@ yarn test
 
 ### Releasing a new version
 
+We use [standard-version](https://github.com/conventional-changelog/standard-version) for semantic versioning and CHANGELOG generation.
+As long as your git commit messages are conventional and accurate, you no longer need to specify the semver type. It will be calculated for you.
+An npm script is provided for convenience.
+
 ```sh
 yarn release
+```
+
+If successful you can push up the new commit and tag with
+
+```sh
+git push --follow-tags origin main
 ```
 
 ### Adding a new chart type
