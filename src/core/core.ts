@@ -178,14 +178,13 @@ export class Core {
         new YAxisInteraction()
           .on("drag", (e) => {
             handleYAxisDrag(
-              this.yElements,
-              this.yZooms,
+              this.yElements[id],
+              this.yZooms[id],
               e,
-              this.yScales,
-              this.yTransforms,
-              this.plotAreas,
-              this.yAxes,
-              id,
+              this.yScales[id],
+              this.yTransforms[id],
+              this.plotAreas[id],
+              this.yAxes[id],
               (isFreePan: boolean) => {
                 this.isFreePan = isFreePan;
               },
@@ -597,14 +596,13 @@ export class Core {
         this.yAxisInteractions[id] = new YAxisInteraction()
           .on("drag", (e) => {
             handleYAxisDrag(
-              this.yElements,
-              this.yZooms,
+              this.yElements[id],
+              this.yZooms[id],
               e,
-              this.yScales,
-              this.yTransforms,
-              this.plotAreas,
-              this.yAxes,
-              id,
+              this.yScales[id],
+              this.yTransforms[id],
+              this.plotAreas[id],
+              this.yAxes[id],
               (isFreePan: boolean) => {
                 this.isFreePan = isFreePan;
               },
@@ -849,7 +847,8 @@ export class Core {
       const k = this.xTransform().k * t.k;
 
       const offset =
-        (this.xScale.range()[1] - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) / k;
+        (this.xScale.range()[1] - (Y_AXIS_WIDTH + DEFAULT_INTERVAL_WIDTH * 3)) /
+        k;
 
       this.xZoom.translateExtent([
         [this.xScale(this.dates[0]) - offset, -Infinity],
@@ -860,7 +859,12 @@ export class Core {
         this.xZoom.scaleBy,
         t.k,
         this.isPinned
-          ? [this.xScale.range()[1] - Y_AXIS_WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
+          ? [
+              this.xScale.range()[1] -
+                Y_AXIS_WIDTH -
+                3 * DEFAULT_INTERVAL_WIDTH,
+              0,
+            ]
           : point
       );
 

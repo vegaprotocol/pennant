@@ -44,27 +44,27 @@ export function handleXAxisDrag(
 }
 
 export function handleYAxisDrag(
-  yElements: Panes<Selection<Element, any, null, undefined>>,
-  yZooms: Panes<ZoomBehavior<Element, unknown>>,
+  yElement: Selection<Element, any, null, undefined>,
+  yZoom: ZoomBehavior<Element, unknown>,
   e: any,
-  yScales: Panes<ScaleLinear>,
-  yTransforms: Panes<() => ZoomTransform>,
-  plotAreas: Panes<PlotArea>,
-  yAxes: Panes<YAxis>,
-  id: string,
+  yScale: ScaleLinear,
+  yTransform: () => ZoomTransform,
+  plotArea: PlotArea,
+  yAxis
+  : YAxis,
   onFreePanChanged: (isFreePan: boolean) => void,
   onRedraw: () => void
 ): void {
-  yElements[id].call(
-    yZooms[id].scaleBy,
-    1 - e.dy / (yScales[id].range()[0] - yScales[id].range()[1]),
-    [0, (yScales[id].range()[0] - yScales[id].range()[1]) / 2]
+  yElement.call(
+    yZoom.scaleBy,
+    1 - e.dy / (yScale.range()[0] - yScale.range()[1]),
+    [0, (yScale.range()[0] - yScale.range()[1]) / 2]
   );
 
-  const yr = yTransforms[id]().rescaleY(yScales[id]);
+  const yr = yTransform().rescaleY(yScale);
 
-  plotAreas[id].yScale(yr);
-  yAxes[id].yScale(yr);
+  plotArea.yScale(yr);
+  yAxis.yScale(yr);
 
   onFreePanChanged(true);
   onRedraw();
