@@ -1,4 +1,3 @@
-import { Cell } from "../../elements";
 import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { Interval } from "../api/vega-graphql";
 import { addDecimal } from "../helpers";
