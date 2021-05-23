@@ -1,6 +1,6 @@
 import { sum } from "d3-array";
-import { LABEL_ANNOTATION_HEIGHT } from "../constants";
 
+import { LABEL_ANNOTATION_HEIGHT } from "../constants";
 import { calculateShiftedPositions, Colors } from "../helpers";
 import {
   LabelAnnotation,
