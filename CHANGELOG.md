@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.26](https://github.com/vegaprotocol/pennant/compare/v0.2.25...v0.2.26) (2021-05-23)
+
+
+### Features
+
+* split-view component ([#211](https://github.com/vegaprotocol/pennant/issues/211)) ([2f7d93a](https://github.com/vegaprotocol/pennant/commit/2f7d93a74db44926e80d9d9e10f855159330a361))
+
 ### [0.2.25](https://github.com/vegaprotocol/pennant/compare/v0.2.24...v0.2.25) (2021-05-20)
 
 
