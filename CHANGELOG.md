@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.27](https://github.com/vegaprotocol/pennant/compare/v0.2.26...v0.2.27) (2021-05-23)
+
+
+### Bug Fixes
+
+* flex issues ([23905db](https://github.com/vegaprotocol/pennant/commit/23905db3268cfa29f8758ce8de3c4731f950e296))
+
 ### [0.2.26](https://github.com/vegaprotocol/pennant/compare/v0.2.25...v0.2.26) (2021-05-23)
 
 
