@@ -720,6 +720,12 @@ export class Core {
             );
           });
 
+        this.plotAreaAnnotations[id] = new PlotAreaAnnotations(
+          this.xScale,
+          this.yScales[id],
+          panels[id].labels
+        );
+
         const domain = this.xTransform().rescaleX(this.xScale).domain() as [
           Date,
           Date
