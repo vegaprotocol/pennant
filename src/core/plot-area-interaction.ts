@@ -1,6 +1,6 @@
 import { mean } from "d3-array";
 import { Dispatch, dispatch } from "d3-dispatch";
-import { pointers,Selection } from "d3-selection";
+import { pointers, Selection } from "d3-selection";
 import {
   zoom as d3Zoom,
   ZoomBehavior,

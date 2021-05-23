@@ -91,6 +91,7 @@ export const Chart = forwardRef(
     const chartRef = useRef<ChartElement>(null!);
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
+    const [proportion, setProportion] = useState(2 / 3);
 
     const [priceMonitoringBounds, setPriceMonitoringBounds] =
       useState<PriceMonitoringBounds | null>(null);
@@ -245,27 +246,21 @@ export const Chart = forwardRef(
     return !isLoading && scenegraph ? (
       <ErrorBoundary>
         <div className="chart__wrapper">
-          <AutoSizer
-            defaultHeight={150}
-            defaultWidth={300}
-            style={{ height: "100%", width: "100%" }}
-          >
-            {({ height, width }) => (
-              <PlotContainer
-                ref={chartRef}
-                width={width}
-                height={height}
-                decimalPlaces={dataSource.decimalPlaces}
-                scenegraph={scenegraph}
-                interval={internalInterval}
-                initialViewport={viewport}
-                overlays={overlays}
-                onViewportChanged={handleViewportChanged}
-                onGetDataRange={handleGetDataRange}
-                onClosePanel={handleClosePanel}
-              />
-            )}
-          </AutoSizer>
+          <PlotContainer
+            ref={chartRef}
+            width={400}
+            height={300}
+            decimalPlaces={dataSource.decimalPlaces}
+            scenegraph={scenegraph}
+            interval={internalInterval}
+            initialViewport={viewport}
+            overlays={overlays}
+            proportion={proportion}
+            onViewportChanged={handleViewportChanged}
+            onGetDataRange={handleGetDataRange}
+            onClosePanel={handleClosePanel}
+            onProportionChanged={setProportion}
+          />
         </div>
       </ErrorBoundary>
     ) : (

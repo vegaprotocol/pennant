@@ -1,0 +1,113 @@
+// https://ux.stackexchange.com/questions/39023/what-is-the-optimum-button-size-of-touch-screen-applications
+:root {
+  --focus-border: #007fd4;
+  --sash-size: 8px;
+  --sash-hover-size: 4px;
+  --separator-border: #454545;
+}
+
+.pennant-split-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.pennant-split-view > .sash-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pennant-split-view > .sash-container > .pennant-sash {
+  pointer-events: initial;
+}
+
+.pennant-split-view {
+  width: 100%;
+  height: 100%;
+}
+
+.pennant-split-view > .split-view-container {
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  position: relative;
+}
+
+.pennant-split-view > .split-view-container > .split-view-view {
+  white-space: initial;
+  position: absolute;
+}
+
+.pennant-split-view > .split-view-container > .split-view-view:not(.visible) {
+  display: none;
+}
+
+.pennant-split-view.vertical > .split-view-container > .split-view-view {
+  width: 100%;
+}
+
+.pennant-split-view.horizontal > .split-view-container > .split-view-view {
+  height: 100%;
+}
+
+.pennant-split-view.separator-border
+  > .split-view-container
+  > .split-view-view:not(:first-child)::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-color: var(--separator-border);
+}
+
+.pennant-split-view.separator-border.vertical
+  > .split-view-container
+  > .split-view-view:not(:first-child)::before {
+  height: 1px;
+  width: 100%;
+}
+
+.pennant-sash {
+  position: absolute;
+  z-index: 35;
+  touch-action: none;
+}
+
+.pennant-sash.horizontal.minimum {
+  cursor: s-resize;
+}
+
+.pennant-sash.horizontal.maximum {
+  cursor: n-resize;
+}
+
+.pennant-sash.horizontal {
+  cursor: ns-resize;
+  left: 0;
+  width: 100%;
+  height: var(--sash-size, 4);
+}
+
+.pennant-sash:before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.1s ease-out;
+  background: transparent;
+}
+
+.pennant-sash.horizontal:before {
+  height: var(--sash-hover-size, 4);
+  top: calc(50% - (var(--sash-hover-size, 4) / 2));
+}
+
+.pennant-sash.hover:before,
+.pennant-sash.active:before {
+  background: var(--focus-border, #007fd4);
+}

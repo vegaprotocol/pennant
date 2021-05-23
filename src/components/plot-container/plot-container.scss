@@ -28,12 +28,24 @@
 
 .plot-container__pane {
   position: relative;
-  flex: 1;
+  height: 100%;
 }
 
 .plot-container__x-axis-container {
   height: 24px;
   position: relative;
+}
+
+.plot-container__x-axis-container::before {
+  height: 1px;
+  width: 100%;
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-color: var(--separator-border);
 }
 
 .d3fc-group {

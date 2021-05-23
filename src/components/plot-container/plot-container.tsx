@@ -18,10 +18,11 @@ import { createRef } from "react";
 import { THROTTLE_INTERVAL, Y_AXIS_WIDTH } from "../../constants";
 import { Core } from "../../core";
 import { asyncSnapshot, formatter } from "../../helpers";
-import { Bounds, ChartElement, Panel,Scenegraph, Viewport } from "../../types";
+import { Bounds, ChartElement, Panel, Scenegraph, Viewport } from "../../types";
 import { FcElement, Interval } from "../../types";
 import { ChartInfo } from "../chart-info";
 import { IndicatorInfo } from "../indicator-info";
+import { SplitView } from "../split-view";
 import { CloseButton } from "./close-button";
 import { getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
@@ -33,10 +34,12 @@ export type PlotContainerProps = {
   interval: Interval;
   initialViewport: Viewport;
   overlays: string[];
+  proportion: number;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePanel: (id: string) => void;
+  onProportionChanged: (proportion: number) => void;
 };
 
 export const PlotContainer = forwardRef(
@@ -47,9 +50,11 @@ export const PlotContainer = forwardRef(
       initialViewport,
       decimalPlaces,
       overlays,
+      proportion,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePanel,
+      onProportionChanged,
     }: PlotContainerProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -213,86 +218,136 @@ export const PlotContainer = forwardRef(
       }
     }, [interval]);
 
+    const panels = scenegraph.panels;
+
+    const main = (
+      <div
+        ref={refs[panels[0].id]}
+        className="plot-container__pane"
+        onMouseOver={() => setShowPaneControls(panels[0].id)}
+        onMouseOut={() => setShowPaneControls(null)}
+      >
+        <d3fc-canvas class="plot-area" use-device-pixel-ratio />
+        <d3fc-svg class="plot-area-interaction" />
+        <div className="plot-area-annotations" />
+        <d3fc-canvas class="y-axis" use-device-pixel-ratio />
+        <d3fc-svg
+          class="y-axis-interaction"
+          style={{
+            width: `${Y_AXIS_WIDTH}px`,
+          }}
+        />
+        <div className="plot-container__info-overlay">
+          {bounds && <ChartInfo bounds={bounds} />}
+          <IndicatorInfo
+            title={studyInfoFields[panels[0].id].label}
+            info={studyInfoFields[panels[0].id].fields.map((field) => ({
+              id: field.id,
+              label: field.label,
+              value: formatter(
+                getStudyInfoFieldValue(
+                  panels[0].originalData,
+                  dataIndex,
+                  field.id
+                ),
+                decimalPlaces
+              ),
+            }))}
+          />
+          {overlays.map((overlay) => (
+            <IndicatorInfo
+              title={studyInfoFields[overlay].label}
+              info={studyInfoFields[overlay].fields.map((field) => ({
+                id: field.id,
+                label: field.label,
+                value: formatter(
+                  getStudyInfoFieldValue(
+                    panels[0].originalData,
+                    dataIndex,
+                    field.id
+                  ),
+                  decimalPlaces
+                ),
+              }))}
+            />
+          ))}
+        </div>
+      </div>
+    );
+
+    const showStudy = scenegraph.panels.length === 2;
+
+    const study = showStudy ? (
+      <div
+        ref={refs[panels[1].id]}
+        className="plot-container__pane"
+        onMouseOver={() => setShowPaneControls(panels[1].id)}
+        onMouseOut={() => setShowPaneControls(null)}
+      >
+        <d3fc-canvas class="plot-area" use-device-pixel-ratio />
+        <d3fc-svg class="plot-area-interaction" />
+        <div className="plot-area-annotations" />
+        <d3fc-canvas class="y-axis" use-device-pixel-ratio />
+        <d3fc-svg
+          class="y-axis-interaction"
+          style={{
+            width: `${Y_AXIS_WIDTH}px`,
+          }}
+        />
+        {panels[1].id !== "main" && (
+          <div
+            className="plot-container__close-button-wrapper"
+            style={{
+              right: `${Y_AXIS_WIDTH}px`,
+              opacity: showPaneControls === panels[1].id ? 1 : 0,
+              visibility:
+                showPaneControls === panels[1].id ? "visible" : "hidden",
+            }}
+          >
+            <div
+              className="plot-container__close-button"
+              onClick={() => {
+                onClosePanel(panels[1].id);
+              }}
+            >
+              <CloseButton size={16} />
+            </div>
+          </div>
+        )}
+        <div className="plot-container__info-overlay">
+          <IndicatorInfo
+            title={studyInfoFields[panels[1].id].label}
+            info={studyInfoFields[panels[1].id].fields.map((field) => ({
+              id: field.id,
+              label: field.label,
+              value: formatter(
+                getStudyInfoFieldValue(
+                  panels[1].originalData,
+                  dataIndex,
+                  field.id
+                ),
+                decimalPlaces
+              ),
+            }))}
+          />
+        </div>
+      </div>
+    ) : (
+      <div>No study</div>
+    );
+
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
-        {scenegraph.panels.map((panel, panelIndex) => (
-          <React.Fragment key={panel.id}>
-            <div
-              ref={refs[panel.id]}
-              className="plot-container__pane"
-              onMouseOver={() => setShowPaneControls(panel.id)}
-              onMouseOut={() => setShowPaneControls(null)}
-            >
-              <d3fc-canvas class="plot-area" use-device-pixel-ratio />
-              <d3fc-svg class="plot-area-interaction" />
-              <div className="plot-area-annotations" />
-              <d3fc-canvas class="y-axis" use-device-pixel-ratio />
-              <d3fc-svg
-                class="y-axis-interaction"
-                style={{
-                  width: `${Y_AXIS_WIDTH}px`,
-                }}
-              />
-              {panel.id !== "main" && (
-                <div
-                  className="plot-container__close-button-wrapper"
-                  style={{
-                    right: `${Y_AXIS_WIDTH}px`,
-                    opacity: showPaneControls === panel.id ? 1 : 0,
-                    visibility:
-                      showPaneControls === panel.id ? "visible" : "hidden",
-                  }}
-                >
-                  <div
-                    className="plot-container__close-button"
-                    onClick={() => {
-                      onClosePanel(panel.id);
-                    }}
-                  >
-                    <CloseButton size={16} />
-                  </div>
-                </div>
-              )}
-              <div className="plot-container__info-overlay">
-                {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
-                <IndicatorInfo
-                  title={studyInfoFields[panel.id].label}
-                  info={studyInfoFields[panel.id].fields.map((field) => ({
-                    id: field.id,
-                    label: field.label,
-                    value: formatter(
-                      getStudyInfoFieldValue(
-                        panel.originalData,
-                        dataIndex,
-                        field.id
-                      ),
-                      decimalPlaces
-                    ),
-                  }))}
-                />
-                {panelIndex === 0 &&
-                  overlays.map((overlay) => (
-                    <IndicatorInfo
-                      title={studyInfoFields[overlay].label}
-                      info={studyInfoFields[overlay].fields.map((field) => ({
-                        id: field.id,
-                        label: field.label,
-                        value: formatter(
-                          getStudyInfoFieldValue(
-                            panel.originalData,
-                            dataIndex,
-                            field.id
-                          ),
-                          decimalPlaces
-                        ),
-                      }))}
-                    />
-                  ))}
-              </div>
-            </div>
-            <div className="plot-container__separator" />
-          </React.Fragment>
-        ))}
+        <SplitView
+          main={main}
+          study={study}
+          showStudy={showStudy}
+          initialProportion={proportion}
+          onResize={(proportion: number) => {
+            chartRef.current?.requestRedraw();
+            onProportionChanged(proportion);
+          }}
+        />
         <div ref={xAxisRef} className="plot-container__x-axis-container">
           <d3fc-canvas class="x-axis" use-device-pixel-ratio />
           <d3fc-svg class="x-axis-interaction" />
