@@ -220,7 +220,7 @@ export const Chart = forwardRef(
       [query]
     );
 
-    const handleClosePanel = useCallback(
+    const handleClosePane = useCallback(
       (id: string) => {
         onOptionsChanged({
           ...options,
@@ -258,7 +258,7 @@ export const Chart = forwardRef(
             proportion={proportion}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
-            onClosePanel={handleClosePanel}
+            onClosePane={handleClosePane}
             onProportionChanged={setProportion}
           />
         </div>

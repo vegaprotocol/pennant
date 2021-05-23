@@ -15,7 +15,7 @@ export interface PositionalElement extends RenderableElement {
   readonly x: Date;
 }
 
-export interface Panel {
+export interface Pane {
   id: string;
   originalData: any[];
   renderableElements: RenderableElement[][];
@@ -35,6 +35,6 @@ export interface Panel {
 }
 
 export interface Scenegraph {
-  panels: Panel[];
-  xAxis: Panel;
+  panes: Pane[];
+  xAxis: Pane;
 }
