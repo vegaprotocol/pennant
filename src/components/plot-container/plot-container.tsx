@@ -1,10 +1,6 @@
-import "d3-transition";
-import "@d3fc/d3fc-element";
-import "./plot-container.scss";
-
 import { throttle } from "lodash";
-import * as React from "react";
 import {
+  createRef,
   forwardRef,
   useCallback,
   useEffect,
@@ -13,7 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { createRef } from "react";
 
 import { THROTTLE_INTERVAL } from "../../constants";
 import { Core } from "../../core";
@@ -22,6 +17,7 @@ import { Bounds, ChartElement, Scenegraph, Viewport } from "../../types";
 import { FcElement, Interval } from "../../types";
 import { PaneView } from "../pane-view";
 import { SplitView } from "../split-view";
+import { XAxisView } from "../x-axis-view";
 
 export type PlotContainerProps = {
   width: number;
@@ -39,7 +35,7 @@ export type PlotContainerProps = {
   onProportionChanged: (proportion: number) => void;
 };
 
-export const PlotContainer = forwardRef(
+export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
   (
     {
       scenegraph,
@@ -52,8 +48,8 @@ export const PlotContainer = forwardRef(
       onGetDataRange = () => {},
       onClosePane,
       onProportionChanged,
-    }: PlotContainerProps,
-    ref: React.Ref<ChartElement>
+    },
+    ref
   ) => {
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -253,10 +249,7 @@ export const PlotContainer = forwardRef(
             onProportionChanged(proportion);
           }}
         />
-        <div ref={xAxisRef} className="plot-container__x-axis-container">
-          <d3fc-canvas class="x-axis" use-device-pixel-ratio />
-          <d3fc-svg class="x-axis-interaction" />
-        </div>
+        <XAxisView ref={xAxisRef} />
       </d3fc-group>
     );
   }

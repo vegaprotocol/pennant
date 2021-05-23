@@ -1,9 +1,9 @@
-.plot-container__x-axis-container {
+.x-axis-container {
   height: 24px;
   position: relative;
 }
 
-.plot-container__x-axis-container::before {
+.x-axis-container::before {
   height: 1px;
   width: 100%;
   content: " ";
