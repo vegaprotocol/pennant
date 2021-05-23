@@ -15,15 +15,13 @@ import {
 } from "react";
 import { createRef } from "react";
 
-import { THROTTLE_INTERVAL, Y_AXIS_WIDTH } from "../../constants";
+import { THROTTLE_INTERVAL } from "../../constants";
 import { Core } from "../../core";
-import { asyncSnapshot, formatter } from "../../helpers";
-import { Bounds, ChartElement, Panel,Scenegraph, Viewport } from "../../types";
+import { asyncSnapshot } from "../../helpers";
+import { Bounds, ChartElement, Scenegraph, Viewport } from "../../types";
 import { FcElement, Interval } from "../../types";
-import { ChartInfo } from "../chart-info";
-import { IndicatorInfo } from "../indicator-info";
-import { CloseButton } from "./close-button";
-import { getStudyInfoFieldValue, studyInfoFields } from "./helpers";
+import { PaneView } from "../pane-view";
+import { SplitView } from "../split-view";
 
 export type PlotContainerProps = {
   width: number;
@@ -33,10 +31,12 @@ export type PlotContainerProps = {
   interval: Interval;
   initialViewport: Viewport;
   overlays: string[];
+  proportion: number;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
-  onClosePanel: (id: string) => void;
+  onClosePane: (id: string) => void;
+  onProportionChanged: (proportion: number) => void;
 };
 
 export const PlotContainer = forwardRef(
@@ -47,9 +47,11 @@ export const PlotContainer = forwardRef(
       initialViewport,
       decimalPlaces,
       overlays,
+      proportion,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
-      onClosePanel,
+      onClosePane,
+      onProportionChanged,
     }: PlotContainerProps,
     ref: React.Ref<ChartElement>
   ) => {
@@ -106,13 +108,13 @@ export const PlotContainer = forwardRef(
 
     const refs = useMemo(
       () =>
-        scenegraph.panels
-          .map((panel) => panel.id)
+        scenegraph.panes
+          .map((pane) => pane.id)
           .reduce((acc, value) => {
             acc[value] = createRef<HTMLDivElement>();
             return acc;
           }, {} as { [index: string]: React.RefObject<HTMLDivElement> }),
-      [scenegraph.panels]
+      [scenegraph.panes]
     );
 
     const chartElement = useRef<Core | null>(null);
@@ -120,22 +122,22 @@ export const PlotContainer = forwardRef(
     useEffect(() => {
       chartElement.current = new Core(
         Object.fromEntries(
-          scenegraph.panels.map((panel) => [
-            panel.id,
+          scenegraph.panes.map((pane) => [
+            pane.id,
             {
-              id: String(panel.id),
-              ref: refs[panel.id],
-              data: panel.originalData,
-              renderableElements: panel.renderableElements.flat(1),
-              yEncodingFields: panel.yEncodingFields,
-              labels: panel.labels ?? [],
-              labelLines: panel.labelLines ?? [],
+              id: String(pane.id),
+              ref: refs[pane.id],
+              data: pane.originalData,
+              renderableElements: pane.renderableElements.flat(1),
+              yEncodingFields: pane.yEncodingFields,
+              labels: pane.labels ?? [],
+              labelLines: pane.labelLines ?? [],
             },
           ])
         ),
         {
           ref: xAxisRef,
-          data: scenegraph.panels[0].originalData.map((d) => d.date),
+          data: scenegraph.panes[0].originalData.map((d) => d.date),
         },
         initialViewport,
         decimalPlaces
@@ -184,28 +186,28 @@ export const PlotContainer = forwardRef(
       if (chartElement.current) {
         chartElement.current.update(
           Object.fromEntries(
-            scenegraph.panels.map((panel) => [
-              panel.id,
+            scenegraph.panes.map((pane) => [
+              pane.id,
               {
-                id: String(panel.id),
-                ref: refs[panel.id],
-                data: panel.originalData,
-                renderableElements: panel.renderableElements.flat(1),
-                yEncodingFields: panel.yEncodingFields,
-                labels: panel.labels ?? [],
-                labelLines: panel.labelLines ?? [],
+                id: String(pane.id),
+                ref: refs[pane.id],
+                data: pane.originalData,
+                renderableElements: pane.renderableElements.flat(1),
+                yEncodingFields: pane.yEncodingFields,
+                labels: pane.labels ?? [],
+                labelLines: pane.labelLines ?? [],
               },
             ])
           ),
           {
             ref: xAxisRef,
-            data: scenegraph.panels[0].originalData.map((d) => d.date),
+            data: scenegraph.panes[0].originalData.map((d) => d.date),
           }
         );
 
         chartRef.current?.requestRedraw();
       }
-    }, [chartElement, refs, scenegraph.panels]);
+    }, [chartElement, refs, scenegraph.panes]);
 
     useEffect(() => {
       if (chartElement.current) {
@@ -213,86 +215,44 @@ export const PlotContainer = forwardRef(
       }
     }, [interval]);
 
+    const showStudy = scenegraph.panes.length === 2;
+
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
-        {scenegraph.panels.map((panel, panelIndex) => (
-          <React.Fragment key={panel.id}>
-            <div
-              ref={refs[panel.id]}
-              className="plot-container__pane"
-              onMouseOver={() => setShowPaneControls(panel.id)}
-              onMouseOut={() => setShowPaneControls(null)}
-            >
-              <d3fc-canvas class="plot-area" use-device-pixel-ratio />
-              <d3fc-svg class="plot-area-interaction" />
-              <div className="plot-area-annotations" />
-              <d3fc-canvas class="y-axis" use-device-pixel-ratio />
-              <d3fc-svg
-                class="y-axis-interaction"
-                style={{
-                  width: `${Y_AXIS_WIDTH}px`,
-                }}
+        <SplitView
+          main={
+            <PaneView
+              ref={refs[scenegraph.panes[0].id]}
+              bounds={bounds}
+              dataIndex={dataIndex}
+              decimalPlaces={decimalPlaces}
+              overlays={overlays}
+              pane={scenegraph.panes[0]}
+              onClosePane={onClosePane}
+            />
+          }
+          study={
+            showStudy ? (
+              <PaneView
+                ref={refs[scenegraph.panes[1].id]}
+                bounds={bounds}
+                dataIndex={dataIndex}
+                decimalPlaces={decimalPlaces}
+                overlays={overlays}
+                pane={scenegraph.panes[1]}
+                onClosePane={onClosePane}
               />
-              {panel.id !== "main" && (
-                <div
-                  className="plot-container__close-button-wrapper"
-                  style={{
-                    right: `${Y_AXIS_WIDTH}px`,
-                    opacity: showPaneControls === panel.id ? 1 : 0,
-                    visibility:
-                      showPaneControls === panel.id ? "visible" : "hidden",
-                  }}
-                >
-                  <div
-                    className="plot-container__close-button"
-                    onClick={() => {
-                      onClosePanel(panel.id);
-                    }}
-                  >
-                    <CloseButton size={16} />
-                  </div>
-                </div>
-              )}
-              <div className="plot-container__info-overlay">
-                {panelIndex === 0 && bounds && <ChartInfo bounds={bounds} />}
-                <IndicatorInfo
-                  title={studyInfoFields[panel.id].label}
-                  info={studyInfoFields[panel.id].fields.map((field) => ({
-                    id: field.id,
-                    label: field.label,
-                    value: formatter(
-                      getStudyInfoFieldValue(
-                        panel.originalData,
-                        dataIndex,
-                        field.id
-                      ),
-                      decimalPlaces
-                    ),
-                  }))}
-                />
-                {panelIndex === 0 &&
-                  overlays.map((overlay) => (
-                    <IndicatorInfo
-                      title={studyInfoFields[overlay].label}
-                      info={studyInfoFields[overlay].fields.map((field) => ({
-                        id: field.id,
-                        label: field.label,
-                        value: formatter(
-                          getStudyInfoFieldValue(
-                            panel.originalData,
-                            dataIndex,
-                            field.id
-                          ),
-                          decimalPlaces
-                        ),
-                      }))}
-                    />
-                  ))}
-              </div>
-            </div>
-            <div className="plot-container__separator" />
-          </React.Fragment>
-        ))}
+            ) : (
+              <div>No study selected</div>
+            )
+          }
+          showStudy={showStudy}
+          initialProportion={proportion}
+          onResize={(proportion: number) => {
+            chartRef.current?.requestRedraw();
+            onProportionChanged(proportion);
+          }}
+        />
         <div ref={xAxisRef} className="plot-container__x-axis-container">
           <d3fc-canvas class="x-axis" use-device-pixel-ratio />
           <d3fc-svg class="x-axis-interaction" />

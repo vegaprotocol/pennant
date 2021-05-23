@@ -3,11 +3,11 @@ import { extent } from "d3-array";
 import { BaseSpec } from "../vega-lite/spec";
 
 export function calculateScales(
-  panel: BaseSpec,
+  pane: BaseSpec,
   data: any[],
   yEncodingFields: string[]
 ): [number, number] {
-  if (!panel) {
+  if (!pane) {
     return [0, 1];
   }
 

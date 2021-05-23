@@ -203,7 +203,7 @@ export function parse(
 ): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
-      `Expected no more than 2 panels. Received ${specification.vconcat.length}`
+      `Expected no more than 2 panes. Received ${specification.vconcat.length}`
     );
   }
 
@@ -302,20 +302,20 @@ export function parse(
   specification.data = { values: newData };
 
   return {
-    panels: isVConcatSpec(specification)
-      ? specification.vconcat.map((panel, panelIndex) => {
+    panes: isVConcatSpec(specification)
+      ? specification.vconcat.map((pane, paneIndex) => {
           return {
-            id: panel.name ?? "",
+            id: pane.name ?? "",
             renderableElements: parseLayer(
-              panel,
+              pane,
               { values: newData },
               specification.encoding ?? {},
               candleWidth
             ),
             bounds: calculateScales(
-              panel,
+              pane,
               newData,
-              extractYEncodingFields(panel)
+              extractYEncodingFields(pane)
             ),
             originalData: newData ?? [],
             grid: new GridElement(),
@@ -323,7 +323,7 @@ export function parse(
             crosshair: new CrosshairElement(),
             axisTooltip: new YAxisTooltipElement(decimalPlaces),
             annotations:
-              panelIndex === 0
+              paneIndex === 0
                 ? [
                     new YAxisAnnotationElement(
                       newData[newData.length - 1].close,
@@ -332,7 +332,7 @@ export function parse(
                   ]
                 : [],
             labels:
-              panelIndex === 0
+              paneIndex === 0
                 ? [
                     new LabelAnnotationHtmlElement({
                       labels: annotations,
@@ -340,15 +340,15 @@ export function parse(
                   ]
                 : [],
             labelLines:
-              panelIndex === 0
+              paneIndex === 0
                 ? [
                     new LabelAnnotationElement({
                       labels: annotations,
                     }),
                   ]
                 : [],
-            yEncodingFields: extractYEncodingFields(panel),
-            yDomain: extractYDomain(panel, newData), // FIXME: duplicate of bounds
+            yEncodingFields: extractYEncodingFields(pane),
+            yDomain: extractYDomain(pane, newData), // FIXME: duplicate of bounds
           };
         })
       : [], // FIXME: If not a vconcat spec what should we do?
