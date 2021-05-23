@@ -1,6 +1,5 @@
 import { select, Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
-import { recalculateScale } from ".";
 
 import { DEFAULT_INTERVAL_WIDTH, Y_AXIS_WIDTH } from "../../constants";
 import { ScaleLinear, ScaleTime } from "../../types";
@@ -10,6 +9,7 @@ import { PlotAreaAnnotations } from "../plot-area-annotations";
 import { PlotAreaInteraction } from "../plot-area-interaction";
 import { XAxis } from "../x-axis";
 import { YAxis } from "../y-axis";
+import { recalculateScale } from ".";
 
 export function handleXAxisDrag(
   xElement: Selection<Element, unknown, null, undefined>,
