@@ -25,8 +25,8 @@
 }
 
 .pane__pane {
-  position: relative;
   height: 100%;
+  position: relative;
 }
 
 .d3fc-group {

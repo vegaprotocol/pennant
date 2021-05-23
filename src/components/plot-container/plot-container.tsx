@@ -1,3 +1,5 @@
+import "./plot-container.css";
+
 import { throttle } from "lodash";
 import {
   createRef,
@@ -82,8 +84,9 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
     const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [showPaneControls, setShowPaneControls] =
-      useState<string | null>(null);
+    const [showPaneControls, setShowPaneControls] = useState<string | null>(
+      null
+    );
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
