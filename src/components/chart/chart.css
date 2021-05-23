@@ -1,0 +1,11 @@
+.chart__wrapper {
+  color: var(--pennant-font-color-base);
+  font-family: var(--pennant-font-family-base);
+  font-size: 12px;
+  font-weight: 400;
+  height: 100%;
+  letter-spacing: 0;
+  line-height: 1.28581;
+  position: relative;
+  text-transform: none;
+}

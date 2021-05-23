@@ -1,4 +1,4 @@
-import "./chart-controls.scss";
+import "./chart-controls.css";
 
 import {
   Alignment,

@@ -1,4 +1,4 @@
-import "./element-label-annotation.scss";
+import "./element-label-annotation.css";
 
 import classNames from "classnames";
 import { Selection } from "d3-selection";

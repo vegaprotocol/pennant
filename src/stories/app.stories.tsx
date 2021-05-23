@@ -1,4 +1,4 @@
-import "./app.stories.scss";
+import "./app.stories.css";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";

@@ -1,4 +1,4 @@
-import "./non-ideal-state.scss";
+import "./non-ideal-state.css";
 
 export type NonIdealStateProps = {
   description?: string;

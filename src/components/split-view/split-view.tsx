@@ -1,4 +1,4 @@
-import "./split-view.scss";
+import "./split-view.css";
 
 import classNames from "classnames";
 import { clamp, debounce } from "lodash";

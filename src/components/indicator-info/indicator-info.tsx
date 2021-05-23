@@ -1,4 +1,4 @@
-import "./indicator-info.scss";
+import "./indicator-info.css";
 
 export type IndicatorInfoProps = {
   title: string;
@@ -7,7 +7,7 @@ export type IndicatorInfoProps = {
 
 export const IndicatorInfo = ({ title, info }: IndicatorInfoProps) => {
   return (
-    <div className="study-info-wrapper">
+    <div className="indicator-info-wrapper">
       <span className="text-muted">{`${title}: `}</span>
       {info.map((d) => (
         <div key={d.id}>

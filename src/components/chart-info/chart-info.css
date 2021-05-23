@@ -1,9 +1,6 @@
-@import "../../styles/colors";
-
 .chart-info-wrapper {
   align-items: center;
-  background-color: $overlay-backdrop;
-  color: #f5f8fa;
+  background-color: var(--pennant-hover-overlay);
   cursor: default;
   display: inline-flex;
   flex-direction: row;

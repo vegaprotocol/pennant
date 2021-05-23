@@ -1,9 +1,6 @@
-@import "../../styles/colors";
-
-.study-info-wrapper {
+.indicator-info-wrapper {
   align-items: center;
-  background-color: $overlay-backdrop;
-  color: #f5f8fa;
+  background-color: var(--pennant-hover-overlay);
   cursor: default;
   display: inline-flex;
   flex-direction: row;
@@ -16,5 +13,5 @@
 }
 
 .text-muted {
-  color: #a7b6c2;
+  color: var(--pennant-font-color-secondary);
 }

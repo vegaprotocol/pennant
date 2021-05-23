@@ -1,4 +1,4 @@
-import "./plot-container.stories.scss";
+import "./plot-container.stories.css";
 
 import { Meta, Story } from "@storybook/react/types-6-0";
 

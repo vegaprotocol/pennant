@@ -2,7 +2,7 @@
 
 exports[`IndicatorInfo renders correctly 1`] = `
 <div
-  className="study-info-wrapper"
+  className="indicator-info-wrapper"
 >
   <span
     className="text-muted"

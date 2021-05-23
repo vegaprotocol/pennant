@@ -1,4 +1,5 @@
-import "./chart.scss";
+import "../../styles/variables.css";
+import "./chart.css";
 
 import React, {
   forwardRef,
@@ -9,7 +10,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 import { INITIAL_NUM_CANDLES } from "../../constants";
 import {
@@ -93,8 +93,10 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [proportion, setProportion] = useState(2 / 3);
 
-    const [priceMonitoringBounds, setPriceMonitoringBounds] =
-      useState<PriceMonitoringBounds | null>(null);
+    const [
+      priceMonitoringBounds,
+      setPriceMonitoringBounds,
+    ] = useState<PriceMonitoringBounds | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);

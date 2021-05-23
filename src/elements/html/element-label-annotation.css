@@ -1,11 +1,9 @@
-@import "../../styles/colors";
-
 .annotation {
-  background-color: black;
+  background-color: var(--pennant-color-black);
   border-color: grey;
   border-style: solid;
   border-width: 2px;
-  color: white;
+  color: var(--pennant-font-color-base);
   display: inline-flex;
   flex-direction: row;
   align-items: stretch;
@@ -25,58 +23,50 @@
 }
 
 .annotation.intent-primary {
-  border-color: #137cbd;
+  border-color: var(--pennant-color-info);
 }
 
 .annotation.intent-primary > .cell {
-  border-color: #137cbd;
+  border-color: var(--pennant-color-info);
 }
 
 .annotation.intent-primary > .cell.fill {
-  background-color: #137cbd;
-  color: black;
+  background-color: var(--pennant-color-info);
+  color: var(--pennant-color-black);
 }
 
 .annotation.intent-success {
-  border-color: $vega-green3;
+  border-color: var(--pennant-color-success);
 }
 
 .annotation.intent-success > .cell {
-  border-color: $vega-green3;
+  border-color: var(--pennant-color-success);
 }
 
 .annotation.intent-success > .cell.fill {
-  background-color: $vega-green3;
-  color: black;
+  background-color: var(--pennant-color-success);
+  color: var(--pennant-color-black);
 }
 
 .annotation.intent-success > .cell.stroke {
-  color: $vega-green3;
-}
-
-.annotation.intent-warning {
-  border-color: #d9822b;
-}
-
-.annotation.intent-warning > .cell {
-  border-color: #d9822b;
+  color: var(--pennant-color-success);
 }
 
 .annotation.intent-danger {
-  border-color: $vega-red3;
+  border-color: var(--pennant-color-danger);
 }
 
 .annotation.intent-danger > .cell {
-  border-color: $vega-red3;
+  border-color: var(--pennant-color-danger);
 }
 
 .annotation.intent-danger > .cell.fill {
-  background-color: $vega-red3;
-  color: black;
+  background-color: var(--pennant-color-danger);
+  color: var(--pennant-color-black);
 }
 
 .annotation.intent-danger > .cell.stroke {
-  color: $vega-red3;
+  color: var(--pennant-color-danger);
 }
 
 .cell > button {
@@ -87,7 +77,7 @@
 }
 
 .cell > button.action {
-  color: white;
+  color: var(--pennant-cont-color-base);
 }
 
 .cell:last-child {

@@ -1,4 +1,4 @@
-import "./pane-view.scss";
+import "./pane-view.css";
 import "@d3fc/d3fc-element";
 
 import { forwardRef, useState } from "react";

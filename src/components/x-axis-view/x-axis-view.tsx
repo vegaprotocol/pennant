@@ -1,4 +1,4 @@
-import "./x-axis-view.scss";
+import "./x-axis-view.css";
 import "@d3fc/d3fc-element";
 
 import { forwardRef } from "react";

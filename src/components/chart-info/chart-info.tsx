@@ -1,4 +1,4 @@
-import "./chart-info.scss";
+import "./chart-info.css";
 
 import { format } from "date-fns";
 
