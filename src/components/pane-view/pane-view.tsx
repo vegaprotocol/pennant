@@ -61,7 +61,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
           </div>
         )}
         <div className="pane__info-overlay">
-          {pane.id !== "main" && bounds && <ChartInfo bounds={bounds} />}
+          {pane.id === "main" && bounds && <ChartInfo bounds={bounds} />}
           <IndicatorInfo
             title={studyInfoFields[pane.id].label}
             info={studyInfoFields[pane.id].fields.map((field) => ({
