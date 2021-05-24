@@ -93,6 +93,21 @@ The minimum props required are:
 - options
 - interval
 
+### Styling pennant
+
+You may customize the styling of pennant components by overriding the default CSS variables.
+
+```css
+/**
+ * You can override the default pennant variables.
+ * Note: this is not a complete list of --pennant- variables.
+ */
+:root {
+  --pennant-color-success: #26ff8a;
+  --pennant-color-danger: #ff261a;
+}
+```
+
 ## Data
 
 Pennant displays financial data using a DataSource object you pass as a prop to the React Chart component. This object must implement the DataSource interface, and typically takes the form of a class.
