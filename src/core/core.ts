@@ -64,7 +64,7 @@ export type ChartPane = {
 };
 
 /**
- * The chart component renders multiple plot areas which share a common x-axis.
+ * The Core class renders multiple plot areas which share a common x-axis.
  *
  * Zooming and panning of plot areas is supported. Dragging the axes will zoom the apprpriate dimension.
  */
@@ -252,7 +252,10 @@ export class Core {
               },
               () => this.listeners.call("redraw"),
               (from: Date, to: Date) =>
-                this.listeners.call("fetch_data", this, from, to)
+                this.listeners.call("fetch_data", this, from, to),
+              (isPinned) => {
+                this.isPinned = isPinned;
+              }
             );
           })
           .on("zoomstart", () => {
@@ -585,10 +588,16 @@ export class Core {
     this.yElements[id].call(this.yZooms[id].transform, zoomIdentity);
   }
 
+  /**
+   * Updates the chart when new data arrives
+   *
+   * @param panes
+   * @param axis
+   */
   update(
     panes: Panes<ChartPane>,
     axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] }
-  ) {
+  ): this {
     const oldIds = Object.keys(this.plotAreas);
     const newIds = Object.keys(panes);
 
@@ -676,7 +685,10 @@ export class Core {
               },
               () => this.listeners.call("redraw"),
               (from: Date, to: Date) =>
-                this.listeners.call("fetch_data", this, from, to)
+                this.listeners.call("fetch_data", this, from, to),
+              (isPinned) => {
+                this.isPinned = isPinned;
+              }
             );
           })
           .on("zoomstart", () => {
@@ -824,8 +836,7 @@ export class Core {
     this.dates = axis.data;
 
     // Update latest price
-    const latestPrice =
-      panes["main"].data[panes["main"].data.length - 1].close;
+    const latestPrice = panes["main"].data[panes["main"].data.length - 1].close;
 
     this.yAxes["main"].latestPrice(latestPrice);
     this.plotAreas["main"].latestPrice(latestPrice);

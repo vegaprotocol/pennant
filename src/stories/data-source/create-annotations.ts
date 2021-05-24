@@ -1,10 +1,14 @@
-import { LabelAnnotation } from "../../types";
+import { LabelAnnotation, LabelAnnotationCell } from "../..";
 import {
   orders_orders,
+  OrderStatus,
+  PendingAction,
   positions_party_positions,
   Side,
 } from "../api/vega-graphql";
 import { addDecimal, formatNumber } from "../helpers";
+import * as i18n from "../i18n";
+import { OrderBlockChainState } from "./vega-protocol-data-source";
 
 function getSignFromValue(value: number) {
   return value >= 0 ? "+" : "-";
@@ -24,10 +28,7 @@ export function createPositionLabelAnnotation(
     cells: [
       { label: "Position" },
       {
-        label: `${formatNumber(
-          addDecimal(position.averageEntryPrice, 0),
-          decimalPlaces
-        )}`,
+        label: `${formatNumber(position.averageEntryPrice, decimalPlaces)}`,
       },
       {
         label: `${getSignFromValue(Number(position.openVolume))}${Math.abs(
@@ -36,41 +37,61 @@ export function createPositionLabelAnnotation(
         fill: true,
       },
       {
-        label: `PnL ${formatNumber(
-          addDecimal(position.unrealisedPNL, 0),
+        label: `${i18n.GLOBAL.pnl} ${formatNumber(
+          position.unrealisedPNL,
           decimalPlaces
         )}`,
         stroke: true,
       },
     ],
-    intent: "success",
+    intent: Number(position.unrealisedPNL) > 0 ? "success" : "danger",
     y: Number(addDecimal(position.averageEntryPrice, decimalPlaces)),
   };
 }
 
 export function createOrderLabelAnnotation(
   order: orders_orders,
-  decimalPlaces: number
+  decimalPlaces: number,
+  onOrderCancelled: (id: string) => void
 ): LabelAnnotation {
+  const cells: LabelAnnotationCell[] = [
+    // Type and time-in-force
+    {
+      label: `${order.type ? i18n.ORDER_TYPE[order.type] : "-"} ${
+        i18n.ORDER_TIF[order.timeInForce]
+      }`,
+      stroke: true,
+    },
+    // Price
+    {
+      label: `${formatNumber(
+        addDecimal(order.price, 0),
+        order.market?.decimalPlaces ?? 0
+      )}`,
+    },
+    // Size
+    {
+      label: `${getSignFromSide(order.side)}${Number(order.size)}`,
+      stroke: true,
+    },
+  ];
+
+  // Optional cancel button
+  if (
+    order.createdAt !== OrderBlockChainState.Optimistic &&
+    order.status === OrderStatus.Active
+  ) {
+    cells.push({
+      label: `${i18n.GLOBAL.cancel}`,
+      onClick: () => onOrderCancelled(order.id),
+      spinner: order.pending && order.pendingAction === PendingAction.Cancel,
+    });
+  }
+
   return {
     type: "label",
     id: order.id,
-    cells: [
-      {
-        label: `${order.type} ${order.timeInForce}`,
-        stroke: true,
-      },
-      {
-        label: `${formatNumber(
-          addDecimal(order.price, 0),
-          order.market?.decimalPlaces ?? 0
-        )}`,
-      },
-      {
-        label: `${getSignFromSide(order.side)}${Number(order.size)}`,
-        stroke: true,
-      },
-    ],
+    cells: cells,
     intent: "danger",
     y: Number(
       addDecimal(order.price, order.market?.decimalPlaces ?? decimalPlaces)

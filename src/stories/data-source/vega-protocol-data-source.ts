@@ -1,6 +1,6 @@
 import { ApolloClient } from "@apollo/client";
 
-import { Annotation, Candle, DataSource, LabelAnnotation } from "../../types";
+import { Annotation, Candle, DataSource, LabelAnnotation } from "../..";
 import {
   CandleDetails,
   candleQuery,
@@ -27,6 +27,10 @@ import {
   createPositionLabelAnnotation,
 } from "./create-annotations";
 
+export enum OrderBlockChainState {
+  Optimistic = "Optimistic",
+}
+
 const defaultConfig = {
   decimalPlaces: 5,
   supportedIntervals: [
@@ -40,10 +44,11 @@ const defaultConfig = {
   priceMonitoringBounds: [],
 };
 
-function isActiveOrPartiallyFilled(order: orders_orders) {
+function isActiveOrPartiallyFilledAndNotOptimistic(order: orders_orders) {
   return (
-    order.status === OrderStatus.Active ||
-    order.status === OrderStatus.PartiallyFilled
+    (order.status === OrderStatus.Active ||
+      order.status === OrderStatus.PartiallyFilled) &&
+    order.createdAt !== OrderBlockChainState.Optimistic
   );
 }
 
@@ -64,15 +69,17 @@ function parseCandle(candle: CandleDetails, decimalPlaces: number): Candle {
 export class VegaDataSource implements DataSource {
   client: ApolloClient<any>;
   marketId: string;
+  partyId: string;
   _decimalPlaces: number = 0;
 
   candlesSub: ZenObservable.Subscription | null = null;
   marketDataSub: ZenObservable.Subscription | null = null;
   positionsSub: ZenObservable.Subscription | null = null;
   ordersSub: ZenObservable.Subscription | null = null;
-  partyId: string;
   orderAnnotations: Annotation[] = [];
   positionAnnotations: Annotation[] = [];
+
+  onOrderCancelled: (id: string) => void;
 
   /**
    * Indicates the number of decimal places that an integer must be shifted by in order to get a correct
@@ -82,10 +89,23 @@ export class VegaDataSource implements DataSource {
     return this._decimalPlaces;
   }
 
-  constructor(client: ApolloClient<any>, marketId: string, partyId: string) {
+  /**
+   *
+   * @param client - An ApolloClient instance.
+   * @param marketId - Market identifier.
+   * @param partyId - Party identifier.
+   * @param onOrderClosed - Callback called when the user initiates closing an order
+   */
+  constructor(
+    client: ApolloClient<any>,
+    marketId: string,
+    partyId: string,
+    onOrderClosed: (id: string) => void
+  ) {
     this.client = client;
     this.marketId = marketId;
     this.partyId = partyId;
+    this.onOrderCancelled = onOrderClosed;
   }
 
   /**
@@ -182,7 +202,7 @@ export class VegaDataSource implements DataSource {
     });
 
     this.candlesSub = res.subscribe(({ data }) => {
-      const candle = parseCandle(data.candles, this.decimalPlaces); // FIXME: Get from subscription
+      const candle = parseCandle(data.candles, this.decimalPlaces);
 
       onSubscriptionData(candle);
     });
@@ -195,6 +215,9 @@ export class VegaDataSource implements DataSource {
     this.candlesSub && this.candlesSub.unsubscribe();
   }
 
+  /**
+   * Used by the charting library to create a subscription to streaming annotation data.
+   */
   subscribeAnnotations(
     onSubscriptionAnnotation: (annotations: Annotation[]) => void
   ) {
@@ -228,6 +251,9 @@ export class VegaDataSource implements DataSource {
     }
   }
 
+  /**
+   * Used by the charting library to clean-up a subscription to streaming annotation data.
+   */
   unsubscribeAnnotations() {
     this.ordersSub && this.ordersSub.unsubscribe();
     this.positionsSub && this.positionsSub.unsubscribe();
@@ -263,13 +289,17 @@ export class VegaDataSource implements DataSource {
   ) {
     const validOrders = orders
       .filter((order) => order.market?.id === this.marketId)
-      .filter(isActiveOrPartiallyFilled);
+      .filter(isActiveOrPartiallyFilledAndNotOptimistic);
 
     const orderAnnotations: LabelAnnotation[] = [];
 
     for (const order of validOrders) {
       orderAnnotations.push(
-        createOrderLabelAnnotation(order, this._decimalPlaces)
+        createOrderLabelAnnotation(
+          order,
+          this._decimalPlaces,
+          this.onOrderCancelled
+        )
       );
     }
 

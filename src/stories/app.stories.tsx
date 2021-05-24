@@ -94,7 +94,8 @@ export const VegaProtocol: Story = () => {
       new VegaDataSource(
         client,
         market,
-        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
+        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
+        console.log
       ),
     [market]
   );

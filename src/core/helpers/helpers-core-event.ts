@@ -306,7 +306,8 @@ export function handleZoom(
   id: string,
   onBoundsChanged: (bounds: [Date, Date]) => void,
   onRedraw: () => void,
-  onFetchData: (from: Date, to: Date) => void
+  onFetchData: (from: Date, to: Date) => void,
+  onIsPinnedChanged: (isPinned: boolean) => void
 ) {
   if (t.k === 1) {
     xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
@@ -328,7 +329,7 @@ export function handleZoom(
       });
     }
 
-    isPinned = false;
+    onIsPinnedChanged(false);
   } else {
     const k = xTransform().k * t.k;
 
