@@ -74,7 +74,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
               ),
             }))}
           />
-          {pane.id !== "main" &&
+          {pane.id === "main" &&
             overlays.map((overlay) => (
               <IndicatorInfo
                 title={studyInfoFields[overlay].label}
