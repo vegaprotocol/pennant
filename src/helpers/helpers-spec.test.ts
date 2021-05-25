@@ -2,10 +2,14 @@ import { constructTopLevelSpec } from ".";
 
 const data: any[] = [{ open: 100, close: 100 }];
 
+const outputData: any[] = [
+  { open: 100, close: 100, absoluteChange: NaN, percentageChange: NaN },
+];
+
 describe("constructTopLevelSpec", () => {
   test("Basic candle chart spec", () => {
     expect(constructTopLevelSpec(data, "candle")).toEqual({
-      data: { values: data },
+      data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
       vconcat: [
@@ -55,7 +59,7 @@ describe("constructTopLevelSpec", () => {
 
   test("Basic area chart spec", () => {
     expect(constructTopLevelSpec(data, "area")).toEqual({
-      data: { values: data },
+      data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
       vconcat: [
@@ -84,7 +88,7 @@ describe("constructTopLevelSpec", () => {
 
   test("Basic line chart spec", () => {
     expect(constructTopLevelSpec(data, "line")).toEqual({
-      data: { values: data },
+      data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
       vconcat: [
@@ -106,7 +110,7 @@ describe("constructTopLevelSpec", () => {
 
   test("Basic area chart spec with overlay", () => {
     expect(constructTopLevelSpec(data, "area", "bollinger")).toEqual({
-      data: { values: data },
+      data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [{ indicator: "bollinger", on: "close" }],
       vconcat: [
@@ -143,7 +147,7 @@ describe("constructTopLevelSpec", () => {
 
   test("Basic area chart spec with study", () => {
     expect(constructTopLevelSpec(data, "area", undefined, "volume")).toEqual({
-      data: { values: data },
+      data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
       vconcat: [
