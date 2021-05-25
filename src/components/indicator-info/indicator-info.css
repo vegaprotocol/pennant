@@ -4,6 +4,7 @@
   cursor: default;
   display: inline-flex;
   flex-direction: row;
+  font-size: var(--pennant-font-size-base);
   gap: 8px;
   padding: 4px;
   pointer-events: auto;
@@ -23,7 +24,7 @@
 
 .monospace-text {
   font-family: var(--pennant-font-family-monospace);
-  font-size: 14px;
+  font-size: var(--pennant-font-size-monospace);
   font-variant-numeric: tabular-nums;
 }
 

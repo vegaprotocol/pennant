@@ -48,4 +48,7 @@
 
   --pennant-font-family-base: "Helvetica neue", "Helvetica", Arial, sans-serif;
   --pennant-font-family-monospace: "Roboto Mono", monospace;
+
+  --pennant-font-size-base: 10px;
+  --pennant-font-size-monospace: 12px;
 }
