@@ -1,4 +1,6 @@
 import {
+  timeDay,
+  timeMonth,
   utcDay,
   utcHour,
   utcMinute,
@@ -8,6 +10,7 @@ import {
   utcYear,
 } from "d3-time";
 import { timeFormat } from "d3-time-format";
+import { format } from "date-fns";
 
 import { Interval } from "../types";
 
@@ -37,25 +40,6 @@ export function dateFormat(date: Date, interval: Interval) {
   }
 }
 
-// FIXME: UTC is not correct
-export function multiFormat(date: Date) {
-  return (utcSecond(date) < date
-    ? formatMillisecond
-    : utcMinute(date) < date
-    ? formatSecond
-    : utcHour(date) < date
-    ? formatMinute
-    : utcDay(date) < date
-    ? formatHour
-    : utcMonth(date) < date
-    ? utcWeek(date) < date
-      ? formatDay
-      : formatWeek
-    : utcYear(date) < date
-    ? formatMonth
-    : formatYear)(date);
-}
-
 // TODO: Don't create a new Intl.NumberFormat instance on every invocation
 export const formatter = (value: number, fractionDigits: number = 5) => {
   if (isNaN(value)) {
@@ -67,3 +51,59 @@ export const formatter = (value: number, fractionDigits: number = 5) => {
     minimumFractionDigits: fractionDigits,
   }).format(value);
 };
+
+export function tickFormat(ticks: Date[], interval: Interval) {
+  switch (interval) {
+    case Interval.I1M:
+    case Interval.I5M:
+    case Interval.I15M: {
+      const arr = [];
+
+      for (let i = 0; i < ticks.length; i++) {
+        if (
+          (i === 0 && timeDay(ticks[i]) < ticks[i]) ||
+          (i > 0 && ticks[i - 1].getDay() === ticks[i].getDay())
+        ) {
+          arr.push(format(ticks[i], "HH:mm"));
+        } else {
+          arr.push(format(ticks[i], "d"));
+        }
+      }
+
+      return arr;
+    }
+    case Interval.I1H:
+    case Interval.I6H: {
+      const arr = [];
+
+      for (let i = 0; i < ticks.length; i++) {
+        if (
+          (i === 0 && timeDay(ticks[i]) < ticks[i]) ||
+          (i > 0 && ticks[i - 1].getDay() === ticks[i].getDay())
+        ) {
+          arr.push(format(ticks[i], "HH:mm"));
+        } else {
+          arr.push(format(ticks[i], "d"));
+        }
+      }
+
+      return arr;
+    }
+    case Interval.I1D: {
+      const arr = [];
+
+      for (let i = 0; i < ticks.length; i++) {
+        if (
+          (i === 0 && timeMonth(ticks[i]) < ticks[i]) ||
+          (i > 0 && ticks[i - 1].getMonth() === ticks[i].getMonth())
+        ) {
+          arr.push(format(ticks[i], "d"));
+        } else {
+          arr.push(format(ticks[i], "d LLL"));
+        }
+      }
+
+      return arr;
+    }
+  }
+}
