@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.29](https://github.com/vegaprotocol/pennant/compare/v0.2.28...v0.2.29) (2021-05-25)
+
+
+### Bug Fixes
+
+* overlay details should appear on main chart ([6b3bcfe](https://github.com/vegaprotocol/pennant/commit/6b3bcfee9612eef5807038fe8e0d3f8eaa49c1cb))
+
 ### [0.2.28](https://github.com/vegaprotocol/pennant/compare/v0.2.27...v0.2.28) (2021-05-24)
 
 
