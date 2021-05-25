@@ -17,7 +17,7 @@ export const IndicatorInfo = ({ title, info }: IndicatorInfoProps) => {
     <div className="indicator-info-wrapper">
       {title && <span className="text-muted">{`${title}: `}</span>}
       {info.map((d) => (
-        <div key={d.id}>
+        <div key={d.id} className="indicator-info__item">
           {d.label && <span className="text-muted">{`${d.label} `}</span>}
           <span
             className={classNames(
