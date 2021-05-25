@@ -6,6 +6,7 @@ export type {
   ChartType,
   DataSource,
   Intent,
+  Interval,
   LabelAnnotation,
   LabelAnnotationCell,
   Overlay,

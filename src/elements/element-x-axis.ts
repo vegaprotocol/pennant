@@ -1,5 +1,5 @@
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
-import { Colors, dateFormat } from "../helpers";
+import { Colors, tickFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";
 import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
@@ -14,16 +14,17 @@ function addXAxisPath(
   const xRange = xScale.range();
   const numXTicks = getNumXTicks(xRange[1] - xRange[0]);
   const xTicks = xScale.ticks(numXTicks);
+  const xTickLabels = tickFormat(xTicks, interval);
 
-  xTicks.forEach(function drawTick(tick) {
+  for (let i = 0; i < xTicks.length; i++) {
     ctx.beginPath();
     ctx.fillStyle = Colors.GRAY_LIGHT;
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     ctx.font = `${TICK_LABEL_FONT_SIZE}px ${TICK_LABEL_FONT}`;
-    ctx.fillText(dateFormat(tick, interval), xScale(tick), 9);
+    ctx.fillText(xTickLabels[i], xScale(xTicks[i]), 9);
     ctx.closePath();
-  });
+  }
 }
 
 export class XAxisElement implements RenderableElement {
