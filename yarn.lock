@@ -3078,6 +3078,11 @@
   dependencies:
     "@types/d3-selection" "*"
 
+"@types/d3-format@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-2.0.0.tgz#607d261cb268f0a027f100575491031539a40ee6"
+  integrity sha512-uagdkftxnGkO4pZw5jEYOM5ZnZOEsh7z8j11Qxk85UkB2RzfUUxRl7R9VvvJZHwKn8l+x+rpS77Nusq7FkFmIg==
+
 "@types/d3-interpolate@*":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/d3-interpolate/-/d3-interpolate-2.0.0.tgz#325029216dc722c1c68c33ccda759f1209d35823"
@@ -5716,6 +5721,11 @@ d3-drag@2, d3-drag@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-2.0.0.tgz#a10bcc0f986c372b729ba447382413aabf5b0767"
   integrity sha512-Ab3S6XuE/Q+flY96HXT0jOXcM4EAClYFnRGY5zsjRGNy6qCYrQsMffs7cV5Q9xejb35zxW5hf/guKw34kvIKsA==
+
+d3-format@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-3.0.0.tgz#49971ce004d9969a2d6eb8385e3bac735a843a2f"
+  integrity sha512-vzHbrRFaD/Jx1zpiQWojO2Lvgmf7pIsA/D4b6ipd1hxBYzMKsZRsF3i+SWlHz8IpMF4epyKUdG+vhxEYUYB/1g==
 
 "d3-interpolate@1 - 2", "d3-interpolate@1.2.0 - 2":
   version "2.0.1"

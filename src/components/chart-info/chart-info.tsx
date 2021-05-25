@@ -2,7 +2,7 @@ import "./chart-info.css";
 
 import { format } from "date-fns";
 
-const DATE_FORMAT = "HH:mm dd MMM yyyy";
+import { DATE_FORMAT } from "../../constants";
 
 export type ChartInfoProps = {
   bounds: [Date, Date];

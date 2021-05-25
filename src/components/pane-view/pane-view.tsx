@@ -6,10 +6,9 @@ import { forwardRef, useState } from "react";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";
 import { Bounds, Pane } from "../../types";
-import { ChartInfo } from "../chart-info";
 import { IndicatorInfo } from "../indicator-info";
 import { CloseButton } from "./close-button";
-import { getStudyInfoFieldValue, studyInfoFields } from "./helpers";
+import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PaneViewProps = {
   bounds: Bounds | null;
@@ -62,34 +61,44 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
           </div>
         )}
         <div className="pane__info-overlay">
-          {pane.id === "main" && bounds && <ChartInfo bounds={bounds} />}
           <IndicatorInfo
             title={studyInfoFields[pane.id].label}
-            info={studyInfoFields[pane.id].fields.map((field) => ({
-              id: field.id,
-              label: field.label,
-              value: formatter(
-                getStudyInfoFieldValue(pane.originalData, dataIndex, field.id),
-                decimalPlaces
-              ),
-            }))}
+            info={studyInfoFields[pane.id].fields.map((field) => {
+              const value = getStudyInfoFieldValue(
+                pane.originalData,
+                dataIndex,
+                field.id
+              );
+
+              return {
+                id: field.id,
+                label: field.label,
+                value: field.format
+                  ? field.format(value, decimalPlaces)
+                  : formatter(value, decimalPlaces),
+                intent: getIntent(field, value),
+              };
+            })}
           />
-          {pane.id !== "main" &&
+          {pane.id === "main" &&
             overlays.map((overlay) => (
               <IndicatorInfo
                 title={studyInfoFields[overlay].label}
-                info={studyInfoFields[overlay].fields.map((field) => ({
-                  id: field.id,
-                  label: field.label,
-                  value: formatter(
-                    getStudyInfoFieldValue(
-                      pane.originalData,
-                      dataIndex,
-                      field.id
-                    ),
-                    decimalPlaces
-                  ),
-                }))}
+                info={studyInfoFields[overlay].fields.map((field) => {
+                  const value = getStudyInfoFieldValue(
+                    pane.originalData,
+                    dataIndex,
+                    field.id
+                  );
+
+                  return {
+                    id: field.id,
+                    label: field.label,
+                    value: field.format
+                      ? field.format(value, decimalPlaces)
+                      : formatter(value, decimalPlaces),
+                  };
+                })}
               />
             ))}
         </div>
