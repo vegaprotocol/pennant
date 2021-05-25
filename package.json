@@ -50,7 +50,7 @@
     "d3-array": "2.3.3",
     "d3-dispatch": "^2.0.0",
     "d3-drag": "^2.0.0",
-    "d3-format": "^3.0.0",
+    "d3-format": "^2.0.0",
     "d3-scale": "^3.2.3",
     "d3-selection": "^2.0.0",
     "d3-shape": "^2.0.0",
