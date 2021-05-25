@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.31](https://github.com/vegaprotocol/pennant/compare/v0.2.30...v0.2.31) (2021-05-25)
+
+
+### Features
+
+* allow font-size to be overriden ([6d72a17](https://github.com/vegaprotocol/pennant/commit/6d72a17ebf052fa4f2fa57164fd1bc02b26d9078))
+
 ### [0.2.30](https://github.com/vegaprotocol/pennant/compare/v0.2.29...v0.2.30) (2021-05-25)
 
 
