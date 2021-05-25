@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.30](https://github.com/vegaprotocol/pennant/compare/v0.2.29...v0.2.30) (2021-05-25)
+
+
+### Features
+
+* better time axis tick labels ([#220](https://github.com/vegaprotocol/pennant/issues/220)) ([ac8ade3](https://github.com/vegaprotocol/pennant/commit/ac8ade30fc99dd6264bebaec837bc62262cc3dbe))
+* extra candle details ([#222](https://github.com/vegaprotocol/pennant/issues/222)) ([d947d38](https://github.com/vegaprotocol/pennant/commit/d947d38cd385f825bb245f957d3da0ab692bfef4))
+
 ### [0.2.29](https://github.com/vegaprotocol/pennant/compare/v0.2.28...v0.2.29) (2021-05-25)
 
 
