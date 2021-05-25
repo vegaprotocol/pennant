@@ -392,6 +392,14 @@ export function constructTopLevelSpec(
     vconcat.push(studySpecification);
   }
 
+  // Calculate change
+  data = data.map((d, i) => ({
+    ...d,
+    percentageChange:
+      i > 0 ? (d.close - data[i - 1].close) / data[i - 1].close : NaN,
+    absoluteChange: i > 0 ? d.close - data[i - 1].close : NaN,
+  }));
+
   if (priceMonitoringBounds) {
     data = data.map((d) => ({
       ...d,

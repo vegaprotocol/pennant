@@ -12,6 +12,25 @@
   z-index: 1;
 }
 
+.indicator-info__item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .text-muted {
   color: var(--pennant-font-color-secondary);
+}
+
+.monospace-text {
+  font-family: var(--pennant-font-family-monospace);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.monospace-text.success {
+  color: var(--pennant-color-success);
+}
+
+.monospace-text.danger {
+  color: var(--pennant-color-danger);
 }

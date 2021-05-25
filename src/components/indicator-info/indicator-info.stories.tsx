@@ -13,6 +13,20 @@ const Template: Story<IndicatorInfoProps> = (args) => (
   </div>
 );
 
+export const CandleDetails = Template.bind({});
+
+CandleDetails.args = {
+  title: "",
+  info: [
+    { id: "date", label: "", value: "12:00 29 Jan 2021" },
+    { id: "open", label: "O", value: "0.023" },
+    { id: "high", label: "H", value: "0.023" },
+    { id: "low", label: "L", value: "0.023" },
+    { id: "close", label: "C", value: "0.023" },
+    { id: "change", label: "Change", value: "+0.23%", intent: "success" },
+  ],
+};
+
 export const MACD = Template.bind({});
 
 MACD.args = {
