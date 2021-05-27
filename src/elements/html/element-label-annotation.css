@@ -1,24 +1,24 @@
 .annotation {
+  align-items: stretch;
   background-color: var(--pennant-color-black);
-  border-color: grey;
+  border-color: var(--pennant-color-gray-500);
   border-style: solid;
   border-width: 2px;
   color: var(--pennant-font-color-base);
+  cursor: default;
   display: inline-flex;
   flex-direction: row;
-  align-items: stretch;
-  font-size: 14px;
-  cursor: default;
+  font-size: var(--pennant-font-size-annotation);
   user-select: none;
 }
 
 .cell {
   border-right-style: solid;
   border-right-width: 2px;
-  padding: 0 4px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 0 4px;
   position: relative;
 }
 
@@ -72,8 +72,8 @@
 .cell > button {
   background: none;
   border: none;
-  padding: 0 4px;
   cursor: pointer;
+  padding: 0 4px;
 }
 
 .cell > button.action {
@@ -87,8 +87,8 @@
 .spinner-head {
   stroke: #8a9ba8;
   stroke-linecap: round;
-  transform-origin: center;
   transition: stroke-dashoffset 0.2s cubic-bezier(0.4, 1, 0.75, 0.9);
+  transform-origin: center;
 }
 
 .spinner-track {
@@ -96,11 +96,11 @@
 }
 
 .spinner-animation {
+  animation: spinner-animation 0.5s linear infinite;
+  left: 50%;
   position: absolute;
   top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
-  animation: spinner-animation 0.5s linear infinite;
 }
 
 .no-spin {
