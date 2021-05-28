@@ -4,6 +4,12 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  transition: opacity 0.4s, visibility 0.4s;
+}
+
+.non-ideal-state.hide {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .heading {
