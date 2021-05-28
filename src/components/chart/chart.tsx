@@ -93,10 +93,8 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [proportion, setProportion] = useState(2 / 3);
 
-    const [
-      priceMonitoringBounds,
-      setPriceMonitoringBounds,
-    ] = useState<PriceMonitoringBounds | null>(null);
+    const [priceMonitoringBounds, setPriceMonitoringBounds] =
+      useState<PriceMonitoringBounds | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);
@@ -197,15 +195,17 @@ export const Chart = forwardRef(
     }, [dataSource]);
 
     useEffect(() => {
-      setIsLoading(true);
-
-      dataSource.onReady().then((configuration) => {
+      const onReady = async () => {
+        setIsLoading(true);
+        const configuration = await dataSource.onReady();
         setIsLoading(false);
 
         if (configuration.priceMonitoringBounds.length > 0) {
           setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
         }
-      });
+      };
+
+      onReady();
     }, [dataSource]);
 
     const handleViewportChanged = useCallback(
