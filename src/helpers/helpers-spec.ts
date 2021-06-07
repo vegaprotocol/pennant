@@ -2,6 +2,10 @@ import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";
 import { Colors } from "./helpers-color";
+import {
+  indicatorAbsoluteChange,
+  indicatorPercentageChange,
+} from "./helpers-technical-indicators";
 
 function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   switch (chartType) {
@@ -393,11 +397,23 @@ export function constructTopLevelSpec(
   }
 
   // Calculate change
+  const percentageChangeData = indicatorPercentageChange().period(2)(
+    data.map((d) => d.close)
+  );
+
+  const percentageChangeData24 = indicatorPercentageChange().period(25)(
+    data.map((d) => d.close)
+  );
+
+  const absoluteChangeData = indicatorAbsoluteChange().period(2)(
+    data.map((d) => d.close)
+  );
+
   data = data.map((d, i) => ({
     ...d,
-    percentageChange:
-      i > 0 ? (d.close - data[i - 1].close) / data[i - 1].close : NaN,
-    absoluteChange: i > 0 ? d.close - data[i - 1].close : NaN,
+    percentageChange: percentageChangeData[i],
+    percentageChangeData24: percentageChangeData24[i],
+    absoluteChange: absoluteChangeData[i],
   }));
 
   if (priceMonitoringBounds) {

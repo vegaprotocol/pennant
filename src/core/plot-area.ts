@@ -78,13 +78,15 @@ export class PlotArea {
         element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
       }
 
-      this.latestPriceCrosshair.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        [null, this.latestPricePosition]
-      );
+      if (false) {
+        this.latestPriceCrosshair.draw(
+          this.ctx,
+          this._xScale,
+          this._yScale,
+          this._pixelRatio,
+          [null, this.latestPricePosition]
+        );
+      }
 
       this._crosshair.draw(
         this.ctx,
@@ -122,9 +124,8 @@ export class PlotArea {
     const timeAtMouseX = this._xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
     const firstElement: Date = this._data[Math.max(0, index - 1)].date;
-    const secondElement: Date = this._data[
-      Math.min(this._data.length - 1, index)
-    ].date;
+    const secondElement: Date =
+      this._data[Math.min(this._data.length - 1, index)].date;
 
     let indexOffset = 0;
 

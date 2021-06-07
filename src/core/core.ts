@@ -94,6 +94,8 @@ export class Core {
   private isPinned = true;
   private isFreePan = false;
 
+  private isSimple = true;
+
   // Data
   private dates: Date[];
 
@@ -123,7 +125,8 @@ export class Core {
     panes: Panes<ChartPane>,
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
     initialViewport: Viewport,
-    decimalPlaces: number = 5
+    decimalPlaces: number = 5,
+    simple = false
   ) {
     this._decimalPlaces = decimalPlaces;
 
@@ -530,7 +533,7 @@ export class Core {
 
     const latestDate = this.dates[this.dates.length - 1];
     const previousLatestDate = xr.invert(
-      xr.range()[1] - Y_AXIS_WIDTH - intervalWidth * 3
+      xr.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH) - intervalWidth * 3
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
@@ -548,7 +551,7 @@ export class Core {
     const ratio =
       (this.xScale.range()[1] - this.xScale.range()[0]) /
       (this.xScale.range()[1] -
-        Y_AXIS_WIDTH -
+        (this.isSimple ? 0 : Y_AXIS_WIDTH) -
         intervalWidth * 3 -
         this.xScale.range()[0]);
 
@@ -557,7 +560,7 @@ export class Core {
         (Math.abs(
           this.xScale.range()[1] -
             this.xScale.range()[0] -
-            Y_AXIS_WIDTH -
+            (this.isSimple ? 0 : Y_AXIS_WIDTH) -
             3 * intervalWidth
         ) /
           intervalWidth) *
@@ -854,7 +857,7 @@ export class Core {
 
     this.xElement.call(this.xZoom.scaleBy, 2 ** delta, [
       this.isPinned
-        ? this.xScale.range()[1] - Y_AXIS_WIDTH
+        ? this.xScale.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH)
         : (this.xScale.range()[0] + this.xScale.range()[1]) / 2,
       0,
     ]);

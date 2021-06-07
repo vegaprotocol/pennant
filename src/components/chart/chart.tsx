@@ -41,6 +41,7 @@ export type Options = {
   chartType?: ChartType;
   overlays?: Overlay[];
   studies?: Study[];
+  simple?: boolean;
 };
 
 export type ChartProps = {
@@ -68,7 +69,12 @@ export const Chart = forwardRef(
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
-    const { chartType = "candle", studies = [], overlays = [] } = options;
+    const {
+      chartType = "candle",
+      studies = [],
+      overlays = [],
+      simple = false,
+    } = options;
 
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -258,6 +264,7 @@ export const Chart = forwardRef(
             initialViewport={viewport}
             overlays={overlays}
             proportion={proportion}
+            simple={simple}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
