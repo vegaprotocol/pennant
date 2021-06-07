@@ -3,13 +3,13 @@ import "./market-grid.css";
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import React, { useMemo } from "react";
+import { Icon } from "@blueprintjs/core";
+import { useMemo } from "react";
 
 import { Chart } from "../../../components/chart";
 import { Interval } from "../../../types";
 import { markets_markets } from "../../api/vega-graphql";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
-import { Icon } from "@blueprintjs/core";
 
 const httpLink = new HttpLink({
   uri: "https://lb.testnet.vega.xyz/query",
