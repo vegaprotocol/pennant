@@ -300,6 +300,7 @@ export function handleZoom(
   plotAreas: Panes<PlotArea>,
   isPinned: boolean,
   isFreePan: boolean,
+  isSimple: boolean,
   dates: Date[],
   t: ZoomTransform,
   point: [number, number],
@@ -341,13 +342,11 @@ export function handleZoom(
       [xScale(dates[dates.length - 1]) + offset, Infinity],
     ]);
 
-    xElement.call(
-      xZoom.scaleBy,
-      t.k,
-      isPinned
-        ? [xScale.range()[1] - Y_AXIS_WIDTH - 3 * DEFAULT_INTERVAL_WIDTH, 0]
-        : point
-    );
+    const xr = xTransform().rescaleX(xScale);
+
+    const referencePoint = xr(dates[dates.length - 1]);
+
+    xElement.call(xZoom.scaleBy, t.k, isPinned ? [referencePoint, 0] : point);
 
     if (!isFreePan) {
       Object.keys(plotAreas).forEach((id) => {

@@ -14,6 +14,7 @@ import { MutableRefObject } from "react";
 
 import {
   DEFAULT_INTERVAL_WIDTH,
+  INITIAL_NUM_CANDLES,
   MAX_ZOOM,
   MIN_ZOOM,
   Y_AXIS_WIDTH,
@@ -89,10 +90,13 @@ export class Core {
   private _interval = Interval.I1M;
 
   private _decimalPlaces = 5;
+  private initialNumCandles = INITIAL_NUM_CANDLES;
 
   // Modes
   private isPinned = true;
   private isFreePan = false;
+
+  private isSimple = false;
 
   // Data
   private dates: Date[];
@@ -123,9 +127,13 @@ export class Core {
     panes: Panes<ChartPane>,
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
     initialViewport: Viewport,
-    decimalPlaces: number = 5
+    decimalPlaces: number = 5,
+    simple = false,
+    initialNumCandles = 24
   ) {
     this._decimalPlaces = decimalPlaces;
+    this.isSimple = simple;
+    this.initialNumCandles = initialNumCandles;
 
     // x-axis
     this.dates = axis.data;
@@ -219,7 +227,8 @@ export class Core {
           pane.renderableElements.flat(1),
           pane.data,
           pane.yEncodingFields,
-          pane.labelLines
+          pane.labelLines,
+          this.isSimple
         ),
       ])
     );
@@ -243,6 +252,7 @@ export class Core {
               this.plotAreas,
               this.isPinned,
               this.isFreePan,
+              this.isSimple,
               this.dates,
               t,
               point,
@@ -530,7 +540,7 @@ export class Core {
 
     const latestDate = this.dates[this.dates.length - 1];
     const previousLatestDate = xr.invert(
-      xr.range()[1] - Y_AXIS_WIDTH - intervalWidth * 3
+      xr.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH) - intervalWidth * 3
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
@@ -543,12 +553,16 @@ export class Core {
 
   resetXAxis(): void {
     const latestDate = this.dates[this.dates.length - 1];
-    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
+
+    const width = this.xScale.range()[1] - this.xScale.range()[0];
+
+    const intervalWidth =
+      width / this.initialNumCandles ?? DEFAULT_INTERVAL_WIDTH;
 
     const ratio =
-      (this.xScale.range()[1] - this.xScale.range()[0]) /
+      width /
       (this.xScale.range()[1] -
-        Y_AXIS_WIDTH -
+        (this.isSimple ? 0 : Y_AXIS_WIDTH) -
         intervalWidth * 3 -
         this.xScale.range()[0]);
 
@@ -557,8 +571,8 @@ export class Core {
         (Math.abs(
           this.xScale.range()[1] -
             this.xScale.range()[0] -
-            Y_AXIS_WIDTH -
-            3 * intervalWidth
+            (this.isSimple ? 0 : Y_AXIS_WIDTH) -
+            (this.isSimple ? 0 : 3 * intervalWidth)
         ) /
           intervalWidth) *
           1000 *
@@ -654,7 +668,8 @@ export class Core {
           panes[id].renderableElements,
           panes[id].data,
           panes[id].yEncodingFields,
-          panes[id].labelLines
+          panes[id].labelLines,
+          this.isSimple
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
@@ -676,6 +691,7 @@ export class Core {
               this.plotAreas,
               this.isPinned,
               this.isFreePan,
+              this.isSimple,
               this.dates,
               t,
               point,
@@ -854,7 +870,7 @@ export class Core {
 
     this.xElement.call(this.xZoom.scaleBy, 2 ** delta, [
       this.isPinned
-        ? this.xScale.range()[1] - Y_AXIS_WIDTH
+        ? this.xScale.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH)
         : (this.xScale.range()[0] + this.xScale.range()[1]) / 2,
       0,
     ]);
