@@ -6,12 +6,13 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 
-import { INITIAL_NUM_CANDLES } from "../../constants";
+import { FONT_FAMILY_MONOSPACE, INITIAL_NUM_CANDLES } from "../../constants";
 import {
   constructTopLevelSpec,
   getCandleWidth,
@@ -216,6 +217,19 @@ export const Chart = forwardRef(
 
       onReady();
     }, [dataSource]);
+
+    useLayoutEffect(() => {
+      document.documentElement.style.setProperty(
+        "--pennant-font-family-monospace",
+        FONT_FAMILY_MONOSPACE
+      );
+
+      return () => {
+        document.documentElement.style.removeProperty(
+          "--pennant-font-family-monospace"
+        );
+      };
+    }, []);
 
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
