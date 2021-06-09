@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.32](https://github.com/vegaprotocol/pennant/compare/v0.2.31...v0.2.32) (2021-06-09)
+
+
+### Features
+
+* avoid flash of loading component ([#229](https://github.com/vegaprotocol/pennant/issues/229)) ([3fa14b1](https://github.com/vegaprotocol/pennant/commit/3fa14b1a045f336cf7aae3ba4bf11c208429972a))
+* simplified chart view ([#243](https://github.com/vegaprotocol/pennant/issues/243)) ([4268969](https://github.com/vegaprotocol/pennant/commit/4268969b9c4b4481099d6a437abb97e047fca1b0))
+
+
+### Bug Fixes
+
+* use css variables for label annotation line color ([#244](https://github.com/vegaprotocol/pennant/issues/244)) ([0bcf35d](https://github.com/vegaprotocol/pennant/commit/0bcf35d2eed5aa5d1d3e02d1b5e251086eb64c1e))
+
 ### [0.2.31](https://github.com/vegaprotocol/pennant/compare/v0.2.30...v0.2.31) (2021-05-25)
 
 
