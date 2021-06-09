@@ -9,19 +9,10 @@ import {
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Meta, Story } from "@storybook/react";
-import React, { useMemo } from "react";
 
-import { Chart } from "../components/chart";
-import { Interval } from "../types";
-import {
-  marketDetail,
-  marketDetailQuery,
-  marketDetailVariables,
-  markets,
-} from "./api/vega-graphql";
+import { markets } from "./api/vega-graphql";
 import { marketsQuery } from "./api/vega-graphql/queries/markets";
 import { MarketGrid } from "./components/market-grid/market-grid";
-import { VegaDataSource } from "./data-source/vega-protocol-data-source";
 
 export default {
   title: "Overview/Use Cases",
@@ -55,16 +46,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const marketList = [
-  "3C58ED2A4A6C5D7E",
-  "2839D9B2329C9E70",
-  "2839D9B2329C9E70",
-  "3C58ED2A4A6C5D7E",
-  "3C58ED2A4A6C5D7E",
-  "2839D9B2329C9E70",
-];
-
-const Grid = () => {
+const Grid: Story = () => {
   const { data, loading } = useQuery<markets>(marketsQuery, {
     errorPolicy: "ignore",
   });
