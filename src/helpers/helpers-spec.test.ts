@@ -3,7 +3,13 @@ import { constructTopLevelSpec } from ".";
 const data: any[] = [{ open: 100, close: 100 }];
 
 const outputData: any[] = [
-  { open: 100, close: 100, absoluteChange: NaN, percentageChange: NaN },
+  {
+    open: 100,
+    close: 100,
+    absoluteChange: NaN,
+    percentageChange: NaN,
+    percentageChangeData24: NaN,
+  },
 ];
 
 describe("constructTopLevelSpec", () => {
