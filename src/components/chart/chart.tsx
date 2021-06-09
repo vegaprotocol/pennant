@@ -42,6 +42,7 @@ export type Options = {
   overlays?: Overlay[];
   studies?: Study[];
   simple?: boolean;
+  initialNumCandles?: number;
 };
 
 export type ChartProps = {
@@ -62,6 +63,7 @@ export const Chart = forwardRef(
         chartType: "candle",
         studies: [],
         overlays: [],
+        initialNumCandles: INITIAL_NUM_CANDLES,
       },
       initialViewport,
       onOptionsChanged = noop,
@@ -74,6 +76,7 @@ export const Chart = forwardRef(
       studies = [],
       overlays = [],
       simple = false,
+      initialNumCandles = INITIAL_NUM_CANDLES,
     } = options;
 
     useImperativeHandle(ref, () => ({
@@ -265,6 +268,7 @@ export const Chart = forwardRef(
             overlays={overlays}
             proportion={proportion}
             simple={simple}
+            initialNumCandles={initialNumCandles}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}

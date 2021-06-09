@@ -70,6 +70,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
     >
       {markets.map((market, i) => (
         <div
+          key={market.id}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -95,7 +96,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
               key={market.id}
               dataSource={dataSources[i]}
               interval={Interval.I1M}
-              options={{ simple: true }}
+              options={{ simple: true, initialNumCandles: 25 }}
             />
           </div>
         </div>

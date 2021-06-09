@@ -31,6 +31,7 @@ export type PlotContainerProps = {
   overlays: string[];
   proportion: number;
   simple: boolean;
+  initialNumCandles: number;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -48,6 +49,7 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
       overlays,
       proportion,
       simple,
+      initialNumCandles,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePane,
@@ -141,7 +143,8 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
         },
         initialViewport,
         decimalPlaces,
-        simple
+        simple,
+        initialNumCandles
       )
         .interval(interval)
         .on("redraw", () => {
