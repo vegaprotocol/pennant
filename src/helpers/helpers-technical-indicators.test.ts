@@ -1,14 +1,32 @@
-import { indetity } from "./helpers-technical-indicators";
+import {
+  identity,
+  indicatorAbsoluteChange,
+} from "./helpers-technical-indicators";
 
-const input = [1, 2];
-const expected = [1, 2];
+const input = [1, 2, 1, 4];
 
-describe("indetity", () => {
+describe("identity", () => {
   it("Should match expected output", () => {
-    const output = indetity(input);
+    const output = identity(input);
+    const expected = input;
 
     for (let index = 0; index < output.length; index++) {
       expect(output[index]).toBeCloseTo(expected[index]);
+    }
+  });
+});
+
+describe("indicatorAbsoluteChange", () => {
+  it("Should match expected output", () => {
+    const output = indicatorAbsoluteChange()(input);
+    const expected = [NaN, 1, -1, 3];
+
+    for (let index = 0; index < output.length; index++) {
+      if (typeof expected === "number") {
+        expect(output[index]).toBeCloseTo(expected[index]);
+      } else {
+        expect(output[index]).toEqual(expected[index]);
+      }
     }
   });
 });

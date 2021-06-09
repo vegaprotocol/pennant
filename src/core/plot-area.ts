@@ -5,7 +5,6 @@ import { clamp } from "lodash";
 import {
   CrosshairElement,
   GridElement,
-  RenderableHTMLElement,
 } from "../elements";
 import { clearCanvas, Colors } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
@@ -24,6 +23,7 @@ export class PlotArea {
   private _xScale: ScaleTime;
   private _yEncodingFields: string[];
   private _yScale: ScaleLinear;
+  private isSimple: boolean = false;
 
   constructor(
     x: ScaleTime,
@@ -31,7 +31,8 @@ export class PlotArea {
     elements: RenderableElement[],
     originalData: any[],
     fields: string[],
-    labels: RenderableElement[]
+    labels: RenderableElement[],
+    isSimple: boolean
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -39,6 +40,7 @@ export class PlotArea {
     this._data = originalData;
     this._yEncodingFields = fields;
     this._labels = labels;
+    this.isSimple = isSimple;
   }
 
   context(context: CanvasRenderingContext2D) {
@@ -78,13 +80,15 @@ export class PlotArea {
         element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
       }
 
-      this.latestPriceCrosshair.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        [null, this.latestPricePosition]
-      );
+      if (this.isSimple) {
+        this.latestPriceCrosshair.draw(
+          this.ctx,
+          this._xScale,
+          this._yScale,
+          this._pixelRatio,
+          [null, this.latestPricePosition]
+        );
+      }
 
       this._crosshair.draw(
         this.ctx,
@@ -122,9 +126,8 @@ export class PlotArea {
     const timeAtMouseX = this._xScale.invert(offset);
     const index = bisector((d: any) => d.date).left(this._data, timeAtMouseX);
     const firstElement: Date = this._data[Math.max(0, index - 1)].date;
-    const secondElement: Date = this._data[
-      Math.min(this._data.length - 1, index)
-    ].date;
+    const secondElement: Date =
+      this._data[Math.min(this._data.length - 1, index)].date;
 
     let indexOffset = 0;
 

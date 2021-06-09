@@ -15,3 +15,57 @@ export const marketQuery = gql`
     }
   }
 `;
+
+export const marketsQuery = gql`
+  query markets {
+    markets {
+      id
+      name
+      decimalPlaces
+      state
+      fees {
+        factors {
+          infrastructureFee
+          makerFee
+          liquidityFee
+        }
+      }
+      data {
+        market {
+          id
+        }
+        bestBidPrice
+        bestBidVolume
+        bestOfferPrice
+        bestOfferVolume
+        marketTradingMode
+        markPrice
+        openInterest
+        auctionStart
+        auctionEnd
+      }
+      tradableInstrument {
+        instrument {
+          id
+          metadata {
+            tags
+          }
+          name
+          code
+          product {
+            ... on Future {
+              maturity
+              quoteName
+              settlementAsset {
+                id
+                symbol
+                name
+                decimals
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

@@ -67,6 +67,24 @@ export const studyInfoFields: Record<
       },
     ],
   },
+  simple: {
+    label: "",
+    fields: [
+      { id: "close", label: "" },
+      {
+        id: "percentageChangeData24",
+        label: "",
+        format: (d) => {
+          if (isNaN(d)) {
+            return "-";
+          }
+
+          return d3Format("+.2%")(d);
+        },
+        intent: true,
+      },
+    ],
+  },
   bollinger: {
     label: "Bollinger",
     fields: [

@@ -2,6 +2,7 @@ export * from "./lib/CandleDetails";
 export * from "./lib/candlesQuery";
 export * from "./lib/globalTypes";
 export * from "./lib/marketDetail";
+export * from "./lib/markets";
 export * from "./lib/order";
 export * from "./lib/orders";
 export * from "./lib/positions";
