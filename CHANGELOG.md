@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.33](https://github.com/vegaprotocol/pennant/compare/v0.2.32...v0.2.33) (2021-06-09)
+
+
+### Features
+
+* support setting intent on individual lable annotation cells ([745c263](https://github.com/vegaprotocol/pennant/commit/745c26390b4e73ab460207faa046bd2b8a9509c9))
+
 ### [0.2.32](https://github.com/vegaprotocol/pennant/compare/v0.2.31...v0.2.32) (2021-06-09)
 
 
