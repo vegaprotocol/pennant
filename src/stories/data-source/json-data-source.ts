@@ -13,8 +13,9 @@ const annotations: LabelAnnotation[] = [
       { label: "Position" },
       { label: `${initialAverageEntryPrice.toFixed(2)}` },
       {
-        label: `PnL ${10000000000}`,
+        label: `PnL ${-10000000000}`,
         stroke: true,
+        intent: "danger",
       },
       {
         label: "Close",

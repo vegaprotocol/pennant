@@ -84,6 +84,18 @@
   border-right: none;
 }
 
+.annotation > .cell.stroke.cell-intent-danger {
+  color: var(--pennant-color-danger);
+}
+
+.annotation > .cell.stroke.cell-intent-none {
+  color: var(--pennant-color-white);
+}
+
+.annotation > .cell.stroke.cell-intent-success {
+  color: var(--pennant-color-success);
+}
+
 .spinner-head {
   stroke: #8a9ba8;
   stroke-linecap: round;
