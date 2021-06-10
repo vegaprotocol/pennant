@@ -1,4 +1,4 @@
-import { CandleDetailsExtended } from "../types";
+import { Candle } from "../types";
 
 export const Colors = {
   BLACK: "#000",
@@ -48,18 +48,18 @@ export function colorByMarketMovement(bullish: boolean | null) {
   return Colors.WHITE;
 }
 
-export const isUp = (d: CandleDetailsExtended) => {
+export const isUp = (d: Candle) => {
   return d.close > d.open;
 };
 
-export const redIfDownGreenIfUp = (d: CandleDetailsExtended) => {
+export const redIfDownGreenIfUp = (d: Candle) => {
   return isUp(d) ? Colors.GREEN : Colors.RED;
 };
 
-export const candleFill = (d: CandleDetailsExtended) => {
+export const candleFill = (d: Candle) => {
   return isUp(d) ? Colors.GREEN_DARK : Colors.RED;
 };
 
-export const candleStroke = (d: CandleDetailsExtended) => {
+export const candleStroke = (d: Candle) => {
   return redIfDownGreenIfUp(d);
 };
