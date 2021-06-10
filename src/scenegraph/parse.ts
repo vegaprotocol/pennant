@@ -30,7 +30,7 @@ import {
   getRuleConfig,
   getTickConfig,
 } from "../helpers";
-import { calculateScales } from "../scales";
+import { calculateScales } from "../helpers";
 import { Annotation, Scenegraph } from "../types";
 import { Field } from "../vega-lite/channeldef";
 import { compile } from "../vega-lite/compile/compile";

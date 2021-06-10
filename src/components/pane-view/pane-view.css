@@ -1,10 +1,10 @@
 .pane__close-button-wrapper {
-  position: absolute;
-  top: 0;
   margin-top: 4px;
   margin-right: 8px;
-
-  transition: opacity 0.4s, visibility 0.4s;
+  position: absolute;
+  top: 0;
+  transition: opacity var(--pennant-transition-slow),
+    visibility var(--pennant-transition-slow);
 }
 
 .pane__close-button {
@@ -13,15 +13,15 @@
 
 .pane__chart {
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
-  flex-direction: column;
 }
 
 .pane__info-overlay {
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
 .pane__pane {
@@ -38,52 +38,52 @@
 }
 
 .plot-area {
+  height: 100%;
   overflow: hidden;
   position: absolute;
   width: 100%;
-  height: 100%;
 }
 
 .plot-area-interaction {
+  cursor: crosshair;
+  height: 100%;
   position: absolute;
   width: 100%;
-  height: 100%;
-  cursor: crosshair;
 }
 
 .plot-area-annotations {
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
   position: absolute;
   width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
 }
 
 .x-axis {
-  position: absolute;
   cursor: ew-resize;
-  width: 100%;
   height: 100%;
+  position: absolute;
+  width: 100%;
 }
 
 .x-axis-interaction {
+  cursor: ew-resize;
+  height: 100%;
   position: absolute;
   width: 100%;
-  height: 100%;
-  cursor: ew-resize;
 }
 
 .y-axis {
+  height: 100%;
   position: absolute;
   width: 100%;
-  height: 100%;
 }
 
 .y-axis-interaction {
+  cursor: ns-resize;
+  height: 100%;
   position: absolute;
   right: 0;
-  height: 100%;
-  cursor: ns-resize;
 }
 
 .d3fc-canvas-layer {

@@ -4,6 +4,7 @@ export type LabelAnnotationCell = {
   label: string;
   stroke?: boolean;
   fill?: boolean;
+  intent?: Intent; // override annotation intent for this cell
   onClick?: () => void;
   spinner?: boolean;
 };

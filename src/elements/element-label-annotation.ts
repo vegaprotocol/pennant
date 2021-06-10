@@ -11,6 +11,14 @@ import {
 
 const PADDING = 4;
 
+const styles = getComputedStyle(document.documentElement);
+
+const colorSuccess =
+  styles.getPropertyValue("--pennant-color-success") ?? Colors.GREEN;
+
+const colorDanger =
+  styles.getPropertyValue("--pennant-color-danger") ?? Colors.GREEN;
+
 export function cumsum(values: number[]) {
   let sum = 0;
   return Array.from(values, (v) => (sum += v || 0));
@@ -24,7 +32,7 @@ function addLabel(
   label: LabelAnnotation,
   y: number
 ) {
-  const stroke = label.intent === "success" ? Colors.GREEN : Colors.RED;
+  const stroke = label.intent === "success" ? colorSuccess : colorDanger;
 
   ctx.font = `${14}px sans-serif`;
   ctx.textBaseline = "middle";

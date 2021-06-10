@@ -51,4 +51,11 @@
 
   --pennant-font-size-base: 10px;
   --pennant-font-size-monospace: 12px;
+  --pennant-font-size-annotation: 14px;
+
+  --pennant-font-weight-normal: 400;
+
+  /* Transitions. */
+  --pennant-transition-fast: 100ms;
+  --pennant-transition-slow: 300ms;
 }

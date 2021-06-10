@@ -70,7 +70,12 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
       .data((d) => d.cells.filter((d) => !("onClick" in d)))
       .join("span")
       .attr("class", (d) =>
-        classNames("cell", { fill: d.fill }, { stroke: d.stroke })
+        classNames(
+          "cell",
+          { fill: d.fill },
+          { stroke: d.stroke },
+          { [`cell-intent-${d.intent}`]: d.intent }
+        )
       )
       .text((d) => d.label);
 

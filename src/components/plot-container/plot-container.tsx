@@ -30,6 +30,8 @@ export type PlotContainerProps = {
   initialViewport: Viewport;
   overlays: string[];
   proportion: number;
+  simple: boolean;
+  initialNumCandles: number;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (position: [number, number]) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -46,6 +48,8 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
       decimalPlaces,
       overlays,
       proportion,
+      simple,
+      initialNumCandles,
       onViewportChanged = () => {},
       onGetDataRange = () => {},
       onClosePane,
@@ -84,9 +88,8 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
     const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [showPaneControls, setShowPaneControls] = useState<string | null>(
-      null
-    );
+    const [showPaneControls, setShowPaneControls] =
+      useState<string | null>(null);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -139,7 +142,9 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
           data: scenegraph.panes[0].originalData.map((d) => d.date),
         },
         initialViewport,
-        decimalPlaces
+        decimalPlaces,
+        simple,
+        initialNumCandles
       )
         .interval(interval)
         .on("redraw", () => {
@@ -227,6 +232,7 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
               decimalPlaces={decimalPlaces}
               overlays={overlays}
               pane={scenegraph.panes[0]}
+              simple={simple}
               onClosePane={onClosePane}
             />
           }
@@ -239,6 +245,7 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
                 decimalPlaces={decimalPlaces}
                 overlays={overlays}
                 pane={scenegraph.panes[1]}
+                simple={simple}
                 onClosePane={onClosePane}
               />
             ) : (
@@ -252,7 +259,7 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
             onProportionChanged(proportion);
           }}
         />
-        <XAxisView ref={xAxisRef} />
+        <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>
     );
   }

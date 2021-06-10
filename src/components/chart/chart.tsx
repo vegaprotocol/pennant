@@ -41,6 +41,8 @@ export type Options = {
   chartType?: ChartType;
   overlays?: Overlay[];
   studies?: Study[];
+  simple?: boolean;
+  initialNumCandles?: number;
 };
 
 export type ChartProps = {
@@ -61,6 +63,7 @@ export const Chart = forwardRef(
         chartType: "candle",
         studies: [],
         overlays: [],
+        initialNumCandles: INITIAL_NUM_CANDLES,
       },
       initialViewport,
       onOptionsChanged = noop,
@@ -68,7 +71,13 @@ export const Chart = forwardRef(
     }: ChartProps,
     ref: React.Ref<ChartElement>
   ) => {
-    const { chartType = "candle", studies = [], overlays = [] } = options;
+    const {
+      chartType = "candle",
+      studies = [],
+      overlays = [],
+      simple = false,
+      initialNumCandles = INITIAL_NUM_CANDLES,
+    } = options;
 
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -93,10 +102,8 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [proportion, setProportion] = useState(2 / 3);
 
-    const [
-      priceMonitoringBounds,
-      setPriceMonitoringBounds,
-    ] = useState<PriceMonitoringBounds | null>(null);
+    const [priceMonitoringBounds, setPriceMonitoringBounds] =
+      useState<PriceMonitoringBounds | null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);
@@ -197,15 +204,17 @@ export const Chart = forwardRef(
     }, [dataSource]);
 
     useEffect(() => {
-      setIsLoading(true);
-
-      dataSource.onReady().then((configuration) => {
+      const onReady = async () => {
+        setIsLoading(true);
+        const configuration = await dataSource.onReady();
         setIsLoading(false);
 
         if (configuration.priceMonitoringBounds.length > 0) {
           setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
         }
-      });
+      };
+
+      onReady();
     }, [dataSource]);
 
     const handleViewportChanged = useCallback(
@@ -258,6 +267,8 @@ export const Chart = forwardRef(
             initialViewport={viewport}
             overlays={overlays}
             proportion={proportion}
+            simple={simple}
+            initialNumCandles={initialNumCandles}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
