@@ -108,7 +108,11 @@ export const studyInfoFields: Record<
   },
   exponentialMovingAverage: {
     label: "EMA",
-    fields: [{ id: "movingAverage", label: "" }],
+    fields: [{ id: "exponentialMovingAverage", label: "" }],
+  },
+  forceIndex: {
+    label: "Force index",
+    fields: [{ id: "forceIndex", label: "" }],
   },
   macd: {
     label: "MACD",
@@ -132,7 +136,7 @@ export const studyInfoFields: Record<
   },
   relativeStrengthIndex: {
     label: "RSI",
-    fields: [{ id: "index", label: "" }],
+    fields: [{ id: "relativeStrengthIndex", label: "" }],
   },
   volume: {
     label: "Volume",
