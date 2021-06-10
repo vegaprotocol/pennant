@@ -7,6 +7,6 @@ export const Intent = {
   SUCCESS: "success",
   WARNING: "warning",
   DANGER: "danger",
-};
+} as const;
 
 export type Intent = typeof Intent[keyof typeof Intent];

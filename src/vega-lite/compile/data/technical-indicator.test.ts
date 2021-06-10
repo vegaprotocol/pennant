@@ -4,7 +4,11 @@ import { TechnicalIndicatorTransformNode } from "./technical-indicator";
 describe("compile/data/technical-indicator", () => {
   describe("assemble", () => {
     test("should return a proper transform", () => {
-      const transform: Transform = { indicator: "macd", on: "close" };
+      const transform: Transform = {
+        indicator: "macd",
+        on: ["close"],
+        as: ["macd", "signal", "divergence"],
+      };
 
       const technicalIndicator = new TechnicalIndicatorTransformNode(
         null,
@@ -13,7 +17,8 @@ describe("compile/data/technical-indicator", () => {
 
       expect(technicalIndicator.assemble()).toEqual({
         method: "macd",
-        on: "close",
+        on: ["close"],
+        as: ["macd", "signal", "divergence"],
         type: "technical-indicator",
       });
     });

@@ -168,6 +168,18 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
         },
       ];
+    case "forceIndex":
+      return [
+        {
+          encoding: {
+            y: { field: "forceIndex", type: "quantitative" },
+          },
+          mark: {
+            type: "line",
+            color: Colors.VEGA_YELLOW,
+          },
+        },
+      ];
     case "macd":
       return [
         {
@@ -208,7 +220,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
       return [
         {
           encoding: {
-            y: { field: "index", type: "quantitative" },
+            y: { field: "relativeStrengthIndex", type: "quantitative" },
           },
           mark: {
             type: "line",
@@ -280,7 +292,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
       return [
         {
           encoding: {
-            y: { field: "movingAverage", type: "quantitative" },
+            y: { field: "exponentialMovingAverage", type: "quantitative" },
           },
           mark: {
             type: "line",
@@ -288,11 +300,11 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
         },
       ];
-    case "movingAverage":
+    case "exponentialMovingAverage":
       return [
         {
           encoding: {
-            y: { field: "movingAverage", type: "quantitative" },
+            y: { field: "exponentialMovingAverage", type: "quantitative" },
           },
           mark: {
             type: "line",
@@ -338,13 +350,37 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
 function constructOverlayTransform(overlay: Overlay): Transform[] {
   switch (overlay) {
     case "bollinger":
-      return [{ indicator: "bollinger", on: "close" }];
+      return [
+        {
+          indicator: "bollinger",
+          on: ["close"],
+          as: ["upper", "average", "lower"],
+        },
+      ];
     case "envelope":
-      return [{ indicator: "envelope", on: "close" }];
+      return [
+        {
+          indicator: "envelope",
+          on: ["close"],
+          as: ["upper", "lower"],
+        },
+      ];
     case "exponentialMovingAverage":
-      return [{ indicator: "exponentialMovingAverage", on: "close" }];
+      return [
+        {
+          indicator: "exponentialMovingAverage",
+          on: ["close"],
+          as: ["exponentialMovingAverage"],
+        },
+      ];
     case "movingAverage":
-      return [{ indicator: "movingAverage", on: "close" }];
+      return [
+        {
+          indicator: "movingAverage",
+          on: ["close"],
+          as: ["movingAverage"],
+        },
+      ];
     default:
       return [];
   }
@@ -353,13 +389,39 @@ function constructOverlayTransform(overlay: Overlay): Transform[] {
 function constructStudyTransform(study: Study): Transform[] {
   switch (study) {
     case "eldarRay":
-      return [{ indicator: "eldarRay", on: "close" }];
+      return [
+        {
+          indicator: "eldarRay",
+          on: ["close", "high", "low"],
+          as: ["bullPower", "bearPower"],
+        },
+      ];
+    case "forceIndex":
+      return [
+        {
+          indicator: "forceIndex",
+          on: ["close", "volume"],
+          as: ["forceIndex"],
+        },
+      ];
     case "macd":
-      return [{ indicator: "macd", on: "close" }];
+      return [
+        {
+          indicator: "macd",
+          on: ["close"],
+          as: ["macd", "signal", "divergence"],
+        },
+      ];
     case "relativeStrengthIndex":
-      return [{ indicator: "relativeStrengthIndex", on: "close" }];
+      return [
+        {
+          indicator: "relativeStrengthIndex",
+          on: ["close"],
+          as: ["relativeStrengthIndex"],
+        },
+      ];
     default:
-      return [];
+      return []; // TODO: Can we remove this if we add a volume indicator (basically an identity function)
   }
 }
 

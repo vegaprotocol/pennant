@@ -118,7 +118,13 @@ describe("constructTopLevelSpec", () => {
     expect(constructTopLevelSpec(data, "area", "bollinger")).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
-      transform: [{ indicator: "bollinger", on: "close" }],
+      transform: [
+        {
+          indicator: "bollinger",
+          on: ["close"],
+          as: ["upper", "average", "lower"],
+        },
+      ],
       vconcat: [
         {
           name: "main",

@@ -11,20 +11,21 @@ export class TechnicalIndicatorTransformNode extends DataFlowNode {
   }
 
   public dependentFields() {
-    return new Set([this.transform.on]);
+    return new Set(this.transform.on);
   }
 
   public producedFields() {
-    return new Set(this.transform.on); // FIXME: Fields depend on indicator (separate types?)
+    return new Set(this.transform.as);
   }
 
   public assemble() {
-    const { indicator, on, ...rest } = this.transform;
+    const { indicator, on, as, ...rest } = this.transform;
 
     return {
       type: "technical-indicator",
       method: indicator,
       on: on,
+      as: as,
     };
   }
 }

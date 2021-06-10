@@ -3,6 +3,7 @@ import {
   indicatorElderRay,
   indicatorEnvelope,
   indicatorExponentialMovingAverage,
+  indicatorForceIndex,
   indicatorMacd,
   indicatorMovingAverage,
   indicatorRelativeStrengthIndex,
@@ -31,7 +32,7 @@ import {
   getTickConfig,
 } from "../helpers";
 import { calculateScales } from "../helpers";
-import { Annotation, Scenegraph } from "../types";
+import { Annotation, Candle, Scenegraph } from "../types";
 import { Field } from "../vega-lite/channeldef";
 import { compile } from "../vega-lite/compile/compile";
 import { OutputNode } from "../vega-lite/compile/data/dataflow";
@@ -225,46 +226,55 @@ export function parse(
       switch (transform.method) {
         case "bollinger":
           {
-            const indicatorData = indicatorBollingerBands()(
-              data.map((d: any) => d[transform.on])
-            );
+            const indicatorData = indicatorBollingerBands<Candle>().value(
+              (datum) => datum.close
+            )(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
           break;
         case "eldarRay":
           {
-            const indicatorData = indicatorElderRay()(data);
+            const indicatorData = indicatorElderRay<Candle>()(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
           break;
         case "envelope":
           {
-            const indicatorData = indicatorEnvelope()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData = indicatorEnvelope<Candle>()(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
           break;
         case "exponentialMovingAverage":
           {
-            const indicatorData = indicatorExponentialMovingAverage()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData =
+              indicatorExponentialMovingAverage<Candle>().value(
+                (datum) => datum.close
+              )(data);
 
             newData = newData.map((d, i) => ({
               ...d,
-              movingAverage: indicatorData[i],
+              exponentialMovingAverage: indicatorData[i],
+            }));
+          }
+          break;
+        case "forceIndex":
+          {
+            const indicatorData = indicatorForceIndex<Candle>()(data);
+
+            newData = newData.map((d, i) => ({
+              ...d,
+              forceIndex: indicatorData[i],
             }));
           }
           break;
         case "movingAverage":
           {
-            const indicatorData = indicatorMovingAverage()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData = indicatorMovingAverage<Candle>().value(
+              (datum) => datum.close
+            )(data);
 
             newData = newData.map((d, i) => ({
               ...d,
@@ -274,23 +284,29 @@ export function parse(
           break;
         case "macd":
           {
-            const indicatorData = indicatorMacd()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData = indicatorMacd<Candle>().value(
+              (datum) => datum.close
+            )(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
           break;
         case "relativeStrengthIndex":
           {
-            const indicatorData = indicatorRelativeStrengthIndex()(
-              data.map((d) => d[transform.on])
-            );
+            const indicatorData =
+              indicatorRelativeStrengthIndex<Candle>().value(
+                (datum) => datum.close
+              )(data);
 
             newData = newData.map((d, i) => ({
               ...d,
-              index: indicatorData[i],
+              relativeStrengthIndex: indicatorData[i],
             }));
+          }
+          break;
+        case "volume":
+          {
+            // no-op as volume is already present in the data
           }
           break;
       }

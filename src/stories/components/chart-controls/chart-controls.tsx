@@ -18,8 +18,6 @@ import {
   chartTypes,
   Overlay,
   overlayLabels,
-  overlays,
-  studies,
   Study,
   studyLabels,
 } from "../../../types";
@@ -133,7 +131,7 @@ export const ChartControls = ({
         content={
           <Menu>
             <MenuDivider title="Overlays" />
-            {overlays.map((item: Overlay) => (
+            {Object.values(Overlay).map((item) => (
               <MenuItem
                 key={item}
                 icon={overlay === item ? "tick" : "blank"}
@@ -142,7 +140,7 @@ export const ChartControls = ({
               />
             ))}
             <MenuDivider title="Studies" />
-            {studies.map((item: Study) => (
+            {Object.values(Study).map((item) => (
               <MenuItem
                 key={item}
                 icon={study === item ? "tick" : "blank"}

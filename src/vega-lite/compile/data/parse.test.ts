@@ -9,7 +9,8 @@ describe("compile/data/parse", () => {
     it("should return a FoldTransformNode", () => {
       const transform: Transform = {
         indicator: "bollinger",
-        on: "A",
+        on: ["A"],
+        as: ["B"],
       };
       const model = new Model(
         {
