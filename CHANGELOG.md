@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.34](https://github.com/vegaprotocol/pennant/compare/v0.2.33...v0.2.34) (2021-06-10)
+
+
+### Bug Fixes
+
+* export Intent as a value ([0e4f479](https://github.com/vegaprotocol/pennant/commit/0e4f47920c81ac0a387d417e2b6aecfa06c79db5))
+
 ### [0.2.33](https://github.com/vegaprotocol/pennant/compare/v0.2.32...v0.2.33) (2021-06-09)
 
 
