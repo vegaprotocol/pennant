@@ -304,10 +304,11 @@ export function parse(
             }));
           }
           break;
-        case "volume": {
-          // no-op as volume is already present in the data
-        }
-        break;
+        case "volume":
+          {
+            // no-op as volume is already present in the data
+          }
+          break;
       }
     }
 
