@@ -21,7 +21,7 @@ import {
   positions_party_positions,
   positionsVariables,
 } from "../api/vega-graphql";
-import { addDecimal } from "../helpers";
+import { parseVegaDecimal } from "../helpers";
 import {
   createOrderLabelAnnotation,
   createPositionLabelAnnotation,
@@ -55,10 +55,10 @@ function isActiveOrPartiallyFilledAndNotOptimistic(order: orders_orders) {
 function parseCandle(candle: CandleDetails, decimalPlaces: number): Candle {
   return {
     date: new Date(candle.datetime),
-    high: Number(addDecimal(candle.high, decimalPlaces)),
-    low: Number(addDecimal(candle.low, decimalPlaces)),
-    open: Number(addDecimal(candle.open, decimalPlaces)),
-    close: Number(addDecimal(candle.close, decimalPlaces)),
+    high: parseVegaDecimal(candle.high, decimalPlaces),
+    low: parseVegaDecimal(candle.low, decimalPlaces),
+    open: parseVegaDecimal(candle.open, decimalPlaces),
+    close: parseVegaDecimal(candle.close, decimalPlaces),
     volume: Number(candle.volume),
   };
 }
@@ -139,14 +139,17 @@ export class VegaDataSource implements DataSource {
           ],
           priceMonitoringBounds:
             data.market.data.priceMonitoringBounds?.map((bounds: any) => ({
-              maxValidPrice: Number(
-                addDecimal(bounds.maxValidPrice, this._decimalPlaces)
+              maxValidPrice: parseVegaDecimal(
+                bounds.maxValidPrice,
+                this._decimalPlaces
               ),
-              minValidPrice: Number(
-                addDecimal(bounds.minValidPrice, this._decimalPlaces)
+              minValidPrice: parseVegaDecimal(
+                bounds.minValidPrice,
+                this._decimalPlaces
               ),
-              referencePrice: Number(
-                addDecimal(bounds.referencePrice, this._decimalPlaces)
+              referencePrice: parseVegaDecimal(
+                bounds.referencePrice,
+                this._decimalPlaces
               ),
             })) ?? [],
         };

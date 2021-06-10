@@ -6,7 +6,7 @@ import {
   positions_party_positions,
   Side,
 } from "../api/vega-graphql";
-import { addDecimal, formatNumber } from "../helpers";
+import { formatNumber,parseVegaDecimal } from "../helpers";
 import * as i18n from "../i18n";
 import { OrderBlockChainState } from "./vega-protocol-data-source";
 
@@ -45,7 +45,7 @@ export function createPositionLabelAnnotation(
       },
     ],
     intent: Number(position.unrealisedPNL) > 0 ? "success" : "danger",
-    y: Number(addDecimal(position.averageEntryPrice, decimalPlaces)),
+    y: parseVegaDecimal(position.averageEntryPrice, decimalPlaces),
   };
 }
 
@@ -64,10 +64,7 @@ export function createOrderLabelAnnotation(
     },
     // Price
     {
-      label: `${formatNumber(
-        addDecimal(order.price, 0),
-        order.market?.decimalPlaces ?? 0
-      )}`,
+      label: `${formatNumber(order.price, order.market?.decimalPlaces ?? 0)}`,
     },
     // Size
     {
@@ -93,8 +90,9 @@ export function createOrderLabelAnnotation(
     id: order.id,
     cells: cells,
     intent: "danger",
-    y: Number(
-      addDecimal(order.price, order.market?.decimalPlaces ?? decimalPlaces)
+    y: parseVegaDecimal(
+      order.price,
+      order.market?.decimalPlaces ?? decimalPlaces
     ),
   };
 }

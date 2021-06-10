@@ -1,6 +1,6 @@
 import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { Interval } from "../api/vega-graphql";
-import { addDecimal } from "../helpers";
+import { parseVegaDecimal } from "../helpers";
 import json from "./data.json";
 
 const initialAverageEntryPrice = 595 + Math.random();
@@ -87,11 +87,11 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
   return {
     ...candle,
     date: new Date(candle.datetime),
-    high: Number(addDecimal(candle.high, decimalPlaces)),
-    low: Number(addDecimal(candle.low, decimalPlaces)),
-    open: Number(addDecimal(candle.open, decimalPlaces)),
-    close: Number(addDecimal(candle.close, decimalPlaces)),
-    volume: Number(addDecimal(candle.volume, 0)),
+    high: parseVegaDecimal(candle.high, decimalPlaces),
+    low: parseVegaDecimal(candle.low, decimalPlaces),
+    open: parseVegaDecimal(candle.open, decimalPlaces),
+    close: parseVegaDecimal(candle.close, decimalPlaces),
+    volume: parseVegaDecimal(candle.volume, 0),
   };
 }
 
