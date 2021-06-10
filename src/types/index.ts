@@ -1,4 +1,4 @@
-export * from "./annotation-types";
+export * from "./annotation";
 export * from "./candle";
 export * from "./chart-type";
 export * from "./chart-types";
