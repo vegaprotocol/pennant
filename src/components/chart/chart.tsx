@@ -46,6 +46,7 @@ export type Options = {
 };
 
 export type ChartProps = {
+  /** Responsible for fetching data */
   dataSource: DataSource;
   initialViewport?: Viewport;
   interval: Interval;
@@ -132,7 +133,7 @@ export const Chart = forwardRef(
       [annotations, dataSource.decimalPlaces, internalInterval, specification]
     );
 
-    // Fetch historical data
+    // Callback for fetching historical data
     const query = useCallback(
       async (from: Date, to: Date, interval: Interval, merge = true) => {
         const newData = await dataSource.query(
@@ -146,7 +147,7 @@ export const Chart = forwardRef(
       [dataSource]
     );
 
-    // Respond to streaming data
+    // Initial data fetch and subscriptions
     useEffect(() => {
       const fetchData = async (interval: Interval) => {
         await query(
@@ -182,7 +183,7 @@ export const Chart = forwardRef(
       };
     }, [dataSource, interval, query]);
 
-    // Respond to streaming annotations
+    // React to streaming annotations changes
     useEffect(() => {
       function subscribe() {
         if (dataSource.subscribeAnnotations) {
@@ -203,6 +204,7 @@ export const Chart = forwardRef(
       };
     }, [dataSource]);
 
+    // Wait for data source onReady call before showing content
     useEffect(() => {
       const onReady = async () => {
         setIsLoading(true);
@@ -250,11 +252,17 @@ export const Chart = forwardRef(
       [data, initialViewport]
     );
 
+    // Show fallback UI while waiting for data
     if (isLoading) {
       return <NonIdealState title="Loading" />;
     }
 
-    return !isLoading && scenegraph ? (
+    // We failed to construct a scenegraph. Something went wrong with the data
+    if (!scenegraph) {
+      return <NonIdealState title="No data found" />;
+    }
+
+    return (
       <ErrorBoundary>
         <div className="chart__wrapper">
           <PlotContainer
@@ -276,8 +284,6 @@ export const Chart = forwardRef(
           />
         </div>
       </ErrorBoundary>
-    ) : (
-      <NonIdealState title="No data found" />
     );
   }
 );
