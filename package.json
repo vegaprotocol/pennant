@@ -142,5 +142,8 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0",
     "react-dom": "^16.8.0 || ^17.0.0"
+  },
+  "resolutions": {
+    "d3-array": "2.3.3"
   }
 }

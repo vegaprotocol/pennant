@@ -47,9 +47,7 @@ const client = new ApolloClient({
 });
 
 const Grid: Story = () => {
-  const { data, loading } = useQuery<markets>(marketsQuery, {
-    errorPolicy: "ignore",
-  });
+  const { data, loading } = useQuery<markets>(marketsQuery);
 
   if (loading || typeof data === "undefined" || data.markets === null) {
     return <div>Loading</div>;
