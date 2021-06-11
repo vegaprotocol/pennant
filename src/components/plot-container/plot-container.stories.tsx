@@ -38,6 +38,7 @@ const specification: TopLevelSpec = {
   },
   vconcat: [
     {
+      name: "main",
       layer: [
         {
           name: "wick",
@@ -69,7 +70,7 @@ const specification: TopLevelSpec = {
       ],
     },
     {
-      name: "study",
+      name: "volume",
       mark: "bar",
       encoding: {
         x: { field: "date", type: "temporal" },
@@ -82,5 +83,7 @@ const specification: TopLevelSpec = {
 export const Simple = Template.bind({});
 Simple.args = {
   interval: Interval.I5M,
+  overlays: [],
   scenegraph: parse(specification, 100, 0, []) as Scenegraph,
+  simple: false,
 };
