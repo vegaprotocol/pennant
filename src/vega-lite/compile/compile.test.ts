@@ -1,14 +1,5 @@
 import { compile } from "./compile";
 
-/* export interface BaseSpec {
-  data?: Data | null;
-  encoding?: Encoding<any>;
-  mark?: Mark | MarkDef;
-  name?: string;
-  layer?: BaseSpec[];
-  transform?: Transform[];
-} */
-
 describe("compile", () => {
   test("", () => {
     const model = compile({
