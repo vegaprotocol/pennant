@@ -1,7 +1,7 @@
 import { compile } from "./compile";
 
 describe("compile", () => {
-  test("", () => {
+  test("produces a model", () => {
     const model = compile({
       data: { values: [{ open: 100, close: 100 }] },
       name: "spec",
