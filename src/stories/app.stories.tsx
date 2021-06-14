@@ -7,14 +7,19 @@ import {
   Button,
   HotkeysProvider,
   Intent,
+  Menu,
+  MenuDivider,
   MenuItem,
+  Overlay as BPOverlay,
   useHotkeys,
 } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePopper } from "react-popper";
 
 import { Chart } from "../components/chart";
+import { formatter } from "../helpers";
 import { ChartType, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
 import { Interval } from "./api/vega-graphql";
@@ -173,6 +178,29 @@ export const VegaProtocol: Story = () => {
 
 export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [price, setPrice] = useState(0);
+
+  const virtualReference = useRef({
+    getBoundingClientRect() {
+      return {
+        top: 10,
+        left: 10,
+        bottom: 20,
+        right: 100,
+        width: 90,
+        height: 10,
+      };
+    },
+  });
+
+  const [popperElement, setPopperElement] = useState(null);
+  const { styles, attributes } = usePopper(
+    virtualReference.current,
+    popperElement,
+    { placement: "bottom-start" }
+  );
+
   const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [study, setStudy] = useState<Study | null>(null);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
@@ -219,6 +247,25 @@ export const CryptoCompare: Story = () => {
     ],
     []
   );
+
+  useEffect(() => {
+    ref.current.subscribe("contextmenu", (event) => {
+      virtualReference.current = {
+        getBoundingClientRect() {
+          return {
+            top: event.position[1],
+            left: event.position[0],
+            bottom: event.position[1] + 1,
+            right: event.position[0] + 1,
+            width: 1,
+            height: 1,
+          };
+        },
+      };
+      setPrice(event.price);
+      setContextMenuOpen(true);
+    });
+  }, []);
 
   const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
@@ -287,7 +334,50 @@ export const CryptoCompare: Story = () => {
             }}
           />
         </div>
+        <BPOverlay
+          isOpen={contextMenuOpen}
+          onClose={() => {
+            setContextMenuOpen(false);
+          }}
+          hasBackdrop={true}
+          usePortal={false}
+        >
+          <div
+            ref={setPopperElement as any}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <Menu>
+              <MenuItem
+                icon="new-object"
+                text={`Buy @ ${formatter(price, 2)}`}
+              />
+              <MenuItem
+                icon="new-object"
+                text={`Sell @ ${formatter(price, 2)}`}
+              />
+              <MenuItem icon="new-object" text="Create order" />
+              <MenuItem
+                icon="reset"
+                text="Reset chart"
+                onClick={() => {
+                  ref.current.reset();
+                  setContextMenuOpen(false);
+                }}
+              />
+
+              <MenuDivider />
+              <MenuItem
+                disabled={true}
+                text={`Clicked at (${
+                  virtualReference.current.getBoundingClientRect().left
+                }, ${virtualReference.current.getBoundingClientRect().top})`}
+              />
+            </Menu>
+          </div>
+        </BPOverlay>
         <button onClick={() => ref.current.reset()}>reset</button>
+        <p>{contextMenuOpen ? "open" : "false"}</p>
       </div>
     </HotkeysProvider>
   );

@@ -12,12 +12,13 @@ import { ScaleLinear, ScaleTime } from "../types";
 
 export class PlotAreaInteraction {
   private listeners: Dispatch<object> = dispatch(
-    "zoom",
-    "zoomstart",
-    "zoomend",
+    "contextmenu",
     "dblclick",
     "mousemove",
-    "mouseout"
+    "mouseout",
+    "zoom",
+    "zoomend",
+    "zoomstart"
   );
 
   private _xScale: ScaleTime;
@@ -25,6 +26,8 @@ export class PlotAreaInteraction {
   private z: ZoomTransform = zoomIdentity;
 
   private zoom: ZoomBehavior<Element, unknown>;
+
+  private tempTransform: ZoomTransform = zoomIdentity;
 
   constructor(x: ScaleTime, y: ScaleLinear) {
     this._xScale = x.copy();
@@ -58,10 +61,20 @@ export class PlotAreaInteraction {
 
         this.z = t;
       })
-      .on("start", () => {
+      .on("start", (e) => {
+        this.tempTransform = e.transform;
         this.listeners.call("zoomstart", this);
       })
       .on("end", (e) => {
+        // If we haven't panned or scaled then do not fire a "zoomend" event"
+        if (
+          e.transform.k === this.tempTransform.k &&
+          e.transform.x === this.tempTransform.x &&
+          e.transform.y === this.tempTransform.y
+        ) {
+          return;
+        }
+
         this.listeners.call("zoomend", this, [
           e.sourceEvent.offsetX,
           e.sourceEvent.offsetY,
@@ -88,7 +101,14 @@ export class PlotAreaInteraction {
       .on("mousemove", (event) =>
         this.listeners.call("mousemove", this, [event.offsetX, event.offsetY])
       )
-      .on("mouseout", () => this.listeners.call("mouseout", this));
+      .on("mouseout", () => this.listeners.call("mouseout", this))
+      .on("contextmenu", (event) => {
+        event.preventDefault();
+        this.listeners.call("contextmenu", this, {
+          position: [event.pageX, event.pageY],
+          price: this._yScale.invert(event.offsetY),
+        });
+      });
   }
 
   on(typenames: string, callback: (this: object, ...args: any[]) => void) {

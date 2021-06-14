@@ -182,6 +182,7 @@ export function measureYAxis(
   scale: ScaleLinear,
   yTransform: () => ZoomTransform,
   plotArea: PlotArea,
+  plotAreaInteraction: PlotAreaInteraction,
   plotAreaAnnotations: PlotAreaAnnotations,
   yAxis: YAxis,
   isFreePan: boolean,
@@ -194,6 +195,7 @@ export function measureYAxis(
   const yr = yTransform().rescaleY(scale);
 
   plotArea.yScale(yr);
+  plotAreaInteraction.yScale(yr);
   plotAreaAnnotations.yScale(yr);
   yAxis.yScale(yr);
 
