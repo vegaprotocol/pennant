@@ -5,7 +5,7 @@ export type Viewport = {
 
 export type Bounds = [Date, Date];
 
-export interface ChartElement {
+export interface PlotContainerElement {
   /**
    * Changes the center of the chart by the given number of intervals.
    */
@@ -30,4 +30,24 @@ export interface ChartElement {
    * Decreases the zoom of the chart by delta.
    */
   zoomOut(delta: number): void;
+}
+
+export interface PennantEvent {
+  type: string;
+}
+
+export interface PennantMouseEvent extends PennantEvent {
+  position: [number, number];
+  price: number;
+}
+
+export type PennantEventHandlerFn = (event: PennantEvent) => void;
+export type PennantMouseEventHandlerFn = (event: PennantMouseEvent) => void;
+
+export interface ChartElement extends PlotContainerElement {
+  /**
+   * Adds a listener function (callback) to a particular event type of the object.
+   */
+  subscribe(type: string, callback: PennantEventHandlerFn): void;
+  subscribe(type: "contextmenu", callback: PennantMouseEventHandlerFn): void;
 }

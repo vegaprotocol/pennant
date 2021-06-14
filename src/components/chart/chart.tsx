@@ -1,6 +1,7 @@
 import "../../styles/variables.css";
 import "./chart.css";
 
+import { dispatch } from "d3-dispatch";
 import React, {
   forwardRef,
   useCallback,
@@ -98,6 +99,9 @@ export const Chart = forwardRef(
       snapshot: async () => {
         return chartRef.current ? await chartRef.current.snapshot() : null;
       },
+      subscribe: (typenames: string, callback: (...args: any[]) => void) => {
+        listeners.current.on(typenames, callback);
+      },
       zoomIn: (delta: number) => {
         chartRef.current.zoomIn(delta);
       },
@@ -107,6 +111,7 @@ export const Chart = forwardRef(
     }));
 
     const chartRef = useRef<ChartElement>(null!);
+    const listeners = useRef(dispatch("contextmenu"));
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [proportion, setProportion] = useState(2 / 3);
@@ -276,6 +281,9 @@ export const Chart = forwardRef(
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
             onProportionChanged={setProportion}
+            onRightClick={(event: any) => {
+              listeners.current.call("contextmenu", undefined, event);
+            }}
           />
         </div>
       </ErrorBoundary>

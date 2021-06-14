@@ -306,6 +306,9 @@ export class Core {
               () => this.listeners.call("redraw"),
               () => this.listeners.call("mouseout", this)
             );
+          })
+          .on("contextmenu", (event) => {
+            this.listeners.call("contextmenu", this, event);
           }),
       ])
     );
@@ -389,6 +392,7 @@ export class Core {
             scale,
             this.yTransforms[id],
             this.plotAreas[id],
+            this.plotAreaInteractions[id],
             this.plotAreaAnnotations[id],
             this.yAxes[id],
             this.isFreePan,
@@ -590,6 +594,16 @@ export class Core {
 
     this.xScale.domain(domain);
     this.xElement.call(this.xZoom.transform, zoomIdentity);
+    /* 
+    for (const plotArea of Object.values(this.plotAreas)) {
+      plotArea.crosshair([null, null]);
+    }
+
+    this.xAxis.crosshair(null);
+
+    for (const axis of Object.values(this.yAxes)) {
+      axis.crosshair(null);
+    } */
   }
 
   resetYAxis(id: string) {
@@ -745,6 +759,12 @@ export class Core {
               () => this.listeners.call("mouseout", this),
               () => this.listeners.call("redraw")
             );
+          })
+          .on("contextmenu", (event) => {
+            this.listeners.call("contextmenu", this, [
+              event.pageX,
+              event.pageY,
+            ]);
           });
 
         this.plotAreaAnnotations[id] = new PlotAreaAnnotations(
@@ -798,6 +818,7 @@ export class Core {
               this.yScales[id],
               this.yTransforms[id],
               this.plotAreas[id],
+              this.plotAreaInteractions[id],
               this.plotAreaAnnotations[id],
               this.yAxes[id],
               this.isFreePan,
