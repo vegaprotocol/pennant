@@ -80,7 +80,7 @@ export class PlotArea {
         element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
       }
 
-      if (this.isSimple) {
+      if (!this.isSimple) {
         this.latestPriceCrosshair.draw(
           this.ctx,
           this._xScale,
