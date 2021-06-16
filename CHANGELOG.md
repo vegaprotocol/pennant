@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.36](https://github.com/vegaprotocol/pennant/compare/v0.2.35...v0.2.36) (2021-06-16)
+
+
+### Features
+
+* initial number of candles to fetch can be configured ([20135ff](https://github.com/vegaprotocol/pennant/commit/20135ff6c21288a5d41d8d93fa39fc3668c9b791))
+
+
+### Bug Fixes
+
+* label annotation colors can now change over the lifetime of an annotation ([72d30c3](https://github.com/vegaprotocol/pennant/commit/72d30c35542f7387a43681576cb8366bfc385337))
+
 ### [0.2.35](https://github.com/vegaprotocol/pennant/compare/v0.2.34...v0.2.35) (2021-06-16)
 
 
