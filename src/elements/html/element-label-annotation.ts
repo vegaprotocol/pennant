@@ -57,12 +57,12 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
       .join((enter) =>
         enter
           .append("div")
-          .attr("class", (d) => `annotation intent-${d.intent}`)
           .style("left", `0px`)
           .style("height", `22px`)
           .style("position", "absolute")
           .style("pointer-events", "auto")
       )
+      .attr("class", (d) => `annotation intent-${d.intent}`)
       .style("top", (d) => `${d.y - LABEL_ANNOTATION_HEIGHT / 2}px`);
 
     label
