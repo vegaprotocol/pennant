@@ -34,6 +34,7 @@ import {
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
+import { useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -102,36 +103,7 @@ export const Chart = forwardRef(
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [proportion, setProportion] = useState(2 / 3);
-
-    const [priceMonitoringBounds, setPriceMonitoringBounds] =
-      useState<PriceMonitoringBounds | null>(null);
-
-    const [isLoading, setIsLoading] = useState(true);
     const [internalInterval, setInternalInterval] = useState(interval);
-
-    const specification = useMemo(
-      () =>
-        constructTopLevelSpec(
-          data,
-          chartType,
-          overlays[0],
-          studies[0],
-          priceMonitoringBounds
-        ),
-      [chartType, data, overlays, priceMonitoringBounds, studies]
-    );
-
-    // Compile data and view specification into scenegraph ready for rendering
-    const scenegraph = useMemo(
-      () =>
-        parse(
-          specification,
-          getCandleWidth(internalInterval),
-          dataSource.decimalPlaces,
-          annotations
-        ),
-      [annotations, dataSource.decimalPlaces, internalInterval, specification]
-    );
 
     // Callback for fetching historical data
     const query = useCallback(
@@ -145,6 +117,33 @@ export const Chart = forwardRef(
         setData((data) => mergeData(newData, merge ? data : []));
       },
       [dataSource]
+    );
+
+    // Wait for data source onReady call before showing content
+    const { loading, configuration } = useOnReady(dataSource);
+
+    const specification = useMemo(
+      () =>
+        constructTopLevelSpec(
+          data,
+          chartType,
+          overlays[0],
+          studies[0],
+          configuration?.priceMonitoringBounds
+        ),
+      [chartType, data, overlays, configuration?.priceMonitoringBounds, studies]
+    );
+
+    // Compile data and view specification into scenegraph ready for rendering
+    const scenegraph = useMemo(
+      () =>
+        parse(
+          specification,
+          getCandleWidth(internalInterval),
+          dataSource.decimalPlaces,
+          annotations
+        ),
+      [annotations, dataSource.decimalPlaces, internalInterval, specification]
     );
 
     // Initial data fetch and subscriptions
@@ -169,19 +168,21 @@ export const Chart = forwardRef(
         });
       }
 
-      const myDataSource = dataSource;
+      if (!loading) {
+        const myDataSource = dataSource;
 
-      // Initial data fetch
-      fetchData(interval);
+        // Initial data fetch
+        fetchData(interval);
 
-      // Set up subscriptions
-      subscribe(interval);
+        // Set up subscriptions
+        subscribe(interval);
 
-      return () => {
-        myDataSource.unsubscribeData();
-        setData([]);
-      };
-    }, [dataSource, interval, query]);
+        return () => {
+          myDataSource.unsubscribeData();
+          setData([]);
+        };
+      }
+    }, [dataSource, interval, loading, query]);
 
     // React to streaming annotations changes
     useEffect(() => {
@@ -193,31 +194,18 @@ export const Chart = forwardRef(
         }
       }
 
-      const myDataSource = dataSource;
+      if (!loading) {
+        const myDataSource = dataSource;
 
-      subscribe();
+        subscribe();
 
-      return () => {
-        myDataSource.unsubscribeAnnotations &&
-          myDataSource.unsubscribeAnnotations();
-        setAnnotations([]);
-      };
-    }, [dataSource]);
-
-    // Wait for data source onReady call before showing content
-    useEffect(() => {
-      const onReady = async () => {
-        setIsLoading(true);
-        const configuration = await dataSource.onReady();
-        setIsLoading(false);
-
-        if (configuration.priceMonitoringBounds.length > 0) {
-          setPriceMonitoringBounds(configuration.priceMonitoringBounds[0]);
-        }
-      };
-
-      onReady();
-    }, [dataSource]);
+        return () => {
+          myDataSource.unsubscribeAnnotations &&
+            myDataSource.unsubscribeAnnotations();
+          setAnnotations([]);
+        };
+      }
+    }, [dataSource, loading]);
 
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
@@ -253,7 +241,7 @@ export const Chart = forwardRef(
     );
 
     // Show fallback UI while waiting for data
-    if (isLoading) {
+    if (loading) {
       return <NonIdealState title="Loading" />;
     }
 

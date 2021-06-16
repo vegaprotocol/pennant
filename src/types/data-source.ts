@@ -1,12 +1,14 @@
 import { Annotation, Candle, Interval } from ".";
 
+export interface Configuration {
+  decimalPlaces: number;
+  supportedIntervals: Interval[];
+  priceMonitoringBounds: any;
+}
+
 export interface DataSource {
   readonly decimalPlaces: number;
-  onReady(): Promise<{
-    decimalPlaces: number;
-    supportedIntervals: Interval[];
-    priceMonitoringBounds: any;
-  }>;
+  onReady(): Promise<Configuration>;
   query(interval: Interval, from: string, to: string): Promise<Candle[]>;
   subscribeData(
     interval: Interval,
