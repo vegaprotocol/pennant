@@ -96,7 +96,11 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
               key={market.id}
               dataSource={dataSources[i]}
               interval={Interval.I1M}
-              options={{ simple: true, initialNumCandles: 25 }}
+              options={{
+                simple: true,
+                initialNumCandlesToDisplay: 25,
+                initialNumCandlesToFetch: 10000,
+              }}
             />
           </div>
         </div>

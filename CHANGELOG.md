@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.35](https://github.com/vegaprotocol/pennant/compare/v0.2.34...v0.2.35) (2021-06-16)
+
+
+### Features
+
+* add force index indicator ([#252](https://github.com/vegaprotocol/pennant/issues/252)) ([b2fd2a2](https://github.com/vegaprotocol/pennant/commit/b2fd2a2152b48aaf7c9d53516216e8448fcd234b))
+
+
+### Bug Fixes
+
+* draw latest price line for non simple charts ([ffe06d3](https://github.com/vegaprotocol/pennant/commit/ffe06d37948d16b92fc86812ed918fb218fe0ac5))
+* ensure onReady call resolves before querying or subscribing api ([5c44d6d](https://github.com/vegaprotocol/pennant/commit/5c44d6d3145b23b4216553a51b7b36d0c317d0e7))
+* **deps:** update dependency @types/node to v14 ([#205](https://github.com/vegaprotocol/pennant/issues/205)) ([f1cb466](https://github.com/vegaprotocol/pennant/commit/f1cb46635f35243a8dcaddb5f428bd576e709e16))
+
 ### [0.2.34](https://github.com/vegaprotocol/pennant/compare/v0.2.33...v0.2.34) (2021-06-10)
 
 
