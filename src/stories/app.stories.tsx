@@ -341,8 +341,9 @@ export const CryptoCompare: Story = () => {
           onClose={() => {
             setContextMenuOpen(false);
           }}
-          hasBackdrop={false}
+          hasBackdrop={true}
           usePortal={false}
+          transitionDuration={-1}
         >
           <div
             ref={setPopperElement}
@@ -353,12 +354,19 @@ export const CryptoCompare: Story = () => {
               <MenuItem
                 icon="new-object"
                 text={`Buy @ ${formatter(price, 2)}`}
+                onClick={() => {
+                  alert(`Buy @ ${formatter(price, 2)}`);
+                  setContextMenuOpen(false);
+                }}
               />
               <MenuItem
                 icon="new-object"
                 text={`Sell @ ${formatter(price, 2)}`}
+                onClick={() => {
+                  alert(`Sell @ ${formatter(price, 2)}`);
+                  setContextMenuOpen(false);
+                }}
               />
-              <MenuItem icon="new-object" text="Create order" />
               <MenuItem
                 icon="reset"
                 text="Reset chart"
@@ -378,8 +386,13 @@ export const CryptoCompare: Story = () => {
             </Menu>
           </div>
         </BPOverlay>
-        <button onClick={() => ref.current.reset()}>reset</button>
-        <p>{contextMenuOpen ? "open" : "false"}</p>
+        <Button
+          icon="reset"
+          onClick={() => ref.current.reset()}
+          style={{ marginTop: "12px" }}
+        >
+          Reset
+        </Button>
       </div>
     </HotkeysProvider>
   );
