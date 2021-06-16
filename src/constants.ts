@@ -1,6 +1,7 @@
 export const Y_AXIS_WIDTH = 92;
 export const THROTTLE_INTERVAL = 10;
-export const INITIAL_NUM_CANDLES = 100;
+export const INITIAL_NUM_CANDLES_TO_DISPLAY = 100;
+export const INITIAL_NUM_CANDLES_TO_FETCH = 10000;
 export const MAX_CANDLE_WIDTH = 20;
 export const DEFAULT_INTERVAL_WIDTH = 10;
 export const MIN_ZOOM = 0.1;

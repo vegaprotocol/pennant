@@ -14,7 +14,7 @@ import { MutableRefObject } from "react";
 
 import {
   DEFAULT_INTERVAL_WIDTH,
-  INITIAL_NUM_CANDLES,
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
   MAX_ZOOM,
   MIN_ZOOM,
   Y_AXIS_WIDTH,
@@ -90,7 +90,7 @@ export class Core {
   private _interval = Interval.I1M;
 
   private _decimalPlaces = 5;
-  private initialNumCandles = INITIAL_NUM_CANDLES;
+  private initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY;
 
   // Modes
   private isPinned = true;

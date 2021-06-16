@@ -11,7 +11,10 @@ import React, {
   useState,
 } from "react";
 
-import { INITIAL_NUM_CANDLES } from "../../constants";
+import {
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
+  INITIAL_NUM_CANDLES_TO_FETCH,
+} from "../../constants";
 import {
   constructTopLevelSpec,
   getCandleWidth,
@@ -27,7 +30,6 @@ import {
   DataSource,
   Interval,
   Overlay,
-  PriceMonitoringBounds,
   Study,
   Viewport,
 } from "../../types";
@@ -43,7 +45,8 @@ export type Options = {
   overlays?: Overlay[];
   studies?: Study[];
   simple?: boolean;
-  initialNumCandles?: number;
+  initialNumCandlesToDisplay?: number;
+  initialNumCandlesToFetch?: number;
 };
 
 export type ChartProps = {
@@ -65,7 +68,8 @@ export const Chart = forwardRef(
         chartType: "candle",
         studies: [],
         overlays: [],
-        initialNumCandles: INITIAL_NUM_CANDLES,
+        initialNumCandlesToDisplay: INITIAL_NUM_CANDLES_TO_DISPLAY,
+        initialNumCandlesToFetch: INITIAL_NUM_CANDLES_TO_FETCH,
       },
       initialViewport,
       onOptionsChanged = noop,
@@ -78,7 +82,10 @@ export const Chart = forwardRef(
       studies = [],
       overlays = [],
       simple = false,
-      initialNumCandles = INITIAL_NUM_CANDLES,
+      initialNumCandlesToDisplay:
+        initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY,
+      initialNumCandlesToFetch:
+        initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
     } = options;
 
     useImperativeHandle(ref, () => ({
@@ -152,7 +159,7 @@ export const Chart = forwardRef(
         await query(
           new Date(
             new Date().getTime() -
-              1000 * 60 * getSubMinutes(interval, INITIAL_NUM_CANDLES)
+              1000 * 60 * getSubMinutes(interval, initialNumCandlesToFetch)
           ),
           new Date(),
           interval,
@@ -182,7 +189,7 @@ export const Chart = forwardRef(
           setData([]);
         };
       }
-    }, [dataSource, interval, loading, query]);
+    }, [dataSource, initialNumCandlesToFetch, interval, loading, query]);
 
     // React to streaming annotations changes
     useEffect(() => {
