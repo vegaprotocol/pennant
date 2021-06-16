@@ -68,9 +68,9 @@ type Market = {
 
 const MarketSelect = Select.ofType<Market>();
 
-const renderMarket: ItemRenderer<any> = (
-  market: Market,
-  { handleClick, modifiers }: any
+const renderMarket: ItemRenderer<Market> = (
+  market,
+  { handleClick, modifiers }
 ) => {
   if (!modifiers.matchesPredicate) {
     return null;
@@ -194,7 +194,9 @@ export const CryptoCompare: Story = () => {
     },
   });
 
-  const [popperElement, setPopperElement] = useState(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
   const { styles, attributes } = usePopper(
     virtualReference.current,
     popperElement,
@@ -339,11 +341,11 @@ export const CryptoCompare: Story = () => {
           onClose={() => {
             setContextMenuOpen(false);
           }}
-          hasBackdrop={true}
+          hasBackdrop={false}
           usePortal={false}
         >
           <div
-            ref={setPopperElement as any}
+            ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
