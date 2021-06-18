@@ -30,7 +30,7 @@
     "@d3fc/d3fc-element": "^6.1.2",
     "@d3fc/d3fc-technical-indicator": "^8.0.1",
     "@types/classnames": "^2.2.11",
-    "@types/d3-array": "^2.9.0",
+    "@types/d3-array": "^3.0.0",
     "@types/d3-dispatch": "^2.0.0",
     "@types/d3-drag": "^2.0.0",
     "@types/d3-scale": "^3.2.2",
@@ -47,7 +47,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "classnames": "^2.2.6",
-    "d3-array": "2.3.3",
+    "d3-array": "3.0.1",
     "d3-dispatch": "^2.0.0",
     "d3-drag": "^2.0.0",
     "d3-format": "^2.0.0",
@@ -145,6 +145,6 @@
     "react-dom": "^16.8.0 || ^17.0.0"
   },
   "resolutions": {
-    "d3-array": "2.3.3"
+    "d3-array": "3.0.1"
   }
 }
