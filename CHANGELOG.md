@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.38](https://github.com/vegaprotocol/pennant/compare/v0.2.37...v0.2.38) (2021-06-21)
+
+
+### Bug Fixes
+
+* movingAverage and envelope indicators now work ([bbbc6f7](https://github.com/vegaprotocol/pennant/commit/bbbc6f75bca2fe51671b4817000fcce5e73135cf))
+
 ### [0.2.37](https://github.com/vegaprotocol/pennant/compare/v0.2.36...v0.2.37) (2021-06-21)
 
 
