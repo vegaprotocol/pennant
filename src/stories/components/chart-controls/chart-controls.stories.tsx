@@ -17,7 +17,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 const Template: Story<ChartControlsProps> = (args) => {
   const [interval, setInterval] = useState<Interval>(Interval.I5M);
-  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [chartType, setChartType] = useState<ChartType>(ChartType.CANDLE);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
   const [study, setStudy] = useState<Study | null>(null);
 

@@ -1,6 +1,11 @@
-export const chartTypes = ["area", "candle", "line", "ohlc"] as const;
+export const ChartType = {
+  AREA: "area",
+  CANDLE: "candle",
+  LINE: "line",
+  OHLC: "ohlc",
+} as const;
 
-export type ChartType = typeof chartTypes[number];
+export type ChartType = typeof ChartType[keyof typeof ChartType];
 
 export const chartTypeLabels: Record<ChartType, string> = {
   area: "Mountain",

@@ -9,7 +9,7 @@ import {
 
 function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   switch (chartType) {
-    case "area":
+    case ChartType.AREA:
       return [
         {
           encoding: {
@@ -36,7 +36,7 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
           },
         },
       ];
-    case "line":
+    case ChartType.LINE:
       return [
         {
           encoding: {
@@ -48,7 +48,7 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
           },
         },
       ];
-    case "ohlc":
+    case ChartType.OHLC:
       return [
         {
           encoding: {
@@ -99,8 +99,7 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
           },
         },
       ];
-    case "candle":
-    default:
+    case ChartType.CANDLE:
       return [
         {
           encoding: {

@@ -15,7 +15,6 @@ import { INTERVALS } from "../../../helpers";
 import {
   ChartType,
   chartTypeLabels,
-  chartTypes,
   Overlay,
   overlayLabels,
   Study,
@@ -24,10 +23,10 @@ import {
 import { Interval } from "../../api/vega-graphql";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
-  ["area", "timeline-area-chart"],
-  ["candle", "waterfall-chart"],
-  ["line", "timeline-line-chart"],
-  ["ohlc", "timeline-line-chart"],
+  [ChartType.AREA, "timeline-area-chart"],
+  [ChartType.CANDLE, "waterfall-chart"],
+  [ChartType.LINE, "timeline-line-chart"],
+  [ChartType.OHLC, "timeline-line-chart"],
 ]);
 
 export type ChartControlsProps = {
@@ -109,7 +108,7 @@ export const ChartControls = ({
         minimal={true}
         content={
           <Menu>
-            {chartTypes.map((item: ChartType) => (
+            {Object.values(ChartType).map((item) => (
               <MenuItem
                 key={item}
                 text={chartTypeLabels[item]}

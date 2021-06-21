@@ -65,7 +65,7 @@ export const Chart = forwardRef(
       dataSource,
       interval,
       options = {
-        chartType: "candle",
+        chartType: ChartType.CANDLE,
         studies: [],
         overlays: [],
         initialNumCandlesToDisplay: INITIAL_NUM_CANDLES_TO_DISPLAY,
@@ -78,7 +78,7 @@ export const Chart = forwardRef(
     ref: React.Ref<ChartElement>
   ) => {
     const {
-      chartType = "candle",
+      chartType = ChartType.CANDLE,
       studies = [],
       overlays = [],
       simple = false,
