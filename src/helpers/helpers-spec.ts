@@ -299,11 +299,11 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
         },
       ];
-    case "exponentialMovingAverage":
+    case "movingAverage":
       return [
         {
           encoding: {
-            y: { field: "exponentialMovingAverage", type: "quantitative" },
+            y: { field: "movingAverage", type: "quantitative" },
           },
           mark: {
             type: "line",

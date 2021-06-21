@@ -242,7 +242,9 @@ export function parse(
           break;
         case "envelope":
           {
-            const indicatorData = indicatorEnvelope<Candle>()(data);
+            const indicatorData = indicatorEnvelope<Candle>().value(
+              (datum) => datum.close
+            )(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
           }
