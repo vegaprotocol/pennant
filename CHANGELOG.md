@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.37](https://github.com/vegaprotocol/pennant/compare/v0.2.36...v0.2.37) (2021-06-21)
+
+
+### Features
+
+* expose ChartType as a value ([19dec55](https://github.com/vegaprotocol/pennant/commit/19dec5535bc37b044c2013b5592ec2b02c532c0a))
+
+
+### Bug Fixes
+
+* add key to indicator info component list ([4e8287f](https://github.com/vegaprotocol/pennant/commit/4e8287f30f47ef4daf2a668938dbfac33ce30bc3))
+
 ### [0.2.36](https://github.com/vegaprotocol/pennant/compare/v0.2.35...v0.2.36) (2021-06-16)
 
 
