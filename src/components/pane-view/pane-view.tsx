@@ -25,8 +25,9 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
     { bounds, dataIndex, decimalPlaces, overlays, pane, simple, onClosePane },
     ref
   ) => {
-    const [showPaneControls, setShowPaneControls] =
-      useState<string | null>(null);
+    const [showPaneControls, setShowPaneControls] = useState<string | null>(
+      null
+    );
 
     return (
       <div
@@ -97,6 +98,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
           {pane.id === "main" &&
             overlays.map((overlay) => (
               <IndicatorInfo
+                key={studyInfoFields[overlay].label}
                 title={studyInfoFields[overlay].label}
                 info={studyInfoFields[overlay].fields.map((field) => {
                   const value = getStudyInfoFieldValue(
