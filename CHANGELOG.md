@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.39](https://github.com/vegaprotocol/pennant/compare/v0.2.38...v0.2.39) (2021-06-23)
+
+
+### Features
+
+* add contextmenu event to chart ([#262](https://github.com/vegaprotocol/pennant/issues/262)) ([bbf2521](https://github.com/vegaprotocol/pennant/commit/bbf25216bca793e573bc19936f23656d7d0b0708))
+
 ### [0.2.38](https://github.com/vegaprotocol/pennant/compare/v0.2.37...v0.2.38) (2021-06-21)
 
 
