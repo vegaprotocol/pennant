@@ -15,7 +15,12 @@ import {
 import { THROTTLE_INTERVAL } from "../../constants";
 import { Core } from "../../core";
 import { asyncSnapshot } from "../../helpers";
-import { Bounds, ChartElement, Scenegraph, Viewport } from "../../types";
+import {
+  Bounds,
+  PlotContainerElement,
+  Scenegraph,
+  Viewport,
+} from "../../types";
 import { FcElement, Interval } from "../../types";
 import { PaneView } from "../pane-view";
 import { SplitView } from "../split-view";
@@ -33,13 +38,16 @@ export type PlotContainerProps = {
   simple: boolean;
   initialNumCandles: number;
   onViewportChanged?: (viewport: Viewport) => void;
-  onRightClick?: (position: [number, number]) => void;
+  onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePane: (id: string) => void;
   onProportionChanged: (proportion: number) => void;
 };
 
-export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
+export const PlotContainer = forwardRef<
+  PlotContainerElement,
+  PlotContainerProps
+>(
   (
     {
       scenegraph,
@@ -51,6 +59,7 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
       simple,
       initialNumCandles,
       onViewportChanged = () => {},
+      onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
       onProportionChanged,
@@ -88,8 +97,6 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
     const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
     const [bounds, setBounds] = useState<Bounds | null>(null);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
-    const [showPaneControls, setShowPaneControls] =
-      useState<string | null>(null);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
 
@@ -164,6 +171,9 @@ export const PlotContainer = forwardRef<ChartElement, PlotContainerProps>(
         })
         .on("fetch_data", (from: Date, to: Date) => {
           onGetDataRangeThrottled(from, to, interval);
+        })
+        .on("contextmenu", (event: any) => {
+          onRightClick(event);
         });
 
       chartRef.current?.requestRedraw();
