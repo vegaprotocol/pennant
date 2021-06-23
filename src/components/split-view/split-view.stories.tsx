@@ -7,7 +7,7 @@ export default {
   component: SplitView,
 } as Meta;
 
-export const Basic: Story<SplitViewProps> = (args) => {
+const Template: Story<SplitViewProps> = (args) => {
   return (
     <div style={{ border: "1px solid grey", height: "100%" }}>
       <SplitView {...args} />
@@ -15,6 +15,7 @@ export const Basic: Story<SplitViewProps> = (args) => {
   );
 };
 
+export const Basic = Template.bind({});
 Basic.args = {
   main: <div style={{ backgroundColor: "rgb(6,6,6)", height: "100%" }} />,
   study: (
@@ -26,4 +27,13 @@ Basic.args = {
       }}
     />
   ),
+  showStudy: true,
+  initialProportion: 2 / 3,
+};
+
+export const NoStudy = Template.bind({});
+NoStudy.args = {
+  main: <div style={{ backgroundColor: "rgb(6,6,6)", height: "100%" }} />,
+  study: null,
+  showStudy: false,
 };
