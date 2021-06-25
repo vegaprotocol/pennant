@@ -2638,10 +2638,10 @@
   dependencies:
     "@types/d3-selection" "*"
 
-"@types/d3-format@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-2.0.0.tgz#607d261cb268f0a027f100575491031539a40ee6"
-  integrity sha512-uagdkftxnGkO4pZw5jEYOM5ZnZOEsh7z8j11Qxk85UkB2RzfUUxRl7R9VvvJZHwKn8l+x+rpS77Nusq7FkFmIg==
+"@types/d3-format@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-2.0.1.tgz#1f911f2ca829b57a29b3f0b5ee27f4656628d3d4"
+  integrity sha512-1o4A+s8NvzBGKTPvNsgWjumueiauHfaLwPrYidOGzekQNJT0iucJAnEyEYLY9472jY9VHZCPAIvF4QDhSw8IHw==
 
 "@types/d3-interpolate@*":
   version "2.0.0"
