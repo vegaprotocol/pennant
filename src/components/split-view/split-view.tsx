@@ -18,6 +18,7 @@ export type SplitViewProps = {
   showStudy: boolean;
   initialProportion: number;
   onResize?: (proportion: number) => void;
+  simple?: boolean;
 };
 
 const styles = getComputedStyle(document.documentElement);
@@ -32,6 +33,7 @@ export const SplitView = ({
   showStudy = false,
   initialProportion = 2 / 3,
   onResize,
+  simple = false,
 }: SplitViewProps) => {
   const splitViewRef = useRef<HTMLDivElement>(null!);
   const sashRef = useRef<HTMLDivElement>(null!);
@@ -48,7 +50,9 @@ export const SplitView = ({
 
   const layout = useCallback(() => {
     if (showStudy) {
-      sashRef.current.style.top = `${size.current - sashSize / 2}px`;
+      if (sashRef.current) {
+        sashRef.current.style.top = `${size.current - sashSize / 2}px`;
+      }
       mainRef.current.style.top = `${0}px`;
       mainRef.current.style.height = `${size.current}px`;
       studyRef.current.style.top = `${size.current}px`;
@@ -152,13 +156,13 @@ export const SplitView = ({
       className="pennant-split-view vertical separator-border"
     >
       <div className="sash-container">
-        {showStudy && (
+        {showStudy && !simple && (
           <div
             ref={sashRef}
             className="pennant-sash horizontal"
-            onMouseDown={handleMouseDown}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseDown={simple ? undefined : handleMouseDown}
+            onMouseEnter={simple ? undefined : handleMouseEnter}
+            onMouseLeave={simple ? undefined : handleMouseLeave}
           />
         )}
       </div>

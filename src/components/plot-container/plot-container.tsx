@@ -268,6 +268,7 @@ export const PlotContainer = forwardRef<
             chartRef.current?.requestRedraw();
             onProportionChanged(proportion);
           }}
+          simple={simple}
         />
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>

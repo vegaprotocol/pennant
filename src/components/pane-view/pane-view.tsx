@@ -37,7 +37,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
         onMouseOut={() => setShowPaneControls(null)}
       >
         <d3fc-canvas class="plot-area" use-device-pixel-ratio />
-        <d3fc-svg class="plot-area-interaction" />
+        {!simple && <d3fc-svg class="plot-area-interaction" />}
         <div className="plot-area-annotations" />
         <d3fc-canvas
           class="y-axis"
