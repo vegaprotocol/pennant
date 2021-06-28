@@ -544,7 +544,11 @@ export class Core {
   }
 
   pinXAxis(): void {
-    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
+    const width = this.xScale.range()[1] - this.xScale.range()[0];
+
+    const intervalWidth =
+      width / this.initialNumCandles ?? DEFAULT_INTERVAL_WIDTH;
+
     const xr = this.xTransform().rescaleX(this.xScale);
 
     const latestDate = this.dates[this.dates.length - 1];
@@ -553,8 +557,7 @@ export class Core {
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
-      const difference =
-        this.xScale(latestDate) - this.xScale(previousLatestDate);
+      const difference = xr(latestDate) - xr(previousLatestDate);
 
       this.xElement.call(this.xZoom.translateBy, -difference, 0);
     }
@@ -597,16 +600,6 @@ export class Core {
 
     this.xScale.domain(domain);
     this.xElement.call(this.xZoom.transform, zoomIdentity);
-    /* 
-    for (const plotArea of Object.values(this.plotAreas)) {
-      plotArea.crosshair([null, null]);
-    }
-
-    this.xAxis.crosshair(null);
-
-    for (const axis of Object.values(this.yAxes)) {
-      axis.crosshair(null);
-    } */
   }
 
   resetYAxis(id: string) {
