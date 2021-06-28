@@ -52,6 +52,11 @@ import { XAxisInteraction } from "./x-axis-interaction";
 import { YAxis } from "./y-axis";
 import { YAxisInteraction } from "./y-axis-interaction";
 
+// Padding between center of right-most candle and y-axis or right hand edge
+function getCandlePadding(isSimple: boolean, intervalWidth: number) {
+  return (isSimple ? 0 : Y_AXIS_WIDTH) + (isSimple ? 0.5 : 3) * intervalWidth;
+}
+
 export type Panes<T> = { [id: string]: T };
 
 export type ChartPane = {
@@ -539,17 +544,20 @@ export class Core {
   }
 
   pinXAxis(): void {
-    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
+    const width = this.xScale.range()[1] - this.xScale.range()[0];
+
+    const intervalWidth =
+      width / this.initialNumCandles ?? DEFAULT_INTERVAL_WIDTH;
+
     const xr = this.xTransform().rescaleX(this.xScale);
 
     const latestDate = this.dates[this.dates.length - 1];
     const previousLatestDate = xr.invert(
-      xr.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH) - intervalWidth * 3
+      xr.range()[1] - getCandlePadding(this.isSimple, intervalWidth)
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
-      const difference =
-        this.xScale(latestDate) - this.xScale(previousLatestDate);
+      const difference = xr(latestDate) - xr(previousLatestDate);
 
       this.xElement.call(this.xZoom.translateBy, -difference, 0);
     }
@@ -566,8 +574,7 @@ export class Core {
     const ratio =
       width /
       (this.xScale.range()[1] -
-        (this.isSimple ? 0 : Y_AXIS_WIDTH) -
-        intervalWidth * 3 -
+        getCandlePadding(this.isSimple, intervalWidth) -
         this.xScale.range()[0]);
 
     const date0 = new Date(
@@ -575,8 +582,7 @@ export class Core {
         (Math.abs(
           this.xScale.range()[1] -
             this.xScale.range()[0] -
-            (this.isSimple ? 0 : Y_AXIS_WIDTH) -
-            (this.isSimple ? 0 : 3 * intervalWidth)
+            getCandlePadding(this.isSimple, intervalWidth)
         ) /
           intervalWidth) *
           1000 *
@@ -594,16 +600,6 @@ export class Core {
 
     this.xScale.domain(domain);
     this.xElement.call(this.xZoom.transform, zoomIdentity);
-    /* 
-    for (const plotArea of Object.values(this.plotAreas)) {
-      plotArea.crosshair([null, null]);
-    }
-
-    this.xAxis.crosshair(null);
-
-    for (const axis of Object.values(this.yAxes)) {
-      axis.crosshair(null);
-    } */
   }
 
   resetYAxis(id: string) {
@@ -888,10 +884,12 @@ export class Core {
 
   private zoom(delta: number) {
     const xr = this.xTransform().rescaleX(this.xScale);
+    const intervalWidth = DEFAULT_INTERVAL_WIDTH;
 
     this.xElement.call(this.xZoom.scaleBy, 2 ** delta, [
       this.isPinned
-        ? this.xScale.range()[1] - (this.isSimple ? 0 : Y_AXIS_WIDTH)
+        ? this.xScale.range()[1] -
+          getCandlePadding(this.isSimple, intervalWidth)
         : (this.xScale.range()[0] + this.xScale.range()[1]) / 2,
       0,
     ]);

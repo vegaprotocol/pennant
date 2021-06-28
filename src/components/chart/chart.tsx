@@ -199,7 +199,7 @@ export const Chart = forwardRef(
     // React to streaming annotations changes
     useEffect(() => {
       function subscribe() {
-        if (dataSource.subscribeAnnotations) {
+        if (dataSource.subscribeAnnotations && !simple) {
           dataSource.subscribeAnnotations((annotations) => {
             setAnnotations(annotations);
           });
@@ -217,7 +217,7 @@ export const Chart = forwardRef(
           setAnnotations([]);
         };
       }
-    }, [dataSource, loading]);
+    }, [dataSource, loading, simple]);
 
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {

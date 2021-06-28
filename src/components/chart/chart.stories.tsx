@@ -16,12 +16,15 @@ const Template: Story<ChartProps> = (args) => (
   </div>
 );
 
-export const Simple = Template.bind({});
-Simple.args = { dataSource: new JsonDataSource("", 5), interval: Interval.I5M };
+export const Default = Template.bind({});
+Default.args = {
+  dataSource: new JsonDataSource("", 5),
+  interval: Interval.I5M,
+};
 
 export const Study = Template.bind({});
 Study.args = {
-  ...Simple.args,
+  ...Default.args,
   options: {
     chartType: "area",
     studies: ["macd"],
@@ -30,9 +33,15 @@ Study.args = {
 
 export const Positions = Template.bind({});
 Positions.args = {
-  ...Simple.args,
-  options: { ...Simple.args.options, chartType: "area" },
+  ...Default.args,
+  options: { chartType: "area" },
 };
 
 export const NoData = Template.bind({});
 NoData.args = { dataSource: new EmptyDataSource(), interval: Interval.I5M };
+
+export const SimpleMode = Template.bind({});
+SimpleMode.args = {
+  ...Default.args,
+  options: { studies: ["volume"], simple: true },
+};
