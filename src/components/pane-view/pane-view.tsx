@@ -50,7 +50,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
             width: simple ? 0 : `${Y_AXIS_WIDTH}px`,
           }}
         />
-        {pane.id !== "main" && (
+        {pane.id !== "main" && !simple && (
           <div
             className="pane__close-button-wrapper"
             style={{
