@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.40](https://github.com/vegaprotocol/pennant/compare/v0.2.39...v0.2.40) (2021-06-28)
+
+
+### Features
+
+* make simple mode more simple ([#284](https://github.com/vegaprotocol/pennant/issues/284)) ([492b787](https://github.com/vegaprotocol/pennant/commit/492b787ecdc9805824ceab6e9ef163758becfaec))
+
 ### [0.2.39](https://github.com/vegaprotocol/pennant/compare/v0.2.38...v0.2.39) (2021-06-23)
 
 
