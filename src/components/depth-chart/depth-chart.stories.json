@@ -1,0 +1,164 @@
+{
+  "data": {
+    "market": {
+      "id": "3C58ED2A4A6C5D7E",
+      "decimalPlaces": 4,
+      "tradableInstrument": {
+        "instrument": {
+          "id": "unused-id",
+          "name": "UNIDAI Monthly (31 Dec 2021)",
+          "code": "UNIDAI.MF21"
+        }
+      },
+      "depth": {
+        "lastTrade": {
+          "price": "180045"
+        },
+        "sell": [
+          {
+            "price": "180045",
+            "volume": "2785",
+            "numberOfOrders": "62"
+          },
+          {
+            "price": "180046",
+            "volume": "3763",
+            "numberOfOrders": "64"
+          },
+          {
+            "price": "180047",
+            "volume": "1108",
+            "numberOfOrders": "23"
+          },
+          {
+            "price": "180048",
+            "volume": "210",
+            "numberOfOrders": "5"
+          },
+          {
+            "price": "180050",
+            "volume": "124",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180055",
+            "volume": "38",
+            "numberOfOrders": "1"
+          },
+          {
+            "price": "180065",
+            "volume": "944",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180066",
+            "volume": "708",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180067",
+            "volume": "474",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180089",
+            "volume": "242",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180224",
+            "volume": "18674",
+            "numberOfOrders": "291"
+          },
+          {
+            "price": "180225",
+            "volume": "7126",
+            "numberOfOrders": "118"
+          },
+          {
+            "price": "180226",
+            "volume": "5927",
+            "numberOfOrders": "96"
+          },
+          {
+            "price": "180227",
+            "volume": "1590",
+            "numberOfOrders": "28"
+          },
+          {
+            "price": "180228",
+            "volume": "1230",
+            "numberOfOrders": "21"
+          },
+          {
+            "price": "180229",
+            "volume": "179",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180588",
+            "volume": "8904",
+            "numberOfOrders": "139"
+          },
+          {
+            "price": "180589",
+            "volume": "3436",
+            "numberOfOrders": "60"
+          },
+          {
+            "price": "180590",
+            "volume": "3111",
+            "numberOfOrders": "46"
+          },
+          {
+            "price": "180591",
+            "volume": "1204",
+            "numberOfOrders": "18"
+          }
+        ],
+        "buy": [
+          {
+            "price": "180044",
+            "volume": "485",
+            "numberOfOrders": "28"
+          },
+          {
+            "price": "180043",
+            "volume": "141",
+            "numberOfOrders": "8"
+          },
+          {
+            "price": "180042",
+            "volume": "32",
+            "numberOfOrders": "3"
+          },
+          {
+            "price": "180039",
+            "volume": "9",
+            "numberOfOrders": "1"
+          },
+          {
+            "price": "180004",
+            "volume": "956",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180003",
+            "volume": "718",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "180002",
+            "volume": "480",
+            "numberOfOrders": "2"
+          },
+          {
+            "price": "179960",
+            "volume": "250",
+            "numberOfOrders": "2"
+          }
+        ]
+      }
+    }
+  }
+}
