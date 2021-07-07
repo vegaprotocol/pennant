@@ -88,6 +88,12 @@ export function measureXAxis(
   onBoundsChanged: (bounds: [Date, Date]) => void
 ) {
   const { width, pixelRatio } = event.detail;
+
+  // Sometimes the reported width is zero. In this case there is no point performing any calculations
+  if (width === 0) {
+    return;
+  }
+
   const ratio = width / pixelRatio / (xScale.range()[1] - xScale.range()[0]);
 
   if (ratio !== 1) {
