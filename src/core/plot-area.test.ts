@@ -3,7 +3,7 @@ import { scaleLinear, scaleTime } from "d3-scale";
 import { PlotArea } from "./plot-area";
 
 describe("getIndex", () => {
-  test("returns corect value if inside range", () => {
+  test("returns corect value if inside domain", () => {
     const xScale = scaleTime()
       .domain([new Date(2021, 6, 1), new Date(2021, 6, 11)])
       .range([0, 100]);
@@ -43,7 +43,7 @@ describe("getIndex", () => {
     expect(plotArea.getIndex(100)).toEqual(null);
   });
 
-  test("returns null if outside range", () => {
+  test("returns correct value if outside domain", () => {
     const xScale = scaleTime()
       .domain([new Date(2021, 6, 1), new Date(2021, 6, 10)])
       .range([0, 100]);
@@ -66,6 +66,6 @@ describe("getIndex", () => {
       false
     );
 
-    expect(plotArea.getIndex(200)).toEqual(null);
+    expect(plotArea.getIndex(200)).toEqual([2, new Date(2021, 6, 11)]);
   });
 });
