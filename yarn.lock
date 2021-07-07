@@ -2781,10 +2781,10 @@
   dependencies:
     "@types/d3-selection" "*"
 
-"@types/d3-format@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-2.0.1.tgz#1f911f2ca829b57a29b3f0b5ee27f4656628d3d4"
-  integrity sha512-1o4A+s8NvzBGKTPvNsgWjumueiauHfaLwPrYidOGzekQNJT0iucJAnEyEYLY9472jY9VHZCPAIvF4QDhSw8IHw==
+"@types/d3-format@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-2.0.2.tgz#97b2ac314430ae9f7768cc9efba8b23b63af82ef"
+  integrity sha512-OhQPuTeeMhD9A0Ksqo4q1S9Z1Q57O/t4tTPBxBQxRB4IERnxeoEYLPe72fA/GYpPSUrfKZVOgLHidkxwbzLdJA==
 
 "@types/d3-interpolate@*":
   version "2.0.0"
