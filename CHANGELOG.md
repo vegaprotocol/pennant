@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.43](https://github.com/vegaprotocol/pennant/compare/v0.2.42...v0.2.43) (2021-07-07)
+
+
+### Bug Fixes
+
+* saving chart to image now includes panes ([bc5b7d6](https://github.com/vegaprotocol/pennant/commit/bc5b7d6522fca28defe1e6c157e4e642437fe9f5))
+
+### [0.2.42](https://github.com/vegaprotocol/pennant/compare/v0.2.41...v0.2.42) (2021-07-07)
+
+### [0.2.41](https://github.com/vegaprotocol/pennant/compare/v0.2.40...v0.2.41) (2021-07-07)
+
+
+### Bug Fixes
+
+* handle mouse position not corresponding to valid date ([2ced394](https://github.com/vegaprotocol/pennant/commit/2ced394f6ec7c284cc6b68643ed3d4c9aa249f57))
+* handle zero reported width ([e5b1ae6](https://github.com/vegaprotocol/pennant/commit/e5b1ae6896d001a2137d4f0714bbc188b0b8c180))
+
 ### [0.2.40](https://github.com/vegaprotocol/pennant/compare/v0.2.39...v0.2.40) (2021-06-28)
 
 

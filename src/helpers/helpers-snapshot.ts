@@ -23,9 +23,8 @@ export async function asyncSnapshot(
     const bbox = chartRef.current.getBoundingClientRect();
 
     // FIXME: These queries are extremely brittle. Replace with something more robust.
-    const panes = chartRef.current.querySelectorAll<HTMLDivElement>(
-      ".plot-container__pane"
-    );
+    const panes =
+      chartRef.current.querySelectorAll<HTMLDivElement>(".pane__pane");
 
     const paneElements = [];
 
