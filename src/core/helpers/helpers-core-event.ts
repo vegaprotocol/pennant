@@ -155,13 +155,17 @@ export function handleZoomend(
   id: string,
   onRedraw: () => void
 ) {
-  const [_index, x] = plotAreas[id].getIndex(offset[0]);
+  const index = plotAreas[id].getIndex(offset[0]);
 
-  for (const plotArea of Object.values(plotAreas)) {
-    plotArea.crosshair([x, yScale.invert(offset[1])]);
+  if (index === null) {
+    return;
   }
 
-  xAxis.crosshair(x);
+  for (const plotArea of Object.values(plotAreas)) {
+    plotArea.crosshair([index[1], yScale.invert(offset[1])]);
+  }
+
+  xAxis.crosshair(index[1]);
   yAxis.crosshair(yScale.invert(offset[1]));
 
   onRedraw();
@@ -275,22 +279,26 @@ export function handleMousemove(
   onRedraw: () => void
 ) {
   // Calculate index of data item
-  const [index, x] = plotAreas[id].getIndex(offset[0]);
+  const index = plotAreas[id].getIndex(offset[0]);
+
+  if (index === null) {
+    return;
+  }
 
   for (const plotArea of Object.values(plotAreas)) {
-    plotArea.crosshair([x, null]);
+    plotArea.crosshair([index[1], null]);
   }
 
   for (const axis of Object.values(yAxes)) {
     axis.crosshair(null);
   }
 
-  xAxis.crosshair(x);
+  xAxis.crosshair(index[1]);
 
-  plotAreas[id].crosshair([x, yScale.invert(offset[1])]);
+  plotAreas[id].crosshair([index[1], yScale.invert(offset[1])]);
   yAxes[id].crosshair(yScale.invert(offset[1]));
 
-  onMousemove(index, id);
+  onMousemove(index[0], id);
   onRedraw();
 }
 
