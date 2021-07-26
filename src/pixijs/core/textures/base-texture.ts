@@ -1,4 +1,5 @@
 import { settings } from "../../settings";
+import { CanvasResource } from "./resources/canvas-resource";
 import { Resource } from "./resources/resource";
 
 export type ImageSource =
@@ -27,6 +28,11 @@ export class BaseTexture<R extends Resource = Resource> {
     this.resolution = options.resolution ?? settings.RESOLUTION;
     this.width = options.height ?? 0;
 
+    // Convert the resource to a Resource object
+    if (resource && !(resource instanceof Resource)) {
+      resource = new CanvasResource(resource); // FIXME: Should auto detect rather than hard code Canvas only
+    }
+
     this.setResource(resource);
   }
 
@@ -34,6 +40,18 @@ export class BaseTexture<R extends Resource = Resource> {
     const resource = this.resource as any;
 
     return resource ? resource.bitmap || resource.source : null;
+  }
+
+  setRealSize(
+    realWidth: number,
+    realHeight: number,
+    resolution?: number
+  ): this {
+    this.resolution = resolution || this.resolution;
+    this.width = realWidth / this.resolution;
+    this.height = realHeight / this.resolution;
+
+    return this;
   }
 
   setResource(resource: R): this {

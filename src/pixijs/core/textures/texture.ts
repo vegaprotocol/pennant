@@ -27,6 +27,11 @@ export class Texture<R extends Resource = Resource> {
       : new Point(0, 0);
   }
 
+  onBaseTextureUpdated(baseTexture: BaseTexture): void {
+    this._frame.width = baseTexture.width;
+    this._frame.height = baseTexture.height;
+  }
+
   get frame(): Rectangle {
     return this._frame;
   }

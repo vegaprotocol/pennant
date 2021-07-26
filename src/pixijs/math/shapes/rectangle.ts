@@ -1,10 +1,24 @@
+import { SHAPES } from "../const";
+
 export class Rectangle {
+  public x: number = 0;
+  public y: number = 0;
+  public width: number = 0;
+  public height: number = 0;
+  public readonly type: SHAPES.RECT;
+
   constructor(
-    public x: number = 0,
-    public y: number = 0,
-    public width: number = 0,
-    public height: number = 0
-  ) {}
+    x: number = 0,
+    y: number = 0,
+    width: number = 0,
+    height: number = 0
+  ) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.type = SHAPES.RECT;
+  }
 
   get left(): number {
     return this.x;
@@ -60,19 +74,5 @@ export class Rectangle {
     }
 
     return false;
-  }
-
-  ceil(resolution = 1, eps = 0.001): this {
-    const x2 = Math.ceil((this.x + this.width - eps) * resolution) / resolution;
-    const y2 =
-      Math.ceil((this.y + this.height - eps) * resolution) / resolution;
-
-    this.x = Math.floor((this.x + eps) * resolution) / resolution;
-    this.y = Math.floor((this.y + eps) * resolution) / resolution;
-
-    this.width = x2 - this.x;
-    this.height = y2 - this.y;
-
-    return this;
   }
 }

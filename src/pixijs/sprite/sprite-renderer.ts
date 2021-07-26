@@ -16,6 +16,7 @@ export class SpriteRenderer {
     const width = texture._frame.width;
     const height = texture._frame.height;
 
+    let wt = sprite.transform.worldTransform;
     let dx = 0;
     let dy = 0;
 
@@ -26,6 +27,13 @@ export class SpriteRenderer {
 
     dx -= width / 2;
     dy -= height / 2;
+
+    renderer.setContextTransform(wt, sprite.roundPixels, 1);
+
+    if (sprite.roundPixels) {
+      dx = dx | 0;
+      dy = dy | 0;
+    }
 
     const resolution = texture.baseTexture.resolution;
 

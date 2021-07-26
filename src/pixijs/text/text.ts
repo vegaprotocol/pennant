@@ -17,18 +17,23 @@ export class Text extends Sprite {
   protected _resolution: number;
   protected _autoResolution: boolean;
   protected _style!: TextStyle;
-  protected _text: string = "";
+  protected _text: string;
+  protected _font: string;
 
   constructor(
     text: string,
     style: Partial<ITextStyle> | TextStyle,
-    canvas: HTMLCanvasElement
+    canvas?: HTMLCanvasElement
   ) {
-    super();
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+    }
 
     const texture = Texture.from(canvas);
 
     texture.orig = new Rectangle();
+
+    super(texture);
 
     this.canvas = canvas;
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -36,12 +41,17 @@ export class Text extends Sprite {
     this._resolution = settings.RESOLUTION;
     this._autoResolution = true;
 
+    this._text = null!;
+    this._font = "";
+
     this.style = style;
     this.text = text;
   }
 
-  public updateText(respectDirty: boolean): void {
+  public updateText(): void {
     const style = this._style;
+
+    this._font = this._style.toFontString();
 
     const context = this.context;
 
@@ -66,6 +76,8 @@ export class Text extends Sprite {
     context.scale(this._resolution, this._resolution);
 
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    context.font = this._font;
 
     let linePositionX: number;
     let linePositionY: number;
@@ -132,9 +144,9 @@ export class Text extends Sprite {
       this._resolution = renderer.resolution;
     }
 
-    this.updateText(true);
+    this.updateText();
 
-    super._render.call(this, renderer);
+    super._render(renderer);
   }
 
   private _generateFillStyle(
@@ -317,25 +329,39 @@ export class Text extends Sprite {
   }
 
   private updateTexture(): void {
-/*     const canvas = this.canvas;
+    const canvas = this.canvas;
 
     const texture = this._texture;
     const style = this._style;
-    const padding = style.trim ? 0 : style.padding;
+    const padding = style.padding;
     const baseTexture = texture.baseTexture;
 
     texture.orig.width = texture._frame.width - padding * 2;
-    texture.orig.height = texture._frame.height - padding * 2; */
+    texture.orig.height = texture._frame.height - padding * 2;
+
+    if (this._width) {
+      this.scale.x =
+        (sign(this.scale.x) * this._width) / this._texture.orig.width;
+    }
+
+    if (this._height) {
+      this.scale.y =
+        (sign(this.scale.y) * this._height) / this._texture.orig.height;
+    }
+
+    baseTexture.setRealSize(canvas.width, canvas.height, this._resolution);
+
+    texture.onBaseTextureUpdated(baseTexture);
   }
 
   get height(): number {
-    this.updateText(true);
+    this.updateText();
 
     return Math.abs(this.scale.y) * this._texture.orig.height;
   }
 
   set height(value: number) {
-    this.updateText(true);
+    this.updateText();
 
     const s = sign(this.scale.y) || 1;
 
@@ -380,13 +406,13 @@ export class Text extends Sprite {
   }
 
   get width(): number {
-    this.updateText(true);
+    this.updateText();
 
     return Math.abs(this.scale.x) * this._texture.orig.width;
   }
 
   set width(value: number) {
-    this.updateText(true);
+    this.updateText();
 
     const s = sign(this.scale.x) || 1;
 
