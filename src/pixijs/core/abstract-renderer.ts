@@ -1,9 +1,11 @@
+import { Rectangle } from "../math";
 import { settings } from "../settings";
-import { SpriteRenderer } from "../sprite/sprite-renderer";
 import { hex2rgb, hex2string } from "../utils";
 import { RenderableObject } from "./renderable-object";
 
 export interface RendererOptions {
+  width?: number;
+  height?: number;
   backgroundColor?: number;
   backgroundAlpha?: number;
   resolution?: number;
@@ -18,6 +20,7 @@ export abstract class AbstractRenderer {
   public resolution: number;
   public readonly view: HTMLCanvasElement;
   public readonly plugins: RendererPlugins = {};
+  public readonly screen: Rectangle;
 
   protected _backgroundColor: number = 0x000000;
   protected _backgroundColorString: string = "#000000";
@@ -26,12 +29,29 @@ export abstract class AbstractRenderer {
 
   constructor(options?: Partial<RendererOptions>) {
     this.resolution = options?.resolution || settings.RESOLUTION;
+    this.screen = new Rectangle(
+      0,
+      0,
+      options?.width ?? 800,
+      options?.height ?? 600
+    );
     this.view = options?.view || document.createElement("canvas");
 
     this.backgroundColor = options?.backgroundColor || this._backgroundColor;
     this.backgroundAlpha = options?.backgroundAlpha || 1;
 
     this._lastObjectRendered = null;
+  }
+
+  public resize(screenWidth: number, screenHeight: number): void {
+    this.screen.width = screenWidth;
+    this.screen.height = screenHeight;
+
+    this.view.width = screenWidth * this.resolution;
+    this.view.height = screenHeight * this.resolution;
+
+    this.view.style.width = `${screenWidth}px`;
+    this.view.style.height = `${screenHeight}px`;
   }
 
   get width(): number {
