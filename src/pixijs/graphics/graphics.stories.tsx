@@ -40,6 +40,35 @@ export const Simple = () => {
     graphics.drawRect(530, 50, 140, 100);
     graphics.endFill();
 
+    graphics.lineStyle({ width: 0 });
+    graphics.beginFill(0xde3249, 1);
+    graphics.drawCircle(100, 250, 50);
+    graphics.endFill();
+
+    graphics.lineStyle({ width: 2, color: 0xfeeb77, alpha: 1 });
+    graphics.beginFill(0x650a5a, 1);
+    graphics.drawCircle(250, 250, 50);
+    graphics.endFill();
+
+    graphics.lineStyle({ width: 10, color: 0xffbd01, alpha: 1 });
+    graphics.beginFill(0xc34288, 1);
+    graphics.drawCircle(400, 250, 50);
+    graphics.endFill();
+
+    graphics.beginFill(0xff3300);
+    graphics.lineStyle({
+      width: 4,
+      color: 0xffd900,
+      alpha: 1,
+      lineDash: [5, 15],
+    });
+    graphics.moveTo(50, 350);
+    graphics.lineTo(250, 350);
+    graphics.lineTo(100, 400);
+    graphics.lineTo(50, 350);
+    graphics.closePath();
+    graphics.endFill();
+
     container.addChild(graphics);
 
     renderer.render(container);

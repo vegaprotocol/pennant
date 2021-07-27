@@ -26,6 +26,8 @@ export class Renderer extends AbstractRenderer {
     this.plugins.interaction = new InteractionManager(this);
 
     this._projTransform = null;
+
+    this.resize(options?.width ?? 800, options?.height ?? 600);
   }
 
   public render(displayObject: RenderableObject) {
@@ -39,9 +41,11 @@ export class Renderer extends AbstractRenderer {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.globalAlpha = 1;
 
-    context.fillStyle = this._backgroundColorString;
-    context.fillRect(0, 0, this.width, this.height);
+    context.clearRect(0, 0, this.width, this.height);
 
+  /*   context.fillStyle = this._backgroundColorString;
+    context.fillRect(0, 0, this.width, this.height);
+ */
     displayObject.render(this);
 
     context.restore();
@@ -55,12 +59,12 @@ export class Renderer extends AbstractRenderer {
 
     context.clearRect(0, 0, this.width, this.height);
 
-    if (clearColor) {
+/*     if (clearColor) {
       context.globalAlpha = alpha;
       context.fillStyle = clearColor;
       context.fillRect(0, 0, this.width, this.height);
       context.globalAlpha = 1;
-    }
+    } */
   }
 
   setContextTransform(

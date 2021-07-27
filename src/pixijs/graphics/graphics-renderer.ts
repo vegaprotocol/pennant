@@ -1,8 +1,17 @@
-import { curveBasis, line } from "d3-shape";
+import { area, line } from "d3-shape";
 import { Renderer } from "../core";
-import { Line, Matrix, Rectangle, SHAPES } from "../math";
+import {
+  Area,
+  Circle,
+  Line,
+  Matrix,
+  Polygon,
+  Rectangle,
+  SHAPES,
+} from "../math";
 import { Graphics } from "./graphics";
 import { FillStyle } from "./styles/fill-style";
+import { LineStyle } from "./styles/line-style";
 
 export class GraphicsRenderer {
   public renderer: Renderer;
@@ -34,7 +43,7 @@ export class GraphicsRenderer {
       const data = graphicsData[i];
       const shape = data.shape;
       const fillStyle = data.fillStyle ?? new FillStyle();
-      const lineStyle = data.lineStyle;
+      const lineStyle = data.lineStyle ?? new LineStyle();
 
       const fillColor = data?.fillStyle?.color ?? 0;
       const lineColor = data?.lineStyle?.color ?? 0;
@@ -60,7 +69,39 @@ export class GraphicsRenderer {
       contextStrokeStyle = this._calcCanvasStyle(lineTint);
 
       context.lineWidth = lineStyle?.width ?? 0;
-      if (data.type === SHAPES.LINE) {
+
+      if (data.type === SHAPES.POLY) {
+        context.beginPath();
+
+        const tempShape = shape as Polygon;
+
+        let points = tempShape.points;
+
+        context.moveTo(points[0], points[1]);
+
+        for (let j = 2; j < points.length; j += 2) {
+          context.lineTo(points[j], points[j + 1]);
+        }
+
+        if (tempShape.closeStroke) {
+          context.closePath();
+        }
+
+        if (fillStyle.visible) {
+          context.globalAlpha = fillStyle.alpha;
+          context.fillStyle = contextFillStyle;
+          context.fill();
+        }
+
+        if (lineStyle.visible) {
+          this.paintPolygonStroke(
+            tempShape,
+            lineStyle,
+            contextStrokeStyle,
+            context
+          );
+        }
+      } else if (data.type === SHAPES.LINE) {
         const tempShape = shape as Line;
 
         context.globalAlpha = fillStyle.alpha;
@@ -68,36 +109,91 @@ export class GraphicsRenderer {
         context.strokeStyle = contextStrokeStyle;
 
         context.beginPath();
+
         line().curve(tempShape.curve).context(context)(tempShape.data);
 
         context.stroke();
       } else if (data.type === SHAPES.AREA) {
+        const tempShape = shape as Area;
+
+        context.globalAlpha = fillStyle.alpha;
+
+        context.strokeStyle = contextStrokeStyle;
+
+        context.beginPath();
+
+        area().curve(tempShape.curve).y0(tempShape.y0).context(context)(
+          tempShape.data
+        );
+
+        if (fillStyle.visible) {
+          context.globalAlpha = fillStyle.alpha;
+          context.fillStyle = contextFillStyle;
+          context.fill();
+        }
+
+        context.stroke();
       } else if (data.type === SHAPES.RECT) {
         const tempShape = shape as Rectangle;
 
-        context.globalAlpha = fillStyle.alpha;
-        context.fillStyle = contextFillStyle;
+        if (fillStyle.visible) {
+          context.globalAlpha = fillStyle.alpha;
+          context.fillStyle = contextFillStyle;
 
-        context.fillRect(
-          tempShape.x,
-          tempShape.y,
-          tempShape.width,
-          tempShape.height
-        );
+          context.fillRect(
+            tempShape.x,
+            tempShape.y,
+            tempShape.width,
+            tempShape.height
+          );
+        }
 
-        const alignmentOffset = (lineStyle?.width ?? 0) * -0.5;
-        const width = tempShape.width + 2 * alignmentOffset;
-        const height = tempShape.height + 2 * alignmentOffset;
+        if (lineStyle.visible) {
+          const alignmentOffset = (lineStyle?.width ?? 0) * -0.5;
+          const width = tempShape.width + 2 * alignmentOffset;
+          const height = tempShape.height + 2 * alignmentOffset;
 
-        context.strokeStyle = contextStrokeStyle;
-        context.strokeRect(
-          tempShape.x - alignmentOffset,
-          tempShape.y - alignmentOffset,
-          width,
-          height
-        );
+          context.strokeStyle = contextStrokeStyle;
+          context.strokeRect(
+            tempShape.x - alignmentOffset,
+            tempShape.y - alignmentOffset,
+            width,
+            height
+          );
+        }
+      } else if (data.type === SHAPES.CIRCLE) {
+        const tempShape = shape as Circle;
+
+        // TODO - need to be Undefined!
+        context.beginPath();
+        context.arc(tempShape.x, tempShape.y, tempShape.radius, 0, 2 * Math.PI);
+        context.closePath();
+
+        if (fillStyle.visible) {
+          context.globalAlpha = fillStyle.alpha;
+          context.fillStyle = contextFillStyle;
+          context.fill();
+        }
+
+        if (lineStyle.visible) {
+          context.globalAlpha = lineStyle.alpha;
+          context.strokeStyle = contextStrokeStyle;
+          context.stroke();
+        }
       }
     }
+  }
+
+  private paintPolygonStroke(
+    shape: Polygon,
+    lineStyle: LineStyle,
+    contextStrokeStyle: string | CanvasPattern,
+    context: CanvasRenderingContext2D
+  ): void {
+    context.globalAlpha = lineStyle.alpha;
+    context.strokeStyle = contextStrokeStyle;
+    context.setLineDash(lineStyle.lineDash);
+    context.stroke();
   }
 
   private _calcCanvasStyle(tint: number): string {

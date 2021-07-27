@@ -2,7 +2,17 @@ import { CurveFactory, CurveFactoryLineOnly, curveLinear } from "d3-shape";
 
 import { Renderer } from "../core";
 import { Container } from "../display";
-import { Line, Matrix, Point, PointData, Rectangle, Shape } from "../math";
+import {
+  Area,
+  Circle,
+  Line,
+  Matrix,
+  Point,
+  PointData,
+  Polygon,
+  Rectangle,
+  Shape,
+} from "../math";
 import { GraphicsGeometry } from "./graphics-geometry";
 import { FillStyle } from "./styles/fill-style";
 import { LineStyle } from "./styles/line-style";
@@ -13,15 +23,18 @@ export interface FillStyleOptions {
 }
 
 export interface LineStyleOptions extends FillStyleOptions {
+  lineDash?: number[];
   width?: number;
 }
 
 export class Graphics extends Container {
-  private _geometry: GraphicsGeometry;
   protected _fillStyle: FillStyle;
   protected _lineStyle: LineStyle;
   protected _matrix: Matrix | null;
   protected _tint: number;
+  public currentPath: Polygon | null = null;
+
+  private _geometry: GraphicsGeometry;
 
   constructor(geometry: GraphicsGeometry | null = null) {
     super();
@@ -50,6 +63,8 @@ export class Graphics extends Container {
   }
 
   public endFill(): this {
+    this.finishPoly();
+
     this._fillStyle.reset();
 
     return this;
@@ -65,7 +80,9 @@ export class Graphics extends Container {
       options
     ) as FillStyleOptions;
 
-    Object.assign(this._fillStyle, options);
+    const visible = (options?.alpha ?? 1) > 0;
+
+    Object.assign(this._fillStyle, { visible }, options);
 
     return this;
   }
@@ -78,19 +95,31 @@ export class Graphics extends Container {
     // Apply defaults
     options = Object.assign(
       {
+        alpha: 1,
         width: 0,
         color: 0x0,
+        lineDash: [],
       },
       options
     );
 
-    Object.assign(this._lineStyle, options);
+    const visible = (options?.width ?? 0 > 0) && (options?.alpha ?? 0 > 0);
+
+    Object.assign(this._lineStyle, { visible }, options);
 
     return this;
   }
 
-  public drawRect(x: number, y: number, width: number, height: number): this {
-    return this.drawShape(new Rectangle(x, y, width, height));
+  public drawArea(
+    data: [number, number][],
+    curve: CurveFactory = curveLinear,
+    y0: number = 0
+  ): this {
+    return this.drawShape(new Area(data, curve, y0));
+  }
+
+  public drawCircle(x: number, y: number, radius: number): this {
+    return this.drawShape(new Circle(x, y, radius));
   }
 
   public drawLine(
@@ -98,6 +127,40 @@ export class Graphics extends Container {
     curve: CurveFactory | CurveFactoryLineOnly = curveLinear
   ): this {
     return this.drawShape(new Line(data, curve));
+  }
+
+  public drawRect(x: number, y: number, width: number, height: number): this {
+    return this.drawShape(new Rectangle(x, y, width, height));
+  }
+
+  public moveTo(x: number, y: number): this {
+    this.startPoly();
+    this.currentPath!.points[0] = x;
+    this.currentPath!.points[1] = y;
+
+    return this;
+  }
+
+  public lineTo(x: number, y: number): this {
+    if (!this.currentPath) {
+      this.moveTo(0, 0);
+    }
+
+    const points = this.currentPath!.points;
+
+    points.push(x, y);
+
+    return this;
+  }
+
+  public closePath(): this {
+    const currentPath = this.currentPath;
+
+    if (currentPath) {
+      currentPath.closeStroke = true;
+    }
+
+    return this;
   }
 
   public clear(): this {
@@ -116,6 +179,34 @@ export class Graphics extends Container {
 
   protected _render(renderer: Renderer): void {
     renderer.plugins.graphics.render(this);
+  }
+
+  protected startPoly(): void {
+    if (this.currentPath) {
+      const points = this.currentPath.points;
+      const len = this.currentPath.points.length;
+
+      if (len > 2) {
+        this.drawShape(this.currentPath);
+        this.currentPath = new Polygon();
+        this.currentPath.closeStroke = false;
+        this.currentPath.points.push(points[len - 2], points[len - 1]);
+      }
+    } else {
+      this.currentPath = new Polygon();
+      this.currentPath.closeStroke = false;
+    }
+  }
+
+  finishPoly(): void {
+    if (this.currentPath) {
+      if (this.currentPath.points.length > 2) {
+        this.drawShape(this.currentPath);
+        this.currentPath = null;
+      } else {
+        this.currentPath.points.length = 0;
+      }
+    }
   }
 
   public get geometry(): GraphicsGeometry {

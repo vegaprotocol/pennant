@@ -9,8 +9,6 @@ export default {
   DepthChart,
 } as Meta;
 
-// https://www.binance.com/api/v3/depth?symbol=BTCGBP&limit=1000
-
 const vegaData = {
   asks: data.vega.data.market.depth.sell.map((priceLevel) => ({
     price: Number(priceLevel.price),
@@ -46,6 +44,6 @@ Vega.args = {
 
 export const Binance = Template.bind({});
 Binance.args = {
-  buy: binanceData.asks,
-  sell: binanceData.bids,
+  buy: binanceData.bids,
+  sell: binanceData.asks,
 };
