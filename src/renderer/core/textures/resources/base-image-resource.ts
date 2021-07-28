@@ -6,10 +6,10 @@ export class BaseImageResource extends Resource {
 
   constructor(source: ImageSource) {
     const sourceAny = source as any;
-    
+
     const width =
       sourceAny.naturalWidth || sourceAny.videoWidth || sourceAny.width;
-      
+
     const height =
       sourceAny.naturalHeight || sourceAny.videoHeight || sourceAny.height;
 
