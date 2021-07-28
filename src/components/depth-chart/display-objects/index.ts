@@ -1,9 +1,9 @@
 import { ScaleLinear } from "d3-scale";
 import { CurveFactory, curveStepBefore, line } from "d3-shape";
 
-import { Container } from "../../../pixijs/display";
-import { Graphics } from "../../../pixijs/graphics";
-import { Text } from "../../../pixijs/text";
+import { Container } from "../../../renderer/display";
+import { Graphics } from "../../../renderer/graphics";
+import { Text } from "../../../renderer/text";
 import { AXIS_HEIGHT } from "../depth-chart";
 
 export class HorizontalAxis extends Container {

@@ -154,8 +154,6 @@ export class InteractionManager extends EventEmitter {
     mode = mode || "default";
     let applyStyles = true;
 
-    // offscreen canvas does not support setting styles, but cursor modes can be functions,
-    // in order to handle pixi rendered cursors, so we can't bail
     if (
       self.OffscreenCanvas &&
       this.interactionDOMElement instanceof OffscreenCanvas

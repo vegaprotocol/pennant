@@ -1,8 +1,8 @@
 import { curveStepAfter } from "d3-shape";
 
-import { Renderer } from "../../pixijs";
-import { Container } from "../../pixijs/display";
-import { Rectangle } from "../../pixijs/math";
+import { Renderer } from "../../renderer";
+import { Container } from "../../renderer/display";
+import { Rectangle } from "../../renderer/math";
 import {
   FILL_BUY_LIGHT,
   FILL_SELL_LIGHT,

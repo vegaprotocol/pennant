@@ -10,14 +10,6 @@ type CharacterWidthCache = { [key: string]: number };
 
 /**
  * The TextMetrics object represents the measurement of a block of text with a specified style.
- *
- * ```js
- * let style = new PIXI.TextStyle({fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'})
- * let textMetrics = PIXI.TextMetrics.measureText('Your text', style)
- * ```
- *
- * @class
- * @memberof PIXI
  */
 export class TextMetrics {
   public text: string;
@@ -44,17 +36,6 @@ export class TextMetrics {
   public static _newlines: number[];
   public static _breakingSpaces: number[];
 
-  /**
-   * @param {string} text - the text that was measured
-   * @param {PIXI.TextStyle} style - the style that was measured
-   * @param {number} width - the measured width of the text
-   * @param {number} height - the measured height of the text
-   * @param {string[]} lines - an array of the lines of text broken by new lines and wrapping if specified in style
-   * @param {number[]} lineWidths - an array of the line widths for each line matched to `lines`
-   * @param {number} lineHeight - the measured line height for this style
-   * @param {number} maxLineWidth - the maximum line width for all measured lines
-   * @param {Object} fontProperties - the font properties object from TextMetrics.measureFont
-   */
   constructor(
     text: string,
     style: TextStyle,
@@ -68,76 +49,52 @@ export class TextMetrics {
   ) {
     /**
      * The text that was measured
-     *
-     * @member {string}
      */
     this.text = text;
 
     /**
      * The style that was measured
-     *
-     * @member {PIXI.TextStyle}
      */
     this.style = style;
 
     /**
      * The measured width of the text
-     *
-     * @member {number}
      */
     this.width = width;
 
     /**
      * The measured height of the text
-     *
-     * @member {number}
      */
     this.height = height;
 
     /**
      * An array of lines of the text broken by new lines and wrapping is specified in style
-     *
-     * @member {string[]}
      */
     this.lines = lines;
 
     /**
      * An array of the line widths for each line matched to `lines`
-     *
-     * @member {number[]}
      */
     this.lineWidths = lineWidths;
 
     /**
      * The measured line height for this style
-     *
-     * @member {number}
      */
     this.lineHeight = lineHeight;
 
     /**
      * The maximum line width for all measured lines
-     *
-     * @member {number}
      */
     this.maxLineWidth = maxLineWidth;
 
     /**
      * The font properties object from TextMetrics.measureFont
-     *
-     * @member {PIXI.IFontMetrics}
      */
     this.fontProperties = fontProperties;
   }
 
   /**
    * Measures the supplied string of text and returns a Rectangle.
-   *
-   * @param {string} text - the text to measure.
-   * @param {PIXI.TextStyle} style - the text style to use for measuring
-   * @param {boolean} [wordWrap] - optional override for if word-wrap should be applied to the text.
-   * @param {HTMLCanvasElement} [canvas] - optional specification of the canvas to use for measuring.
-   * @return {PIXI.TextMetrics} measured width and height of the text.
    */
   public static measureText(
     text: string,
@@ -208,12 +165,6 @@ export class TextMetrics {
   /**
    * Applies newlines to a string to have it optimally fit into the horizontal
    * bounds set by the Text object's wordWrapWidth property.
-   *
-   * @private
-   * @param {string} text - String to apply word wrapping to
-   * @param {PIXI.TextStyle} style - the style to use when wrapping
-   * @param {HTMLCanvasElement} [canvas] - optional specification of the canvas to use for measuring.
-   * @return {string} New string with new lines applied where required
    */
   private static wordWrap(
     text: string,
@@ -601,13 +552,6 @@ export class TextMetrics {
    * should be broken by newlines
    * For example certain characters in CJK langs or numbers.
    * It must return a boolean.
-   *
-   * @param  {string}  char        - The character
-   * @param  {string}  nextChar    - The next character
-   * @param  {string}  token       - The token/word the characters are from
-   * @param  {number}  index       - The index in the token of the char
-   * @param  {boolean}  breakWords - The style attr break words
-   * @return {boolean} whether to break word or not
    */
   static canBreakChars(
     _char: string,
@@ -629,9 +573,6 @@ export class TextMetrics {
    * @example
    * // Correctly splits emojis, eg "🤪🤪" will result in two element array, each with one emoji.
    * TextMetrics.wordWrapSplit = (token) => [...token];
-   *
-   * @param  {string}  token - The token to split
-   * @return {string[]} The characters of the token
    */
   static wordWrapSplit(token: string): string[] {
     return token.split("");
@@ -639,10 +580,6 @@ export class TextMetrics {
 
   /**
    * Calculates the ascent, descent and fontSize of a given font-style
-   *
-   * @static
-   * @param {string} font - String representing the style of the font
-   * @return {PIXI.IFontMetrics} Font properties object
    */
   public static measureFont(font: string): IFontMetrics {
     // as this method is used for preparing assets, don't recalculate things if we don't need to
@@ -737,9 +674,6 @@ export class TextMetrics {
 
   /**
    * Clear font metrics in metrics cache.
-   *
-   * @static
-   * @param {string} [font] - font name. If font name not set then clear cache for all fonts.
    */
   public static clearMetrics(font = ""): void {
     if (font) {
@@ -749,17 +683,6 @@ export class TextMetrics {
     }
   }
 }
-
-/**
- * Internal return object for {@link PIXI.TextMetrics.measureFont `TextMetrics.measureFont`}.
- *
- * @typedef {object} FontMetrics
- * @property {number} ascent - The ascent distance
- * @property {number} descent - The descent distance
- * @property {number} fontSize - Font size from ascent to descent
- * @memberof PIXI.TextMetrics
- * @private
- */
 
 const canvas = ((): HTMLCanvasElement | OffscreenCanvas => {
   try {
@@ -781,82 +704,42 @@ canvas.width = canvas.height = 10;
 
 /**
  * Cached canvas element for measuring text
- *
- * @memberof PIXI.TextMetrics
- * @type {HTMLCanvasElement}
- * @private
  */
 TextMetrics._canvas = canvas;
 
 /**
  * Cache for context to use.
- *
- * @memberof PIXI.TextMetrics
- * @type {CanvasRenderingContext2D}
- * @private
  */
 TextMetrics._context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 /**
- * Cache of {@see PIXI.TextMetrics.FontMetrics} objects.
- *
- * @memberof PIXI.TextMetrics
- * @type {Object}
- * @private
+ * Cache of {@see TextMetrics.FontMetrics} objects.
  */
 TextMetrics._fonts = {};
 
 /**
  * String used for calculate font metrics.
  * These characters are all tall to help calculate the height required for text.
- *
- * @static
- * @memberof PIXI.TextMetrics
- * @name METRICS_STRING
- * @type {string}
- * @default |ÉqÅ
  */
 TextMetrics.METRICS_STRING = "|ÉqÅ";
 
 /**
  * Baseline symbol for calculate font metrics.
- *
- * @static
- * @memberof PIXI.TextMetrics
- * @name BASELINE_SYMBOL
- * @type {string}
- * @default M
  */
 TextMetrics.BASELINE_SYMBOL = "M";
 
 /**
  * Baseline multiplier for calculate font metrics.
- *
- * @static
- * @memberof PIXI.TextMetrics
- * @name BASELINE_MULTIPLIER
- * @type {number}
- * @default 1.4
  */
 TextMetrics.BASELINE_MULTIPLIER = 1.4;
 
 /**
  * Height multiplier for setting height of canvas to calculate font metrics.
- *
- * @static
- * @memberof PIXI.TextMetrics
- * @name HEIGHT_MULTIPLIER
- * @type {number}
- * @default 2.00
  */
 TextMetrics.HEIGHT_MULTIPLIER = 2.0;
 
 /**
  * Cache of new line chars.
- *
- * @memberof PIXI.TextMetrics
- * @type {number[]}
- * @private
  */
 TextMetrics._newlines = [
   0x000a, // line feed
@@ -865,10 +748,6 @@ TextMetrics._newlines = [
 
 /**
  * Cache of breaking spaces.
- *
- * @memberof PIXI.TextMetrics
- * @type {number[]}
- * @private
  */
 TextMetrics._breakingSpaces = [
   0x0009, // character tabulation
@@ -886,13 +765,3 @@ TextMetrics._breakingSpaces = [
   0x205f, // medium mathematical space
   0x3000, // ideographic space
 ];
-
-/**
- * A number, or a string containing a number.
- *
- * @memberof PIXI
- * @typedef {object} IFontMetrics
- * @property {number} ascent - Font ascent
- * @property {number} descent - Font descent
- * @property {number} fontSize - Font size
- */

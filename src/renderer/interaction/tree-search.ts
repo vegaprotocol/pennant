@@ -51,9 +51,6 @@ export class TreeSearch {
       interactiveParent = false;
     }
 
-    // ** FREE TIP **! If an object is not interactive or has no buttons in it
-    // (such as a game scene!) set interactiveChildren to false for that displayObject.
-    // This will allow PixiJS to completely ignore and bypass checking the displayObjects children.
     if (
       hitTestChildren &&
       displayObject.interactiveChildren &&

@@ -112,11 +112,6 @@ const genericFontFamilies = [
  * A TextStyle Object contains information to decorate a Text objects.
  *
  * An instance can be shared between multiple Text objects; then changing the style will update all text objects using it.
- *
- * A tool can be used to generate a text style [here](https://pixijs.io/pixi-text-style).
- *
- * @class
- * @memberof PIXI
  */
 export class TextStyle implements ITextStyle {
   public styleID: number;
@@ -164,8 +159,6 @@ export class TextStyle implements ITextStyle {
   /**
    * Creates a new TextStyle object with the same values as this one.
    * Note that the only the properties of the object are cloned.
-   *
-   * @return {PIXI.TextStyle} New cloned TextStyle object
    */
   public clone(): TextStyle {
     const clonedProperties: Partial<ITextStyle> = {};
@@ -328,9 +321,6 @@ export class TextStyle implements ITextStyle {
 
   /**
    * If fill is an array of colours to create a gradient, this can change the type/direction of the gradient.
-   * See {@link PIXI.TEXT_GRADIENT}
-   *
-   * @member {number}
    */
   get fillGradientType(): TEXT_GRADIENT {
     return this._fillGradientType;

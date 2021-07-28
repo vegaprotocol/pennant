@@ -1,11 +1,11 @@
 import { bisect } from "d3-array";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 
-import { Renderer } from "../../pixijs";
-import { Container } from "../../pixijs/display";
-import { InteractionEvent } from "../../pixijs/interaction/interaction-event";
-import { Rectangle } from "../../pixijs/math";
-import { Text } from "../../pixijs/text";
+import { Renderer } from "../../renderer";
+import { Container } from "../../renderer/display";
+import { InteractionEvent } from "../../renderer/interaction/interaction-event";
+import { Rectangle } from "../../renderer/math";
+import { Text } from "../../renderer/text";
 import {
   AXIS_HEIGHT,
   GRAY,
