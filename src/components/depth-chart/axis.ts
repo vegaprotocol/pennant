@@ -175,17 +175,6 @@ export class Axis {
     let x = event.data?.global.x;
 
     if (x && this.prices.length > 1) {
-      this.buyPriceText.visible = true;
-      this.buyVolumeText.visible = true;
-      this.sellPriceText.visible = true;
-      this.sellVolumeText.visible = true;
-
-      this.buyIndicator.visible = true;
-      this.sellIndicator.visible = true;
-
-      this.buyOverlay.visible = true;
-      this.sellOverlay.visible = true;
-
       const index = bisectCenter(this.prices, x);
       const nearestX = this.prices[index];
 
@@ -280,6 +269,31 @@ export class Axis {
         this.renderer.screen.width - sellNearestX,
         this.renderer.screen.height - AXIS_HEIGHT
       );
+
+      // TODO: Changing visibility in groups like this suggests they should be in a Container
+      if (this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0]) {
+        this.buyPriceText.visible = true;
+        this.buyVolumeText.visible = true;
+        this.buyIndicator.visible = true;
+        this.buyOverlay.visible = true;
+      } else {
+        this.buyPriceText.visible = false;
+        this.buyVolumeText.visible = false;
+        this.buyIndicator.visible = false;
+        this.buyOverlay.visible = false;
+      }
+
+      if (this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1]) {
+        this.sellPriceText.visible = true;
+        this.sellVolumeText.visible = true;
+        this.sellIndicator.visible = true;
+        this.sellOverlay.visible = true;
+      } else {
+        this.sellPriceText.visible = false;
+        this.sellVolumeText.visible = false;
+        this.sellIndicator.visible = false;
+        this.sellOverlay.visible = false;
+      }
 
       this.render();
     }
