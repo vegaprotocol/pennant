@@ -1,4 +1,3 @@
-import { ScaleLinear } from "d3-scale";
 import { CurveFactory, curveStepBefore, line } from "d3-shape";
 
 import { Container } from "../../../renderer/display";
@@ -6,40 +5,9 @@ import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
 import { AXIS_HEIGHT } from "../depth-chart";
 
-export class HorizontalAxis extends Container {
-  constructor() {
-    super();
-  }
+export * from "./horizontal-axis";
+export * from "./vertical-axis";
 
-  public update(
-    scale: ScaleLinear<number, number>,
-    width: number,
-    height: number
-  ) {
-    this.removeChildren();
-
-    const ticks = scale.ticks(width / 200);
-
-    const text = ticks.map((tick) => {
-      const t = new Text(String(tick), {
-        fill: 0xffffff,
-        fontFamily: "monospace",
-        fontSize: 12,
-      });
-
-      t.x = scale(tick);
-      t.y = height - AXIS_HEIGHT + 3;
-      t.anchor.y = 0;
-      t.anchor.x = 0.5;
-
-      return t;
-    });
-
-    if (ticks.length > 0) {
-      this.addChild(...text);
-    }
-  }
-}
 export class DepthCurve extends Container {
   public area: Graphics = new Graphics();
   public line: Graphics = new Graphics();
@@ -243,5 +211,72 @@ export class Label extends Container {
 
   get height() {
     return this.text.height;
+  }
+}
+
+export class MidMarketPriceLabel extends Container {
+  public price: Text = new Text("", {
+    fill: 0xffffff,
+    fontSize: 18,
+  });
+
+  public label: Text = new Text("Mid Market Price", {
+    fill: 0xa1a1a1,
+    fontSize: 12,
+  });
+
+  public background: Graphics = new Graphics();
+
+  constructor() {
+    super();
+
+    this.addChild(this.background);
+    this.addChild(this.label);
+    this.addChild(this.price);
+  }
+
+  public update(
+    text: string,
+    x: number,
+    y: number,
+    anchor: { x: number; y: number }
+  ) {
+    this.price.x = x;
+    this.price.y = y;
+    this.price.text = text;
+    this.price.anchor.x = anchor.x;
+    this.price.anchor.y = anchor.y;
+
+    this.label.x = x;
+    this.label.y = y + this.price.height;
+    this.label.anchor.x = anchor.x;
+    this.label.anchor.y = anchor.y;
+
+    const width = Math.max(this.price.width, this.label.width);
+    const height = this.price.height + this.label.height;
+
+    const anchorX = anchor.x;
+    const anchorY = anchor.y;
+
+    const padding = 2;
+
+    this.background.clear();
+    this.background.beginFill(0x000000, 1);
+    this.background.drawRect(
+      x - (anchorX * width + padding),
+      y - (anchorY * height + padding),
+      width + 2 * padding,
+      height + 2 * padding
+    );
+
+    this.background.endFill();
+  }
+
+  get width() {
+    return this.price.width;
+  }
+
+  get height() {
+    return this.price.height;
   }
 }

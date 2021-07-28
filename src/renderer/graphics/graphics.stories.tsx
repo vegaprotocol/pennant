@@ -6,7 +6,7 @@ import { Container } from "../display";
 import { Graphics } from "./graphics";
 
 export default {
-  title: "Graphics",
+  title: "Renderer/Graphics",
 };
 
 export const Simple = () => {

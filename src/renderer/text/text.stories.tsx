@@ -5,7 +5,7 @@ import { Container } from "../display";
 import { Text } from "./text";
 
 export default {
-  title: "Text",
+  title: "Renderer/Text",
 };
 
 export const BasicText = () => {

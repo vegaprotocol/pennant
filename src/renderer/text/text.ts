@@ -1,3 +1,4 @@
+import { constructTopLevelSpec } from "../../helpers";
 import { Renderer, Texture } from "../core";
 import { CanvasResource } from "../core/textures/resources/canvas-resource";
 import { Rectangle } from "../math";
@@ -75,8 +76,6 @@ export class Text extends Sprite {
 
     context.scale(this._resolution, this._resolution);
 
-    console.log(this._resolution);
-
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     context.font = this._font;
@@ -144,7 +143,6 @@ export class Text extends Sprite {
   _render(renderer: Renderer): void {
     if (this._autoResolution && this._resolution !== renderer.resolution) {
       this._resolution = renderer.resolution;
-      console.log(renderer.resolution);
     }
 
     this.updateText();

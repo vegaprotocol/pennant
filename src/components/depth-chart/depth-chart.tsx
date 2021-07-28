@@ -91,7 +91,7 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
     }
 
     fecthData();
-  }, 10000);
+  }, 1000);
 
   const cumulativeBuy = zip<number>(
     data.buy.map((priceLevel) => priceLevel.price),
@@ -170,11 +170,13 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
       volumes.map((volume) => volumeScale(volume)),
       prices.map((price) => priceFormatter.format(price)),
       volumes.map((volume) => volumeFormatter.format(volume)),
-      priceScale
+      priceFormatter.format(midPrice),
+      priceScale,
+      volumeScale
     );
 
     axis.current.render();
-  }, [priceScale, prices, volumeScale, volumes]);
+  }, [midPrice, priceScale, prices, volumeScale, volumes]);
 
   useEffect(() => {
     const extendedCumulativeBuy = [
@@ -217,14 +219,7 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
         height: "100%",
       }}
     >
-      <div
-        ref={ref}
-        className={styles.canvasContainer}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
+      <div ref={ref} className={styles.canvasContainer}>
         <canvas
           ref={chartRef}
           className={styles.canvas}

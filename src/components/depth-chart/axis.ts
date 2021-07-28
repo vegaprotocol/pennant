@@ -1,10 +1,11 @@
 import { bisect } from "d3-array";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 
-import { Renderer } from "../../renderer";
+import { Renderer, Texture } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { Sprite } from "../../renderer/sprite";
 import { Text } from "../../renderer/text";
 import {
   AXIS_HEIGHT,
@@ -17,14 +18,17 @@ import {
   HorizontalLine,
   Indicator,
   Label,
+  MidMarketPriceLabel,
   Rect,
+  VerticalAxis,
 } from "./display-objects";
 
 export class Axis {
   public stage: Container = new Container();
   public renderer: Renderer;
 
-  public axis: HorizontalAxis = new HorizontalAxis();
+  public horizontalAxis: HorizontalAxis = new HorizontalAxis();
+  public verticalAxis: VerticalAxis = new VerticalAxis();
 
   public buyIndicator: Indicator = new Indicator(STROKE_BUY_LIGHT);
   public sellIndicator: Indicator = new Indicator(STROKE_SELL_LIGHT);
@@ -48,13 +52,15 @@ export class Axis {
   public buyOverlay: Rect = new Rect(0x0, 0.5);
   public sellOverlay: Rect = new Rect(0x0, 0.5);
 
+  public midMarketPriceLabel: MidMarketPriceLabel = new MidMarketPriceLabel();
+
   public separator: HorizontalLine = new HorizontalLine(1, GRAY);
 
   public prices: number[] = [];
   public volumes: number[] = [];
   public priceLabels: string[] = [];
   public volumeLabels: string[] = [];
-  public scale: ScaleLinear<number, number> = scaleLinear();
+  public priceScale: ScaleLinear<number, number> = scaleLinear();
 
   private lastEvent: InteractionEvent | null = null;
 
@@ -89,7 +95,10 @@ export class Axis {
 
     this.stage.addChild(this.separator);
 
-    this.stage.addChild(this.axis);
+    this.stage.addChild(this.horizontalAxis);
+    this.stage.addChild(this.verticalAxis);
+
+    this.stage.addChild(this.midMarketPriceLabel);
 
     this.stage.addChild(this.buyPriceText);
     this.stage.addChild(this.buyVolumeText);
@@ -112,22 +121,39 @@ export class Axis {
     volumes: number[],
     priceLabels: string[],
     volumeLabels: string[],
-    scale: ScaleLinear<number, number>
+    midMarketPrice: string,
+    priceScale: ScaleLinear<number, number>,
+    volumeScale: ScaleLinear<number, number>
   ): void {
     this.prices = prices;
     this.volumes = volumes;
     this.priceLabels = priceLabels;
     this.volumeLabels = volumeLabels;
-    this.scale = scale;
+    this.priceScale = priceScale;
 
-    this.axis.update(
-      this.scale,
+    this.horizontalAxis.update(
+      this.priceScale,
       this.renderer.screen.width,
       this.renderer.screen.height
     );
 
+    this.verticalAxis.update(
+      volumeScale,
+      this.renderer.screen.width,
+      this.renderer.screen.height
+    );
+
+    this.midMarketPriceLabel.update(
+      midMarketPrice,
+      this.renderer.screen.width / 2,
+      10,
+      { x: 0.5, y: 0 }
+    );
+
     if (this.lastEvent) {
       this.onPointerMove(this.lastEvent);
+    } else {
+      this.render();
     }
   }
 

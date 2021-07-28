@@ -1,6 +1,8 @@
 .canvasContainer {
-  position: relative;
   cursor: crosshair;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .canvas {

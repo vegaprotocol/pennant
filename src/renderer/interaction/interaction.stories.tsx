@@ -7,7 +7,7 @@ import { Graphics } from "../graphics";
 import { Rectangle } from "../math";
 
 export default {
-  title: "Interaction",
+  title: "Renderer/Interaction",
 };
 
 export const Simple = () => {
