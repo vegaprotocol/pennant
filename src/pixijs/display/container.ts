@@ -75,6 +75,34 @@ export class Container extends DisplayObject implements RenderableObject {
     return children[0];
   }
 
+  public removeChildren(
+    beginIndex = 0,
+    endIndex = this.children.length
+  ): DisplayObject[] {
+    const begin = beginIndex;
+    const end = endIndex;
+    const range = end - begin;
+    let removed;
+
+    if (range > 0 && range <= end) {
+      removed = this.children.splice(begin, range);
+
+      for (let i = 0; i < removed.length; ++i) {
+        removed[i].parent = null;
+      }
+
+      this._boundsID++;
+
+      return removed;
+    } else if (range === 0 && this.children.length === 0) {
+      return [];
+    }
+
+    throw new RangeError(
+      "removeChildren: numeric values are outside the acceptable range."
+    );
+  }
+
   public render(renderer: Renderer): void {
     if (!this.visible) {
       return;
@@ -118,6 +146,16 @@ export class Container extends DisplayObject implements RenderableObject {
     }
 
     return result;
+  }
+
+  destroy(): void {
+    super.destroy();
+
+    const oldChildren = this.removeChildren(0, this.children.length);
+
+    for (let i = 0; i < oldChildren.length; ++i) {
+      oldChildren[i].destroy();
+    }
   }
 
   protected _render(_renderer: Renderer): void {}

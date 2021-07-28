@@ -1,7 +1,15 @@
+import { curveStepAfter } from "d3-shape";
+
 import { Renderer } from "../../pixijs";
 import { Container } from "../../pixijs/display";
 import { Rectangle } from "../../pixijs/math";
-import { FILL_BUY_LIGHT, FILL_SELL_LIGHT, GRAY, HEIGHT, STROKE_BUY_LIGHT, STROKE_SELL_LIGHT, WIDTH } from "./depth-chart";
+import {
+  FILL_BUY_LIGHT,
+  FILL_SELL_LIGHT,
+  GRAY,
+  STROKE_BUY_LIGHT,
+  STROKE_SELL_LIGHT,
+} from "./depth-chart";
 import { DepthCurve, VerticalLine } from "./display-objects";
 
 export class Chart {
@@ -14,17 +22,18 @@ export class Chart {
   );
   public sellCurve: DepthCurve = new DepthCurve(
     STROKE_SELL_LIGHT,
-    FILL_SELL_LIGHT
+    FILL_SELL_LIGHT,
+    curveStepAfter
   );
 
   public midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
 
-  constructor(view: HTMLCanvasElement) {
+  constructor(options: any) {
     this.renderer = new Renderer({
-      view: view,
-      resolution: 1.5,
-      width: WIDTH,
-      height: HEIGHT,
+      view: options.view,
+      resolution: options.resolution,
+      width: options.width,
+      height: options.height,
     });
 
     this.stage.addChild(this.midPriceLine);
@@ -40,9 +49,13 @@ export class Chart {
     buyPoints: [number, number][],
     sellPoints: [number, number][]
   ): void {
-    this.midPriceLine.update(WIDTH / 2);
-    this.buyCurve.update(buyPoints);
-    this.sellCurve.update(sellPoints);
+    this.midPriceLine.update(
+      this.renderer.screen.width / 2,
+      this.renderer.screen.height
+    );
+
+    this.buyCurve.update(buyPoints, this.renderer.screen.height);
+    this.sellCurve.update(sellPoints, this.renderer.screen.height);
   }
 
   get screen(): Rectangle {

@@ -75,6 +75,8 @@ export class Text extends Sprite {
 
     context.scale(this._resolution, this._resolution);
 
+    console.log(this._resolution);
+
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     context.font = this._font;
@@ -142,6 +144,7 @@ export class Text extends Sprite {
   _render(renderer: Renderer): void {
     if (this._autoResolution && this._resolution !== renderer.resolution) {
       this._resolution = renderer.resolution;
+      console.log(renderer.resolution);
     }
 
     this.updateText();
@@ -183,6 +186,7 @@ export class Text extends Sprite {
       Math.ceil(this.canvas.width / this._resolution) -
       dropShadowCorrection -
       padding * 2;
+
     const height =
       Math.ceil(this.canvas.height / this._resolution) -
       dropShadowCorrection -

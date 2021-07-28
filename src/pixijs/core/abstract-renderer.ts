@@ -29,6 +29,7 @@ export abstract class AbstractRenderer {
 
   constructor(options?: Partial<RendererOptions>) {
     this.resolution = options?.resolution || settings.RESOLUTION;
+
     this.screen = new Rectangle(
       0,
       0,
@@ -52,6 +53,20 @@ export abstract class AbstractRenderer {
 
     this.view.style.width = `${screenWidth}px`;
     this.view.style.height = `${screenHeight}px`;
+  }
+
+  public destroy(): void {
+    this.plugins.interaction.destroy();
+    this.plugins.interaction = null;
+
+    const thisAny = this as any;
+
+    thisAny.plugins = null;
+    thisAny.view = null;
+    thisAny.screen = null;
+    thisAny._tempDisplayObjectParent = null;
+    thisAny.options = null;
+    this._lastObjectRendered = null;
   }
 
   get width(): number {

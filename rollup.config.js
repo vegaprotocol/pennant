@@ -1,11 +1,10 @@
-import * as meta from "./package.json";
-
 import { babel, getBabelOutputPlugin } from "@rollup/plugin-babel";
-
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import scss from "rollup-plugin-scss";
+import postcss from "rollup-plugin-postcss";
 import { terser } from "rollup-plugin-terser";
+
+import * as meta from "./package.json";
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
@@ -65,7 +64,10 @@ const config = {
   plugins: [
     nodeResolve({ extensions }),
     commonjs(),
-    scss({ output: "dist/style.css" }),
+    postcss({
+      modules: true,
+      output: "dist/style.css",
+    }),
     babel({
       extensions,
       plugins: ["@babel/plugin-transform-runtime"],

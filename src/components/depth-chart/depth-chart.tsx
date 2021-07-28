@@ -3,18 +3,16 @@ import { extent, max, zip } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
+import useResizeObserver from "use-resize-observer";
 
 import { cumsum } from "../../elements";
 import { useInterval } from "../../hooks";
 import { Axis } from "./axis";
 import { Chart } from "./chart";
-import styles from "./depth-chart.module.css"; // Import css modules stylesheet as styles
+import styles from "./depth-chart.module.css";
 
-console.log(styles);
-// TODO: CurveBefore and CurveAfter depending on which side we are on
-
-export const WIDTH = 420;
-export const HEIGHT = 240;
+// TODO: Do not recreate scenegraph whenever dimensions change
+// TODO: Check parent is being set on display objects (seems to always be null)
 export const AXIS_HEIGHT = 20;
 
 export const FILL_BUY = 0x070c07;
@@ -55,6 +53,12 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
 
   const chart = useRef<Chart>(null!);
   const axis = useRef<Axis>(null!);
+
+  const {
+    ref,
+    width = 800,
+    height = 600,
+  } = useResizeObserver<HTMLDivElement>();
 
   const [data, setData] = useState({ buy, sell });
   const [span, setSpan] = useState(1);
@@ -134,22 +138,39 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
     2 * (max(volumes.slice(indexExtent[0], indexExtent[1])) ?? 0),
   ];
 
-  const priceScale = scaleLinear().domain(priceExtent).range([0, WIDTH]);
+  const priceScale = scaleLinear().domain(priceExtent).range([0, width]);
+
   const volumeScale = scaleLinear()
     .domain(volumeExtent)
-    .range([HEIGHT - AXIS_HEIGHT, 0]);
+    .range([height - AXIS_HEIGHT, 0]);
 
   useEffect(() => {
-    chart.current = new Chart(chartRef.current);
-    axis.current = new Axis(axisRef.current);
-  }, []);
+    chart.current = new Chart({
+      view: chartRef.current,
+      resolution: 1.5,
+      width,
+      height,
+    });
+
+    axis.current = new Axis({
+      view: axisRef.current,
+      resolution: 1.5,
+      width,
+      height,
+    });
+
+    return () => {
+      axis.current.destroy();
+    };
+  }, [height, width]);
 
   useEffect(() => {
     axis.current.update(
       prices.map((price) => priceScale(price)),
       volumes.map((volume) => volumeScale(volume)),
       prices.map((price) => priceFormatter.format(price)),
-      volumes.map((volume) => volumeFormatter.format(volume))
+      volumes.map((volume) => volumeFormatter.format(volume)),
+      priceScale
     );
 
     axis.current.render();
@@ -188,12 +209,20 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
   ]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
       <div
+        ref={ref}
         className={styles.canvasContainer}
         style={{
-          width: `${WIDTH}px`,
-          height: `${HEIGHT}px`,
+          width: "100%",
+          height: "100%",
         }}
       >
         <canvas
@@ -203,18 +232,15 @@ export const DepthChart = ({ buy, sell }: DepthChartProps) => {
             backgroundColor: "#0f0f0f",
           }}
         />
-        <canvas
-          ref={axisRef}
-          className={styles.canvas}
-          width={WIDTH}
-          height={HEIGHT}
-          style={{
-            width: `${WIDTH}px`,
-            height: `${HEIGHT}px`,
-          }}
-        />
+        <canvas ref={axisRef} className={styles.canvas} />
       </div>
-      <div style={{ height: `${HEIGHT}px`, paddingLeft: "12px" }}>
+      <div
+        style={{
+          height: `${height}px`,
+          paddingLeft: "12px",
+          paddingRight: "24px",
+        }}
+      >
         <Slider
           min={0.01}
           max={1}

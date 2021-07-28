@@ -121,42 +121,44 @@ const genericFontFamilies = [
 export class TextStyle implements ITextStyle {
   public styleID: number;
 
-  protected _align: TextStyleAlign;
-  protected _breakWords: boolean;
-  protected _dropShadow: boolean;
-  protected _dropShadowAlpha: number;
-  protected _dropShadowAngle: number;
-  protected _dropShadowBlur: number;
-  protected _dropShadowColor: string | number;
-  protected _dropShadowDistance: number;
-  protected _fill: TextStyleFill;
-  protected _fillGradientType: TEXT_GRADIENT;
-  protected _fillGradientStops: number[];
-  protected _fontFamily: string | string[];
-  protected _fontSize: number | string;
-  protected _fontStyle: TextStyleFontStyle;
-  protected _fontVariant: TextStyleFontVariant;
-  protected _fontWeight: TextStyleFontWeight;
-  protected _letterSpacing: number;
-  protected _lineHeight: number;
-  protected _lineJoin: TextStyleLineJoin;
-  protected _miterLimit: number;
-  protected _padding: number;
-  protected _stroke: string | number;
-  protected _strokeThickness: number;
-  protected _textBaseline: TextStyleTextBaseline;
-  protected _trim: boolean;
-  protected _whiteSpace: TextStyleWhiteSpace;
-  protected _wordWrap: boolean;
-  protected _wordWrapWidth: number;
-  protected _leading: number;
+  // FIXME: Do not use !
+  protected _align!: TextStyleAlign;
+  protected _breakWords!: boolean;
+  protected _dropShadow!: boolean;
+  protected _dropShadowAlpha!: number;
+  protected _dropShadowAngle!: number;
+  protected _dropShadowBlur!: number;
+  protected _dropShadowColor!: string | number;
+  protected _dropShadowDistance!: number;
+  protected _fill!: TextStyleFill;
+  protected _fillGradientType!: TEXT_GRADIENT;
+  protected _fillGradientStops!: number[];
+  protected _fontFamily!: string | string[];
+  protected _fontSize!: number | string;
+  protected _fontStyle!: TextStyleFontStyle;
+  protected _fontVariant!: TextStyleFontVariant;
+  protected _fontWeight!: TextStyleFontWeight;
+  protected _letterSpacing!: number;
+  protected _lineHeight!: number;
+  protected _lineJoin!: TextStyleLineJoin;
+  protected _miterLimit!: number;
+  protected _padding!: number;
+  protected _stroke!: string | number;
+  protected _strokeThickness!: number;
+  protected _textBaseline!: TextStyleTextBaseline;
+  protected _trim!: boolean;
+  protected _whiteSpace!: TextStyleWhiteSpace;
+  protected _wordWrap!: boolean;
+  protected _wordWrapWidth!: number;
+  protected _leading!: number;
 
   constructor(style?: Partial<ITextStyle>) {
     this.styleID = 0;
 
     this.reset();
 
-    deepCopyProperties(this, style, style);
+    // FIXME: Check types
+    deepCopyProperties(this, style as any, style as any);
   }
 
   /**

@@ -33,7 +33,18 @@ const binanceData = {
 };
 
 const Template: Story<DepthChartProps> = (args) => {
-  return <DepthChart {...args} />;
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "auto",
+        width: "420px",
+        height: "240px",
+      }}
+    >
+      <DepthChart {...args} />
+    </div>
+  );
 };
 
 export const Vega = Template.bind({});

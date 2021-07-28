@@ -42,7 +42,7 @@ export abstract class DisplayObject extends EventEmitter {
   abstract removeChild(child: DisplayObject): void;
   abstract render(renderer: Renderer): void;
 
-  setParent(container: Container): Container {
+  public setParent(container: Container): Container {
     if (!container || !container.addChild) {
       throw new Error("setParent: Argument must be a Container");
     }
@@ -52,13 +52,13 @@ export abstract class DisplayObject extends EventEmitter {
     return container;
   }
 
-  updateTransform(): void {
+  public updateTransform(): void {
     if (this.parent) {
       this.transform.updateTransform(this.parent.transform);
     }
   }
 
-  getLocalBounds(rect?: Rectangle): Rectangle {
+  public getLocalBounds(rect?: Rectangle): Rectangle {
     if (!rect) {
       if (!this._localBoundsRect) {
         this._localBoundsRect = new Rectangle();
@@ -121,6 +121,19 @@ export abstract class DisplayObject extends EventEmitter {
     return this._bounds.getRectangle(rect);
   }
 
+  destroy(): void {
+    if (this.parent) {
+      this.parent.removeChild(this);
+    }
+
+    this.removeAllListeners();
+
+    this.parent = null;
+    this.hitArea = null;
+    this.interactive = false;
+    this.interactiveChildren = false;
+  }
+
   get _tempDisplayObjectParent(): TemporaryDisplayObject {
     if (this.tempDisplayObjectParent === null) {
       this.tempDisplayObjectParent = new TemporaryDisplayObject();
@@ -129,7 +142,7 @@ export abstract class DisplayObject extends EventEmitter {
     return this.tempDisplayObjectParent;
   }
 
-  enableTempParent(): Container | null {
+  public enableTempParent(): Container | null {
     const myParent = this.parent;
 
     this.parent = this._tempDisplayObjectParent as unknown as Container;
@@ -137,12 +150,7 @@ export abstract class DisplayObject extends EventEmitter {
     return myParent as unknown as Container;
   }
 
-  /**
-   * Pair method for `enableTempParent`
-   *
-   * @param {PIXI.Container} cacheParent - Actual parent of element
-   */
-  disableTempParent(cacheParent: Container): void {
+  public disableTempParent(cacheParent: Container): void {
     this.parent = cacheParent;
   }
 

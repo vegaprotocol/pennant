@@ -133,32 +133,21 @@ export class InteractionManager extends EventEmitter {
   }
 
   public mapPositionToPoint(point: PointData, x: number, y: number): void {
-    let rect;
+    if (this.interactionDOMElement) {
+      const rect = this.interactionDOMElement.getBoundingClientRect();
 
-    // IE 11 fix
-    if (!this.interactionDOMElement?.parentElement) {
-      rect = {
-        x: 0,
-        y: 0,
-        width: (this.interactionDOMElement as any).width,
-        height: (this.interactionDOMElement as any).height,
-        left: 0,
-        top: 0,
-      };
-    } else {
-      rect = this.interactionDOMElement.getBoundingClientRect();
+      const resolutionMultiplier = 1.0 / this.resolution;
+
+      point.x =
+        (x - rect.left) *
+        ((this.interactionDOMElement as any).width / rect.width) *
+        resolutionMultiplier;
+
+      point.y =
+        (y - rect.top) *
+        ((this.interactionDOMElement as any).height / rect.height) *
+        resolutionMultiplier;
     }
-
-    const resolutionMultiplier = 1.0 / this.resolution;
-
-    point.x =
-      (x - rect.left) *
-      ((this.interactionDOMElement as any).width / rect.width) *
-      resolutionMultiplier;
-    point.y =
-      (y - rect.top) *
-      ((this.interactionDOMElement as any).height / rect.height) *
-      resolutionMultiplier;
   }
 
   public setCursorMode(mode: string | null): void {
@@ -185,8 +174,8 @@ export class InteractionManager extends EventEmitter {
       switch (typeof style) {
         case "string":
           // string styles are handled as cursor CSS
-          if (applyStyles) {
-            this.interactionDOMElement!.style.cursor = style;
+          if (applyStyles && this.interactionDOMElement) {
+            this.interactionDOMElement.style.cursor = style;
           }
           break;
         case "function":
@@ -210,6 +199,12 @@ export class InteractionManager extends EventEmitter {
       // for the mode, then assume that the dev wants it to be CSS for the cursor.
       this.interactionDOMElement!.style.cursor = mode;
     }
+  }
+
+  public destroy(): void {
+    this.removeEvents();
+    this.removeAllListeners();
+    this.interactionDOMElement = null;
   }
 
   private addEvents(): void {
@@ -335,7 +330,6 @@ export class InteractionManager extends EventEmitter {
     const events = this.normalizeToPointerData(originalEvent);
 
     if (events[0].pointerType === "mouse" || events[0].pointerType === "pen") {
-
       this.cursor = null;
     }
 
