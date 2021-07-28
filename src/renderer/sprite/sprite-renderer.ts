@@ -37,8 +37,6 @@ export class SpriteRenderer {
 
     const resolution = texture.baseTexture.resolution;
 
-    console.log(source);
-
     context.drawImage(
       source,
       texture._frame.x * resolution,

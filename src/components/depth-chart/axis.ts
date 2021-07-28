@@ -1,11 +1,11 @@
-import { bisect } from "d3-array";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 
-import { Renderer, Texture } from "../../renderer";
+import { bisectCenter } from "../../math/array";
+import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
+import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { Sprite } from "../../renderer/sprite";
 import { Text } from "../../renderer/text";
 import {
   AXIS_HEIGHT,
@@ -157,6 +157,18 @@ export class Axis {
     }
   }
 
+  public updatePrice(price: number) {
+    const event = new InteractionEvent();
+    event.data = new InteractionData();
+    event.data.global.x = this.priceScale(price);
+
+    this.onPointerMove(event);
+  }
+
+  public clearPrice() {
+    this.onPointerOut();
+  }
+
   private onPointerMove = (event: InteractionEvent) => {
     this.lastEvent = event;
 
@@ -174,7 +186,7 @@ export class Axis {
       this.buyOverlay.visible = true;
       this.sellOverlay.visible = true;
 
-      const index = bisect(this.prices, x);
+      const index = bisectCenter(this.prices, x);
       const nearestX = this.prices[index];
 
       let buyIndex;

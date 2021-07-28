@@ -2,7 +2,13 @@ import { Slider } from "@blueprintjs/core";
 import { extent, max, zip } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { orderBy } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import useResizeObserver from "use-resize-observer";
 
 import { cumsum } from "../../elements";
@@ -43,220 +49,204 @@ export type PriceLevel = {
 };
 
 export type DepthChartProps = {
-  buy: PriceLevel[];
-  sell: PriceLevel[];
+  data: { buy: PriceLevel[]; sell: PriceLevel[] };
 };
 
-export const DepthChart = ({ buy, sell }: DepthChartProps) => {
-  const chartRef = useRef<HTMLCanvasElement>(null!);
-  const axisRef = useRef<HTMLCanvasElement>(null!);
+export interface DepthChartHandle {
+  update(price: number): void;
+  clear(): void;
+}
 
-  const chart = useRef<Chart>(null!);
-  const axis = useRef<Axis>(null!);
+export const DepthChart = forwardRef(
+  ({ data }: DepthChartProps, ref: React.Ref<DepthChartHandle>) => {
+    const chartRef = useRef<HTMLCanvasElement>(null!);
+    const axisRef = useRef<HTMLCanvasElement>(null!);
 
-  const {
-    ref,
-    width = 800,
-    height = 600,
-  } = useResizeObserver<HTMLDivElement>();
+    const chart = useRef<Chart>(null!);
+    const axis = useRef<Axis>(null!);
 
-  const [data, setData] = useState({ buy, sell });
-  const [span, setSpan] = useState(1);
+    const {
+      ref: resizeOberverRef,
+      width = 800,
+      height = 600,
+    } = useResizeObserver<HTMLDivElement>();
 
-  useInterval(() => {
-    async function fecthData() {
-      const res = await fetch(
-        `https://www.binance.com/api/v3/depth?symbol=BTCGBP&limit=1000`
+    const [span, setSpan] = useState(1);
+
+    const cumulativeBuy = zip<number>(
+      data.buy.map((priceLevel) => priceLevel.price),
+      cumsum(data.buy.map((priceLevel) => priceLevel.volume))
+    ) as [number, number][];
+
+    const cumulativeSell = zip<number>(
+      data.sell.map((priceLevel) => priceLevel.price),
+      cumsum(data.sell.map((priceLevel) => priceLevel.volume))
+    ) as [number, number][];
+
+    const prices = orderBy([
+      ...data.buy.map((priceLevel) => priceLevel.price),
+      ...data.sell.map((priceLevel) => priceLevel.price),
+    ]);
+
+    const midPrice = (data.buy[0].price + data.sell[0].price) / 2;
+
+    const maxPriceDifference =
+      max(prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+
+    const priceExtent: [number, number] = [
+      midPrice - span * maxPriceDifference,
+      midPrice + span * maxPriceDifference,
+    ];
+
+    const indexExtent = extent(
+      orderBy([...data.buy, ...data.sell], ["price"])
+        .map((priceLevel, index) => ({ ...priceLevel, index }))
+        .filter(
+          (priceLevel) =>
+            priceLevel.price >= priceExtent[0] &&
+            priceLevel.price <= priceExtent[1]
+        )
+        .map((priceLevel) => priceLevel.index)
+    );
+
+    const volumes = orderBy([...cumulativeBuy, ...cumulativeSell], ["0"]).map(
+      (priceLevel) => priceLevel[1]
+    );
+
+    const volumeExtent: [number, number] = [
+      0,
+      2 * (max(volumes.slice(indexExtent[0], indexExtent[1])) ?? 0),
+    ];
+
+    const priceScale = scaleLinear().domain(priceExtent).range([0, width]);
+
+    const volumeScale = scaleLinear()
+      .domain(volumeExtent)
+      .range([height - AXIS_HEIGHT, 0]);
+
+    useEffect(() => {
+      chart.current = new Chart({
+        view: chartRef.current,
+        resolution: 1.5,
+        width,
+        height,
+      });
+
+      axis.current = new Axis({
+        view: axisRef.current,
+        resolution: 1.5,
+        width,
+        height,
+      });
+
+      return () => {
+        axis.current.destroy();
+      };
+    }, [height, width]);
+
+    useEffect(() => {
+      axis.current.update(
+        prices.map((price) => priceScale(price)),
+        volumes.map((volume) => volumeScale(volume)),
+        prices.map((price) => priceFormatter.format(price)),
+        volumes.map((volume) => volumeFormatter.format(volume)),
+        priceFormatter.format(midPrice),
+        priceScale,
+        volumeScale
       );
 
-      const json = await res.json();
+      axis.current.render();
+    }, [midPrice, priceScale, prices, volumeScale, volumes]);
 
-      setData({
-        sell: orderBy(
-          json.asks.map((ask: [string, string]) => ({
-            price: +ask[0],
-            volume: +ask[1],
-          })),
-          ["price"]
-        ),
-        buy: orderBy(
-          json.bids.map((bid: [string, string]) => ({
-            price: +bid[0],
-            volume: +bid[1],
-          })),
-          ["price"],
-          ["desc"]
-        ),
-      });
-    }
+    useImperativeHandle(ref, () => ({
+      update(price: number) {
+        axis.current.updatePrice(price);
+      },
+      clear() {
+        axis.current.clearPrice();
+      },
+    }));
 
-    fecthData();
-  }, 1000);
+    useEffect(() => {
+      const extendedCumulativeBuy = [
+        ...cumulativeBuy,
+        [
+          midPrice - maxPriceDifference,
+          cumulativeBuy[cumulativeBuy.length - 1][1],
+        ],
+      ] as [number, number][];
 
-  const cumulativeBuy = zip<number>(
-    data.buy.map((priceLevel) => priceLevel.price),
-    cumsum(data.buy.map((priceLevel) => priceLevel.volume))
-  ) as [number, number][];
+      chart.current.update(
+        extendedCumulativeBuy.map((point) => [
+          priceScale(point[0]),
+          volumeScale(point[1]),
+        ]),
+        cumulativeSell.map((point) => [
+          priceScale(point[0]),
+          volumeScale(point[1]),
+        ])
+      );
 
-  const cumulativeSell = zip<number>(
-    data.sell.map((priceLevel) => priceLevel.price),
-    cumsum(data.sell.map((priceLevel) => priceLevel.volume))
-  ) as [number, number][];
-
-  const prices = orderBy([
-    ...data.buy.map((priceLevel) => priceLevel.price),
-    ...data.sell.map((priceLevel) => priceLevel.price),
-  ]);
-
-  const midPrice = (data.buy[0].price + data.sell[0].price) / 2;
-
-  const maxPriceDifference =
-    max(prices.map((price) => Math.abs(price - midPrice))) ?? 0;
-
-  const priceExtent: [number, number] = [
-    midPrice - span * maxPriceDifference,
-    midPrice + span * maxPriceDifference,
-  ];
-
-  const indexExtent = extent(
-    orderBy([...data.buy, ...data.sell], ["price"])
-      .map((priceLevel, index) => ({ ...priceLevel, index }))
-      .filter(
-        (priceLevel) =>
-          priceLevel.price >= priceExtent[0] &&
-          priceLevel.price <= priceExtent[1]
-      )
-      .map((priceLevel) => priceLevel.index)
-  );
-
-  const volumes = orderBy([...cumulativeBuy, ...cumulativeSell], ["0"]).map(
-    (priceLevel) => priceLevel[1]
-  );
-
-  const volumeExtent: [number, number] = [
-    0,
-    2 * (max(volumes.slice(indexExtent[0], indexExtent[1])) ?? 0),
-  ];
-
-  const priceScale = scaleLinear().domain(priceExtent).range([0, width]);
-
-  const volumeScale = scaleLinear()
-    .domain(volumeExtent)
-    .range([height - AXIS_HEIGHT, 0]);
-
-  useEffect(() => {
-    chart.current = new Chart({
-      view: chartRef.current,
-      resolution: 1.5,
-      width,
-      height,
-    });
-
-    axis.current = new Axis({
-      view: axisRef.current,
-      resolution: 1.5,
-      width,
-      height,
-    });
-
-    return () => {
-      axis.current.destroy();
-    };
-  }, [height, width]);
-
-  useEffect(() => {
-    axis.current.update(
-      prices.map((price) => priceScale(price)),
-      volumes.map((volume) => volumeScale(volume)),
-      prices.map((price) => priceFormatter.format(price)),
-      volumes.map((volume) => volumeFormatter.format(volume)),
-      priceFormatter.format(midPrice),
+      chart.current.render();
+    }, [
+      cumulativeBuy,
+      cumulativeSell,
+      maxPriceDifference,
+      midPrice,
       priceScale,
-      volumeScale
-    );
+      prices,
+      volumeScale,
+      volumes,
+    ]);
 
-    axis.current.render();
-  }, [midPrice, priceScale, prices, volumeScale, volumes]);
-
-  useEffect(() => {
-    const extendedCumulativeBuy = [
-      ...cumulativeBuy,
-      [
-        midPrice - maxPriceDifference,
-        cumulativeBuy[cumulativeBuy.length - 1][1],
-      ],
-    ] as [number, number][];
-
-    chart.current.update(
-      extendedCumulativeBuy.map((point) => [
-        priceScale(point[0]),
-        volumeScale(point[1]),
-      ]),
-      cumulativeSell.map((point) => [
-        priceScale(point[0]),
-        volumeScale(point[1]),
-      ])
-    );
-
-    chart.current.render();
-  }, [
-    cumulativeBuy,
-    cumulativeSell,
-    maxPriceDifference,
-    midPrice,
-    priceScale,
-    prices,
-    volumeScale,
-    volumes,
-  ]);
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        height: "100%",
-      }}
-    >
-      <div ref={ref} className={styles.canvasContainer}>
-        <canvas
-          ref={chartRef}
-          className={styles.canvas}
-          style={{
-            backgroundColor: "#0f0f0f",
-          }}
-        />
-        <canvas ref={axisRef} className={styles.canvas} />
-      </div>
+    return (
       <div
         style={{
-          height: `${height}px`,
-          paddingLeft: "12px",
-          paddingRight: "24px",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          height: "100%",
         }}
       >
-        <Slider
-          min={0.01}
-          max={1}
-          stepSize={0.01}
-          labelRenderer={(value) =>
-            Intl.NumberFormat("en-gb", {
-              style: "percent",
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(value)
-          }
-          vertical
-          showTrackFill={false}
-          value={span}
-          onChange={(value) => {
-            setSpan(value);
+        <div ref={resizeOberverRef} className={styles.canvasContainer}>
+          <canvas
+            ref={chartRef}
+            className={styles.canvas}
+            style={{
+              backgroundColor: "#0f0f0f",
+            }}
+          />
+          <canvas ref={axisRef} className={styles.canvas} />
+        </div>
+        <div
+          style={{
+            height: `${height}px`,
+            paddingLeft: "12px",
+            paddingRight: "24px",
           }}
-        />
+        >
+          <Slider
+            min={0.01}
+            max={1}
+            stepSize={0.01}
+            labelRenderer={(value) =>
+              Intl.NumberFormat("en-gb", {
+                style: "percent",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(value)
+            }
+            vertical
+            showTrackFill={false}
+            value={span}
+            onChange={(value) => {
+              setSpan(value);
+            }}
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 DepthChart.displayName = "DepthChart";
