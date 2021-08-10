@@ -9,7 +9,6 @@ import {
   DepthChartProps,
   PriceLevel,
 } from "./depth-chart";
-import data from "./depth-chart.stories.json";
 
 export default {
   title: "Components/DepthChart",
@@ -27,7 +26,7 @@ const Template: Story<DepthChartProps> = (args) => {
   });
 
   useInterval(() => {
-    async function fecthData() {
+    async function fetchData() {
       const res = await fetch(
         `https://www.binance.com/api/v3/depth?symbol=BTCGBP&limit=1000`
       );
@@ -55,7 +54,7 @@ const Template: Story<DepthChartProps> = (args) => {
       setIsLoading(false);
     }
 
-    fecthData();
+    fetchData();
   }, 5000);
 
   if (isLoading) {
@@ -68,8 +67,8 @@ const Template: Story<DepthChartProps> = (args) => {
         style={{
           resize: "both",
           overflow: "auto",
-          width: "420px",
-          height: "240px",
+          width: "500px",
+          height: "300px",
         }}
       >
         <DepthChart ref={ref} data={data} />

@@ -283,6 +283,12 @@ export class InteractionManager extends EventEmitter {
       );
     }
 
+    this.interactionDOMElement.addEventListener(
+      "wheel",
+      this.onWheel,
+      this._eventListenerOptions
+    );
+
     // always look directly for touch events so that we can provide original data
     // In a future version we should change this to being just a fallback and rely solely on
     // PointerEvents whenever available
@@ -716,6 +722,46 @@ export class InteractionManager extends EventEmitter {
     }
   };
 
+  private onWheel = (originalEvent: InteractivePointerEvent): void => {
+    const events = this.normalizeToPointerData(originalEvent);
+
+    if (events[0].pointerType === "mouse" || events[0].pointerType === "pen") {
+      this.cursor = null;
+    }
+
+    for (const event of events) {
+      const interactionData = this.getInteractionDataForPointerId(event);
+
+      const interactionEvent = this.configureInteractionEventForDOMEvent(
+        this.eventData,
+        event,
+        interactionData
+      );
+
+      interactionEvent.data!.originalEvent = originalEvent;
+
+      this.processInteractive(
+        interactionEvent,
+        this.lastObjectRendered,
+        this.processWheel,
+        true
+      );
+
+      this.emit("pointermove", interactionEvent);
+    }
+  };
+
+  private processWheel = (
+    interactionEvent: InteractionEvent,
+    displayObject: DisplayObject,
+    hit?: boolean
+  ): void => {
+    if (hit) {
+      interactionEvent.data?.originalEvent?.preventDefault();
+      this.dispatchEvent(displayObject, "wheel", interactionEvent);
+    }
+  };
+
   private releaseInteractionDataForPointerId(pointerId: number): void {
     const interactionData = this.activeInteractionData[pointerId];
 
@@ -773,10 +819,19 @@ export class InteractionManager extends EventEmitter {
 
   private normalizeToPointerData(
     event: InteractivePointerEvent
-  ): PointerEvent[] {
+  ): PennantPointerEvent[] {
     const normalizedEvents = [];
 
-    if (this.supportsTouchEvents && event instanceof TouchEvent) {
+    if (event instanceof WheelEvent) {
+      const tempEvent = event as PennantPointerEvent;
+
+      if (typeof tempEvent.deltaX === "undefined")
+        tempEvent.deltaX = event.deltaX;
+      if (typeof tempEvent.deltaY === "undefined")
+        tempEvent.deltaY = event.deltaY;
+
+      normalizedEvents.push(tempEvent);
+    } else if (this.supportsTouchEvents && event instanceof TouchEvent) {
       for (let i = 0, li = event.changedTouches.length; i < li; i++) {
         const touch = event.changedTouches[i] as PixiTouch;
 
@@ -803,14 +858,6 @@ export class InteractionManager extends EventEmitter {
         if (typeof touch.twist === "undefined") touch.twist = 0;
         if (typeof touch.tangentialPressure === "undefined")
           touch.tangentialPressure = 0;
-        // TODO: Remove these, as layerX/Y is not a standard, is deprecated, has uneven
-        // support, and the fill ins are not quite the same
-        // offsetX/Y might be okay, but is not the same as clientX/Y when the canvas's top
-        // left is not 0,0 on the page
-        if (typeof touch.layerX === "undefined")
-          touch.layerX = touch.offsetX = touch.clientX;
-        if (typeof touch.layerY === "undefined")
-          touch.layerY = touch.offsetY = touch.clientY;
 
         // mark the touch as normalized, just so that we know we did it
         touch.isNormalized = true;
@@ -824,7 +871,7 @@ export class InteractionManager extends EventEmitter {
       (event instanceof MouseEvent &&
         (!this.supportsPointerEvents || !(event instanceof self.PointerEvent)))
     ) {
-      const tempEvent = event as PixiPointerEvent;
+      const tempEvent = event as PennantPointerEvent;
 
       if (typeof tempEvent.isPrimary === "undefined")
         tempEvent.isPrimary = true;
@@ -849,10 +896,12 @@ export class InteractionManager extends EventEmitter {
       normalizedEvents.push(event);
     }
 
-    return normalizedEvents as PointerEvent[];
+    return normalizedEvents as PennantPointerEvent[];
   }
 
-  private getInteractionDataForPointerId(event: PointerEvent): InteractionData {
+  private getInteractionDataForPointerId(
+    event: PennantPointerEvent
+  ): InteractionData {
     const pointerId = event.pointerId;
 
     let interactionData;
@@ -900,7 +949,7 @@ interface PixiTouch extends Touch {
   isNormalized: boolean;
 }
 
-interface PixiPointerEvent extends PointerEvent {
+export interface PennantPointerEvent extends PointerEvent, WheelEvent {
   isPrimary: boolean;
   width: number;
   height: number;
@@ -911,5 +960,7 @@ interface PixiPointerEvent extends PointerEvent {
   pressure: number;
   twist: number;
   tangentialPressure: number;
+  deltaX: number;
+  deltaY: number;
   isNormalized: boolean;
 }

@@ -59,6 +59,11 @@ const config = {
       file: meta.main,
       format: "cjs",
       globals,
+      plugins: [
+        getBabelOutputPlugin({
+          presets: ["@babel/preset-env"],
+        }),
+      ],
     },
   ],
   plugins: [

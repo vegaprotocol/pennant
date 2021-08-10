@@ -1,7 +1,12 @@
 import { DisplayObject } from "../display";
 import { Point } from "../math";
+import { PennantPointerEvent } from "./interaction-manager";
 
-export type InteractivePointerEvent = PointerEvent | TouchEvent | MouseEvent;
+export type InteractivePointerEvent =
+  | PointerEvent
+  | TouchEvent
+  | MouseEvent
+  | WheelEvent;
 
 export class InteractionData {
   public button: number = 0;
@@ -17,7 +22,7 @@ export class InteractionData {
     this.target = null;
   }
 
-  public copyEvent(event: Touch | InteractivePointerEvent): void {
+  public copyEvent(event: Touch | PennantPointerEvent): void {
     if ("pointerType" in event) {
       this.pointerType = event.pointerType;
     }

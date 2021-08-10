@@ -26,6 +26,7 @@ export class SpriteRenderer {
     dy = (0.5 - sprite.anchor.y) * texture.orig.height;
 
     dx -= width / 2;
+    ``;
     dy -= height / 2;
 
     renderer.setContextTransform(wt, sprite.roundPixels, 1);

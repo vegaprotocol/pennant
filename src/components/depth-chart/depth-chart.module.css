@@ -9,4 +9,5 @@
   position: absolute;
   top: 0;
   left: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }

@@ -1,4 +1,6 @@
 import { ScaleLinear, scaleLinear } from "d3-scale";
+import EventEmitter from "eventemitter3";
+import { clamp } from "lodash";
 
 import { bisectCenter } from "../../math/array";
 import { Renderer } from "../../renderer";
@@ -6,7 +8,6 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { Text } from "../../renderer/text";
 import {
   AXIS_HEIGHT,
   GRAY,
@@ -23,9 +24,52 @@ import {
   VerticalAxis,
 } from "./display-objects";
 
-export class Axis {
+function pointer(event: any) {
+  const node = event.target;
+
+  const rect = node.getBoundingClientRect();
+
+  return [
+    event.clientX - rect.left - node.clientLeft,
+    event.clientY - rect.top - node.clientTop,
+  ];
+}
+export class Gesture {
+  public that: Axis;
+  public active: number = 0;
+  public taps: number = 0;
+
+  public touch0: any = null;
+  public touch1: any = null;
+
+  public sourceEvent: Event | null = null;
+
+  public zooming = false;
+
+  public originalSpan: number = 1;
+
+  constructor(that: Axis) {
+    this.that = that;
+  }
+
+  public start() {
+    this.that.emit("zoomstart");
+  }
+
+  public zoom(scale: number) {
+    this.that.emit("zoom", scale);
+  }
+
+  public end() {
+    this.that.emit("zoomend");
+  }
+}
+
+export class Axis extends EventEmitter {
   public stage: Container = new Container();
   public renderer: Renderer;
+
+  public transform: number = 1;
 
   public horizontalAxis: HorizontalAxis = new HorizontalAxis();
   public verticalAxis: VerticalAxis = new VerticalAxis();
@@ -33,20 +77,10 @@ export class Axis {
   public buyIndicator: Indicator = new Indicator(STROKE_BUY_LIGHT);
   public sellIndicator: Indicator = new Indicator(STROKE_SELL_LIGHT);
 
-  public buyPriceText = new Text("", {
-    fill: 0xffffff,
-    fontFamily: "monospace",
-    fontSize: 12,
-  });
-
+  public buyPriceText = new Label();
   public buyVolumeText = new Label();
 
-  public sellPriceText = new Text("", {
-    fill: 0xffffff,
-    fontFamily: "monospace",
-    fontSize: 12,
-  });
-
+  public sellPriceText = new Label();
   public sellVolumeText = new Label();
 
   public buyOverlay: Rect = new Rect(0x0, 0.5);
@@ -62,10 +96,16 @@ export class Axis {
   public volumeLabels: string[] = [];
   public priceScale: ScaleLinear<number, number> = scaleLinear();
 
+  public zoomExtent = [1, 10];
+
   private lastEvent: InteractionEvent | null = null;
+
+  private gesture = new Gesture(this);
 
   // TODO: type options
   constructor(options: any) {
+    super();
+
     this.renderer = new Renderer({
       view: options.view,
       resolution: options.resolution,
@@ -76,15 +116,9 @@ export class Axis {
     this.separator.update(options.height - AXIS_HEIGHT, options.width);
 
     this.buyPriceText.visible = false;
-    this.buyPriceText.y = options.height - AXIS_HEIGHT + 3;
-    this.buyPriceText.anchor.x = 0.5;
-
     this.buyVolumeText.visible = false;
 
     this.sellPriceText.visible = false;
-    this.sellPriceText.y = options.height - AXIS_HEIGHT + 3;
-    this.sellPriceText.anchor.x = 0.5;
-
     this.sellVolumeText.visible = false;
 
     this.stage.addChild(this.buyOverlay);
@@ -109,7 +143,130 @@ export class Axis {
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
     this.stage
       .on("pointermove", this.onPointerMove)
-      .on("pointerout", this.onPointerOut);
+      .on("pointerout", this.onPointerOut)
+      .on("wheel", (event: InteractionEvent) => {
+        const tempEvent = event.data?.originalEvent as WheelEvent;
+
+        const change = Math.pow(
+          2,
+          -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1)
+        );
+
+        this.transform = clamp(
+          this.transform * change,
+          this.zoomExtent[0],
+          this.zoomExtent[1]
+        );
+
+        this.emit("zoom", this.transform);
+      })
+      .on("touchstart", (event) => {
+        if (event.data.originalEvent instanceof TouchEvent) {
+          const originalEvent = event.data.originalEvent;
+
+          const touches = originalEvent.touches;
+          let started = false;
+
+          originalEvent.stopImmediatePropagation();
+
+          for (const touch of touches) {
+            const p = pointer(touch);
+
+            if (!this.gesture.touch0) {
+              this.gesture.touch0 = {
+                point: p,
+                originalPoint: p,
+                identifier: touch.identifier,
+              };
+
+              started = true;
+            } else if (
+              !this.gesture.touch1 &&
+              this.gesture.touch0.identifier !== touch.identifier
+            ) {
+              this.gesture.touch1 = {
+                point: p,
+                originalPoint: p,
+                identifier: touch.identifier,
+              };
+
+              this.gesture.taps = 0;
+            }
+          }
+
+          if (started) {
+            this.gesture.start();
+          }
+        }
+
+        //setMessage(`touchstart: ${JSON.stringify(gesture)}`);
+      })
+      .on("touchmove", (event) => {
+        if (event.data.originalEvent instanceof TouchEvent) {
+          const touches = event.data.originalEvent.changedTouches ?? [];
+
+          for (const touch of touches) {
+            if (
+              this.gesture.touch0 &&
+              this.gesture.touch0.identifier === touch.identifier
+            ) {
+              this.gesture.touch0.point = pointer(touch);
+            } else if (
+              this.gesture.touch1 &&
+              this.gesture.touch1.identifier === touch.identifier
+            ) {
+              this.gesture.touch1.point = pointer(touch);
+            }
+          }
+
+          if (this.gesture.touch1) {
+            const p0 = this.gesture.touch0.point;
+            const p1 = this.gesture.touch1.point;
+
+            const l0 = this.gesture.touch0.originalPoint;
+            const l1 = this.gesture.touch1.originalPoint;
+
+            const dp = (p1[0] - p0[0]) ** 2 + (p1[1] - p0[1]) ** 2;
+            const dl = (l1[0] - l0[0]) ** 2 + (l1[1] - l0[1]) ** 2;
+
+            const scale = Math.sqrt(dp / dl);
+
+            this.gesture.zoom(
+              clamp(scale, this.zoomExtent[0], this.zoomExtent[1])
+            );
+
+            //setMessage(`touchmove: ${JSON.stringify(scale)}`);
+          }
+        }
+      })
+      .on("touchend", (event) => {
+        if (event.data.originalEvent instanceof TouchEvent) {
+          const touches = event.data.originalEvent.changedTouches ?? [];
+
+          console.log(touches);
+
+          for (const touch of touches) {
+            if (
+              this.gesture.touch0 &&
+              this.gesture.touch0.identifier === touch.identifier
+            ) {
+              this.gesture.touch0 = null;
+            } else if (
+              this.gesture.touch1 &&
+              this.gesture.touch1.identifier === touch.identifier
+            ) {
+              this.gesture.touch1 = null;
+            }
+          }
+
+          if (this.gesture.touch1 && !this.gesture.touch0) {
+            this.gesture.touch0 = null;
+            this.gesture.touch1 = null;
+          }
+
+          this.gesture.end();
+        }
+      });
   }
 
   public render(): void {
@@ -152,8 +309,6 @@ export class Axis {
 
     if (this.lastEvent) {
       this.onPointerMove(this.lastEvent);
-    } else {
-      this.render();
     }
   }
 
@@ -195,12 +350,15 @@ export class Axis {
         sellNearestX = this.prices[sellIndex];
       }
 
-      this.buyPriceText.x = Math.min(
-        Math.max(buyNearestX, this.buyPriceText.width / 2 + 2),
-        this.renderer.screen.width / 2 - this.buyPriceText.width / 2 - 2
+      this.buyPriceText.update(
+        this.priceLabels[buyIndex],
+        Math.min(
+          Math.max(buyNearestX, this.buyPriceText.width / 2 + 2),
+          this.renderer.screen.width / 2 - this.buyPriceText.width / 2 - 2
+        ),
+        this.renderer.screen.height - AXIS_HEIGHT + 3,
+        { x: 0.5, y: 0 }
       );
-
-      this.buyPriceText.text = this.priceLabels[buyIndex];
 
       this.buyVolumeText.update(
         this.volumeLabels[buyIndex],
@@ -218,15 +376,18 @@ export class Axis {
         { x: 1, y: 0.5 }
       );
 
-      this.sellPriceText.x = Math.max(
-        Math.min(
-          sellNearestX,
-          this.renderer.screen.width - this.sellPriceText.width / 2 - 2
+      this.sellPriceText.update(
+        this.priceLabels[sellIndex],
+        Math.max(
+          Math.min(
+            sellNearestX,
+            this.renderer.screen.width - this.sellPriceText.width / 2 - 2
+          ),
+          this.renderer.screen.width / 2 + this.sellPriceText.width / 2 + 2
         ),
-        this.renderer.screen.width / 2 + this.sellPriceText.width / 2 + 2
+        this.renderer.screen.height - AXIS_HEIGHT + 3,
+        { x: 0.5, y: 0 }
       );
-
-      this.sellPriceText.text = this.priceLabels[sellIndex];
 
       this.sellVolumeText.update(
         this.volumeLabels[sellIndex],
