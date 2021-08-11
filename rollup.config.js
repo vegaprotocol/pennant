@@ -1,6 +1,7 @@
 import { babel, getBabelOutputPlugin } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import path from "path";
 import postcss from "rollup-plugin-postcss";
 import { terser } from "rollup-plugin-terser";
 
@@ -71,7 +72,7 @@ const config = {
     commonjs(),
     postcss({
       modules: true,
-      output: "dist/style.css",
+      extract: path.resolve("dist/style.css"),
     }),
     babel({
       extensions,
