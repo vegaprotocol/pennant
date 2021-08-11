@@ -354,8 +354,7 @@ export class Axis extends EventEmitter {
   }
 
   private onPointerMove = (event: InteractionEvent) => {
-
-    if (("ontouchstart" in self)) return;
+    if ("ontouchstart" in self) return;
 
     this.lastEvent = event;
 
