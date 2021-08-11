@@ -1236,7 +1236,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@3.47.0":
+"@blueprintjs/core@3.47.0", "@blueprintjs/core@^3.47.0":
   version "3.47.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.47.0.tgz#bf33155d224b742ba51c6e1cf5be4523290337a7"
   integrity sha512-u+bfmCyPXwKZMnwY4+e/iWjO2vDUvr8hA8ydmV0afyvcEe7Sh85UPEorIgQ/CBuRIbVMNm8FpLsFzDxgkfrCNA==
@@ -1291,12 +1291,12 @@
     resize-observer-polyfill "^1.5.1"
     tslib "~1.13.0"
 
-"@blueprintjs/select@3.16.5":
-  version "3.16.5"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.16.5.tgz#31b15a606dafd15643aa539d93d74795ec2aabe4"
-  integrity sha512-+DJF7Fy11NjV1mUBHtEyx4fQTZDBki8NxxTZLsQWD6lGnUkZQDWToWmkr3oDC1+4MFG++Hf0nKvdp48FqY44IA==
+"@blueprintjs/select@3.16.6":
+  version "3.16.6"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.16.6.tgz#ae41a73bc7c23b07a20b0c50c71273c9d5d0d83d"
+  integrity sha512-lg2duuzlRw18+pbET6vlRY/TVSuuSI6wI4DObUiBAfU7G3fMa6d10Sp+0Yn00XaMPQ5y3MGn1gz0EbIJ3/A5OA==
   dependencies:
-    "@blueprintjs/core" "^3.46.0"
+    "@blueprintjs/core" "^3.47.0"
     classnames "^2.2"
     tslib "~1.13.0"
 
