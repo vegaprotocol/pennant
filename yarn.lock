@@ -12391,7 +12391,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rollup-plugin-postcss@^4.0.0:
+rollup-plugin-postcss@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-postcss/-/rollup-plugin-postcss-4.0.0.tgz#2131fb6db0d5dce01a37235e4f6ad4523c681cea"
   integrity sha512-OQzT+YspV01/6dxfyEw8lBO2px3hyL8Xn+k2QGctL7V/Yx2Z1QaMKdYVslP1mqv7RsKt6DROIlnbpmgJ3yxf6g==
