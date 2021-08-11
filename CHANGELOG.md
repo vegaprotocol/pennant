@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.0](https://github.com/vegaprotocol/pennant/compare/v0.2.43...v0.3.0-alpha.0) (2021-08-11)
+
+
+### Features
+
+* depth chart component ([#317](https://github.com/vegaprotocol/pennant/issues/317)) ([f5f5c57](https://github.com/vegaprotocol/pennant/commit/f5f5c57ec0596dd79ab5df45975260d95bf4864b))
+
 ### [0.2.43](https://github.com/vegaprotocol/pennant/compare/v0.2.42...v0.2.43) (2021-07-07)
 
 
