@@ -16,7 +16,11 @@
   </p>
 
   <p align="center">
-    <img src="./assets/screenshot.png" alt="Pennant chart" width="940">
+    <img src="./assets/candle-chart-screenshot.png" alt="Pennant chart" width="940">
+  </p>
+
+  <p align="center">
+    <img src="./assets/depth-chart-screenshot.png" alt="Pennant chart" width="950">
   </p>
   
   <p align="center">
@@ -162,6 +166,12 @@ If successful you can push up the new commit and tag with
 
 ```sh
 git push --follow-tags origin main
+```
+
+To release as a pre-release use the flag `--prerelease`.
+
+```sh
+yarn release -- --prerelease alpha --release-as minor
 ```
 
 ### Adding a new chart type
