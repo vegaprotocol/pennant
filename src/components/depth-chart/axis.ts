@@ -44,9 +44,9 @@ export class Gesture {
 
   public sourceEvent: Event | null = null;
 
-  public zooming = false;
+  public wheel: number | null = null;
 
-  public originalSpan: number = 1;
+  public zooming = false;
 
   constructor(that: Axis) {
     this.that = that;
@@ -101,6 +101,7 @@ export class Axis extends EventEmitter {
   private lastEvent: InteractionEvent | null = null;
 
   private gesture = new Gesture(this);
+  private originalTransform: number = 1;
 
   // TODO: type options
   constructor(options: any) {
@@ -142,21 +143,32 @@ export class Axis extends EventEmitter {
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
     this.stage
-      .on("pointermove", this.onPointerMove)
-      .on("pointerout", this.onPointerOut)
+      //.on("pointermove", this.onPointerMove)
+      //.on("pointerout", this.onPointerOut)
       .on("wheel", (event: InteractionEvent) => {
         const tempEvent = event.data?.originalEvent as WheelEvent;
 
-        const change = Math.pow(
+        if (this.gesture.wheel) {
+          window.clearTimeout(this.gesture.wheel);
+        } else {
+          this.gesture.start();
+        }
+
+        const k = Math.pow(
           2,
           -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1)
         );
 
         this.transform = clamp(
-          this.transform * change,
+          this.transform * k,
           this.zoomExtent[0],
           this.zoomExtent[1]
         );
+
+        this.gesture.wheel = window.setTimeout(() => {
+          this.gesture.wheel = null;
+          this.gesture.end();
+        }, 150);
 
         this.emit("zoom", this.transform);
       })
@@ -195,14 +207,16 @@ export class Axis extends EventEmitter {
           }
 
           if (started) {
+            this.originalTransform = this.transform;
             this.gesture.start();
           }
         }
-
-        //setMessage(`touchstart: ${JSON.stringify(gesture)}`);
       })
       .on("touchmove", (event) => {
         if (event.data.originalEvent instanceof TouchEvent) {
+          event.data.originalEvent.preventDefault();
+          event.data.originalEvent.stopImmediatePropagation();
+
           const touches = event.data.originalEvent.changedTouches ?? [];
 
           for (const touch of touches) {
@@ -229,21 +243,23 @@ export class Axis extends EventEmitter {
             const dp = (p1[0] - p0[0]) ** 2 + (p1[1] - p0[1]) ** 2;
             const dl = (l1[0] - l0[0]) ** 2 + (l1[1] - l0[1]) ** 2;
 
-            const scale = Math.sqrt(dp / dl);
+            const k = Math.sqrt(dp / dl);
 
-            this.gesture.zoom(
-              clamp(scale, this.zoomExtent[0], this.zoomExtent[1])
+            this.transform = clamp(
+              this.originalTransform * k,
+              this.zoomExtent[0],
+              this.zoomExtent[1]
             );
 
-            //setMessage(`touchmove: ${JSON.stringify(scale)}`);
+            this.gesture.zoom(
+              clamp(this.transform, this.zoomExtent[0], this.zoomExtent[1])
+            );
           }
         }
       })
       .on("touchend", (event) => {
         if (event.data.originalEvent instanceof TouchEvent) {
           const touches = event.data.originalEvent.changedTouches ?? [];
-
-          console.log(touches);
 
           for (const touch of touches) {
             if (
@@ -305,6 +321,18 @@ export class Axis extends EventEmitter {
       this.renderer.screen.width / 2,
       10,
       { x: 0.5, y: 0 }
+    );
+
+    this.separator.update(
+      this.renderer.screen.height - AXIS_HEIGHT,
+      this.renderer.screen.width
+    );
+
+    this.stage.hitArea = new Rectangle(
+      0,
+      0,
+      this.renderer.screen.width,
+      this.renderer.screen.height
     );
 
     if (this.lastEvent) {

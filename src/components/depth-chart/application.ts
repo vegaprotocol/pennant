@@ -22,7 +22,13 @@ export class Application extends EventEmitter {
   public chart: Chart;
   public axis: Axis;
 
-  private _span: number = 0.1;
+  private prices: number[] = [];
+  private volumes: number[] = [];
+  private priceLabels: string[] = [];
+  private volumeLabels: string[] = [];
+
+  private _span: number = 1;
+
   private _data: { buy: PriceLevel[]; sell: PriceLevel[] } = {
     buy: [],
     sell: [],
@@ -108,16 +114,16 @@ export class Application extends EventEmitter {
     this.axis.render();
   }
 
+  public resize(width: number, height: number) {
+    this.chart.renderer.resize(width, height);
+    this.axis.renderer.resize(width, height);
+  }
+
   public destroy() {
     this.axis.destroy();
   }
 
   private update() {
-    const prices = orderBy([
-      ...this._data.buy.map((priceLevel) => priceLevel.price),
-      ...this._data.sell.map((priceLevel) => priceLevel.price),
-    ]);
-
     const cumulativeBuy = zip<number>(
       this._data.buy.map((priceLevel) => priceLevel.price),
       cumsum(this._data.buy.map((priceLevel) => priceLevel.volume))
@@ -131,7 +137,7 @@ export class Application extends EventEmitter {
     const midPrice = (this._data.buy[0].price + this._data.sell[0].price) / 2;
 
     const maxPriceDifference =
-      max(prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+      max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
 
     const priceExtent: [number, number] = [
       midPrice - this._span * maxPriceDifference,
@@ -149,13 +155,9 @@ export class Application extends EventEmitter {
         .map((priceLevel) => priceLevel.index)
     );
 
-    const volumes = orderBy([...cumulativeBuy, ...cumulativeSell], ["0"]).map(
-      (priceLevel) => priceLevel[1]
-    );
-
     const volumeExtent: [number, number] = [
       0,
-      2 * (max(volumes.slice(indexExtent[0], indexExtent[1])) ?? 0),
+      2 * (max(this.volumes.slice(indexExtent[0], indexExtent[1])) ?? 0),
     ];
 
     const priceScale = scaleLinear().domain(priceExtent).range([0, this.width]);
@@ -184,10 +186,10 @@ export class Application extends EventEmitter {
     );
 
     this.axis.update(
-      prices.map((price) => priceScale(price)),
-      volumes.map((volume) => volumeScale(volume)),
-      prices.map((price) => priceFormatter.format(price)),
-      volumes.map((volume) => volumeFormatter.format(volume)),
+      this.prices.map((price) => priceScale(price)),
+      this.volumes.map((volume) => volumeScale(volume)),
+      this.priceLabels,
+      this.volumeLabels,
       priceFormatter.format(midPrice),
       priceScale,
       volumeScale
@@ -200,6 +202,31 @@ export class Application extends EventEmitter {
 
   set data(data: { buy: PriceLevel[]; sell: PriceLevel[] }) {
     this._data = data;
+
+    this.prices = orderBy([
+      ...this._data.buy.map((priceLevel) => priceLevel.price),
+      ...this._data.sell.map((priceLevel) => priceLevel.price),
+    ]);
+
+    this.priceLabels = this.prices.map((price) => priceFormatter.format(price));
+
+    const cumulativeBuy = zip<number>(
+      this._data.buy.map((priceLevel) => priceLevel.price),
+      cumsum(this._data.buy.map((priceLevel) => priceLevel.volume))
+    ) as [number, number][];
+
+    const cumulativeSell = zip<number>(
+      this._data.sell.map((priceLevel) => priceLevel.price),
+      cumsum(this._data.sell.map((priceLevel) => priceLevel.volume))
+    ) as [number, number][];
+
+    this.volumes = orderBy([...cumulativeBuy, ...cumulativeSell], ["0"]).map(
+      (priceLevel) => priceLevel[1]
+    );
+
+    this.volumeLabels = this.volumes.map((volume) =>
+      volumeFormatter.format(volume)
+    );
 
     this.update();
     this.render();

@@ -66,7 +66,7 @@ const Template: Story<DepthChartProps> = (args) => {
       <div
         style={{
           resize: "both",
-          overflow: "auto",
+          overflow: "scroll",
           width: "500px",
           height: "300px",
         }}

@@ -4,8 +4,8 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
-import useResizeObserver from "use-resize-observer";
 
+import { useThrottledResizeObserver } from "../../hooks";
 import { Application } from "./application";
 import styles from "./depth-chart.module.css";
 
@@ -48,28 +48,34 @@ export const DepthChart = forwardRef(
 
     const {
       ref: resizeOberverRef,
-      width = 800,
-      height = 600,
-    } = useResizeObserver<HTMLDivElement>();
+      width = 300,
+      height = 300,
+    } = useThrottledResizeObserver<HTMLDivElement>(50);
 
     useEffect(() => {
       application.current = new Application({
         chartView: chartRef.current,
         axisView: axisRef.current,
-        resolution: 1.5,
-        width,
-        height,
+        resolution: window.devicePixelRatio,
+        width: 300,
+        height: 300,
       });
+      /*.on("zoomstart", () => console.log("zoomstart"))
+        .on("zoom", () => console.log("zoom"))
+        .on("zoomend", () => console.log("zoomend")); */
 
       return () => {
         application.current.destroy();
       };
-    }, [height, width]);
+    }, []);
 
-    // Update chart when data changes
+    // Update chart when dimensions or data change
     useEffect(() => {
+      console.log(width, height);
+      application.current.resize(width, height);
       application.current.data = data;
-    }, [data]);
+      application.current.render();
+    }, [height, width, data]);
 
     useImperativeHandle(ref, () => ({
       update(price: number) {
