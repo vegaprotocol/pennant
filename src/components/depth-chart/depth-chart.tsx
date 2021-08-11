@@ -71,7 +71,6 @@ export const DepthChart = forwardRef(
 
     // Update chart when dimensions or data change
     useEffect(() => {
-      console.log(width, height);
       application.current.resize(width, height);
       application.current.data = data;
       application.current.render();

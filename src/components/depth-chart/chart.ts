@@ -18,8 +18,10 @@ export class Chart {
 
   public buyCurve: DepthCurve = new DepthCurve(
     STROKE_BUY_LIGHT,
-    FILL_BUY_LIGHT
+    FILL_BUY_LIGHT,
+    curveStepAfter
   );
+
   public sellCurve: DepthCurve = new DepthCurve(
     STROKE_SELL_LIGHT,
     FILL_SELL_LIGHT,

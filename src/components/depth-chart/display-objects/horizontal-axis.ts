@@ -4,10 +4,6 @@ import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
 import { AXIS_HEIGHT } from "..";
 
-export const volumeFormatter = new Intl.NumberFormat("en-gb", {
-  maximumFractionDigits: 0,
-  minimumFractionDigits: 0,
-});
 export class HorizontalAxis extends Container {
   private nodeByKeyValue = new Map<string, Text>();
 
@@ -20,22 +16,24 @@ export class HorizontalAxis extends Container {
     width: number,
     height: number
   ) {
-    const ticks = scale.ticks(width / 100);
+    const numTicks = width / 100;
+    const ticks = scale.ticks(numTicks);
+    const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(volumeFormatter.format(tick))
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(volumeFormatter.format(tick))
+      this.nodeByKeyValue.has(tickFormat(tick))
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(volumeFormatter.format).indexOf(node) !== -1)
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
     );
 
     for (const node of enter) {
-      const text = new Text(volumeFormatter.format(node), {
+      const text = new Text(tickFormat(node), {
         fill: 0xa1a1a1,
         fontFamily: "monospace",
         fontSize: 12,
@@ -47,12 +45,12 @@ export class HorizontalAxis extends Container {
 
       text.updateText(); // TODO: Should not need to call this
 
-      this.nodeByKeyValue.set(volumeFormatter.format(node), text);
+      this.nodeByKeyValue.set(tickFormat(node), text);
       this.addChild(text);
     }
 
     for (const node of update) {
-      const text = this.nodeByKeyValue.get(volumeFormatter.format(node))!;
+      const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
       text.x = scale(node);
       text.y = height - AXIS_HEIGHT + 3;
