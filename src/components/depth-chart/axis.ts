@@ -96,7 +96,7 @@ export class Axis extends EventEmitter {
   public volumeLabels: string[] = [];
   public priceScale: ScaleLinear<number, number> = scaleLinear();
 
-  public zoomExtent = [1, 10];
+  public zoomExtent = [1, 500];
 
   private lastEvent: InteractionEvent | null = null;
 
@@ -143,8 +143,7 @@ export class Axis extends EventEmitter {
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
     this.stage
-      //.on("pointermove", this.onPointerMove)
-      //.on("pointerout", this.onPointerOut)
+
       .on("wheel", (event: InteractionEvent) => {
         const tempEvent = event.data?.originalEvent as WheelEvent;
 
@@ -282,7 +281,9 @@ export class Axis extends EventEmitter {
 
           this.gesture.end();
         }
-      });
+      })
+      .on("pointermove", this.onPointerMove)
+      .on("pointerout", this.onPointerOut);
   }
 
   public render(): void {
@@ -353,6 +354,9 @@ export class Axis extends EventEmitter {
   }
 
   private onPointerMove = (event: InteractionEvent) => {
+
+    if (("ontouchstart" in self)) return;
+
     this.lastEvent = event;
 
     let x = event.data?.global.x;

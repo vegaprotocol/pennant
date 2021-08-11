@@ -8,12 +8,12 @@ import { AXIS_HEIGHT, PriceLevel } from ".";
 import { Axis } from "./axis";
 import { Chart } from "./chart";
 
-const priceFormatter = new Intl.NumberFormat("en-gb", {
+export const priceFormatter = new Intl.NumberFormat("en-gb", {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 });
 
-const volumeFormatter = new Intl.NumberFormat("en-gb", {
+export const volumeFormatter = new Intl.NumberFormat("en-gb", {
   maximumFractionDigits: 1,
   minimumFractionDigits: 1,
 });

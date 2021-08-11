@@ -4,6 +4,10 @@ import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
 
+export const priceFormatter = new Intl.NumberFormat("en-gb", {
+  maximumFractionDigits: 0,
+  minimumFractionDigits: 0,
+});
 export class VerticalAxis extends Container {
   constructor() {
     super();
@@ -19,7 +23,7 @@ export class VerticalAxis extends Container {
     const ticks = scale.ticks(height / 50);
 
     const texts = ticks.map((tick) => {
-      const text = new Text(String(tick), {
+      const text = new Text(priceFormatter.format(tick), {
         fill: 0xa1a1a1,
         fontFamily: "monospace",
         fontSize: 12,
