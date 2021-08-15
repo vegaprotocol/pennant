@@ -97,7 +97,13 @@ export const DepthChart = forwardRef(
       );
       application.current.data = data;
       application.current.render();
-    }, [height, width, data]);
+    }, [
+      height,
+      width,
+      data,
+      devicePixelContentBoxSizeInlineSize,
+      devicePixelContentBoxSizeBlockSize,
+    ]);
 
     useImperativeHandle(ref, () => ({
       update(price: number) {
