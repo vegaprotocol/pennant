@@ -5,7 +5,9 @@ import React, {
   useRef,
 } from "react";
 
+import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
+import { string2hex } from "../../renderer/utils";
 import { Application } from "./application";
 import styles from "./depth-chart.module.css";
 
@@ -33,17 +35,29 @@ export const FONT_SIZE = 12;
  */
 export const AXIS_HEIGHT = FONT_SIZE + 5;
 
-export const FILL_BUY = 0x070c07;
-export const FILL_BUY_LIGHT = 0x121f11;
-export const STROKE_BUY = 0x243e22;
-export const STROKE_BUY_LIGHT = 0x5a9c55;
+const cssStyleDeclaration = getComputedStyle(document.documentElement);
 
-export const FILL_SELL = 0x110508;
-export const FILL_SELL_LIGHT = 0x2b0d13;
-export const STROKE_SELL = 0x571924;
-export const STROKE_SELL_LIGHT = 0xda3f5b;
+export const BUY_FILL = string2hex(
+  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-fill").trim() ??
+    "#070c07"
+);
 
-export const GRAY = 0x303030;
+export const BUY_STROKE = string2hex(
+  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-stroke").trim() ??
+    "#5a9c55"
+);
+
+export const SELL_FILL = string2hex(
+  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-fill").trim() ??
+    "#2b0d13"
+);
+
+export const SELL_STROKE = string2hex(
+  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-stroke").trim() ??
+    "#da3f5b"
+);
+
+export const GRAY = string2hex(Colors.GRAY);
 
 export type PriceLevel = {
   price: number;

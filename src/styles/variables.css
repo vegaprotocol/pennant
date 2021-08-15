@@ -42,6 +42,12 @@
 
   --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
 
+  /* Depth chart. */
+  --pennant-color-buy-fill: #16452d;
+  --pennant-color-buy-stroke: var(--vega-green);
+  --pennant-color-sell-fill: #800700;
+  --pennant-color-sell-stroke: var(--vega-red);
+
   /* Typography. */
   --pennant-font-color-base: var(--pennant-color-content);
   --pennant-font-color-secondary: var(--pennant-color-content-secondary);

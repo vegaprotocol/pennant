@@ -9,12 +9,7 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import {
-  AXIS_HEIGHT,
-  GRAY,
-  STROKE_BUY_LIGHT,
-  STROKE_SELL_LIGHT,
-} from "./depth-chart";
+import { AXIS_HEIGHT, BUY_STROKE, GRAY, SELL_STROKE } from "./depth-chart";
 import {
   HorizontalAxis,
   HorizontalLine,
@@ -76,8 +71,8 @@ export class Axis extends EventEmitter {
   public horizontalAxis: HorizontalAxis = new HorizontalAxis();
   public verticalAxis: VerticalAxis = new VerticalAxis();
 
-  public buyIndicator: Indicator = new Indicator(STROKE_BUY_LIGHT);
-  public sellIndicator: Indicator = new Indicator(STROKE_SELL_LIGHT);
+  public buyIndicator: Indicator = new Indicator(BUY_STROKE);
+  public sellIndicator: Indicator = new Indicator(SELL_STROKE);
 
   public buyPriceText = new Label();
   public buyVolumeText = new Label();
@@ -137,8 +132,6 @@ export class Axis extends EventEmitter {
     this.stage.addChild(this.buyIndicator);
     this.stage.addChild(this.sellIndicator);
 
-    this.stage.addChild(this.separator);
-
     this.stage.addChild(this.horizontalAxis);
     this.stage.addChild(this.verticalAxis);
 
@@ -149,6 +142,8 @@ export class Axis extends EventEmitter {
     this.stage.addChild(this.buyVolumeText);
     this.stage.addChild(this.sellPriceText);
     this.stage.addChild(this.sellVolumeText);
+
+    this.stage.addChild(this.separator);
 
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);

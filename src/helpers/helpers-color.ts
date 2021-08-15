@@ -1,13 +1,13 @@
 import { Candle } from "../types";
 
 export const Colors = {
-  BLACK: "#000",
-  WHITE: "#fff",
+  BLACK: "#000000",
+  WHITE: "#ffffff",
   GRAY_DARK: "#121212",
   GRAY_DARK_1: "#292929",
   GRAY_DARK_2: "#333",
   GRAY: "#494949",
-  GRAY_LIGHT: "#ccc",
+  GRAY_LIGHT: "#cccccc",
   GRAY_LIGHT_1: "#6e6e6e",
   GREEN: "#26ff8a",
   GREEN_DARK: "#246340", // Same as GREEN_TRANSPARENT given a background of #1f1f1f
@@ -19,7 +19,7 @@ export const Colors = {
   VEGA_ORANGE: "#d9822b",
   VEGA_GREEN: "#26ff8a",
   VEGA_YELLOW: "#daff0d",
-  BACKGROUND: "#000",
+  BACKGROUND: "#000000",
 };
 
 export function colorByChange(a: number, b: number) {

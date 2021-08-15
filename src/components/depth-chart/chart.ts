@@ -3,28 +3,22 @@ import { curveStepAfter } from "d3-shape";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { Rectangle } from "../../renderer/math";
-import {
-  FILL_BUY_LIGHT,
-  FILL_SELL_LIGHT,
-  GRAY,
-  STROKE_BUY_LIGHT,
-  STROKE_SELL_LIGHT,
-} from "./depth-chart";
-import { DepthCurve, VerticalLine } from "./display-objects";
+import { BUY_FILL, BUY_STROKE, SELL_FILL, SELL_STROKE } from "./depth-chart";
+import { DepthCurve } from "./display-objects";
 
 export class Chart {
   public stage: Container = new Container();
   public renderer: Renderer;
 
   public buyCurve: DepthCurve = new DepthCurve(
-    STROKE_BUY_LIGHT,
-    FILL_BUY_LIGHT,
+    BUY_STROKE,
+    BUY_FILL,
     curveStepAfter
   );
 
   public sellCurve: DepthCurve = new DepthCurve(
-    STROKE_SELL_LIGHT,
-    FILL_SELL_LIGHT,
+    SELL_STROKE,
+    SELL_FILL,
     curveStepAfter
   );
 
