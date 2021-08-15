@@ -7,6 +7,7 @@ import {
   DepthChart,
   DepthChartHandle,
   DepthChartProps,
+  priceFormatter,
   PriceLevel,
 } from "./depth-chart";
 
@@ -217,8 +218,8 @@ const Template: Story<DepthChartProps> = (args) => {
   return (
     <div
       style={{
-        width: "600px",
-        height: "300px",
+        width: "80vw",
+        height: "40vh",
       }}
     >
       <DepthChart ref={ref} {...args} />
@@ -229,14 +230,17 @@ const Template: Story<DepthChartProps> = (args) => {
 export const AAPL = Template.bind({});
 AAPL.args = {
   data: AAPL_data,
+  priceFormat: (price: number) => priceFormatter(5).format(price),
 };
 
 export const ETHBTC = Template.bind({});
 ETHBTC.args = {
   data: ETHBTC_data,
+  priceFormat: (price: number) => priceFormatter(5).format(price),
 };
 
 export const UNIDAI = Template.bind({});
 UNIDAI.args = {
   data: UNIDAI_data,
+  priceFormat: (price: number) => priceFormatter(5).format(price),
 };

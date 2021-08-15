@@ -20,8 +20,8 @@ export class HorizontalLine extends Graphics {
       color: this.color,
       lineDash: this.lineDash,
     });
-    this.moveTo(0, 0);
-    this.lineTo(width, 0);
+    this.moveTo(0, 0.5);
+    this.lineTo(width, 0.5);
     this.endFill();
     this.y = y;
   }

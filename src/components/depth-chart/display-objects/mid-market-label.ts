@@ -1,6 +1,7 @@
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
+import { FONT_SIZE } from "../depth-chart";
 
 export class MidMarketPriceLabel extends Container {
   public price: Text = new Text("9999", {
@@ -10,7 +11,7 @@ export class MidMarketPriceLabel extends Container {
 
   public label: Text = new Text("Mid Market Price", {
     fill: 0xa1a1a1,
-    fontSize: 12,
+    fontSize: FONT_SIZE,
   });
 
   public background: Graphics = new Graphics();
@@ -27,7 +28,8 @@ export class MidMarketPriceLabel extends Container {
     text: string,
     x: number,
     y: number,
-    anchor: { x: number; y: number }
+    anchor: { x: number; y: number },
+    resolution: number = 1
   ) {
     this.price.x = x;
     this.price.y = y;
@@ -39,18 +41,18 @@ export class MidMarketPriceLabel extends Container {
     this.label.anchor.x = anchor.x;
     this.label.anchor.y = anchor.y;
 
-    const width = Math.max(this.price.width, this.label.width);
-    const height = this.price.height + this.label.height;
+    const width = resolution * Math.max(this.price.width, this.label.width);
+    const height = resolution * (this.price.height + this.label.height);
 
-    this.label.y = y + this.price.height;
+    this.label.y = y + resolution * this.price.height;
 
     const anchorX = anchor.x;
     const anchorY = anchor.y;
 
-    const padding = 2;
+    const padding = resolution * 4;
 
     this.background.clear();
-    this.background.beginFill(0x000000, 1);
+    this.background.beginFill(0x000000, 0.9);
     this.background.drawRect(
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),

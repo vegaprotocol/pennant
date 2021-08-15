@@ -9,9 +9,16 @@ import { useThrottledResizeObserver } from "../../hooks";
 import { Application } from "./application";
 import styles from "./depth-chart.module.css";
 
+export const priceFormatter = (decimalPlaces: number) =>
+  new Intl.NumberFormat("en-gb", {
+    maximumFractionDigits: decimalPlaces,
+    minimumFractionDigits: decimalPlaces,
+  });
+
 // TODO: Do not recreate scenegraph whenever dimensions change
 // TODO: Check parent is being set on display objects (seems to always be null)
-export const AXIS_HEIGHT = 20;
+export const FONT_SIZE = 12;
+export const AXIS_HEIGHT = FONT_SIZE + 5;
 
 export const FILL_BUY = 0x070c07;
 export const FILL_BUY_LIGHT = 0x121f11;
@@ -32,6 +39,8 @@ export type PriceLevel = {
 
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
+  priceFormat?: (price: number) => string;
+  isAuction?: boolean;
 };
 
 export interface DepthChartHandle {
@@ -40,7 +49,14 @@ export interface DepthChartHandle {
 }
 
 export const DepthChart = forwardRef(
-  ({ data }: DepthChartProps, ref: React.Ref<DepthChartHandle>) => {
+  (
+    {
+      data,
+      priceFormat = (price: number) => priceFormatter(2).format(price),
+      isAuction = false,
+    }: DepthChartProps,
+    ref: React.Ref<DepthChartHandle>
+  ) => {
     const chartRef = useRef<HTMLCanvasElement>(null!);
     const axisRef = useRef<HTMLCanvasElement>(null!);
 
@@ -50,6 +66,8 @@ export const DepthChart = forwardRef(
       ref: resizeOberverRef,
       width = 300,
       height = 300,
+      devicePixelContentBoxSizeInlineSize = window.devicePixelRatio * 300,
+      devicePixelContentBoxSizeBlockSize = window.devicePixelRatio * 300,
     } = useThrottledResizeObserver<HTMLDivElement>(50);
 
     useEffect(() => {
@@ -59,19 +77,20 @@ export const DepthChart = forwardRef(
         resolution: window.devicePixelRatio,
         width: 300,
         height: 300,
+        priceFormat,
       });
-      /*.on("zoomstart", () => console.log("zoomstart"))
-        .on("zoom", () => console.log("zoom"))
-        .on("zoomend", () => console.log("zoomend")); */
 
       return () => {
         application.current.destroy();
       };
-    }, []);
+    }, [priceFormat]);
 
     // Update chart when dimensions or data change
     useEffect(() => {
-      application.current.resize(width, height);
+      application.current.resize(
+        devicePixelContentBoxSizeInlineSize / window.devicePixelRatio,
+        devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
+      );
       application.current.data = data;
       application.current.render();
     }, [height, width, data]);

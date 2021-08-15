@@ -2,7 +2,7 @@ import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
-import { AXIS_HEIGHT } from "..";
+import { AXIS_HEIGHT, FONT_SIZE } from "../depth-chart";
 
 export class HorizontalAxis extends Container {
   private nodeByKeyValue = new Map<string, Text>();
@@ -14,9 +14,10 @@ export class HorizontalAxis extends Container {
   public update(
     scale: ScaleLinear<number, number>,
     width: number,
-    height: number
+    height: number,
+    resolution: number = 1
   ) {
-    const numTicks = width / 100;
+    const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);
 
@@ -36,12 +37,12 @@ export class HorizontalAxis extends Container {
       const text = new Text(tickFormat(node), {
         fill: 0xa1a1a1,
         fontFamily: "monospace",
-        fontSize: 12,
+        fontSize: FONT_SIZE,
       });
 
       text.x = scale(node);
-      text.y = height - AXIS_HEIGHT + 3;
-      text.anchor.set(0.5, 0);
+      text.y = height - (resolution * AXIS_HEIGHT) / 2;
+      text.anchor.set(0.5, 0.5);
 
       text.updateText(); // TODO: Should not need to call this
 
@@ -53,7 +54,7 @@ export class HorizontalAxis extends Container {
       const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
       text.x = scale(node);
-      text.y = height - AXIS_HEIGHT + 3;
+      text.y = height - (resolution * AXIS_HEIGHT) / 2;
     }
 
     for (const node of exit) {

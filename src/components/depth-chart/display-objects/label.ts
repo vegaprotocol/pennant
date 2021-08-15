@@ -21,7 +21,8 @@ export class Label extends Container {
     text: string,
     x: number,
     y: number,
-    anchor: { x: number; y: number }
+    anchor: { x: number; y: number },
+    resolution: number = 1
   ) {
     this.text.x = x;
     this.text.y = y;
@@ -29,13 +30,13 @@ export class Label extends Container {
     this.text.anchor.x = anchor.x;
     this.text.anchor.y = anchor.y;
 
-    const width = this.text.width;
-    const height = this.text.height;
+    const width = resolution * this.text.width;
+    const height = resolution * this.text.height;
 
     const anchorX = anchor.x;
     const anchorY = anchor.y;
 
-    const padding = 2;
+    const padding = resolution * 2;
 
     this.background.clear();
     this.background.beginFill(0x000000, 1);
