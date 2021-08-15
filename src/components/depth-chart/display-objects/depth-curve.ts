@@ -4,13 +4,16 @@ import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { AXIS_HEIGHT } from "../depth-chart";
 
+/**
+ * Draws two area curves
+ */
 export class DepthCurve extends Container {
-  public area: Graphics = new Graphics();
-  public line: Graphics = new Graphics();
+  private area: Graphics = new Graphics();
+  private line: Graphics = new Graphics();
 
-  public stroke: number;
-  public fill: number;
-  public curve: CurveFactory;
+  private stroke: number;
+  private fill: number;
+  private curve: CurveFactory;
 
   constructor(
     stroke: number = 0,

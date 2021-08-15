@@ -2,13 +2,17 @@ import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
 
+/**
+ * Draw a label
+ */
 export class Label extends Container {
-  public text: Text = new Text("", {
+  private text: Text = new Text("", {
     fill: 0xffffff,
     fontFamily: "monospace",
     fontSize: 12,
   });
-  public background: Graphics = new Graphics();
+
+  private background: Graphics = new Graphics();
 
   constructor() {
     super();

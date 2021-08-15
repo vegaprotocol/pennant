@@ -6,6 +6,9 @@ import { Rectangle } from "../../renderer/math";
 import { BUY_FILL, BUY_STROKE, SELL_FILL, SELL_STROKE } from "./depth-chart";
 import { DepthCurve } from "./display-objects";
 
+/**
+ * Responsible for drawing area curves for depth chart.
+ */
 export class Chart {
   public stage: Container = new Container();
   public renderer: Renderer;
@@ -22,7 +25,12 @@ export class Chart {
     curveStepAfter
   );
 
-  constructor(options: any) {
+  constructor(options: {
+    view: HTMLCanvasElement;
+    resolution: number;
+    width: number;
+    height: number;
+  }) {
     this.renderer = new Renderer({
       view: options.view,
       resolution: options.resolution,
@@ -46,9 +54,5 @@ export class Chart {
 
     this.buyCurve.update(buyPoints, this.renderer.view.height, resolution);
     this.sellCurve.update(sellPoints, this.renderer.view.height, resolution);
-  }
-
-  get screen(): Rectangle {
-    return this.renderer.screen;
   }
 }

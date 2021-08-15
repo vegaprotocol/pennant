@@ -4,7 +4,13 @@ import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
 import { FONT_SIZE } from "../depth-chart";
 
+/**
+ * Draws a vertical axis at the right of the chart
+ */
 export class VerticalAxis extends Container {
+  /**
+   * Cache ticks
+   */
   private nodeByKeyValue = new Map<string, Text>();
 
   constructor() {

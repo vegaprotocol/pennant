@@ -31,6 +31,7 @@ function pointer(event: any) {
     event.clientY - rect.top - node.clientTop,
   ];
 }
+
 export class Gesture {
   public that: Axis;
   public active: number = 0;
@@ -62,48 +63,62 @@ export class Gesture {
   }
 }
 
+/**
+ * Reponsible for drawing axes and handling interactivity for depth chart
+ */
 export class Axis extends EventEmitter {
   public stage: Container = new Container();
   public renderer: Renderer;
 
-  public transform: number = 1;
+  /**
+   * The scale extent to the specified array of numbers [k0, k1] where k0 is the minimum allowed scale factor
+   * and k1 is the maximum allowed scale factor.
+   */
+  public scaleExtent = [0, Infinity];
 
-  public horizontalAxis: HorizontalAxis = new HorizontalAxis();
-  public verticalAxis: VerticalAxis = new VerticalAxis();
+  private prices: number[] = [];
+  private volumes: number[] = [];
+  private priceLabels: string[] = [];
+  private volumeLabels: string[] = [];
+  private priceScale: ScaleLinear<number, number> = scaleLinear();
+  private midMarketPrice: number = 0;
 
-  public buyIndicator: Indicator = new Indicator(BUY_STROKE);
-  public sellIndicator: Indicator = new Indicator(SELL_STROKE);
+  /**
+   * The current scale.
+   */
+  private transform: number = 1;
 
-  public buyPriceText = new Label();
-  public buyVolumeText = new Label();
+  private horizontalAxis: HorizontalAxis = new HorizontalAxis();
+  private verticalAxis: VerticalAxis = new VerticalAxis();
 
-  public sellPriceText = new Label();
-  public sellVolumeText = new Label();
+  private buyIndicator: Indicator = new Indicator(BUY_STROKE);
+  private sellIndicator: Indicator = new Indicator(SELL_STROKE);
 
-  public buyOverlay: Rect = new Rect(0x0, 0.5);
-  public sellOverlay: Rect = new Rect(0x0, 0.5);
+  private buyPriceText = new Label();
+  private buyVolumeText = new Label();
 
-  public midMarketPriceLabel: MidMarketPriceLabel = new MidMarketPriceLabel();
-  public midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
+  private sellPriceText = new Label();
+  private sellVolumeText = new Label();
 
-  public separator: HorizontalLine = new HorizontalLine(1, GRAY);
+  private buyOverlay: Rect = new Rect(0x0, 0.5);
+  private sellOverlay: Rect = new Rect(0x0, 0.5);
 
-  public prices: number[] = [];
-  public volumes: number[] = [];
-  public priceLabels: string[] = [];
-  public volumeLabels: string[] = [];
-  public priceScale: ScaleLinear<number, number> = scaleLinear();
-  public midMarketPrice: number = 0;
+  private midMarketPriceLabel: MidMarketPriceLabel = new MidMarketPriceLabel();
+  private midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
 
-  public zoomExtent = [1, 500];
+  private separator: HorizontalLine = new HorizontalLine(1, GRAY);
 
   private lastEvent: InteractionEvent | null = null;
 
   private gesture = new Gesture(this);
   private originalTransform: number = 1;
 
-  // TODO: type options
-  constructor(options: any) {
+  constructor(options: {
+    view: HTMLCanvasElement;
+    resolution: number;
+    width: number;
+    height: number;
+  }) {
     super();
 
     this.renderer = new Renderer({
@@ -128,25 +143,21 @@ export class Axis extends EventEmitter {
 
     this.stage.addChild(this.buyOverlay);
     this.stage.addChild(this.sellOverlay);
-
     this.stage.addChild(this.buyIndicator);
     this.stage.addChild(this.sellIndicator);
-
     this.stage.addChild(this.horizontalAxis);
     this.stage.addChild(this.verticalAxis);
-
     this.stage.addChild(this.midPriceLine);
     this.stage.addChild(this.midMarketPriceLabel);
-
     this.stage.addChild(this.buyPriceText);
     this.stage.addChild(this.buyVolumeText);
     this.stage.addChild(this.sellPriceText);
     this.stage.addChild(this.sellVolumeText);
-
     this.stage.addChild(this.separator);
 
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
+
     this.stage
       .on("wheel", (event: InteractionEvent) => {
         const tempEvent = event.data?.originalEvent as WheelEvent;
@@ -164,8 +175,8 @@ export class Axis extends EventEmitter {
 
         this.transform = clamp(
           this.transform * k,
-          this.zoomExtent[0],
-          this.zoomExtent[1]
+          this.scaleExtent[0],
+          this.scaleExtent[1]
         );
 
         this.gesture.wheel = window.setTimeout(() => {
@@ -250,12 +261,12 @@ export class Axis extends EventEmitter {
 
             this.transform = clamp(
               this.originalTransform * k,
-              this.zoomExtent[0],
-              this.zoomExtent[1]
+              this.scaleExtent[0],
+              this.scaleExtent[1]
             );
 
             this.gesture.zoom(
-              clamp(this.transform, this.zoomExtent[0], this.zoomExtent[1])
+              clamp(this.transform, this.scaleExtent[0], this.scaleExtent[1])
             );
           }
         }
@@ -316,7 +327,6 @@ export class Axis extends EventEmitter {
     const resolution = this.renderer.resolution;
 
     this.horizontalAxis.update(this.priceScale, width, height, resolution);
-
     this.verticalAxis.update(volumeScale, width, height, resolution);
 
     this.midMarketPriceLabel.update(
@@ -331,7 +341,6 @@ export class Axis extends EventEmitter {
     );
 
     this.midPriceLine.update(width / 2, height, resolution);
-
     this.separator.update(height - resolution * AXIS_HEIGHT, width);
 
     this.stage.hitArea = new Rectangle(
@@ -498,10 +507,8 @@ export class Axis extends EventEmitter {
 
   public destroy() {
     this.stage.destroy();
-    //this.stage = null;
 
     this.renderer.destroy();
-    //this.renderer = null;
   }
 
   private onPointerOut = () => {
@@ -520,8 +527,4 @@ export class Axis extends EventEmitter {
 
     this.render();
   };
-
-  get screen(): Rectangle {
-    return this.renderer.screen;
-  }
 }

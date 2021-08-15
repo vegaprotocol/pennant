@@ -1,10 +1,13 @@
 import { Graphics } from "../../../renderer/graphics";
 import { AXIS_HEIGHT } from "../depth-chart";
 
+/**
+ * Draw a vertical line
+ */
 export class VerticalLine extends Graphics {
-  public width: number;
-  public color: number;
-  public lineDash: number[];
+  private width: number;
+  private color: number;
+  private lineDash: number[];
 
   constructor(width = 1, color = 0xffffff, lineDash: number[] = []) {
     super();

@@ -1,11 +1,13 @@
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 
+/**
+ * Draw an indicator at a given price and volume
+ */
 export class Indicator extends Container {
-  public circle: Graphics = new Graphics();
-  public line: Graphics = new Graphics();
-
-  public color: number;
+  private circle: Graphics = new Graphics();
+  private line: Graphics = new Graphics();
+  private color: number;
 
   constructor(color = 0xffffff) {
     super();

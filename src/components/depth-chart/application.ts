@@ -14,8 +14,8 @@ export const volumeFormatter = new Intl.NumberFormat("en-gb", {
 });
 
 export class Application extends EventEmitter {
-  public chart: Chart;
-  public axis: Axis;
+  private chart: Chart;
+  private axis: Axis;
 
   private prices: number[] = [];
   private volumes: number[] = [];
@@ -93,7 +93,7 @@ export class Application extends EventEmitter {
   }
 
   private update() {
-    const resolution = this.axis.renderer.resolution; // TODO: Feels arbitrary that it's axis not chart
+    const resolution = this.axis.renderer.resolution;
 
     const cumulativeBuy = zip<number>(
       this._data.buy.map((priceLevel) => priceLevel.price),
@@ -176,7 +176,7 @@ export class Application extends EventEmitter {
           (max(this._data.sell.map((priceLevel) => priceLevel.price)) as number)
       );
 
-      this.axis.zoomExtent = [1, maxExtent / (2 * minExtent)];
+      this.axis.scaleExtent = [1, maxExtent / (2 * minExtent)];
     }
 
     this.axis.update(

@@ -3,18 +3,21 @@ import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
 import { FONT_SIZE } from "../depth-chart";
 
+/**
+ * Draw a title and subtitle at the top of the chart
+ */
 export class MidMarketPriceLabel extends Container {
-  public price: Text = new Text("9999", {
+  private price: Text = new Text("9999", {
     fill: 0xffffff,
     fontSize: 18,
   });
 
-  public label: Text = new Text("Mid Market Price", {
+  private label: Text = new Text("Mid Market Price", {
     fill: 0xa1a1a1,
     fontSize: FONT_SIZE,
   });
 
-  public background: Graphics = new Graphics();
+  private background: Graphics = new Graphics();
 
   constructor() {
     super();

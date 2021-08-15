@@ -4,7 +4,13 @@ import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
 import { AXIS_HEIGHT, FONT_SIZE } from "../depth-chart";
 
+/**
+ * Draws a horizontal axis at the bottom of the chart
+ */
 export class HorizontalAxis extends Container {
+  /**
+   * Cache ticks
+   */
   private nodeByKeyValue = new Map<string, Text>();
 
   constructor() {

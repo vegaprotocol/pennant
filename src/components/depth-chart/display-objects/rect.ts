@@ -1,8 +1,11 @@
 import { Graphics } from "../../../renderer/graphics";
 
+/**
+ * Draw a rectangle
+ */
 export class Rect extends Graphics {
-  public alpha = 1;
-  public color = 0xffffff;
+  private alpha = 1;
+  private color = 0xffffff;
 
   constructor(color = 0xffffff, alpha = 1) {
     super();

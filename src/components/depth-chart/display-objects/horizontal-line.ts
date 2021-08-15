@@ -1,9 +1,12 @@
 import { Graphics } from "../../../renderer/graphics";
 
+/**
+ * Draws a horizontal line
+ */
 export class HorizontalLine extends Graphics {
-  public width: number;
-  public color: number;
-  public lineDash: number[];
+  private width: number;
+  private color: number;
+  private lineDash: number[];
 
   constructor(width = 1, color = 0xffffff, lineDash: number[] = []) {
     super();
