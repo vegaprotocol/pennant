@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.7](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.6...v0.3.0-alpha.7) (2021-08-15)
+
 ## [0.3.0-alpha.6](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.4...v0.3.0-alpha.6) (2021-08-15)
 
 
