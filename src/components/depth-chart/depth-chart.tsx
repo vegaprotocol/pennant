@@ -9,15 +9,28 @@ import { useThrottledResizeObserver } from "../../hooks";
 import { Application } from "./application";
 import styles from "./depth-chart.module.css";
 
-export const priceFormatter = (decimalPlaces: number) =>
+/**
+ * Creates a price formatter
+ * @param decimalPlaces Number of decimal places to display
+ */
+export const priceFormatter = (decimalPlaces: number): Intl.NumberFormat =>
   new Intl.NumberFormat("en-gb", {
     maximumFractionDigits: decimalPlaces,
     minimumFractionDigits: decimalPlaces,
   });
 
-// TODO: Do not recreate scenegraph whenever dimensions change
-// TODO: Check parent is being set on display objects (seems to always be null)
+function defaultPriceFormat(price: number) {
+  return priceFormatter(2).format(price);
+}
+
+/**
+ * Standard font size in CSS pixels
+ */
 export const FONT_SIZE = 12;
+
+/**
+ * Height of the bottom price axis
+ */
 export const AXIS_HEIGHT = FONT_SIZE + 5;
 
 export const FILL_BUY = 0x070c07;
@@ -37,18 +50,22 @@ export type PriceLevel = {
   volume: number;
 };
 
-function defaultPriceFormat(price: number) {
-  return priceFormatter(2).format(price);
-}
-
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
   priceFormat?: (price: number) => string;
+  /** Whether the market is in auction. This is a distinct mode with its own behaviors. */
   isAuction?: boolean;
 };
 
 export interface DepthChartHandle {
+  /**
+   * Simulate the user hovering over the chart at a particular price
+   */
   update(price: number): void;
+
+  /**
+   * Simulate the user's mouse leaving the chart
+   */
   clear(): void;
 }
 
@@ -74,6 +91,9 @@ export const DepthChart = forwardRef(
       devicePixelContentBoxSizeBlockSize = window.devicePixelRatio * 300,
     } = useThrottledResizeObserver<HTMLDivElement>(50);
 
+    /**
+     * Create a new instance of the depth chart
+     */
     useEffect(() => {
       application.current = new Application({
         chartView: chartRef.current,
