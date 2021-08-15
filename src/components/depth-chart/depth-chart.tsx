@@ -37,6 +37,10 @@ export type PriceLevel = {
   volume: number;
 };
 
+function defaultPriceFormat(price: number) {
+  return priceFormatter(2).format(price);
+}
+
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
   priceFormat?: (price: number) => string;
@@ -52,7 +56,7 @@ export const DepthChart = forwardRef(
   (
     {
       data,
-      priceFormat = (price: number) => priceFormatter(2).format(price),
+      priceFormat = defaultPriceFormat,
       isAuction = false,
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
