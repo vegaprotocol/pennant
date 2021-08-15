@@ -1,4 +1,5 @@
 import { area, line } from "d3-shape";
+
 import { Renderer } from "../core";
 import {
   Area,
@@ -28,7 +29,7 @@ export class GraphicsRenderer {
     const context = renderer.context;
     const transform = graphics.transform.worldTransform;
 
-    renderer.setContextTransform(transform);
+    renderer.setContextTransform(transform, true, 1);
 
     const graphicsData = graphics.geometry.graphicsData;
 
@@ -50,7 +51,9 @@ export class GraphicsRenderer {
 
       if (data.matrix) {
         renderer.setContextTransform(
-          transform.copyTo(this._tempMatrix).append(data.matrix)
+          transform.copyTo(this._tempMatrix).append(data.matrix),
+          true,
+          1
         );
       }
 

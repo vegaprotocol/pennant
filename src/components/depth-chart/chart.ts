@@ -18,15 +18,15 @@ export class Chart {
 
   public buyCurve: DepthCurve = new DepthCurve(
     STROKE_BUY_LIGHT,
-    FILL_BUY_LIGHT
+    FILL_BUY_LIGHT,
+    curveStepAfter
   );
+
   public sellCurve: DepthCurve = new DepthCurve(
     STROKE_SELL_LIGHT,
     FILL_SELL_LIGHT,
     curveStepAfter
   );
-
-  public midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
 
   constructor(options: any) {
     this.renderer = new Renderer({
@@ -36,7 +36,6 @@ export class Chart {
       height: options.height,
     });
 
-    this.stage.addChild(this.midPriceLine);
     this.stage.addChild(this.buyCurve);
     this.stage.addChild(this.sellCurve);
   }
@@ -49,13 +48,10 @@ export class Chart {
     buyPoints: [number, number][],
     sellPoints: [number, number][]
   ): void {
-    this.midPriceLine.update(
-      this.renderer.screen.width / 2,
-      this.renderer.screen.height
-    );
+    const resolution = this.renderer.resolution;
 
-    this.buyCurve.update(buyPoints, this.renderer.screen.height);
-    this.sellCurve.update(sellPoints, this.renderer.screen.height);
+    this.buyCurve.update(buyPoints, this.renderer.view.height, resolution);
+    this.sellCurve.update(sellPoints, this.renderer.view.height, resolution);
   }
 
   get screen(): Rectangle {

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.7](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.6...v0.3.0-alpha.7) (2021-08-15)
+
+## [0.3.0-alpha.6](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.4...v0.3.0-alpha.6) (2021-08-15)
+
+
+### Features
+
+* improved depth-chart rendering ([#325](https://github.com/vegaprotocol/pennant/issues/325)) ([2b81750](https://github.com/vegaprotocol/pennant/commit/2b81750ae88cc0b9dc5bf256b71f4bc9dd69a4de))
+
+## [0.3.0-alpha.5](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.4...v0.3.0-alpha.5) (2021-08-15)
+
+
+### Features
+
+* use physical pixels where possible when rednering depth chart ([cd374b5](https://github.com/vegaprotocol/pennant/commit/cd374b54deecf221e66b83ee27d53ea532156520))
+
+
+### Bug Fixes
+
+* tick labels ([7a27f53](https://github.com/vegaprotocol/pennant/commit/7a27f533b32cd2168f7188b0ffed98ae284a2088))
+* type error in use-resize-observer ([e5093d3](https://github.com/vegaprotocol/pennant/commit/e5093d310f083f5d3b3001124338a47528530c03))
+
 ## [0.3.0-alpha.4](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.3...v0.3.0-alpha.4) (2021-08-11)
 
 ## [0.3.0-alpha.3](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.2...v0.3.0-alpha.3) (2021-08-11)

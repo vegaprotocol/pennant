@@ -19,6 +19,7 @@ export class Renderer extends AbstractRenderer {
     super(options);
 
     this.context = this.view.getContext("2d") as CanvasRenderingContext2D;
+    this.context.imageSmoothingEnabled = true;
     this.geometry = null;
 
     this.plugins.sprite = new SpriteRenderer(this);
@@ -43,7 +44,7 @@ export class Renderer extends AbstractRenderer {
 
     context.clearRect(0, 0, this.width, this.height);
 
-  /*   context.fillStyle = this._backgroundColorString;
+    /*   context.fillStyle = this._backgroundColorString;
     context.fillRect(0, 0, this.width, this.height);
  */
     displayObject.render(this);
@@ -59,7 +60,7 @@ export class Renderer extends AbstractRenderer {
 
     context.clearRect(0, 0, this.width, this.height);
 
-/*     if (clearColor) {
+    /*     if (clearColor) {
       context.globalAlpha = alpha;
       context.fillStyle = clearColor;
       context.fillRect(0, 0, this.width, this.height);
@@ -74,7 +75,7 @@ export class Renderer extends AbstractRenderer {
   ): void {
     let mat = transform;
     const proj = this._projTransform;
-    const resolution = this.resolution;
+    const resolution = 1;
 
     localResolution = localResolution || resolution;
 
