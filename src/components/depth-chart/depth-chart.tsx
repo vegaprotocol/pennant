@@ -116,13 +116,7 @@ export const DepthChart = forwardRef(
 
     return (
       <div ref={resizeOberverRef} className={styles.canvasContainer}>
-        <canvas
-          ref={chartRef}
-          className={styles.canvas}
-          style={{
-            backgroundColor: "#0f0f0f",
-          }}
-        />
+        <canvas ref={chartRef} className={styles.canvas} />
         <canvas ref={axisRef} className={styles.canvas} />
       </div>
     );
