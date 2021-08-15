@@ -24,16 +24,20 @@ export class DepthCurve extends Container {
     this.curve = curve;
 
     this.area.lineStyle({ width: 0 });
-    this.line.lineStyle({ width: 1, color: stroke });
+    this.line.lineStyle({ width: 1, color: stroke, alpha: 0.5 });
 
     this.addChild(this.area);
     this.addChild(this.line);
   }
 
-  public update(points: [number, number][], height: number): void {
+  public update(
+    points: [number, number][],
+    height: number,
+    resolution: number = 1
+  ): void {
     this.area.clear();
-    this.area.beginFill(this.fill);
-    this.area.drawArea(points, this.curve, height - AXIS_HEIGHT);
+    this.area.beginFill(this.fill, 0.5);
+    this.area.drawArea(points, this.curve, height - resolution * AXIS_HEIGHT);
     this.area.endFill();
 
     this.line.clear();

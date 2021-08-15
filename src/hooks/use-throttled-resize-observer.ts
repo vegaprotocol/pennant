@@ -1,11 +1,7 @@
 import { throttle } from "lodash";
 import { useMemo, useState } from "react";
-import useResizeObserver from "use-resize-observer";
 
-type ObservedSize = {
-  width: number | undefined;
-  height: number | undefined;
-};
+import useResizeObserver, { ObservedSize } from "./use-resize-observer";
 
 export function useThrottledResizeObserver<T extends HTMLElement>(
   wait: number
@@ -13,6 +9,8 @@ export function useThrottledResizeObserver<T extends HTMLElement>(
   const [size, setSize] = useState<ObservedSize>({
     width: undefined,
     height: undefined,
+    devicePixelContentBoxSizeInlineSize: undefined,
+    devicePixelContentBoxSizeBlockSize: undefined,
   });
 
   const onResize = useMemo(() => throttle(setSize, wait), [wait]);

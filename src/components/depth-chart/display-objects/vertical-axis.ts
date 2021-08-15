@@ -1,14 +1,12 @@
 import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
+import { FONT_SIZE } from "../depth-chart";
 
-export const priceFormatter = new Intl.NumberFormat("en-gb", {
-  maximumFractionDigits: 0,
-  minimumFractionDigits: 0,
-});
 export class VerticalAxis extends Container {
+  private nodeByKeyValue = new Map<string, Text>();
+
   constructor() {
     super();
   }
@@ -16,42 +14,54 @@ export class VerticalAxis extends Container {
   public update(
     scale: ScaleLinear<number, number>,
     width: number,
-    height: number
+    height: number,
+    resolution: number = 1
   ) {
-    this.removeChildren();
+    const numTicks = height / resolution / 50;
+    const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
+    const tickFormat = scale.tickFormat(numTicks);
 
-    const ticks = scale.ticks(height / 50);
+    const enter = ticks.filter(
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+    );
 
-    const texts = ticks.map((tick) => {
-      const text = new Text(priceFormatter.format(tick), {
+    const update = ticks.filter((tick) =>
+      this.nodeByKeyValue.has(tickFormat(tick))
+    );
+
+    const exit = [...this.nodeByKeyValue.keys()].filter(
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+    );
+
+    for (const node of enter) {
+      const text = new Text(tickFormat(node), {
         fill: 0xa1a1a1,
         fontFamily: "monospace",
-        fontSize: 12,
+        fontSize: FONT_SIZE,
       });
 
+      text.x = width - resolution * 7;
+      text.y = scale(node);
       text.anchor.set(1, 0.5);
-      text.x = width - 7;
-      text.y = scale(tick);
 
       text.updateText(); // TODO: Should not need to call this
 
-      return text;
-    });
+      this.nodeByKeyValue.set(tickFormat(node), text);
+      this.addChild(text);
+    }
 
-    const lines = ticks.map((tick) => {
-      const line = new Graphics();
+    for (const node of update) {
+      const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
-      line.lineStyle({ width: 1, color: 0xa1a1a1 });
-      line.moveTo(width - 4, scale(tick));
-      line.lineTo(width, scale(tick));
-      line.endFill();
+      text.x = width - resolution * 7;
+      text.y = scale(node);
+    }
 
-      return line;
-    });
+    for (const node of exit) {
+      const text = this.nodeByKeyValue.get(node)!;
 
-    if (ticks.length > 0) {
-      this.addChild(...texts);
-      this.addChild(...lines);
+      this.nodeByKeyValue.delete(node);
+      this.removeChild(text);
     }
   }
 }
