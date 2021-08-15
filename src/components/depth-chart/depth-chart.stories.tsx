@@ -130,6 +130,53 @@ const UNIDAI_data = {
   ],
 };
 
+const BTCUSD_data = {
+  buy: [
+    { price: 44226.95501, volume: 22 },
+    { price: 44226.955, volume: 36 },
+    { price: 44226.95496, volume: 21 },
+    { price: 44226.95495, volume: 12 },
+    { price: 44226.95494, volume: 14 },
+    { price: 44226.95493, volume: 23 },
+    { price: 44226.95488, volume: 26 },
+    { price: 44226.95479, volume: 16 },
+    { price: 44170.48563, volume: 24 },
+    { price: 44170.48561, volume: 49 },
+    { price: 44170.4856, volume: 14 },
+    { price: 44170.48557, volume: 13 },
+    { price: 44170.48556, volume: 34 },
+    { price: 44170.48554, volume: 22 },
+    { price: 44170.4855, volume: 45 },
+    { price: 44170.48549, volume: 17 },
+    { price: 44170.48546, volume: 79 },
+    { price: 44170.48545, volume: 13 },
+    { price: 44170.48543, volume: 1 },
+    { price: 44170.48542, volume: 17 },
+  ],
+  sell: [
+    { price: 44283.4244, volume: 184 },
+    { price: 44283.42441, volume: 12 },
+    { price: 44283.42443, volume: 13 },
+    { price: 44283.42444, volume: 78 },
+    { price: 44283.42445, volume: 47 },
+    { price: 44283.42446, volume: 44 },
+    { price: 44283.42447, volume: 15 },
+    { price: 44283.42448, volume: 47 },
+    { price: 44283.42449, volume: 20 },
+    { price: 44283.4245, volume: 41 },
+    { price: 44283.42451, volume: 18 },
+    { price: 44283.42452, volume: 52 },
+    { price: 44283.42453, volume: 78 },
+    { price: 44283.42454, volume: 49 },
+    { price: 44283.42456, volume: 86 },
+    { price: 44283.4246, volume: 5 },
+    { price: 44283.42461, volume: 19 },
+    { price: 44283.42462, volume: 5 },
+    { price: 44283.42465, volume: 43 },
+    { price: 44283.42467, volume: 25 },
+  ],
+};
+
 export const Binance: Story<DepthChartProps> = (args) => {
   const ref = useRef<DepthChartHandle>(null!);
 
@@ -242,5 +289,11 @@ ETHBTC.args = {
 export const UNIDAI = Template.bind({});
 UNIDAI.args = {
   data: UNIDAI_data,
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const BTCUSD = Template.bind({});
+BTCUSD.args = {
+  data: BTCUSD_data,
   priceFormat: (price: number) => priceFormatter(5).format(price),
 };

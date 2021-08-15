@@ -137,16 +137,25 @@ export class Application extends EventEmitter {
       .domain(volumeExtent)
       .range([this.height - resolution * AXIS_HEIGHT, 0]);
 
-    const extendedCumulativeBuy = [
-      ...cumulativeBuy,
-      [
+    if (
+      midPrice -
+        (min(this._data.buy.map((priceLevel) => priceLevel.price)) as number) <
+      (max(this._data.sell.map((priceLevel) => priceLevel.price)) as number) -
+        midPrice
+    ) {
+      cumulativeBuy.push([
         midPrice - maxPriceDifference,
         cumulativeBuy[cumulativeBuy.length - 1][1],
-      ],
-    ] as [number, number][];
+      ]);
+    } else {
+      cumulativeSell.push([
+        midPrice + maxPriceDifference,
+        cumulativeSell[cumulativeSell.length - 1][1],
+      ]);
+    }
 
     this.chart.update(
-      extendedCumulativeBuy.map((point) => [
+      cumulativeBuy.map((point) => [
         priceScale(point[0]),
         volumeScale(point[1]),
       ]),
