@@ -1,5 +1,3 @@
-import { default as cssColorNames } from "css-color-names";
-
 export function hex2rgb(
   hex: number,
   out: Array<number> | Float32Array = []
@@ -21,10 +19,6 @@ export function hex2string(hex: number): string {
 
 export function string2hex(string: string): number {
   if (typeof string === "string") {
-    string =
-      (cssColorNames as { [key: string]: string })[string.toLowerCase()] ||
-      string;
-
     if (string[0] === "#") {
       string = string.substr(1);
     }

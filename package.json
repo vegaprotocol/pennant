@@ -47,7 +47,6 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "classnames": "^2.2.6",
-    "css-color-names": "^1.0.1",
     "d3-array": "2.3.3",
     "d3-dispatch": "^2.0.0",
     "d3-drag": "^2.0.0",
