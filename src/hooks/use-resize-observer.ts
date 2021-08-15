@@ -13,11 +13,12 @@ import {
 
 function hasDevicePixelContentBox() {
   return new Promise((resolve) => {
-    const ro = new ResizeObserver((entries) => {
+    const ro: ResizeObserver = new ResizeObserver((entries) => {
       resolve(entries.every((entry) => "devicePixelContentBoxSize" in entry));
       ro.disconnect();
     });
-    ro.observe(document.body, { box: ["device-pixel-content-box"] });
+
+    ro.observe(document.body, { box: ["device-pixel-content-box"] } as any);
   }).catch(() => false);
 }
 
