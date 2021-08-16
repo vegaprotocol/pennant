@@ -56,10 +56,6 @@ export abstract class DisplayObject extends EventEmitter {
    * Set the parent Container of this DisplayObject.
    */
   public setParent(container: Container): Container {
-    if (!container || !container.addChild) {
-      throw new Error("setParent: Argument must be a Container");
-    }
-
     container.addChild(this);
 
     return container;

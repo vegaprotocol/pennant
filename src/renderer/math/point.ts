@@ -16,7 +16,6 @@ export class Point {
   }
 
   /** Creates a clone of this point
-   * @returns A clone of this point
    */
   clone(): Point {
     return new Point(this.x, this.y);
@@ -24,9 +23,6 @@ export class Point {
 
   /**
    * Copies `x` and `y` from the given point into this point
-   *
-   * @param p - The point to copy from
-   * @returns The point instance itself
    */
   copyFrom(p: PointData): this {
     this.set(p.x, p.y);
@@ -36,9 +32,6 @@ export class Point {
 
   /**
    * Copies this point's x and y into the given point (`p`).
-   *
-   * @param p - The point to copy to. Can be any of type that is or extends `IPointData`
-   * @returns The point (`p`) with values updated
    */
   copyTo<T extends Point>(p: T): T {
     p.set(this.x, this.y);
@@ -48,9 +41,6 @@ export class Point {
 
   /**
    * Accepts another point (`p`) and returns `true` if the given point is equal to this point
-   *
-   * @param p - The point to check
-   * @returns Returns `true` if both `x` and `y` are equal
    */
   equals(p: PointData): boolean {
     return p.x === this.x && p.y === this.y;
@@ -58,12 +48,7 @@ export class Point {
 
   /**
    * Sets the point to a new `x` and `y` position.
-   * If `y` is omitted, both `x` and `y` will be set to `x`.
-   *
-   * @param x - position of the point on the `x` axis
-   * @param y - position of the point on the `y` axis
-   * @returns The point instance itself
-   */
+   * If `y` is omitted, both `x` and `y` will be set to `x`. */
   set(x = 0, y = x): this {
     this.x = x;
     this.y = y;
