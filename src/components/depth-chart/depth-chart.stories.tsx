@@ -284,16 +284,19 @@ export const ETHBTC = Template.bind({});
 ETHBTC.args = {
   data: ETHBTC_data,
   priceFormat: (price: number) => priceFormatter(5).format(price),
+  indicativePrice: 0.065,
 };
 
 export const UNIDAI = Template.bind({});
 UNIDAI.args = {
   data: UNIDAI_data,
   priceFormat: (price: number) => priceFormatter(5).format(price),
+  indicativePrice: 30,
 };
 
 export const BTCUSD = Template.bind({});
 BTCUSD.args = {
   data: BTCUSD_data,
   priceFormat: (price: number) => priceFormatter(5).format(price),
+  midPrice: 44256,
 };

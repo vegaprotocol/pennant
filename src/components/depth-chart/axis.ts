@@ -9,7 +9,12 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { AXIS_HEIGHT, BUY_STROKE, GRAY, SELL_STROKE } from "./depth-chart";
+import {
+  AXIS_HEIGHT,
+  BUY_STROKE,
+  GRAY,
+  SELL_STROKE,
+} from "./depth-chart";
 import {
   HorizontalAxis,
   HorizontalLine,
@@ -81,7 +86,7 @@ export class Axis extends EventEmitter {
   private priceLabels: string[] = [];
   private volumeLabels: string[] = [];
   private priceScale: ScaleLinear<number, number> = scaleLinear();
-  private midMarketPrice: number = 0;
+  private midPrice: number = 0;
 
   /**
    * The current scale.
@@ -308,16 +313,17 @@ export class Axis extends EventEmitter {
   public update(
     prices: number[],
     volumes: number[],
-    midMarketPrice: number,
+    midPrice: number,
     priceLabels: string[],
     volumeLabels: string[],
-    midMarketPriceLabel: string,
+    midPriceLabel: string,
+    midPriceTitle: string,
     priceScale: ScaleLinear<number, number>,
     volumeScale: ScaleLinear<number, number>
   ): void {
     this.prices = prices;
     this.volumes = volumes;
-    this.midMarketPrice = midMarketPrice;
+    this.midPrice = midPrice;
     this.priceLabels = priceLabels;
     this.volumeLabels = volumeLabels;
     this.priceScale = priceScale;
@@ -330,7 +336,8 @@ export class Axis extends EventEmitter {
     this.verticalAxis.update(volumeScale, width, height, resolution);
 
     this.midMarketPriceLabel.update(
-      midMarketPriceLabel,
+      midPriceLabel,
+      midPriceTitle,
       width / 2,
       10,
       {
@@ -392,22 +399,22 @@ export class Axis extends EventEmitter {
       if (x > width / 2) {
         buyIndex = bisectLeft(
           this.prices,
-          2 * this.priceScale(this.midMarketPrice) - nearestX
+          2 * this.priceScale(this.midPrice) - nearestX
         );
         sellIndex = index;
 
-        buyNearestX = 2 * this.priceScale(this.midMarketPrice) - nearestX;
+        buyNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
         sellNearestX = nearestX;
       } else {
         buyIndex = index;
         sellIndex =
           bisectRight(
             this.prices,
-            2 * this.priceScale(this.midMarketPrice) - nearestX
+            2 * this.priceScale(this.midPrice) - nearestX
           ) - 1;
 
         buyNearestX = nearestX;
-        sellNearestX = 2 * this.priceScale(this.midMarketPrice) - nearestX;
+        sellNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
       }
 
       this.buyPriceText.update(
