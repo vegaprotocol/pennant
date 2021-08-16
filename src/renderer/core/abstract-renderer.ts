@@ -17,10 +17,21 @@ export interface RendererPlugins {
 }
 
 export abstract class AbstractRenderer {
+  /** The resolution / device pixel ratio of the renderer. */
   public resolution: number;
+
+  /** The canvas element that everything is drawn to. */
   public readonly view: HTMLCanvasElement;
-  public readonly plugins: RendererPlugins = {};
+
+  /**
+   * Measurements of the screen. (0, 0, screenWidth, screenHeight).
+   *
+   * Its safe to use as filterArea or hitArea for the whole stage.
+   */
   public readonly screen: Rectangle;
+
+  /** Collection of plugins */
+  public readonly plugins: RendererPlugins = {};
 
   protected _backgroundColor: number = 0x000000;
   protected _backgroundColorString: string = "#000000";

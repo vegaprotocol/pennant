@@ -2,6 +2,9 @@ import { Matrix, Shape, SHAPES } from "../math";
 import { FillStyle } from "./styles/fill-style";
 import { LineStyle } from "./styles/line-style";
 
+/**
+ * A class to contain data useful for Graphics objects.
+ */
 export class GraphicsData {
   public shape: Shape;
   public lineStyle: LineStyle | null;

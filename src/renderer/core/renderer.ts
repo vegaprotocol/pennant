@@ -1,4 +1,3 @@
-import { DisplayObject } from "../display/display-object";
 import { GraphicsRenderer } from "../graphics";
 import { InteractionManager } from "../interaction/interaction-manager";
 import { Matrix } from "../math";

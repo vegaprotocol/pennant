@@ -9,14 +9,24 @@ import { Container } from "./container";
 interface HitArea {
   contains(x: number, y: number): boolean;
 }
+
+/**
+ * The base class for all objects that are rendered on the screen.
+ */
 export abstract class DisplayObject extends EventEmitter {
   public cursor: Cursor | string | null = null;
   public hitArea: HitArea | null;
   public interactive: boolean;
   public interactiveChildren: boolean;
+
+  /** The display object container that contains this display object. */
   public parent: DisplayObject | null;
+
   public transform: Transform;
+
+  /** The visibility of the object. If false the object will not be drawn. */
   public visible: boolean;
+
   public _trackedPointers: { [x: number]: InteractionTrackingData } | undefined;
   public _bounds: Bounds = new Bounds();
   public _localBounds: Bounds | null = null;
@@ -42,6 +52,9 @@ export abstract class DisplayObject extends EventEmitter {
   abstract removeChild(child: DisplayObject): void;
   abstract render(renderer: Renderer): void;
 
+  /**
+   * Set the parent Container of this DisplayObject.
+   */
   public setParent(container: Container): Container {
     if (!container || !container.addChild) {
       throw new Error("setParent: Argument must be a Container");
@@ -93,6 +106,9 @@ export abstract class DisplayObject extends EventEmitter {
     return bounds;
   }
 
+  /**
+   * Calculates and returns the (world) bounds of the display object as a {@link Rectangle}.
+   */
   public getBounds(skipUpdate?: boolean, rect?: Rectangle): Rectangle {
     if (!skipUpdate) {
       if (!this.parent) {
@@ -154,6 +170,9 @@ export abstract class DisplayObject extends EventEmitter {
     this.parent = cacheParent;
   }
 
+  /**
+   * The position of the displayObject on the x axis relative to the local coordinates of the parent.
+   */
   get x(): number {
     return this.position.x;
   }
@@ -162,6 +181,9 @@ export abstract class DisplayObject extends EventEmitter {
     this.transform.position.x = value;
   }
 
+  /**
+   * The position of the displayObject on the y axis relative to the local coordinates of the parent.
+   */
   get y(): number {
     return this.position.y;
   }
@@ -170,6 +192,12 @@ export abstract class DisplayObject extends EventEmitter {
     this.transform.position.y = value;
   }
 
+  /**
+   * The coordinate of the object relative to the local coordinates of the parent.
+   *
+   * @since PixiJS 4
+   * @member {PIXI.ObservablePoint}
+   */
   get position(): Point {
     return this.transform.position;
   }

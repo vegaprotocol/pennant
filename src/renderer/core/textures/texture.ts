@@ -4,11 +4,21 @@ import { Resource } from "./resources/resource";
 
 export type TextureSource = string | BaseTexture | ImageSource;
 
+// TODO: Simplify orig and _frame into one value?
+
+/**
+ * A texture stores the information that represents an image or part of an image.
+ */
 export class Texture<R extends Resource = Resource> {
+  /** The base texture that this texture uses. */
   public baseTexture: BaseTexture;
+
+  /** This is the area of original texture. */
   public orig: Rectangle;
 
+  /** This is the area of the BaseTexture image to actually copy to the canvas when rendering, */
   public _frame: Rectangle;
+
   public defaultAnchor: Point;
 
   constructor(
@@ -61,6 +71,9 @@ export class Texture<R extends Resource = Resource> {
     this.orig = frame;
   }
 
+  /**
+   * Returns resolution of baseTexture
+   */
   get resolution(): number {
     return this.baseTexture.resolution;
   }

@@ -1,5 +1,6 @@
 import { BaseTexture } from "../base-texture";
 
+// TODO: Might not be needed with only canvas and not WebGL
 export abstract class Resource {
   protected _width: number;
   protected _height: number;

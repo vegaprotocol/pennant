@@ -1,20 +1,28 @@
 import { Renderer } from "../core";
-import {
-  RenderableContainer,
-  RenderableObject,
-} from "../core/renderable-object";
+import { RenderableObject } from "../core/renderable-object";
 import { Rectangle } from "../math";
 import { removeItems } from "../utils";
 import { DisplayObject } from "./display-object";
 
+/**
+ * Container is a general-purpose display object that holds children.
+ * It also adds built-in support for advanced rendering features like masking and filtering.
+ */
 export class Container extends DisplayObject implements RenderableObject {
+  /**
+   * The array of children of this container.
+   */
   public readonly children: DisplayObject[] = [];
+
   public parent: Container | null = null;
 
   constructor() {
     super();
   }
 
+  /**
+   * Recalculates the bounds of the container.
+   */
   public calculateBounds(): void {
     this._bounds.clear();
 
@@ -35,6 +43,11 @@ export class Container extends DisplayObject implements RenderableObject {
     this._bounds.updateID = this._boundsID;
   }
 
+  /**
+   * Adds one or more children to the container.
+   *
+   * Multiple items can be added like so: `myContainer.addChild(thingOne, thingTwo, thingThree)`
+   */
   public addChild<T extends DisplayObject[]>(...children: T): T[0] {
     if (children.length > 1) {
       for (let i = 0; i < children.length; i++) {
@@ -55,6 +68,9 @@ export class Container extends DisplayObject implements RenderableObject {
     return children[0];
   }
 
+  /**
+   * Removes one or more children from the container.
+   */
   public removeChild<T extends DisplayObject[]>(...children: T): T[0] | null {
     if (children.length > 1) {
       for (let i = 0; i < children.length; i++) {
@@ -75,6 +91,9 @@ export class Container extends DisplayObject implements RenderableObject {
     return children[0];
   }
 
+  /**
+   * Removes all children from this container that are within the begin and end indexes.
+   */
   public removeChildren(
     beginIndex = 0,
     endIndex = this.children.length
@@ -115,6 +134,9 @@ export class Container extends DisplayObject implements RenderableObject {
     }
   }
 
+  /**
+   * Updates the transform on all children of this container for rendering.
+   */
   public updateTransform(): void {
     if (this.parent) {
       this.transform.updateTransform(this.parent.transform);
@@ -129,6 +151,9 @@ export class Container extends DisplayObject implements RenderableObject {
     }
   }
 
+  /**
+   * Retrieves the local bounds of the displayObject as a rectangle object.
+   */
   public getLocalBounds(
     rect?: Rectangle,
     skipChildrenUpdate = false

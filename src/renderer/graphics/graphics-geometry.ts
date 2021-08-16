@@ -8,8 +8,15 @@ import { LineStyle } from "./styles/line-style";
 const tmpPoint = new Point();
 const tmpBounds = new Bounds();
 
+/**
+ * The Graphics class contains methods used to draw primitive shapes such as lines, circles and
+ * rectangles to the display, and to color and fill them.
+ */
 export class GraphicsGeometry extends BatchGeometry {
+  /** The collection of drawn shapes. */
   public graphicsData: Array<GraphicsData>;
+
+  /** An array of points to draw, 2 numbers per point */
   public points: Array<number>;
 
   constructor() {
@@ -19,6 +26,9 @@ export class GraphicsGeometry extends BatchGeometry {
     this.points = [];
   }
 
+  /**
+   * Clears the graphics that were drawn to this Graphics object, and resets fill and line style settings.
+   */
   public clear(): GraphicsGeometry {
     if (this.graphicsData.length > 0) {
       this.graphicsData.length = 0;
@@ -27,6 +37,9 @@ export class GraphicsGeometry extends BatchGeometry {
     return this;
   }
 
+  /**
+   * Draws the given shape to this Graphics object.
+   */
   public drawShape(
     shape: Shape,
     fillStyle: FillStyle | null = null,
@@ -40,6 +53,9 @@ export class GraphicsGeometry extends BatchGeometry {
     return this;
   }
 
+  /**
+   * Check to see if a point is contained within this geometry.
+   */
   public containsPoint(point: PointData): boolean {
     const graphicsData = this.graphicsData;
 

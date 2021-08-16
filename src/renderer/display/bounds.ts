@@ -12,29 +12,13 @@ export class Bounds {
     this.minX = Infinity;
     this.minY = Infinity;
     this.maxX = -Infinity;
-
-    /**
-     * @member {number}
-     * @default 0
-     */
     this.maxY = -Infinity;
-
     this.rect = null;
-
-    /**
-     * It is updated to _boundsID of corresponding object to keep bounds in sync with content.
-     * Updated from outside, thus public modifier.
-     *
-     * @member {number}
-     * @public
-     */
     this.updateID = -1;
   }
 
   /**
    * Checks if bounds are empty.
-   *
-   * @return {boolean} True if empty.
    */
   isEmpty(): boolean {
     return this.minX > this.maxX || this.minY > this.maxY;
@@ -42,7 +26,6 @@ export class Bounds {
 
   /**
    * Clears the bounds and resets.
-   *
    */
   clear(): void {
     this.minX = Infinity;
@@ -75,9 +58,6 @@ export class Bounds {
 
   /**
    * Adds a point, after transformed. This should be inlined when its possible.
-   *
-   * @param matrix
-   * @param point
    */
   addPointMatrix(matrix: Matrix, point: PointData): void {
     const { a, b, c, d, tx, ty } = matrix;
@@ -93,8 +73,6 @@ export class Bounds {
 
   /**
    * Adds a quad, not transformed
-   *
-   * @param {Float32Array} vertices - The verts to add.
    */
   addQuad(vertices: Float32Array): void {
     let minX = this.minX;
@@ -202,11 +180,7 @@ export class Bounds {
   }
 
   /**
-   * Adds screen vertices from array
-   *
-   * @param {Float32Array} vertexData - calculated vertices
-   * @param {number} beginOffset - begin offset
-   * @param {number} endOffset - end offset, excluded
+   * Adds screen vertices from array.
    */
   addVertexData(
     vertexData: Float32Array,
@@ -351,9 +325,6 @@ export class Bounds {
   /**
    * Pads bounds object, making it grow in all directions.
    * If paddingY is omitted, both paddingX and paddingY will be set to paddingX.
-   *
-   * @param {number} [paddingX=0] - The horizontal padding amount.
-   * @param {number} [paddingY=0] - The vertical padding amount.
    */
   pad(paddingX = 0, paddingY = paddingX): void {
     if (!this.isEmpty()) {
@@ -366,13 +337,6 @@ export class Bounds {
 
   /**
    * Adds padded frame. (x0, y0) should be strictly less than (x1, y1)
-   *
-   * @param {number} x0 - left X of frame
-   * @param {number} y0 - top Y of frame
-   * @param {number} x1 - right X of frame
-   * @param {number} y1 - bottom Y of frame
-   * @param {number} padX - padding X
-   * @param {number} padY - padding Y
    */
   addFramePad(
     x0: number,
