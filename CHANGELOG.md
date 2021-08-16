@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.8](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.7...v0.3.0-alpha.8) (2021-08-16)
+
+
+### Features
+
+* auction mode ([#329](https://github.com/vegaprotocol/pennant/issues/329)) ([ea50d29](https://github.com/vegaprotocol/pennant/commit/ea50d29619bddcf9a2ef6cc1517383eb4d15a65a))
+* depth chart uses css variables for colors ([fdfff0e](https://github.com/vegaprotocol/pennant/commit/fdfff0e1bdde5cdd3cd0ecda2fb8343298bdd1bd))
+
+
+### Bug Fixes
+
+* extend depth-chart data to create symmetric chart ([cd986aa](https://github.com/vegaprotocol/pennant/commit/cd986aa69e16cb57f4b9593c1bc1fb7a772461b8))
+
 ## [0.3.0-alpha.7](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.6...v0.3.0-alpha.7) (2021-08-15)
 
 ## [0.3.0-alpha.6](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.4...v0.3.0-alpha.6) (2021-08-15)
