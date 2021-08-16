@@ -1,7 +1,7 @@
 import { extent, max, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
-import { orderBy, zip } from "lodash";
+import { orderBy, sortBy, zip } from "lodash";
 
 import cumsum from "../../math/array/cumsum";
 import { Axis } from "./axis";
@@ -213,7 +213,7 @@ export class Application extends EventEmitter {
   set data(data: { buy: PriceLevel[]; sell: PriceLevel[] }) {
     this._data = data;
 
-    this.prices = orderBy([
+    this.prices = sortBy([
       ...this._data.buy.map((priceLevel) => priceLevel.price),
       ...this._data.sell.map((priceLevel) => priceLevel.price),
     ]);
@@ -244,6 +244,8 @@ export class Application extends EventEmitter {
 
   set indicativePrice(price: number) {
     this._indicativePrice = price;
+
+    this.axis.indicativePrice = price;
 
     this.update();
     this.render();
