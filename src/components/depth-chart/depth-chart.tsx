@@ -66,9 +66,12 @@ export type PriceLevel = {
 
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
+  /** Used to format tick labels on price axis */
   priceFormat?: (price: number) => string;
-  /** Whether the market is in auction. This is a distinct mode with its own behaviors. */
-  isAuction?: boolean;
+  /** Indicative price if the auction ended now, 0 if not in auction mode */
+  indicativePrice?: number;
+  /** Arithmetic average of the best bid price and best offer price. */
+  midPrice?: number;
 };
 
 export interface DepthChartHandle {
@@ -88,7 +91,8 @@ export const DepthChart = forwardRef(
     {
       data,
       priceFormat = defaultPriceFormat,
-      isAuction = false,
+      indicativePrice = 0,
+      midPrice = 0,
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
   ) => {
@@ -129,6 +133,7 @@ export const DepthChart = forwardRef(
         devicePixelContentBoxSizeInlineSize / window.devicePixelRatio,
         devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
       );
+
       application.current.data = data;
       application.current.render();
     }, [
@@ -138,6 +143,14 @@ export const DepthChart = forwardRef(
       devicePixelContentBoxSizeInlineSize,
       devicePixelContentBoxSizeBlockSize,
     ]);
+
+    useEffect(() => {
+      application.current.indicativePrice = indicativePrice;
+    }, [indicativePrice]);
+
+    useEffect(() => {
+      application.current.midPrice = midPrice;
+    }, [midPrice]);
 
     useImperativeHandle(ref, () => ({
       update(price: number) {

@@ -28,7 +28,8 @@ export class MidMarketPriceLabel extends Container {
   }
 
   public update(
-    text: string,
+    price: string,
+    title: string,
     x: number,
     y: number,
     anchor: { x: number; y: number },
@@ -36,13 +37,14 @@ export class MidMarketPriceLabel extends Container {
   ) {
     this.price.x = x;
     this.price.y = y;
-    this.price.text = text;
+    this.price.text = price;
     this.price.anchor.x = anchor.x;
     this.price.anchor.y = anchor.y;
 
     this.label.x = x;
     this.label.anchor.x = anchor.x;
     this.label.anchor.y = anchor.y;
+    this.label.text = title;
 
     const width = resolution * Math.max(this.price.width, this.label.width);
     const height = resolution * (this.price.height + this.label.height);

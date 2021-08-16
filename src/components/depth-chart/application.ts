@@ -1,7 +1,7 @@
 import { extent, max, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
-import { orderBy, zip } from "lodash";
+import { orderBy, sortBy, zip } from "lodash";
 
 import cumsum from "../../math/array/cumsum";
 import { Axis } from "./axis";
@@ -28,6 +28,12 @@ export class Application extends EventEmitter {
     buy: [],
     sell: [],
   };
+
+  /** Indicative price if the auction ended now, 0 if not in auction mode */
+  private _indicativePrice: number = 0;
+
+  /** Arithmetic average of the best bid price and best offer price. */
+  private _midPrice: number = 0;
 
   private priceFormat: (price: number) => string;
 
@@ -105,7 +111,12 @@ export class Application extends EventEmitter {
       cumsum(this._data.sell.map((priceLevel) => priceLevel.volume))
     ) as [number, number][];
 
-    const midPrice = (this._data.buy[0].price + this._data.sell[0].price) / 2;
+    const midPrice =
+      this._indicativePrice > 0
+        ? this._indicativePrice
+        : this._midPrice > 0
+        ? this._midPrice
+        : (this._data.buy[0].price + this._data.sell[0].price) / 2;
 
     const maxPriceDifference =
       max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
@@ -137,22 +148,17 @@ export class Application extends EventEmitter {
       .domain(volumeExtent)
       .range([this.height - resolution * AXIS_HEIGHT, 0]);
 
-    if (
-      midPrice -
-        (min(this._data.buy.map((priceLevel) => priceLevel.price)) as number) <
-      (max(this._data.sell.map((priceLevel) => priceLevel.price)) as number) -
-        midPrice
-    ) {
-      cumulativeBuy.push([
-        midPrice - maxPriceDifference,
-        cumulativeBuy[cumulativeBuy.length - 1][1],
-      ]);
-    } else {
-      cumulativeSell.push([
-        midPrice + maxPriceDifference,
-        cumulativeSell[cumulativeSell.length - 1][1],
-      ]);
-    }
+    // Add dummy data points at extreme points of price range
+    // to ensure the chart looks symmetric
+    cumulativeBuy.push([
+      midPrice - maxPriceDifference,
+      cumulativeBuy[cumulativeBuy.length - 1][1],
+    ]);
+
+    cumulativeSell.push([
+      midPrice + maxPriceDifference,
+      cumulativeSell[cumulativeSell.length - 1][1],
+    ]);
 
     this.chart.update(
       cumulativeBuy.map((point) => [
@@ -165,18 +171,26 @@ export class Application extends EventEmitter {
       ])
     );
 
+    // TODO: Clean up this logic
     if (this._data.buy.length > 0 && this._data.sell.length > 0) {
-      const minExtent = Math.abs(
-        (max(this._data.buy.map((priceLevel) => priceLevel.price)) as number) -
-          (min(this._data.sell.map((priceLevel) => priceLevel.price)) as number)
-      );
+      const minExtent =
+        (min(
+          this.prices
+            .filter((price) => midPrice - price > 0)
+            .map((price) => midPrice - price)
+        ) as number) ??
+        0 +
+          (min(
+            this.prices
+              .filter((price) => price - midPrice > 0)
+              .map((price) => price - midPrice)
+          ) as number) ??
+        0;
 
-      const maxExtent = Math.abs(
-        (min(this._data.buy.map((priceLevel) => priceLevel.price)) as number) -
-          (max(this._data.sell.map((priceLevel) => priceLevel.price)) as number)
-      );
-
-      this.axis.scaleExtent = [1, maxExtent / (2 * minExtent)];
+      this.axis.scaleExtent = [
+        1,
+        maxPriceDifference / (2 * (minExtent ?? maxPriceDifference / 10)),
+      ];
     }
 
     this.axis.update(
@@ -186,6 +200,7 @@ export class Application extends EventEmitter {
       this.priceLabels,
       this.volumeLabels,
       this.priceFormat(midPrice),
+      this._indicativePrice > 0 ? "Indicative price" : "Mid Market Price",
       priceScale,
       volumeScale
     );
@@ -198,7 +213,7 @@ export class Application extends EventEmitter {
   set data(data: { buy: PriceLevel[]; sell: PriceLevel[] }) {
     this._data = data;
 
-    this.prices = orderBy([
+    this.prices = sortBy([
       ...this._data.buy.map((priceLevel) => priceLevel.price),
       ...this._data.sell.map((priceLevel) => priceLevel.price),
     ]);
@@ -222,6 +237,22 @@ export class Application extends EventEmitter {
     this.volumeLabels = this.volumes.map((volume) =>
       volumeFormatter.format(volume)
     );
+
+    this.update();
+    this.render();
+  }
+
+  set indicativePrice(price: number) {
+    this._indicativePrice = price;
+
+    this.axis.indicativePrice = price;
+
+    this.update();
+    this.render();
+  }
+
+  set midPrice(price: number) {
+    this._midPrice = price;
 
     this.update();
     this.render();

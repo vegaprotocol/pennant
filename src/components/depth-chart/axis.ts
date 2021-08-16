@@ -1,4 +1,5 @@
-import { bisectLeft, bisectRight } from "d3-array";
+import { bisectLeft, bisectRight, zip } from "d3-array";
+import { Delaunay } from "d3-delaunay";
 import { ScaleLinear, scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
@@ -81,7 +82,8 @@ export class Axis extends EventEmitter {
   private priceLabels: string[] = [];
   private volumeLabels: string[] = [];
   private priceScale: ScaleLinear<number, number> = scaleLinear();
-  private midMarketPrice: number = 0;
+  private midPrice: number = 0;
+  private _indicativePrice: number = 0;
 
   /**
    * The current scale.
@@ -93,12 +95,16 @@ export class Axis extends EventEmitter {
 
   private buyIndicator: Indicator = new Indicator(BUY_STROKE);
   private sellIndicator: Indicator = new Indicator(SELL_STROKE);
+  private auctionIndicator: Indicator = new Indicator(0xcccccc);
 
   private buyPriceText = new Label();
   private buyVolumeText = new Label();
 
   private sellPriceText = new Label();
   private sellVolumeText = new Label();
+
+  private auctionPriceText = new Label();
+  private auctionVolumeText = new Label();
 
   private buyOverlay: Rect = new Rect(0x0, 0.5);
   private sellOverlay: Rect = new Rect(0x0, 0.5);
@@ -141,10 +147,14 @@ export class Axis extends EventEmitter {
     this.sellPriceText.visible = false;
     this.sellVolumeText.visible = false;
 
+    this.auctionPriceText.visible = false;
+    this.auctionVolumeText.visible = false;
+
     this.stage.addChild(this.buyOverlay);
     this.stage.addChild(this.sellOverlay);
     this.stage.addChild(this.buyIndicator);
     this.stage.addChild(this.sellIndicator);
+    this.stage.addChild(this.auctionIndicator);
     this.stage.addChild(this.horizontalAxis);
     this.stage.addChild(this.verticalAxis);
     this.stage.addChild(this.midPriceLine);
@@ -153,6 +163,8 @@ export class Axis extends EventEmitter {
     this.stage.addChild(this.buyVolumeText);
     this.stage.addChild(this.sellPriceText);
     this.stage.addChild(this.sellVolumeText);
+    this.stage.addChild(this.auctionPriceText);
+    this.stage.addChild(this.auctionVolumeText);
     this.stage.addChild(this.separator);
 
     this.stage.interactive = true;
@@ -308,16 +320,17 @@ export class Axis extends EventEmitter {
   public update(
     prices: number[],
     volumes: number[],
-    midMarketPrice: number,
+    midPrice: number,
     priceLabels: string[],
     volumeLabels: string[],
-    midMarketPriceLabel: string,
+    midPriceLabel: string,
+    midPriceTitle: string,
     priceScale: ScaleLinear<number, number>,
     volumeScale: ScaleLinear<number, number>
   ): void {
     this.prices = prices;
     this.volumes = volumes;
-    this.midMarketPrice = midMarketPrice;
+    this.midPrice = midPrice;
     this.priceLabels = priceLabels;
     this.volumeLabels = volumeLabels;
     this.priceScale = priceScale;
@@ -330,7 +343,8 @@ export class Axis extends EventEmitter {
     this.verticalAxis.update(volumeScale, width, height, resolution);
 
     this.midMarketPriceLabel.update(
-      midMarketPriceLabel,
+      midPriceLabel,
+      midPriceTitle,
       width / 2,
       10,
       {
@@ -381,124 +395,218 @@ export class Axis extends EventEmitter {
       const width = this.renderer.view.width;
       const height = this.renderer.view.height;
 
-      const index = bisectCenter(this.prices, x);
-      const nearestX = this.prices[index];
+      // In auction mode. Curves will in general overlap
+      // so use different tooltip behaviour
+      if (this._indicativePrice) {
+        const y = (event.data?.global.y as number) * resolution;
+        const radius = 50 * resolution;
 
-      let buyIndex;
-      let sellIndex;
-      let buyNearestX;
-      let sellNearestX;
+        // TODO: Cache the result of this calculation
+        const points = zip<number>(this.prices, this.volumes);
+        const delaunay = Delaunay.from(points);
+        const index = delaunay.find(x, y);
 
-      if (x > width / 2) {
-        buyIndex = bisectLeft(
-          this.prices,
-          2 * this.priceScale(this.midMarketPrice) - nearestX
-        );
-        sellIndex = index;
+        const d = Math.hypot(x - this.prices[index], y - this.volumes[index]);
 
-        buyNearestX = 2 * this.priceScale(this.midMarketPrice) - nearestX;
-        sellNearestX = nearestX;
+        if (d < radius) {
+          this.auctionPriceText.update(
+            this.priceLabels[index],
+            Math.max(
+              Math.min(
+                this.prices[index],
+                width - (resolution * this.auctionPriceText.width) / 2 - 2
+              ),
+              width / 2 +
+                (resolution * this.sellPriceText.width) / 2 +
+                resolution * 2
+            ),
+            height - (resolution * AXIS_HEIGHT) / 2,
+            { x: 0.5, y: 0.5 },
+            resolution
+          );
+
+          this.auctionVolumeText.update(
+            this.volumeLabels[index],
+            this.prices[index] > width / 2
+              ? this.prices[index] - width / 2 >
+                resolution * this.auctionVolumeText.width + resolution * 6
+                ? width / 2 + resolution * 3
+                : this.prices[index] + 6
+              : width / 2 - this.prices[index] >
+                resolution * this.auctionVolumeText.width + 6
+              ? width / 2 - resolution * 2
+              : this.prices[index] - 6,
+            Math.min(
+              Math.max(
+                this.volumes[index],
+                this.auctionVolumeText.height / 2 + 2
+              ),
+              height -
+                resolution * AXIS_HEIGHT -
+                this.auctionVolumeText.height / 2 -
+                2
+            ),
+            { x: this.prices[index] > width / 2 ? 0 : 1, y: 0.5 },
+            resolution
+          );
+
+          this.auctionIndicator.update(
+            this.prices[index],
+            this.volumes[index],
+            width
+          );
+
+          this.auctionPriceText.visible = true;
+          this.auctionVolumeText.visible = true;
+          this.auctionIndicator.visible = true;
+        } else {
+          this.auctionPriceText.visible = false;
+          this.auctionVolumeText.visible = false;
+          this.auctionIndicator.visible = false;
+        }
       } else {
-        buyIndex = index;
-        sellIndex =
-          bisectRight(
+        const index = bisectCenter(this.prices, x);
+        const nearestX = this.prices[index];
+
+        let buyIndex;
+        let sellIndex;
+        let buyNearestX;
+        let sellNearestX;
+
+        if (x > width / 2) {
+          buyIndex = bisectLeft(
             this.prices,
-            2 * this.priceScale(this.midMarketPrice) - nearestX
-          ) - 1;
+            2 * this.priceScale(this.midPrice) - nearestX
+          );
+          sellIndex = index;
 
-        buyNearestX = nearestX;
-        sellNearestX = 2 * this.priceScale(this.midMarketPrice) - nearestX;
-      }
+          buyNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
+          sellNearestX = nearestX;
+        } else {
+          buyIndex = index;
+          sellIndex =
+            bisectRight(
+              this.prices,
+              2 * this.priceScale(this.midPrice) - nearestX
+            ) - 1;
 
-      this.buyPriceText.update(
-        this.priceLabels[buyIndex],
-        Math.min(
-          Math.max(buyNearestX, this.buyPriceText.width / 2 + 2),
-          width / 2 - this.buyPriceText.width / 2 - resolution * 2
-        ),
-        height - (resolution * AXIS_HEIGHT) / 2,
-        { x: 0.5, y: 0.5 },
-        resolution
-      );
+          buyNearestX = nearestX;
+          sellNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
+        }
 
-      this.buyVolumeText.update(
-        this.volumeLabels[buyIndex],
-        width / 2 - buyNearestX > this.buyVolumeText.width + 6
-          ? width / 2 - resolution * 2
-          : buyNearestX - 6,
-        Math.min(
-          Math.max(this.volumes[buyIndex], this.buyVolumeText.height / 2 + 2),
-          height - resolution * AXIS_HEIGHT - this.buyVolumeText.height / 2 - 2
-        ),
-        { x: 1, y: 0.5 },
-        resolution
-      );
+        this.buyPriceText.update(
+          this.priceLabels[buyIndex],
+          Math.min(
+            Math.max(
+              buyNearestX,
+              (resolution * this.buyPriceText.width) / 2 + 2
+            ),
+            width / 2 -
+              (resolution * this.buyPriceText.width) / 2 -
+              resolution * 2
+          ),
+          height - (resolution * AXIS_HEIGHT) / 2,
+          { x: 0.5, y: 0.5 },
+          resolution
+        );
 
-      this.sellPriceText.update(
-        this.priceLabels[sellIndex],
-        Math.max(
-          Math.min(sellNearestX, width - this.sellPriceText.width / 2 - 2),
-          width / 2 + this.sellPriceText.width / 2 + resolution * 2
-        ),
-        height - (resolution * AXIS_HEIGHT) / 2,
-        { x: 0.5, y: 0.5 },
-        resolution
-      );
+        this.buyVolumeText.update(
+          this.volumeLabels[buyIndex],
+          width / 2 - buyNearestX > resolution * this.buyVolumeText.width + 6
+            ? width / 2 - resolution * 2
+            : buyNearestX - 6,
+          Math.min(
+            Math.max(
+              this.volumes[buyIndex],
+              (resolution * this.buyVolumeText.height) / 2 + 2
+            ),
+            height -
+              resolution * AXIS_HEIGHT -
+              (resolution * this.buyVolumeText.height) / 2 -
+              2
+          ),
+          { x: 1, y: 0.5 },
+          resolution
+        );
 
-      this.sellVolumeText.update(
-        this.volumeLabels[sellIndex],
-        sellNearestX - width / 2 > this.sellVolumeText.width + 6
-          ? width / 2 + resolution * 3
-          : sellNearestX + 6,
-        Math.min(
-          Math.max(this.volumes[sellIndex], this.sellVolumeText.height / 2 + 2),
-          height - resolution * AXIS_HEIGHT - this.sellVolumeText.height / 2 - 2
-        ),
-        { x: 0, y: 0.5 },
-        resolution
-      );
+        this.sellPriceText.update(
+          this.priceLabels[sellIndex],
+          Math.max(
+            Math.min(
+              sellNearestX,
+              width - (resolution * this.sellPriceText.width) / 2 - 2
+            ),
+            width / 2 +
+              (resolution * this.sellPriceText.width) / 2 +
+              resolution * 2
+          ),
+          height - (resolution * AXIS_HEIGHT) / 2,
+          { x: 0.5, y: 0.5 },
+          resolution
+        );
 
-      this.buyIndicator.update(buyNearestX, this.volumes[buyIndex], width);
+        this.sellVolumeText.update(
+          this.volumeLabels[sellIndex],
+          sellNearestX - width / 2 > resolution * this.sellVolumeText.width + 6
+            ? width / 2 + resolution * 3
+            : sellNearestX + 6,
+          Math.min(
+            Math.max(
+              this.volumes[sellIndex],
+              (resolution * this.sellVolumeText.height) / 2 + 2
+            ),
+            height -
+              resolution * AXIS_HEIGHT -
+              (resolution * this.sellVolumeText.height) / 2 -
+              2
+          ),
+          { x: 0, y: 0.5 },
+          resolution
+        );
 
-      this.sellIndicator.update(sellNearestX, this.volumes[sellIndex], width);
+        this.buyIndicator.update(buyNearestX, this.volumes[buyIndex], width);
+        this.sellIndicator.update(sellNearestX, this.volumes[sellIndex], width);
 
-      this.buyOverlay.update(
-        0,
-        0,
-        buyNearestX,
-        height - resolution * AXIS_HEIGHT
-      );
+        this.buyOverlay.update(
+          0,
+          0,
+          buyNearestX,
+          height - resolution * AXIS_HEIGHT
+        );
 
-      this.sellOverlay.update(
-        sellNearestX,
-        0,
-        width - sellNearestX,
-        height - resolution * AXIS_HEIGHT
-      );
+        this.sellOverlay.update(
+          sellNearestX,
+          0,
+          width - sellNearestX,
+          height - resolution * AXIS_HEIGHT
+        );
 
-      // TODO: Changing visibility in groups like this suggests they should be in a Container
-      if (this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0]) {
-        this.buyPriceText.visible = true;
-        this.buyVolumeText.visible = true;
-        this.buyIndicator.visible = true;
-        this.buyOverlay.visible = true;
-      } else {
-        this.buyPriceText.visible = false;
-        this.buyVolumeText.visible = false;
-        this.buyIndicator.visible = false;
-        this.buyOverlay.visible = false;
-      }
+        // TODO: Changing visibility in groups like this suggests they should be in a Container
+        if (this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0]) {
+          this.buyPriceText.visible = true;
+          this.buyVolumeText.visible = true;
+          this.buyIndicator.visible = true;
+          this.buyOverlay.visible = true;
+        } else {
+          this.buyPriceText.visible = false;
+          this.buyVolumeText.visible = false;
+          this.buyIndicator.visible = false;
+          this.buyOverlay.visible = false;
+        }
 
-      if (this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1]) {
-        this.sellPriceText.visible = true;
-        this.sellVolumeText.visible = true;
-        this.sellIndicator.visible = true;
-        this.sellOverlay.visible = true;
-      } else {
-        this.sellPriceText.visible = false;
-        this.sellVolumeText.visible = false;
-        this.sellIndicator.visible = false;
-        this.sellOverlay.visible = false;
+        if (
+          this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1]
+        ) {
+          this.sellPriceText.visible = true;
+          this.sellVolumeText.visible = true;
+          this.sellIndicator.visible = true;
+          this.sellOverlay.visible = true;
+        } else {
+          this.sellPriceText.visible = false;
+          this.sellVolumeText.visible = false;
+          this.sellIndicator.visible = false;
+          this.sellOverlay.visible = false;
+        }
       }
 
       this.render();
@@ -527,4 +635,8 @@ export class Axis extends EventEmitter {
 
     this.render();
   };
+
+  set indicativePrice(price: number) {
+    this._indicativePrice = price;
+  }
 }
