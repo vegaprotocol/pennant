@@ -11,7 +11,7 @@ import {
 
 const PADDING = 4;
 
-const styles = getComputedStyle(document.documentElement);
+const styles = window.getComputedStyle(document.documentElement);
 
 const colorSuccess =
   styles.getPropertyValue("--pennant-color-success") ?? Colors.GREEN;
