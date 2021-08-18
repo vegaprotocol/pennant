@@ -1,0 +1,14 @@
+.canvasContainer {
+  cursor: crosshair;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  background-color: #0f0f0f;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
