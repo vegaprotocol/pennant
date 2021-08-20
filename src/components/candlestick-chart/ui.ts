@@ -15,6 +15,7 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { Rect } from "../depth-chart/display-objects";
 import { YAxis } from "./display-objects/y-axis";
 
 function pointer(event: any, resolution: number = 1): [number, number] {
@@ -49,7 +50,7 @@ export class Ui extends EventEmitter {
   private lastEvent: InteractionEvent | null = null;
 
   // TODO: Shouldn't need this but was seeing issues where a closed over variable was being mutated
-  private lastPoint: [number, number] | null = null;
+  private firstPoint: [number, number] | null = null;
 
   private gesture = new Gesture(this);
   private originalTransform: ZoomTransform = zoomIdentity;
@@ -74,8 +75,6 @@ export class Ui extends EventEmitter {
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
 
-    this.zoom.scaleExtent = [1, 10];
-
     this.yAxis.interactive = true;
     this.yAxis.cursor = "grab";
 
@@ -96,6 +95,7 @@ export class Ui extends EventEmitter {
   }
 
   public update(
+    timeScale: ScaleLinear<number, number>,
     priceScale: ScaleLinear<number, number>,
     width: number,
     height: number
@@ -255,31 +255,30 @@ export class Ui extends EventEmitter {
     const resolution = this.renderer.resolution;
     const p = pointer(event.data?.originalEvent, resolution);
 
-    this.lastPoint = p ?? [0, 0];
+    this.firstPoint = p ?? [0, 0];
+
+    let previousT = 0;
 
     const handleRender = (t: number) => {
-      const position = this.inertia.position.map(
-        (d, i) => d + t * this.inertia.velocity[i]
-      ) as [number, number];
+      console.log(t, previousT, t - previousT);
+      /*       const position = this.inertia.position.map(
+        (d, i) => t * this.inertia.velocity[i]
+      ) as [number, number]; */
 
-      this.gesture.zoom(
-        this.zoom.constrain(
-          this.zoom.translate(
-            this.zoom.__zoom,
-            position,
-            this.inertia.position
-          ),
-          [
-            [0, 0],
-            [100, 100],
-          ],
-          this.zoom.translateExtent
-        ),
-        this.lastPoint!
+      this.zoom.translateBy(
+        ((t - previousT) * this.inertia.velocity[0]) / 10,
+        ((t - previousT) * this.inertia.velocity[1]) / 10
       );
+
+      this.gesture.zoom(this.zoom.__zoom, this.firstPoint!);
+
+      previousT = t;
     };
 
     this.inertia.on("render", handleRender);
+    this.inertia.on("start", () => {
+      previousT = 0;
+    });
 
     this.inertia.start(p);
 
@@ -307,7 +306,7 @@ export class Ui extends EventEmitter {
             ],
             this.zoom.translateExtent
           ),
-          this.lastPoint!
+          this.firstPoint!
         );
       }
     };

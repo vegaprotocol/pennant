@@ -57,8 +57,8 @@ export class Inertia extends EventEmitter {
     this.emit("end");
 
     this.timer.restart((e) => {
+      console.log(e);
       this.t = limit * (1 - Math.exp((-B * e) / A));
-
       this.emit("render", this.t);
 
       if (this.t > 1) {

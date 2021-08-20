@@ -15,7 +15,7 @@ export class YAxis extends Container {
    * Cache ticks
    */
   private nodeByKeyValue = new Map<string, Graphics>();
-  private rectangle: Rect = new Rect(0xff0000);
+  private rectangle: Rect = new Rect(0x000000, 0.5);
 
   constructor() {
     super();

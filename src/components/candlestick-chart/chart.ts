@@ -48,6 +48,9 @@ export class Chart extends EventEmitter {
 
     this.priceFormat = options.priceFormat;
 
+    this.timeZoom.scaleExtent = [1, 10];
+    this.priceZoom.scaleExtent = [1, 10];
+
     this.contents = new Contents({
       view: options.chartView,
       resolution: options.resolution,
@@ -85,7 +88,7 @@ export class Chart extends EventEmitter {
                 Math.pow(
                   2,
                   -(transform.y - this.lastZoomTransform.y) /
-                    transform.k /
+                    1 /
                     (this.priceScale.range()[1] - this.priceScale.range()[0])
                 ),
                 [
@@ -94,6 +97,10 @@ export class Chart extends EventEmitter {
                 ]
               );
             } else {
+              this.priceZoom.scaleBy(k, [
+                0,
+                (this.priceScale.range()[1] - this.priceScale.range()[0]) / 2,
+              ]);
             }
           } else {
             if (k === 1) {
@@ -105,6 +112,7 @@ export class Chart extends EventEmitter {
                 0
               );
             } else {
+              this.timeZoom.scaleBy(k, point);
             }
           }
 
@@ -154,6 +162,7 @@ export class Chart extends EventEmitter {
     );
 
     this.ui.update(
+      rescaledTimeScale as any,
       rescaledPriceScale as any,
       this.ui.renderer.width,
       this.ui.renderer.height

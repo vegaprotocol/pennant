@@ -4,6 +4,7 @@ import { times } from "lodash";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
+import { Rect } from "./display-objects/rect";
 import { XGrid } from "./display-objects/x-grid";
 import { YGrid } from "./display-objects/y-grid";
 
@@ -16,6 +17,8 @@ export class Contents {
 
   public xGrid: XGrid = new XGrid();
   public yGrid: YGrid = new YGrid();
+
+  public rectangle: Rect = new Rect(0xff0000, 0.5);
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -32,6 +35,7 @@ export class Contents {
 
     this.stage.addChild(this.xGrid);
     this.stage.addChild(this.yGrid);
+    this.stage.addChild(this.rectangle);
   }
 
   public render(): void {
@@ -48,5 +52,12 @@ export class Contents {
 
     this.xGrid.update(timeScale, width, height, resolution);
     this.yGrid.update(priceScale, width, height, resolution);
+
+    this.rectangle.update(
+      timeScale(10),
+      priceScale(20),
+      timeScale(60) - timeScale(0),
+      priceScale(60) - priceScale(0)
+    );
   }
 }
