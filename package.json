@@ -2,7 +2,10 @@
   "name": "pennant",
   "version": "0.3.0-alpha.8",
   "description": "A React component library for visualising historical and streaming financial market data",
-  "exports": "./dist/modern.js",
+  "exports": {
+    ".": "./dist/modern.js",
+    "./dist/": "./dist/"
+  },
   "main": "./dist/legacy.js",
   "module": "./dist/module.js",
   "types": "./dist/types/index.d.ts",
