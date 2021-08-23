@@ -34,7 +34,7 @@ function pointer(event: any) {
 }
 
 export class Gesture {
-  public that: Axis;
+  public that: UI;
   public active: number = 0;
   public taps: number = 0;
 
@@ -47,7 +47,7 @@ export class Gesture {
 
   public zooming = false;
 
-  constructor(that: Axis) {
+  constructor(that: UI) {
     this.that = that;
   }
 
@@ -67,7 +67,7 @@ export class Gesture {
 /**
  * Reponsible for drawing axes and handling interactivity for depth chart
  */
-export class Axis extends EventEmitter {
+export class UI extends EventEmitter {
   public stage: Container = new Container();
   public renderer: Renderer;
 
