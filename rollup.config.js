@@ -19,7 +19,7 @@ const config = {
   external: [/@babel\/runtime/, ...Object.keys(globals)],
   output: [
     {
-      file: meta.exports,
+      file: meta.exports["."],
       format: "es",
       plugins: [
         getBabelOutputPlugin({
