@@ -4,7 +4,7 @@ import { useRef } from "react";
 import {
   CandlestickChart,
   CandlestickChartHandle,
-  CandlestickhartProps,
+  CandlestickChartProps,
 } from "./candlestick-chart";
 
 export default {
@@ -12,7 +12,7 @@ export default {
   DepthChart: CandlestickChart,
 } as Meta;
 
-const Template: Story<CandlestickhartProps> = (args) => {
+const Template: Story<CandlestickChartProps> = (args) => {
   const ref = useRef<CandlestickChartHandle>(null!);
 
   return (

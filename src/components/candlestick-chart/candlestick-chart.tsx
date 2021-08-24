@@ -32,12 +32,12 @@ function defaultPriceFormat(price: number) {
  */
 export const FONT_SIZE = 12;
 
-export type CandlestickhartProps = {};
+export type CandlestickChartProps = {};
 
 export interface CandlestickChartHandle {}
 
 export const CandlestickChart = forwardRef(
-  ({}: CandlestickhartProps, ref: React.Ref<CandlestickChartHandle>) => {
+  ({}: CandlestickChartProps, ref: React.Ref<CandlestickChartHandle>) => {
     const contentsRef = useRef<HTMLCanvasElement>(null!);
     const uiRef = useRef<HTMLCanvasElement>(null!);
 
