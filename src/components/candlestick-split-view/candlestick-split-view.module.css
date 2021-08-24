@@ -5,50 +5,72 @@
   --separator-border: #454545;
 }
 
-.pennant-split-view {
+.canvasContainer {
+  cursor: crosshair;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  background-color: #0f0f0f;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+:root {
+  --focus-border: #007fd4;
+  --sash-size: 8px;
+  --sash-hover-size: 4px;
+  --separator-border: #454545;
+}
+
+.splitView {
   height: 100%;
   position: relative;
   width: 100%;
 }
 
-.pennant-split-view > .sash-container {
+.splitView > .sashContainer {
   height: 100%;
   pointer-events: none;
   position: absolute;
   width: 100%;
 }
 
-.pennant-split-view > .sash-container > .pennant-sash {
+.splitView > .sashContainer > .sash {
   pointer-events: initial;
 }
 
-.pennant-split-view > .split-view-container {
+.splitView > .splitViewContainer {
   height: 100%;
   position: relative;
   white-space: nowrap;
   width: 100%;
 }
 
-.pennant-split-view > .split-view-container > .split-view-view {
+.splitView > .splitViewContainer > .splitViewView {
   position: absolute;
   white-space: initial;
 }
 
-.pennant-split-view > .split-view-container > .split-view-view:not(.visible) {
+.splitView > .splitViewContainer > .splitViewView:not(.visible) {
   display: none;
 }
 
-.pennant-split-view.vertical > .split-view-container > .split-view-view {
+.splitViewVertical > .splitViewContainer > .splitViewView {
   width: 100%;
 }
 
-.pennant-split-view.horizontal > .split-view-container > .split-view-view {
+.splitView.horizontal > .splitViewContainer > .splitViewView {
   height: 100%;
 }
 
-.pennant-split-view.separator-border
-  > .split-view-container
-  > .split-view-view:not(:first-child)::before {
+.pennantSplitView.separatorBorder
+  > .splitViewContainer
+  > .splitViewView:not(:first-child)::before {
   background-color: var(--separator-border);
   content: " ";
   left: 0;
@@ -58,27 +80,27 @@
   z-index: 5;
 }
 
-.pennant-split-view.separator-border.vertical
-  > .split-view-container
-  > .split-view-view:not(:first-child)::before {
+.splitView.separatorBorder.vertical
+  > .splitViewContainer
+  > .splitViewView:not(:first-child)::before {
   height: 1px;
   width: 100%;
 }
 
-.pennant-sash {
+.sash {
   position: absolute;
   touch-action: none;
   z-index: 35;
 }
 
-.pennant-sash.horizontal {
+.sash.horizontal {
   cursor: ns-resize;
   height: var(--sash-size, 4);
   left: 0;
   width: 100%;
 }
 
-.pennant-sash:before {
+.sash:before {
   background: transparent;
   content: "";
   height: 100%;
@@ -88,12 +110,12 @@
   width: 100%;
 }
 
-.pennant-sash.horizontal:before {
+.sash.horizontal:before {
   height: var(--sash-hover-size, 4);
   top: calc(50% - (var(--sash-hover-size, 4) / 2));
 }
 
-.pennant-sash.hover:before,
-.pennant-sash.active:before {
+.sash.hover:before,
+.sash.active:before {
   background: var(--focus-border, #007fd4);
 }

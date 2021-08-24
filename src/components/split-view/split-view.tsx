@@ -91,7 +91,8 @@ export const SplitView = ({
     layout();
   }, [layout]);
 
-  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+  const 
+  handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
 
     const start =
