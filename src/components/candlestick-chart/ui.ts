@@ -260,14 +260,9 @@ export class Ui extends EventEmitter {
     let previousT = 0;
 
     const handleRender = (t: number) => {
-      console.log(t, previousT, t - previousT);
-      /*       const position = this.inertia.position.map(
-        (d, i) => t * this.inertia.velocity[i]
-      ) as [number, number]; */
-
       this.zoom.translateBy(
-        ((t - previousT) * this.inertia.velocity[0]) / 10,
-        ((t - previousT) * this.inertia.velocity[1]) / 10
+        ((t - previousT) * this.inertia.velocity[0]) / 30,
+        ((t - previousT) * this.inertia.velocity[1]) / 30
       );
 
       this.gesture.zoom(this.zoom.__zoom, this.firstPoint!);

@@ -6,7 +6,6 @@ import EventEmitter from "eventemitter3";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { ZoomScale, ZoomTransform } from "../../helpers/zoom/transform";
 import { Zoom } from "../../helpers/zoom/zoom";
-import number from "../../math/array/number";
 import { Contents } from "./contents";
 import { Ui } from "./ui";
 
@@ -32,9 +31,10 @@ export class Chart extends EventEmitter {
   private timeZoom: Zoom = new Zoom();
   private priceZoom: Zoom = new Zoom();
 
-  private lastZoomTransform: ZoomTransform = zoomIdentity;
+  private isPinned: boolean = true;
+  private isFreePan: boolean = false;
 
-  private priceFormat: (price: number) => string;
+  private lastZoomTransform: ZoomTransform = zoomIdentity;
 
   constructor(options: {
     chartView: HTMLCanvasElement;
@@ -45,8 +45,6 @@ export class Chart extends EventEmitter {
     priceFormat: (price: number) => string;
   }) {
     super();
-
-    this.priceFormat = options.priceFormat;
 
     this.timeZoom.scaleExtent = [1, 10];
     this.priceZoom.scaleExtent = [1, 10];

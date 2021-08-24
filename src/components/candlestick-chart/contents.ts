@@ -56,7 +56,7 @@ export class Contents {
     this.rectangle.update(
       timeScale(10),
       priceScale(20),
-      timeScale(60) - timeScale(0),
+      timeScale(20) - timeScale(0),
       priceScale(60) - priceScale(0)
     );
   }
