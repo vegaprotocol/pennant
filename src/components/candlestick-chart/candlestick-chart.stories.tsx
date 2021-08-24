@@ -9,7 +9,7 @@ import {
 
 export default {
   title: "Components/CandlestickChart",
-  DepthChart: CandlestickChart,
+  Component: CandlestickChart,
 } as Meta;
 
 const Template: Story<CandlestickChartProps> = (args) => {
