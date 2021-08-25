@@ -62,11 +62,16 @@ export const CandlestickSplitView = forwardRef(
 
       if (splitViewRef.current !== null) {
         Object.entries(splitViewViewRef.current).forEach(([key, value]) => {
-          splitViewRef.current!.addView(value, {
-            element: value,
-            minimumSize: 10,
-            maximumSize: 100,
-          });
+          splitViewRef.current!.addView(
+            value,
+            {
+              element: document.createElement("div"),
+              minimumSize: 30,
+              maximumSize: 400,
+              layout: (size) => {},
+            },
+            60
+          );
         });
       }
     }, []);
@@ -80,15 +85,14 @@ export const CandlestickSplitView = forwardRef(
           styles.separatorBorder
         )}
       >
-        {/*         <div ref={sashRef} className={styles.sashContainer}>
-          <div className={classNames(styles.sash, styles.horizontal)} />
-        </div> */}
         <div ref={viewRef} className={styles.splitViewContainer}>
           {views.map((view) => (
             <div
               key={view.id}
               ref={(el) => {
-                splitViewViewRef.current[view.id] = el;
+                if (el) {
+                  splitViewViewRef.current[view.id] = el;
+                }
               }}
               className={classNames(styles.splitViewView, styles.visible)}
             >
