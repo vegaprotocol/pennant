@@ -23,6 +23,7 @@ export class Chart extends EventEmitter {
   private volumeLabels: string[] = [];
 
   private _span: number = 1;
+  private maxPriceDifference: number = 0;
 
   private _data: { buy: PriceLevel[]; sell: PriceLevel[] } = {
     buy: [],
@@ -118,12 +119,14 @@ export class Chart extends EventEmitter {
         ? this._midPrice
         : (this._data.buy[0].price + this._data.sell[0].price) / 2;
 
-    const maxPriceDifference =
-      max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+    if (!this.maxPriceDifference) {
+      this.maxPriceDifference =
+        max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+    }
 
     const priceExtent: [number, number] = [
-      midPrice - this._span * maxPriceDifference,
-      midPrice + this._span * maxPriceDifference,
+      midPrice - this._span * this.maxPriceDifference,
+      midPrice + this._span * this.maxPriceDifference,
     ];
 
     const indexExtent = extent(
@@ -151,12 +154,12 @@ export class Chart extends EventEmitter {
     // Add dummy data points at extreme points of price range
     // to ensure the chart looks symmetric
     cumulativeBuy.push([
-      midPrice - maxPriceDifference,
+      midPrice - this.maxPriceDifference,
       cumulativeBuy[cumulativeBuy.length - 1][1],
     ]);
 
     cumulativeSell.push([
-      midPrice + maxPriceDifference,
+      midPrice + this.maxPriceDifference,
       cumulativeSell[cumulativeSell.length - 1][1],
     ]);
 
@@ -189,7 +192,8 @@ export class Chart extends EventEmitter {
 
       this.axis.scaleExtent = [
         1,
-        maxPriceDifference / (2 * (minExtent ?? maxPriceDifference / 10)),
+        this.maxPriceDifference /
+          (2 * (minExtent ?? this.maxPriceDifference / 10)),
       ];
     }
 
