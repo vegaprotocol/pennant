@@ -3175,10 +3175,15 @@
   resolved "https://registry.yarnpkg.com/@types/d3-time-format/-/d3-time-format-3.0.0.tgz#913e984362a59792dc8d8b122dd17625991eade2"
   integrity sha512-UpLg1mn/8PLyjr+J/JwdQJM/GzysMvv2CS8y+WYAL5K0+wbvXv/pPSLEfdNaprCZsGcXTxPsFMy8QtkYv9ueew==
 
-"@types/d3-time@*", "@types/d3-time@^2.0.0":
+"@types/d3-time@*":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-2.1.0.tgz#95708e5c92b199959806fd2116eeb3dfa0e9661c"
   integrity sha512-qVCiT93utxN0cawScyQuNx8H82vBvZXSClZfgOu3l3dRRlRO6FjKEZlaPgXG9XUFjIAOsA4kAJY101vobHeJLQ==
+
+"@types/d3-time@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-3.0.0.tgz#e1ac0f3e9e195135361fa1a1d62f795d87e6e819"
+  integrity sha512-sZLCdHvBUcNby1cB6Fd3ZBrABbjz3v1Vm90nysCQ6Vt7vd6e/h9Lt7SiJUoEX0l4Dzc7P5llKyhqSi1ycSf1Hg==
 
 "@types/d3-transition@^2.0.0":
   version "2.0.0"

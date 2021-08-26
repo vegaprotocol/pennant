@@ -39,7 +39,7 @@
     "@types/d3-scale": "^3.2.2",
     "@types/d3-selection": "^2.0.0",
     "@types/d3-shape": "^2.0.0",
-    "@types/d3-time": "^2.0.0",
+    "@types/d3-time": "^3.0.0",
     "@types/d3-time-format": "^3.0.0",
     "@types/d3-transition": "^2.0.0",
     "@types/d3-zoom": "^2.0.0",
