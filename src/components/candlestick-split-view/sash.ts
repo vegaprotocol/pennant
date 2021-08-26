@@ -92,6 +92,7 @@ export class Sash extends EventEmitter {
     this.el.classList.add(styles.sash);
     container.append(this.el);
 
+    // TODO: Remove event listeners
     this.el.addEventListener("mousedown", this.onPointerStart);
     this.el.addEventListener("dblclick", this.onPointerDoublePress);
     this.el.addEventListener("mouseenter", () => Sash.onMouseEnter(this));
@@ -158,9 +159,9 @@ export class Sash extends EventEmitter {
     window.addEventListener("mouseup", onPointerUp);
   };
 
-  private onPointerDoublePress(event: MouseEvent): void {
+  private onPointerDoublePress = (event: MouseEvent): void => {
     this.emit("reset");
-  }
+  };
 
   private static onMouseEnter(sash: Sash): void {
     if (sash.el.classList.contains(styles.active)) {
@@ -194,6 +195,7 @@ export class Sash extends EventEmitter {
       const horizontalProvider = <HorizontalSashLayoutProvider>(
         this.layoutProvider
       );
+
       this.el.style.top =
         horizontalProvider.getHorizontalSashTop(this) - this.size / 2 + "px";
 
@@ -209,7 +211,7 @@ export class Sash extends EventEmitter {
     }
   }
 
-  isHidden(): boolean {
+  public isHidden(): boolean {
     return this.hidden;
   }
 

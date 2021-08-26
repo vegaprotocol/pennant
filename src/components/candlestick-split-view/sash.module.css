@@ -1,11 +1,15 @@
 :root {
-  --sash-size: 4px;
+  --focus-border: #007fd4;
+  --sash-size: 8px;
+  --sash-hover-size: 4px;
+  --separator-border: #454545;
 }
 
 .sash {
   position: absolute;
   z-index: 35;
   touch-action: none;
+  pointer-events: auto;
 }
 
 .sash.disabled {
@@ -83,14 +87,17 @@
   left: calc(var(--sash-size) * -0.5);
   top: calc(var(--sash-size) * -1);
 }
+
 .sash.vertical > .orthogonal-drag-handle.end {
   left: calc(var(--sash-size) * -0.5);
   bottom: calc(var(--sash-size) * -1);
 }
+
 .sash.horizontal > .orthogonal-drag-handle.start {
   top: calc(var(--sash-size) * -0.5);
   left: calc(var(--sash-size) * -1);
 }
+
 .sash.horizontal > .orthogonal-drag-handle.end {
   top: calc(var(--sash-size) * -0.5);
   right: calc(var(--sash-size) * -1);
@@ -114,4 +121,9 @@
 .sash.horizontal:before {
   height: var(--sash-hover-size);
   top: calc(50% - (var(--sash-hover-size) / 2));
+}
+
+.sash.hover:before,
+.sash.active:before {
+  background: var(--focus-border);
 }

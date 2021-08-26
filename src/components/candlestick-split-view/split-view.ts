@@ -1,7 +1,8 @@
 import { range } from "d3-array";
+import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
 
-import styles from "./candlestick-split-view.module.css";
+import styles from "./banderole.module.css";
 import {
   Orientation,
   Sash,
@@ -15,12 +16,23 @@ interface SashEvent {
   readonly current: number;
 }
 
+export interface SplitViewDescriptor {
+  size: number;
+  views: {
+    visible?: boolean;
+    size: number;
+    container: HTMLElement;
+    view: View;
+  }[];
+}
+
 export interface SplitViewOptions {
   readonly orientation?: Orientation;
   readonly orthogonalStartSash?: Sash;
   readonly orthogonalEndSash?: Sash;
   readonly inverseAltBehavior?: boolean;
   readonly proportionalLayout?: boolean;
+  readonly descriptor?: SplitViewDescriptor;
   readonly getSashOrthogonalSize?: () => number;
 }
 
@@ -143,7 +155,7 @@ interface SashDragState {
   snapAfter: SashDragSnapState | undefined;
 }
 
-export class SplitView {
+export class SplitView extends EventEmitter {
   readonly orientation: Orientation;
   private sashContainer: HTMLElement;
   private viewContainer: HTMLElement;
@@ -187,6 +199,8 @@ export class SplitView {
     viewContainer: HTMLElement,
     options: SplitViewOptions = {}
   ) {
+    super();
+
     this.orientation = options.orientation ?? Orientation.VERTICAL;
     this.proportionalLayout = options.proportionalLayout ?? true;
     this.getSashOrthogonalSize = options.getSashOrthogonalSize;
@@ -196,9 +210,31 @@ export class SplitView {
 
     this.sashContainer.classList.add(styles.sashContainer);
     container.prepend(this.sashContainer);
+
+    if (options.descriptor) {
+      this.size = options.descriptor.size;
+
+      for (const [
+        index,
+        viewDescriptor,
+      ] of options.descriptor.views.entries()) {
+        const size = viewDescriptor.size;
+
+        const container = viewDescriptor.container;
+        const view = viewDescriptor.view;
+
+        this.addView(container, view, size, index, true);
+      }
+    }
   }
 
-  public addView(container: HTMLElement, view: View, size: number) {
+  public addView(
+    container: HTMLElement,
+    view: View,
+    size: number,
+    index = this.viewItems.length,
+    skipLayout?: boolean
+  ) {
     const viewSize = size;
 
     const item = new VerticalViewItem(container, view, viewSize);
@@ -248,12 +284,84 @@ export class SplitView {
 
       sash.on("end", this.onSashEnd);
 
+      sash.on("reset", () => {
+        const index = this.sashItems.findIndex((item) => item.sash === sash);
+        const upIndexes = range(0, index + 1);
+        const downIndexes = range(index + 1, this.viewItems.length);
+        const snapBeforeIndex = this.findFirstSnapIndex(upIndexes);
+        const snapAfterIndex = this.findFirstSnapIndex(downIndexes);
+
+        if (
+          typeof snapBeforeIndex === "number" &&
+          !this.viewItems[snapBeforeIndex].visible
+        ) {
+          return;
+        }
+
+        if (
+          typeof snapAfterIndex === "number" &&
+          !this.viewItems[snapAfterIndex].visible
+        ) {
+          return;
+        }
+
+        this.emit("sashreset", index);
+      });
+
       const sashItem: SashItem = { sash };
 
       this.sashItems.push(sashItem);
     }
 
+    if (!skipLayout) {
+      this.relayout();
+    }
+  }
+
+  public layout(size: number): void {
+    const previousSize = Math.max(this.size, this.contentSize);
+    this.size = size;
+
+    if (!this.proportions) {
+      const indexes = range(0, this.viewItems.length);
+
+      this.resize(this.viewItems.length - 1, size - previousSize, undefined);
+    } else {
+      for (let i = 0; i < this.viewItems.length; i++) {
+        const item = this.viewItems[i];
+
+        item.size = clamp(
+          Math.round(this.proportions[i] * size),
+          item.minimumSize,
+          item.maximumSize
+        );
+      }
+    }
+
+    this.distributeEmptySpace();
+    this.layoutViews();
+  }
+
+  public resizeView(index: number, size: number): void {
+    if (index < 0 || index >= this.viewItems.length) {
+      return;
+    }
+
+    const indexes = range(0, this.viewItems.length).filter((i) => i !== index);
+
+    const item = this.viewItems[index];
+    size = Math.round(size);
+    size = clamp(size, item.minimumSize, Math.min(item.maximumSize, this.size));
+
+    item.size = size;
     this.relayout();
+  }
+
+  public dispose(): void {
+    this.sashItems.forEach((sashItem) => sashItem.sash.dispose());
+    this.sashItems = [];
+
+    this.sashContainer.remove();
   }
 
   private relayout(): void {
@@ -277,7 +385,7 @@ export class SplitView {
       let snapBefore: SashDragSnapState | undefined;
       let snapAfter: SashDragSnapState | undefined;
 
-      const upIndexes = range(index, -1);
+      const upIndexes = range(0, index + 1);
       const downIndexes = range(index + 1, this.viewItems.length);
 
       const minDeltaUp = upIndexes.reduce(
@@ -438,10 +546,6 @@ export class SplitView {
             0
           );
 
-    console.log(downIndexes, index);
-    console.log(minDeltaUp, minDeltaDown, overloadMinDelta);
-    console.log(maxDeltaDown, maxDeltaUp, overloadMaxDelta);
-
     const minDelta = Math.max(minDeltaUp, minDeltaDown, overloadMinDelta);
     const maxDelta = Math.min(maxDeltaDown, maxDeltaUp, overloadMaxDelta);
 
@@ -470,9 +574,6 @@ export class SplitView {
         overloadMaxDelta
       );
     }
-
-    //console.log(delta, minDelta, maxDelta);
-    //console.log(upSizes);
 
     delta = clamp(delta, minDelta, maxDelta);
 
@@ -514,7 +615,7 @@ export class SplitView {
     const contentSize = this.viewItems.reduce((r, i) => r + i.size, 0);
     let emptyDelta = this.size - contentSize;
 
-    const indexes = range(this.viewItems.length - 1, -1);
+    const indexes = range(0, this.viewItems.length);
 
     for (let i = 0; emptyDelta !== 0 && i < indexes.length; i++) {
       const item = this.viewItems[indexes[i]];
@@ -523,6 +624,7 @@ export class SplitView {
         item.minimumSize,
         item.maximumSize
       );
+
       const viewDelta = size - item.size;
 
       emptyDelta -= viewDelta;

@@ -41,7 +41,7 @@
 }
 
 .splitView > .sashContainer > .sash {
-  pointer-events: initial;
+  pointer-events: auto;
 }
 
 .splitView > .splitViewContainer {
@@ -60,7 +60,7 @@
   display: none;
 }
 
-.splitViewVertical > .splitViewContainer > .splitViewView {
+.splitView.vertical > .splitViewContainer > .splitViewView {
   width: 100%;
 }
 
