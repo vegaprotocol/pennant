@@ -19,7 +19,7 @@ const config = {
   external: [/@babel\/runtime/, ...Object.keys(globals)],
   output: [
     {
-      file: meta.exports,
+      file: meta.exports["."],
       format: "es",
       plugins: [
         getBabelOutputPlugin({
@@ -71,7 +71,7 @@ const config = {
     nodeResolve({ extensions }),
     commonjs(),
     postcss({
-      modules: true,
+      autoModules: true,
       extract: path.resolve("dist/style.css"),
     }),
     babel({

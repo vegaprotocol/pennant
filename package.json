@@ -1,8 +1,11 @@
 {
   "name": "pennant",
-  "version": "0.3.0-alpha.8",
+  "version": "0.3.1",
   "description": "A React component library for visualising historical and streaming financial market data",
-  "exports": "./dist/modern.js",
+  "exports": {
+    ".": "./dist/modern.js",
+    "./dist/": "./dist/"
+  },
   "main": "./dist/legacy.js",
   "module": "./dist/module.js",
   "types": "./dist/types/index.d.ts",
@@ -36,7 +39,7 @@
     "@types/d3-scale": "^3.2.2",
     "@types/d3-selection": "^2.0.0",
     "@types/d3-shape": "^2.0.0",
-    "@types/d3-time": "^2.0.0",
+    "@types/d3-time": "^3.0.0",
     "@types/d3-time-format": "^3.0.0",
     "@types/d3-transition": "^2.0.0",
     "@types/d3-zoom": "^2.0.0",
@@ -147,7 +150,7 @@
     "sass-loader": "10.2.0",
     "standard-version": "9.3.1",
     "subscriptions-transport-ws": "0.9.19",
-    "ts-jest": "27.0.4",
+    "ts-jest": "27.0.5",
     "ts-node": "10.2.0",
     "tslib": "2.3.1"
   },

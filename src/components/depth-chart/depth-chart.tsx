@@ -8,7 +8,7 @@ import React, {
 import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { string2hex } from "../../renderer/utils";
-import { Application } from "./application";
+import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 
 /**
@@ -96,10 +96,9 @@ export const DepthChart = forwardRef(
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
   ) => {
-    const chartRef = useRef<HTMLCanvasElement>(null!);
-    const axisRef = useRef<HTMLCanvasElement>(null!);
-
-    const application = useRef<Application>(null!);
+    const contentsRef = useRef<HTMLCanvasElement>(null!);
+    const uiRef = useRef<HTMLCanvasElement>(null!);
+    const chartRef = useRef<Chart>(null!);
 
     const {
       ref: resizeOberverRef,
@@ -113,9 +112,9 @@ export const DepthChart = forwardRef(
      * Create a new instance of the depth chart
      */
     useEffect(() => {
-      application.current = new Application({
-        chartView: chartRef.current,
-        axisView: axisRef.current,
+      chartRef.current = new Chart({
+        chartView: contentsRef.current,
+        axisView: uiRef.current,
         resolution: window.devicePixelRatio,
         width: 300,
         height: 300,
@@ -123,19 +122,19 @@ export const DepthChart = forwardRef(
       });
 
       return () => {
-        application.current.destroy();
+        chartRef.current.destroy();
       };
     }, [priceFormat]);
 
     // Update chart when dimensions or data change
     useEffect(() => {
-      application.current.resize(
+      chartRef.current.resize(
         devicePixelContentBoxSizeInlineSize / window.devicePixelRatio,
         devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
       );
 
-      application.current.data = data;
-      application.current.render();
+      chartRef.current.data = data;
+      chartRef.current.render();
     }, [
       height,
       width,
@@ -145,26 +144,26 @@ export const DepthChart = forwardRef(
     ]);
 
     useEffect(() => {
-      application.current.indicativePrice = indicativePrice;
+      chartRef.current.indicativePrice = indicativePrice;
     }, [indicativePrice]);
 
     useEffect(() => {
-      application.current.midPrice = midPrice;
+      chartRef.current.midPrice = midPrice;
     }, [midPrice]);
 
     useImperativeHandle(ref, () => ({
       update(price: number) {
-        application.current.updatePrice(price);
+        chartRef.current.updatePrice(price);
       },
       clear() {
-        application.current.clearPrice();
+        chartRef.current.clearPrice();
       },
     }));
 
     return (
       <div ref={resizeOberverRef} className={styles.canvasContainer}>
-        <canvas ref={chartRef} className={styles.canvas} />
-        <canvas ref={axisRef} className={styles.canvas} />
+        <canvas ref={contentsRef} className={styles.canvas} />
+        <canvas ref={uiRef} className={styles.canvas} />
       </div>
     );
   }
