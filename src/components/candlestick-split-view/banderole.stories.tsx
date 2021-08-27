@@ -30,7 +30,7 @@ const Template: Story<BanderoleProps & { numViews: number }> = ({
         {views.map((view) => (
           <div
             key={view.id}
-            style={{ border: "1px solid #3d3d3d", height: "100%" }}
+            style={{ border: "1px solid #6d6d6d", height: "100%" }}
           >
             {view.id}
           </div>

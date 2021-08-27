@@ -20,13 +20,6 @@
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-:root {
-  --focus-border: #007fd4;
-  --sash-size: 8px;
-  --sash-hover-size: 4px;
-  --separator-border: #454545;
-}
-
 .splitView {
   height: 100%;
   position: relative;
@@ -85,37 +78,4 @@
   > .splitViewView:not(:first-child)::before {
   height: 1px;
   width: 100%;
-}
-
-.sash {
-  position: absolute;
-  touch-action: none;
-  z-index: 35;
-}
-
-.sash.horizontal {
-  cursor: ns-resize;
-  height: var(--sash-size, 4);
-  left: 0;
-  width: 100%;
-}
-
-.sash:before {
-  background: transparent;
-  content: "";
-  height: 100%;
-  pointer-events: none;
-  position: absolute;
-  transition: background-color var(--pennant-transition-fast) ease-out;
-  width: 100%;
-}
-
-.sash.horizontal:before {
-  height: var(--sash-hover-size, 4);
-  top: calc(50% - (var(--sash-hover-size, 4) / 2));
-}
-
-.sash.hover:before,
-.sash.active:before {
-  background: var(--focus-border, #007fd4);
 }

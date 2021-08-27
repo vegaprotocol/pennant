@@ -127,6 +127,13 @@ abstract class ViewItem {
   abstract layoutContainer(offset: number): void;
 }
 
+class HorizontalViewItem extends ViewItem {
+  layoutContainer(offset: number): void {
+    this.container.style.left = `${offset}px`;
+    this.container.style.width = `${this.size}px`;
+  }
+}
+
 class VerticalViewItem extends ViewItem {
   layoutContainer(offset: number): void {
     this.container.style.top = `${offset}px`;
@@ -237,7 +244,10 @@ export class SplitView extends EventEmitter {
   ) {
     const viewSize = size;
 
-    const item = new VerticalViewItem(container, view, viewSize);
+    const item =
+      this.orientation === Orientation.VERTICAL
+        ? new VerticalViewItem(container, view, viewSize)
+        : new HorizontalViewItem(container, view, viewSize);
 
     this.viewItems.push(item);
 
@@ -286,7 +296,7 @@ export class SplitView extends EventEmitter {
 
       sash.on("reset", () => {
         const index = this.sashItems.findIndex((item) => item.sash === sash);
-        const upIndexes = range(0, index + 1);
+        const upIndexes = range(index, -1, -1);
         const downIndexes = range(index + 1, this.viewItems.length);
         const snapBeforeIndex = this.findFirstSnapIndex(upIndexes);
         const snapAfterIndex = this.findFirstSnapIndex(downIndexes);
@@ -385,7 +395,7 @@ export class SplitView extends EventEmitter {
       let snapBefore: SashDragSnapState | undefined;
       let snapAfter: SashDragSnapState | undefined;
 
-      const upIndexes = range(0, index + 1);
+      const upIndexes = range(index, -1, -1);
       const downIndexes = range(index + 1, this.viewItems.length);
 
       const minDeltaUp = upIndexes.reduce(
@@ -511,7 +521,7 @@ export class SplitView extends EventEmitter {
       return 0;
     }
 
-    const upIndexes = range(0, index + 1);
+    const upIndexes = range(index, -1, -1);
     const downIndexes = range(index + 1, this.viewItems.length);
 
     const upItems = upIndexes.map((i) => this.viewItems[i]);
@@ -694,7 +704,7 @@ export class SplitView extends EventEmitter {
       const max = !(expandsDown[index] && collapsesUp[index + 1]);
 
       if (min && max) {
-        const upIndexes = range(0, index + 1);
+        const upIndexes = range(index, -1, -1);
         const downIndexes = range(index + 1, this.viewItems.length);
         const snapBeforeIndex = this.findFirstSnapIndex(upIndexes);
         const snapAfterIndex = this.findFirstSnapIndex(downIndexes);
