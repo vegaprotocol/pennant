@@ -54,7 +54,7 @@ export class YAxis extends Container {
       line.clear();
       line.lineStyle({
         width: 10,
-        color: 0xffffff,
+        color: 0x3d3d3d,
         lineDash: [],
       });
       line.moveTo(-Y_AXIS_WIDTH, 0.5);

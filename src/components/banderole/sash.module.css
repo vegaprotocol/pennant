@@ -1,9 +1,4 @@
-:root {
-  --focus-border: #007fd4;
-  --sash-size: 8px;
-  --sash-hover-size: 4px;
-  --separator-border: #454545;
-}
+@import "./banderole.css";
 
 .sash {
   position: absolute;

@@ -259,6 +259,10 @@ export class Ui extends EventEmitter {
 
     let previousT = 0;
 
+    if (event.data?.identifier) {
+      this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
+    }
+
     const handleRender = (t: number) => {
       this.zoom.translateBy(
         ((t - previousT) * this.inertia.velocity[0]) / 30,
@@ -311,6 +315,12 @@ export class Ui extends EventEmitter {
 
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+
+      if (event.data?.identifier) {
+        this.renderer.context.canvas.releasePointerCapture(
+          event.data?.identifier
+        );
+      }
 
       this.gesture.end();
       this.inertia.end();

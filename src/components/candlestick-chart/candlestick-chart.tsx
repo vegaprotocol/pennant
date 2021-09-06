@@ -1,13 +1,19 @@
+import "banderole/dist/style.css";
+
+import { Banderole } from "banderole";
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 
 import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { string2hex } from "../../renderer/utils";
+import { Pane } from "../pane";
+import { CloseButton } from "../pane-view/close-button";
 import styles from "./candlestick-chart.module.css";
 import { Chart } from "./chart";
 
@@ -42,6 +48,8 @@ export const CandlestickChart = forwardRef(
     const uiRef = useRef<HTMLCanvasElement>(null!);
 
     const chartRef = useRef<Chart>(null!);
+
+    const [panes, setPanes] = useState([0, 1]);
 
     const {
       ref: resizeOberverRef,
@@ -89,10 +97,29 @@ export const CandlestickChart = forwardRef(
     ]);
 
     return (
-      <div ref={resizeOberverRef} className={styles.canvasContainer}>
-        <canvas ref={contentsRef} className={styles.canvas} />
-        <canvas ref={uiRef} className={styles.canvas} />
-      </div>
+      <Banderole vertical>
+        <div style={{ backgroundColor: "black", height: "100%" }}>
+          <div ref={resizeOberverRef} className={styles.canvasContainer}>
+            <canvas ref={contentsRef} className={styles.canvas} />
+            <canvas ref={uiRef} className={styles.canvas} />
+          </div>
+        </div>
+        {panes.map((pane, index) => (
+          <Pane
+            key={pane}
+            onClose={() => {
+              setPanes((panes) => {
+                const newPanes = [...panes];
+                newPanes.splice(index, 1);
+
+                return newPanes;
+              });
+            }}
+          >
+            <div style={{ color: "white" }}>Important information</div>
+          </Pane>
+        ))}
+      </Banderole>
     );
   }
 );

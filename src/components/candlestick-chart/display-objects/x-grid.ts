@@ -46,7 +46,7 @@ export class XGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0xd6d6d6,
+        color: 0x3d3d3d,
         lineDash: [],
       });
       line.moveTo(0.5, 0);
@@ -64,7 +64,7 @@ export class XGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0xd6d6d6,
+        color: 0x3d3d3d,
         lineDash: [],
       });
       line.moveTo(0.5, 0);

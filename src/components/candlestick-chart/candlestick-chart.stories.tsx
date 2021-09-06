@@ -20,6 +20,8 @@ const Template: Story<CandlestickChartProps> = (args) => {
       style={{
         width: "80vw",
         height: "80vh",
+        resize: "both",
+        overflow: "scroll",
       }}
     >
       <CandlestickChart ref={ref} {...args} />

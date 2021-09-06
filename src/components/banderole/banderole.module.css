@@ -1,9 +1,4 @@
-:root {
-  --focus-border: #007fd4;
-  --sash-size: 8px;
-  --sash-hover-size: 4px;
-  --separator-border: #454545;
-}
+@import "./banderole.css";
 
 .canvasContainer {
   cursor: crosshair;
@@ -47,6 +42,7 @@
 .splitView > .splitViewContainer > .splitViewView {
   position: absolute;
   white-space: initial;
+  overflow: hidden;
 }
 
 .splitView > .splitViewContainer > .splitViewView:not(.visible) {
@@ -61,7 +57,7 @@
   height: 100%;
 }
 
-.pennantSplitView.separatorBorder
+.splitView.separatorBorder
   > .splitViewContainer
   > .splitViewView:not(:first-child)::before {
   background-color: var(--separator-border);
@@ -78,4 +74,11 @@
   > .splitViewView:not(:first-child)::before {
   height: 1px;
   width: 100%;
+}
+
+.splitView.separatorBorder.horizontal
+  > .splitViewContainer
+  > .splitViewView:not(:first-child)::before {
+  height: 100%;
+  width: 1px;
 }

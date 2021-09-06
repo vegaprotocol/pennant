@@ -3,6 +3,7 @@ import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
 
 import styles from "./banderole.module.css";
+import { Disposable } from "./disposable";
 import {
   Orientation,
   Sash,
@@ -14,6 +15,21 @@ interface SashEvent {
   readonly sash: Sash;
   readonly start: number;
   readonly current: number;
+}
+
+export type DistributeSizing = { type: "distribute" };
+export type SplitSizing = { type: "split"; index: number };
+export type InvisibleSizing = { type: "invisible"; cachedVisibleSize: number };
+export type Sizing = DistributeSizing | SplitSizing | InvisibleSizing;
+
+export namespace Sizing {
+  export const Distribute: DistributeSizing = { type: "distribute" };
+  export function Split(index: number): SplitSizing {
+    return { type: "split", index };
+  }
+  export function Invisible(cachedVisibleSize: number): InvisibleSizing {
+    return { type: "invisible", cachedVisibleSize };
+  }
 }
 
 export interface SplitViewDescriptor {
@@ -45,15 +61,25 @@ export interface View {
   setVisible?(visible: boolean): void;
 }
 
+type ViewItemSize = number | { cachedVisibleSize: number };
+
 abstract class ViewItem {
   protected container: HTMLElement;
-  private view: View;
+  public view: View;
   private _size: number;
 
-  constructor(container: HTMLElement, view: View, size: number) {
+  constructor(container: HTMLElement, view: View, size: ViewItemSize) {
     this.container = container;
     this.view = view;
-    this._size = size;
+
+    if (typeof size === "number") {
+      this._size = size;
+      this._cachedVisibleSize = undefined;
+      container.classList.add(styles.visible);
+    } else {
+      this._size = 0;
+      this._cachedVisibleSize = size.cachedVisibleSize;
+    }
   }
 
   set size(size: number) {
@@ -162,10 +188,9 @@ interface SashDragState {
   snapAfter: SashDragSnapState | undefined;
 }
 
-export class SplitView extends EventEmitter {
+export class SplitView extends EventEmitter implements Disposable {
   readonly orientation: Orientation;
   private sashContainer: HTMLElement;
-  private viewContainer: HTMLElement;
   private size = 0;
   private contentSize = 0;
   private proportions: undefined | number[] = undefined;
@@ -208,15 +233,14 @@ export class SplitView extends EventEmitter {
   ) {
     super();
 
-    this.orientation = options.orientation ?? Orientation.VERTICAL;
+    this.orientation = options.orientation ?? Orientation.Vertical;
     this.proportionalLayout = options.proportionalLayout ?? true;
     this.getSashOrthogonalSize = options.getSashOrthogonalSize;
 
     this.sashContainer = document.createElement("div");
-    this.viewContainer = viewContainer;
 
     this.sashContainer.classList.add(styles.sashContainer);
-    container.prepend(this.sashContainer);
+    container.prepend(this.sashContainer); // Should always be first child
 
     if (options.descriptor) {
       this.size = options.descriptor.size;
@@ -238,14 +262,24 @@ export class SplitView extends EventEmitter {
   public addView(
     container: HTMLElement,
     view: View,
-    size: number,
+    size: number | Sizing,
     index = this.viewItems.length,
     skipLayout?: boolean
   ) {
-    const viewSize = size;
+    let viewSize: ViewItemSize;
+
+    if (typeof size === "number") {
+      viewSize = size;
+    } else if (size.type === "split") {
+      viewSize = this.getViewSize(size.index) / 2;
+    } else if (size.type === "invisible") {
+      viewSize = { cachedVisibleSize: size.cachedVisibleSize };
+    } else {
+      viewSize = view.minimumSize;
+    }
 
     const item =
-      this.orientation === Orientation.VERTICAL
+      this.orientation === Orientation.Vertical
         ? new VerticalViewItem(container, view, viewSize)
         : new HorizontalViewItem(container, view, viewSize);
 
@@ -253,14 +287,14 @@ export class SplitView extends EventEmitter {
 
     if (this.viewItems.length > 1) {
       const sash =
-        this.orientation === Orientation.VERTICAL
+        this.orientation === Orientation.Vertical
           ? new Sash(
               this.sashContainer,
               {
                 getHorizontalSashTop: (s) => this.getSashPosition(s),
                 getHorizontalSashWidth: this.getSashOrthogonalSize,
               },
-              { orientation: Orientation.HORIZONTAL }
+              { orientation: Orientation.Horizontal }
             )
           : new Sash(
               this.sashContainer,
@@ -268,11 +302,11 @@ export class SplitView extends EventEmitter {
                 getVerticalSashLeft: (s) => this.getSashPosition(s),
                 getVerticalSashHeight: this.getSashOrthogonalSize,
               },
-              { orientation: Orientation.VERTICAL }
+              { orientation: Orientation.Vertical }
             );
 
       const sashEventMapper =
-        this.orientation === Orientation.VERTICAL
+        this.orientation === Orientation.Vertical
           ? (e: BaseSashEvent) => ({
               sash,
               start: e.startY,
@@ -328,13 +362,36 @@ export class SplitView extends EventEmitter {
     }
   }
 
+  public removeView(index: number, sizing?: Sizing): View {
+    if (index < 0 || index >= this.viewItems.length) {
+      throw new Error("Index out of bounds");
+    }
+
+    // Remove view
+    const viewItem = this.viewItems.splice(index, 1)[0];
+    const view = viewItem.view;
+
+    // Remove sash
+    if (this.viewItems.length >= 1) {
+      const sashIndex = Math.max(index - 1, 0);
+      const sashItem = this.sashItems.splice(sashIndex, 1)[0];
+      sashItem.sash.dispose();
+    }
+
+    this.relayout();
+
+    if (sizing && sizing.type === "distribute") {
+      this.distributeViewSizes();
+    }
+
+    return view;
+  }
+
   public layout(size: number): void {
     const previousSize = Math.max(this.size, this.contentSize);
     this.size = size;
 
     if (!this.proportions) {
-      const indexes = range(0, this.viewItems.length);
-
       this.resize(this.viewItems.length - 1, size - previousSize, undefined);
     } else {
       for (let i = 0; i < this.viewItems.length; i++) {
@@ -357,13 +414,39 @@ export class SplitView extends EventEmitter {
       return;
     }
 
-    const indexes = range(0, this.viewItems.length).filter((i) => i !== index);
-
     const item = this.viewItems[index];
     size = Math.round(size);
     size = clamp(size, item.minimumSize, Math.min(item.maximumSize, this.size));
 
     item.size = size;
+    this.relayout();
+  }
+
+  public getViewSize(index: number): number {
+    if (index < 0 || index >= this.viewItems.length) {
+      return -1;
+    }
+
+    return this.viewItems[index].size;
+  }
+
+  public distributeViewSizes(): void {
+    const flexibleViewItems: ViewItem[] = [];
+    let flexibleSize = 0;
+
+    for (const item of this.viewItems) {
+      if (item.maximumSize - item.minimumSize > 0) {
+        flexibleViewItems.push(item);
+        flexibleSize += item.size;
+      }
+    }
+
+    const size = Math.floor(flexibleSize / flexibleViewItems.length);
+
+    for (const item of flexibleViewItems) {
+      item.size = clamp(size, item.minimumSize, item.maximumSize);
+    }
+
     this.relayout();
   }
 

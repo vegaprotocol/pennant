@@ -24,7 +24,7 @@ export class YGrid extends Container {
     height: number,
     resolution: number = 1
   ) {
-    const numTicks = width / resolution / 50;
+    const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);
 
@@ -46,7 +46,7 @@ export class YGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0x6c6c6c,
+        color: 0x3d3d3d,
         lineDash: [],
       });
       line.moveTo(0, 0.5);
@@ -64,7 +64,7 @@ export class YGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0x6c6c6c,
+        color: 0x3d3d3d,
         lineDash: [],
       });
       line.moveTo(0, 0.5);

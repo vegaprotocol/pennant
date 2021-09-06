@@ -1,6 +1,8 @@
 import EventEmitter from "eventemitter3";
 import { debounce } from "lodash";
 
+import { Disposable } from "./disposable";
+import { isMacintosh } from "./platform";
 import styles from "./sash.module.css";
 
 export interface SashOptions {
@@ -16,15 +18,15 @@ export interface SashEvent {
 }
 
 export enum Orientation {
-  VERTICAL,
-  HORIZONTAL,
+  Vertical = "VERTICAL",
+  Horizontal = "HORIZONTAL",
 }
 
 export enum SashState {
-  Disabled,
-  Minimum,
-  Maximum,
-  Enabled,
+  Disabled = "DISABLED",
+  Minimum = "MINIMUM",
+  Maximum = "MAXIMUM",
+  Enabled = "ENABLED",
 }
 
 export interface SashLayoutProvider {}
@@ -41,7 +43,7 @@ export interface HorizontalSashLayoutProvider extends SashLayoutProvider {
   getHorizontalSashWidth?(sash: Sash): number;
 }
 
-export class Sash extends EventEmitter {
+export class Sash extends EventEmitter implements Disposable {
   private el: HTMLElement;
   private layoutProvider: SashLayoutProvider;
   private hidden: boolean;
@@ -92,20 +94,23 @@ export class Sash extends EventEmitter {
     this.el.classList.add(styles.sash);
     container.append(this.el);
 
-    // TODO: Remove event listeners
-    this.el.addEventListener("mousedown", this.onPointerStart);
+    if (isMacintosh) {
+      this.el.classList.add(styles.mac);
+    }
+
+    this.el.addEventListener("pointerdown", this.onPointerStart);
     this.el.addEventListener("dblclick", this.onPointerDoublePress);
-    this.el.addEventListener("mouseenter", () => Sash.onMouseEnter(this));
-    this.el.addEventListener("mouseleave", () => Sash.onMouseLeave(this));
+    this.el.addEventListener("mouseenter", this.onMouseEnter);
+    this.el.addEventListener("mouseleave", this.onMouseLeave);
 
     this.size = 4;
 
     this.hidden = false;
     this.layoutProvider = layoutProvider;
 
-    this.orientation = options.orientation ?? Orientation.VERTICAL;
+    this.orientation = options.orientation ?? Orientation.Vertical;
 
-    if (this.orientation === Orientation.HORIZONTAL) {
+    if (this.orientation === Orientation.Horizontal) {
       this.el.classList.add(styles.horizontal);
       this.el.classList.remove(styles.vertical);
     } else {
@@ -116,7 +121,7 @@ export class Sash extends EventEmitter {
     this.layout();
   }
 
-  private onPointerStart = (event: MouseEvent) => {
+  private onPointerStart = (event: PointerEvent) => {
     const startX = event.pageX;
     const startY = event.pageY;
 
@@ -131,7 +136,9 @@ export class Sash extends EventEmitter {
 
     this.emit("start", startEvent);
 
-    const onPointerMove = (event: MouseEvent) => {
+    this.el.setPointerCapture(event.pointerId);
+
+    const onPointerMove = (event: PointerEvent) => {
       event.preventDefault();
 
       const moveEvent: SashEvent = {
@@ -144,41 +151,43 @@ export class Sash extends EventEmitter {
       this.emit("change", moveEvent);
     };
 
-    const onPointerUp = (event: MouseEvent): void => {
+    const onPointerUp = (event: PointerEvent): void => {
       event.preventDefault();
 
       this.el.classList.remove(styles.active);
 
       this.emit("end");
 
-      window.removeEventListener("mousemove", onPointerMove);
-      window.removeEventListener("mouseup", onPointerUp);
+      this.el.releasePointerCapture(event.pointerId);
+
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
     };
 
-    window.addEventListener("mousemove", onPointerMove);
-    window.addEventListener("mouseup", onPointerUp);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
   };
 
-  private onPointerDoublePress = (event: MouseEvent): void => {
+  private onPointerDoublePress = (): void => {
     this.emit("reset");
   };
 
-  private static onMouseEnter(sash: Sash): void {
-    if (sash.el.classList.contains(styles.active)) {
-      sash.hoverDelayer.cancel();
-      sash.el.classList.add(styles.hover);
+  private onMouseEnter = (): void => {
+    if (this.el.classList.contains(styles.active)) {
+      this.hoverDelayer.cancel();
+      this.el.classList.add(styles.hover);
     } else {
-      sash.hoverDelayer(sash.el);
+      this.hoverDelayer(this.el);
     }
-  }
+  };
 
-  private static onMouseLeave(sash: Sash): void {
-    sash.hoverDelayer.cancel();
-    sash.el.classList.remove(styles.hover);
-  }
+  private onMouseLeave = (): void => {
+    this.hoverDelayer.cancel();
+    this.el.classList.remove(styles.hover);
+  };
 
   public layout(): void {
-    if (this.orientation === Orientation.VERTICAL) {
+    if (this.orientation === Orientation.Vertical) {
       const verticalProvider = <VerticalSashLayoutProvider>this.layoutProvider;
       this.el.style.left =
         verticalProvider.getVerticalSashLeft(this) - this.size / 2 + "px";
@@ -211,11 +220,24 @@ export class Sash extends EventEmitter {
     }
   }
 
-  public isHidden(): boolean {
-    return this.hidden;
+  show(): void {
+    this.hidden = false;
+    this.el.style.removeProperty("display");
+    this.el.setAttribute("aria-hidden", "false");
+  }
+
+  hide(): void {
+    this.hidden = true;
+    this.el.style.display = "none";
+    this.el.setAttribute("aria-hidden", "true");
   }
 
   public dispose(): void {
+    this.el.removeEventListener("pointerdown", this.onPointerStart);
+    this.el.removeEventListener("dblclick", this.onPointerDoublePress);
+    this.el.removeEventListener("mouseenter", this.onMouseEnter);
+    this.el.removeEventListener("mouseleave", () => this.onMouseLeave);
+
     this.el.remove();
   }
 }
