@@ -157,7 +157,6 @@ export class PaneView extends EventEmitter implements Disposable {
         }
       )
       .on("zoomend", () => {
-        console.log("zoomend");
         this.emit("zoomend");
       });
   }
@@ -178,7 +177,7 @@ export class PaneView extends EventEmitter implements Disposable {
   }
 
   public destroy() {
-    this.ui.destroy();
+    this.ui.dispose();
   }
 
   private update() {

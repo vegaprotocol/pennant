@@ -15,6 +15,7 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { Disposable } from "../banderole/disposable";
 import { Rect } from "../depth-chart/display-objects";
 import { YAxis } from "./display-objects/y-axis";
 
@@ -32,7 +33,7 @@ function pointer(event: any, resolution: number = 1): [number, number] {
 /**
  * Reponsible for drawing axes and handling interactivity for depth chart
  */
-export class Ui extends EventEmitter {
+export class Ui extends EventEmitter implements Disposable {
   public stage: Container = new Container();
   public renderer: Renderer;
 
@@ -334,7 +335,7 @@ export class Ui extends EventEmitter {
 
   private onPointerOut = (event: InteractionEvent) => {};
 
-  public destroy() {
+  public dispose() {
     this.stage.destroy();
 
     this.renderer.destroy();

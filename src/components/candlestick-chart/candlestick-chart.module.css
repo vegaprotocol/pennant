@@ -1,14 +1,20 @@
 .canvasContainer {
+  background-color: #0f0f0f;
   cursor: crosshair;
   height: 100%;
-  position: relative;
+  position: absolute;
+  top: 0;
   width: 100%;
-  background-color: #0f0f0f;
 }
 
 .canvas {
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.container {
+  background-color: #0f0f0f;
+  height: 100%;
 }

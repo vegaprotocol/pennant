@@ -6,17 +6,22 @@ import EventEmitter from "eventemitter3";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { ZoomScale, ZoomTransform } from "../../helpers/zoom/transform";
 import { Zoom } from "../../helpers/zoom/zoom";
+import { Disposable } from "../banderole/disposable";
+import styles from "./candlestick-chart.module.css";
 import { Contents } from "./contents";
 import { Ui } from "./ui";
 
-export const volumeFormatter = new Intl.NumberFormat("en-gb", {
-  maximumFractionDigits: 0,
-  minimumFractionDigits: 0,
-});
+export interface PaneOptions {
+  closable?: boolean;
+}
 
-export class Chart extends EventEmitter {
+export class Pane extends EventEmitter implements Disposable {
   private contents: Contents;
   private ui: Ui;
+
+  private resizeObserver: ResizeObserver;
+
+  private closeable: boolean;
 
   private timeScale: ScaleLinear<number, number> = scaleLinear<
     number,
@@ -28,42 +33,33 @@ export class Chart extends EventEmitter {
     number
   >().domain([0, 100]);
 
-  private timeZoom: Zoom = new Zoom();
+  private _timeZoom: Zoom = new Zoom();
   private priceZoom: Zoom = new Zoom();
-
-  private isPinned: boolean = true;
-  private isFreePan: boolean = false;
 
   private lastZoomTransform: ZoomTransform = zoomIdentity;
 
-  constructor(options: {
-    chartView: HTMLCanvasElement;
-    axisView: HTMLCanvasElement;
-    resolution: number;
-    width: number;
-    height: number;
-    priceFormat: (price: number) => string;
-  }) {
+  constructor(container: HTMLElement, options: PaneOptions = {}) {
     super();
 
-    this.timeZoom.scaleExtent = [1, 10];
-    this.priceZoom.scaleExtent = [1, 10];
+    const contents = document.createElement("canvas");
+    contents.classList.add(styles.canvas);
 
     this.contents = new Contents({
-      view: options.chartView,
-      resolution: options.resolution,
-      width: options.width,
-      height: options.height,
+      view: contents,
+      resolution: 1,
+      width: 300,
+      height: 300,
     });
+
+    const ui = document.createElement("canvas");
+    ui.classList.add(styles.canvas);
 
     this.ui = new Ui({
-      view: options.axisView,
-      resolution: options.resolution,
-      width: options.width,
-      height: options.height,
-    });
-
-    this.ui
+      view: ui,
+      resolution: 1,
+      width: 300,
+      height: 300,
+    })
       .on("zoomstart", () => {
         this.emit("zoomstart");
       })
@@ -78,7 +74,7 @@ export class Chart extends EventEmitter {
         }) => {
           const k = transform.k / this.lastZoomTransform.k;
 
-          if (point[0] > this.timeScale.range()[1] - Y_AXIS_WIDTH) {
+          if (false && point[0] > this.timeScale.range()[1] - Y_AXIS_WIDTH) {
             if (k === 1) {
               // Pure translation
 
@@ -104,27 +100,77 @@ export class Chart extends EventEmitter {
             if (k === 1) {
               // Pure translation
 
-              this.timeZoom.translateBy(
+              this._timeZoom.translateBy(
                 (transform.x - this.lastZoomTransform.x) /
-                  this.timeZoom.__zoom.k,
+                  this._timeZoom.__zoom.k,
                 0
               );
             } else {
-              this.timeZoom.scaleBy(k, point);
+              this._timeZoom.scaleBy(k, point);
             }
           }
 
           this.lastZoomTransform = transform;
 
-          this.update();
-          this.render();
-          this.emit("zoom");
+          //this.update();
+          //this.render();
+          this.emit("zoom", this._timeZoom.__zoom);
         }
       )
       .on("zoomend", () => {
-        console.log("zoomend");
         this.emit("zoomend");
       });
+
+    this.resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.contentBoxSize) {
+          // Firefox implements `contentBoxSize` as a single content rect, rather than an array
+          const contentBoxSize = Array.isArray(entry.contentBoxSize)
+            ? entry.contentBoxSize[0]
+            : entry.contentBoxSize;
+
+          this.resize(contentBoxSize.inlineSize, contentBoxSize.blockSize);
+          this.render();
+        }
+      }
+    });
+
+    this.resizeObserver.observe(container);
+
+    this.ui.render();
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add(styles.canvasContainer);
+
+    wrapper.appendChild(contents);
+    wrapper.appendChild(ui);
+
+    container.prepend(wrapper);
+
+    this.closeable = options?.closable ?? false;
+  }
+
+  get height(): number {
+    return this.contents.renderer.view.height;
+  }
+
+  get timeZoom() {
+    return this._timeZoom;
+  }
+
+  set timeZoom(zoom) {
+    this._timeZoom = zoom;
+    this.update();
+    this.render();
+  }
+
+  get width(): number {
+    return this.contents.renderer.view.width;
+  }
+
+  public dispose() {
+    this.contents.dispose();
+    this.ui.dispose();
   }
 
   public render() {
@@ -142,11 +188,7 @@ export class Chart extends EventEmitter {
     this.update();
   }
 
-  public destroy() {
-    this.ui.destroy();
-  }
-
-  private update() {
+  public update() {
     const resolution = this.ui.renderer.resolution;
 
     const rescaledTimeScale = this.timeZoom.__zoom.rescaleX(this.timeScale);
@@ -166,12 +208,57 @@ export class Chart extends EventEmitter {
       this.ui.renderer.height
     );
   }
+}
 
-  get height(): number {
-    return this.contents.renderer.view.height;
+export class PaneItem {
+  public pane: Pane;
+
+  constructor(pane: Pane) {
+    this.pane = pane;
+  }
+}
+
+export class Chart extends EventEmitter {
+  private timeScale: ScaleLinear<number, number> = scaleLinear<
+    number,
+    number
+  >().domain([0, 100]);
+
+  private timeZoom: Zoom = new Zoom();
+
+  private lastZoomTransform: ZoomTransform = zoomIdentity;
+
+  private paneItems: PaneItem[] = [];
+
+  constructor() {
+    super();
+
+    this.timeZoom.scaleExtent = [1, 10];
   }
 
-  get width(): number {
-    return this.contents.renderer.view.width;
+  public addPane(pane: Pane) {
+    pane
+      .on("zoomstart", (_event) => {
+        console.log("zoomstart");
+      })
+      .on("zoom", (transform) => {
+        this.timeZoom.__zoom = transform;
+
+        this.paneItems.forEach((paneItem) => {
+          paneItem.pane.timeZoom = this.timeZoom;
+        });
+      })
+      .on("zoomend", (_event) => {
+        console.log("zoomend");
+      });
+
+    pane.update();
+    pane.render();
+
+    this.paneItems.push(new PaneItem(pane));
+  }
+
+  public removePane(index: number): void {
+    this.paneItems.splice(index, 1);
   }
 }

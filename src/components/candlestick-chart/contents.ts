@@ -4,6 +4,7 @@ import { times } from "lodash";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
+import { Disposable } from "../banderole/disposable";
 import { Rect } from "./display-objects/rect";
 import { XGrid } from "./display-objects/x-grid";
 import { YGrid } from "./display-objects/y-grid";
@@ -11,7 +12,7 @@ import { YGrid } from "./display-objects/y-grid";
 /**
  * Responsible for drawing area curves for depth chart.
  */
-export class Contents {
+export class Contents implements Disposable {
   public stage: Container = new Container();
   public renderer: Renderer;
 
@@ -60,4 +61,6 @@ export class Contents {
       priceScale(60) - priceScale(0)
     );
   }
+
+  public dispose() {}
 }

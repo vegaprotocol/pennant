@@ -12,114 +12,103 @@ import React, {
 import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { string2hex } from "../../renderer/utils";
-import { Pane } from "../pane";
+import { Study } from "../../types";
+import chartStories from "../chart/chart.stories";
+import { Pane as PaneView } from "../pane";
 import { CloseButton } from "../pane-view/close-button";
 import styles from "./candlestick-chart.module.css";
-import { Chart } from "./chart";
+import { Chart, Pane } from "./chart";
 
-const AXIS_WIDTH = 20;
-
-/**
- * Creates a price formatter
- * @param decimalPlaces Number of decimal places to display
- */
-export const priceFormatter = (decimalPlaces: number): Intl.NumberFormat =>
-  new Intl.NumberFormat("en-gb", {
-    maximumFractionDigits: decimalPlaces,
-    minimumFractionDigits: decimalPlaces,
-  });
-
-function defaultPriceFormat(price: number) {
-  return priceFormatter(2).format(price);
+export interface Options {
+  studies: Study[];
 }
 
-/**
- * Standard font size in CSS pixels
- */
-export const FONT_SIZE = 12;
-
-export type CandlestickChartProps = {};
+export type CandlestickChartProps = {
+  options?: Options;
+  onOptionsChanged?: (options: Options) => void;
+};
 
 export interface CandlestickChartHandle {}
 
 export const CandlestickChart = forwardRef(
-  ({}: CandlestickChartProps, ref: React.Ref<CandlestickChartHandle>) => {
-    const contentsRef = useRef<HTMLCanvasElement>(null!);
-    const uiRef = useRef<HTMLCanvasElement>(null!);
-
+  (
+    { options = { studies: [] }, onOptionsChanged }: CandlestickChartProps,
+    ref: React.Ref<CandlestickChartHandle>
+  ) => {
     const chartRef = useRef<Chart>(null!);
+    const paneRef = useRef<Record<number, HTMLElement>>({});
 
-    const [panes, setPanes] = useState([0, 1]);
+    const previousStudies = useRef<Study[]>([]);
 
-    const {
-      ref: resizeOberverRef,
-      width = 300,
-      height = 300,
-      devicePixelContentBoxSizeInlineSize,
-      devicePixelContentBoxSizeBlockSize,
-    } = useThrottledResizeObserver<HTMLDivElement>(50);
+    const studies = options.studies;
 
-    /**
-     * Create a new instance of the depth chart
-     */
     useEffect(() => {
-      chartRef.current = new Chart({
-        chartView: contentsRef.current,
-        axisView: uiRef.current,
-        resolution: window.devicePixelRatio,
-        width: 300,
-        height: 300,
-        priceFormat: defaultPriceFormat,
-      });
-
-      return () => {
-        chartRef.current.destroy();
-      };
+      chartRef.current = new Chart();
     }, []);
 
-    // Update chart when dimensions or data change
     useEffect(() => {
-      const devicePixelRatio = window.devicePixelRatio;
-
-      chartRef.current.resize(
-        (devicePixelContentBoxSizeInlineSize ?? width * devicePixelRatio) /
-          window.devicePixelRatio,
-        (devicePixelContentBoxSizeBlockSize ?? height * devicePixelRatio) /
-          window.devicePixelRatio
+      const enter = studies.map(
+        (study) => !previousStudies.current.includes(study)
       );
 
-      chartRef.current.render();
-    }, [
-      height,
-      width,
-      devicePixelContentBoxSizeInlineSize,
-      devicePixelContentBoxSizeBlockSize,
-    ]);
+      const exit = previousStudies.current.map(
+        (study) => !studies.includes(study)
+      );
+
+      console.log(enter, exit, paneRef.current);
+
+      for (let i = exit.length - 1; i >= 0; i--) {
+        if (exit[i]) {
+          console.log("removing " + i);
+          chartRef.current?.removePane(i);
+        }
+      }
+
+      enter.forEach((flag, index) => {
+        if (flag) {
+          if (paneRef.current[index]) {
+            chartRef.current?.addPane(
+              new Pane(paneRef.current[index], { closable: true })
+            );
+          }
+        }
+      });
+
+      previousStudies.current = studies;
+    }, [studies]);
+
+    const handleClosePane = (index: number) => {
+      const newStudies = [...options.studies];
+      newStudies.splice(index, 1);
+
+      onOptionsChanged?.({
+        ...options,
+        studies: newStudies,
+      });
+    };
 
     return (
-      <Banderole vertical>
-        <div style={{ backgroundColor: "black", height: "100%" }}>
-          <div ref={resizeOberverRef} className={styles.canvasContainer}>
-            <canvas ref={contentsRef} className={styles.canvas} />
-            <canvas ref={uiRef} className={styles.canvas} />
-          </div>
-        </div>
-        {panes.map((pane, index) => (
-          <Pane
-            key={pane}
-            onClose={() => {
-              setPanes((panes) => {
-                const newPanes = [...panes];
-                newPanes.splice(index, 1);
-
-                return newPanes;
-              });
-            }}
-          >
-            <div style={{ color: "white" }}>Important information</div>
-          </Pane>
-        ))}
-      </Banderole>
+      <div className={styles.container}>
+        <Banderole vertical>
+          {studies.map((study, studyIndex) => (
+            <PaneView
+              key={studyIndex}
+              ref={(el: HTMLElement | null) => {
+                if (el) {
+                  paneRef.current[studyIndex] = el;
+                } else {
+                  delete paneRef.current[studyIndex];
+                }
+              }}
+              onClose={() => {
+                handleClosePane(studyIndex);
+              }}
+            >
+              <div style={{ color: "white", padding: "8px" }}>{study}</div>
+            </PaneView>
+          ))}
+        </Banderole>
+      </div>
     );
   }
 );

@@ -1,10 +1,12 @@
 import { Meta, Story } from "@storybook/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { Study } from "../../types";
 
 import {
   CandlestickChart,
   CandlestickChartHandle,
   CandlestickChartProps,
+  Options,
 } from "./candlestick-chart";
 
 export default {
@@ -12,8 +14,13 @@ export default {
   Component: CandlestickChart,
 } as Meta;
 
-const Template: Story<CandlestickChartProps> = (args) => {
+const Template: Story<CandlestickChartProps & { initialOptions: Options }> = ({
+  initialOptions,
+  ...args
+}) => {
   const ref = useRef<CandlestickChartHandle>(null!);
+
+  const [options, setOptions] = useState(initialOptions);
 
   return (
     <div
@@ -24,10 +31,17 @@ const Template: Story<CandlestickChartProps> = (args) => {
         overflow: "scroll",
       }}
     >
-      <CandlestickChart ref={ref} {...args} />
+      <CandlestickChart
+        ref={ref}
+        options={options}
+        onOptionsChanged={setOptions}
+        {...args}
+      />
     </div>
   );
 };
 
 export const Basic = Template.bind({});
-Basic.args = {};
+Basic.args = {
+  initialOptions: { studies: [Study.MACD, Study.ELDAR_RAY, Study.FORCE_INDEX] },
+};

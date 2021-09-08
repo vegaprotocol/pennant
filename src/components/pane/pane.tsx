@@ -16,7 +16,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(
     const containerRef = useRef<HTMLDivElement>(null!);
 
     useEffect(() => {
-      const pane = new PaneView(containerRef.current, {
+      /*    const pane = new PaneView(containerRef.current, {
         resolution: 2,
         width: 300,
         height: 300,
@@ -25,16 +25,20 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(
 
       () => {
         pane.dispose();
-      };
+      }; */
     }, []);
 
     return (
-      <div ref={ref} className={styles.paneWrapper}>
+      <div
+        ref={ref}
+        className={styles.paneWrapper}
+        onMouseOver={() => setShowControls(true)}
+        onMouseOut={() => setShowControls(false)}
+      >
         <div
           ref={containerRef}
           className={styles.paneWrapper}
-          onMouseOver={() => setShowControls(true)}
-          onMouseOut={() => setShowControls(false)}
+          style={{ pointerEvents: "none" }}
         >
           <div className={styles.childrenWrapper}>{children}</div>
           <div

@@ -9,6 +9,7 @@
   transition: opacity var(--pennant-transition-slow),
     visibility var(--pennant-transition-slow);
   cursor: pointer;
+  pointer-events: auto;
 }
 
 .hover {
@@ -22,4 +23,5 @@
 
 .paneWrapper {
   height: 100%;
+  position: relative;
 }
