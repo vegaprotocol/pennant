@@ -19,8 +19,12 @@ import { CloseButton } from "../pane-view/close-button";
 import styles from "./candlestick-chart.module.css";
 import { Chart, Pane } from "./chart";
 
+export interface StudyOptions {
+  id: string;
+  study: Study;
+}
 export interface Options {
-  studies: Study[];
+  studies: StudyOptions[];
 }
 
 export type CandlestickChartProps = {
@@ -36,78 +40,110 @@ export const CandlestickChart = forwardRef(
     ref: React.Ref<CandlestickChartHandle>
   ) => {
     const chartRef = useRef<Chart>(null!);
-    const paneRef = useRef<Record<number, HTMLElement>>({});
+    const mainRef = useRef<HTMLElement | null>(null);
+    const paneRef = useRef<Record<string, HTMLElement>>({});
+    const axisRef = useRef<HTMLElement | null>(null);
 
-    const previousStudies = useRef<Study[]>([]);
+    const previousStudyIds = useRef<string[]>([]);
 
     const studies = options.studies;
 
     useEffect(() => {
       chartRef.current = new Chart();
+
+      if (mainRef.current) {
+        chartRef.current.addPane(
+          new Pane(mainRef.current, { closable: false })
+        );
+      }
+
+      if (axisRef.current) {
+        chartRef.current.addPane(
+          new Pane(axisRef.current, { closable: false })
+        );
+      }
     }, []);
 
     useEffect(() => {
-      const enter = studies.map(
-        (study) => !previousStudies.current.includes(study)
-      );
+      const ids = studies.map((study) => study.id);
 
-      const exit = previousStudies.current.map(
-        (study) => !studies.includes(study)
-      );
-
-      console.log(enter, exit, paneRef.current);
+      const enter = ids.map((id) => !previousStudyIds.current.includes(id));
+      const exit = previousStudyIds.current.map((id) => !ids.includes(id));
 
       for (let i = exit.length - 1; i >= 0; i--) {
         if (exit[i]) {
-          console.log("removing " + i);
-          chartRef.current?.removePane(i);
+          chartRef.current?.removePane(i + 1); // FIXME: Main pane gets in way
         }
       }
 
       enter.forEach((flag, index) => {
         if (flag) {
-          if (paneRef.current[index]) {
+          if (paneRef.current[ids[index]]) {
             chartRef.current?.addPane(
-              new Pane(paneRef.current[index], { closable: true })
+              new Pane(paneRef.current[ids[index]], { closable: true })
             );
           }
         }
       });
 
-      previousStudies.current = studies;
+      previousStudyIds.current = ids;
     }, [studies]);
 
-    const handleClosePane = (index: number) => {
-      const newStudies = [...options.studies];
-      newStudies.splice(index, 1);
+    const handleClosePane = (id: string) => {
+      const index = studies.findIndex((study) => study.id === id);
 
-      onOptionsChanged?.({
-        ...options,
-        studies: newStudies,
-      });
+      if (index !== -1) {
+        const newStudies = [...options.studies];
+        newStudies.splice(index, 1);
+
+        onOptionsChanged?.({
+          ...options,
+          studies: newStudies,
+        });
+      }
     };
 
     return (
       <div className={styles.container}>
-        <Banderole vertical>
-          {studies.map((study, studyIndex) => (
+        <div style={{ flex: "1 1 0" }}>
+          <Banderole vertical>
             <PaneView
-              key={studyIndex}
               ref={(el: HTMLElement | null) => {
-                if (el) {
-                  paneRef.current[studyIndex] = el;
-                } else {
-                  delete paneRef.current[studyIndex];
-                }
+                mainRef.current = el;
               }}
-              onClose={() => {
-                handleClosePane(studyIndex);
-              }}
+              closable={false}
             >
-              <div style={{ color: "white", padding: "8px" }}>{study}</div>
+              <div style={{ color: "white", padding: "8px" }}>Main</div>
             </PaneView>
-          ))}
-        </Banderole>
+            {studies.map((study) => (
+              <PaneView
+                key={study.id}
+                ref={(el: HTMLElement | null) => {
+                  if (el) {
+                    paneRef.current[study.id] = el;
+                  } else {
+                    delete paneRef.current[study.id];
+                  }
+                }}
+                onClose={() => {
+                  handleClosePane(study.id);
+                }}
+              >
+                <div style={{ color: "white", padding: "8px" }}>{study.id}</div>
+              </PaneView>
+            ))}
+          </Banderole>
+        </div>
+        <div style={{ flex: "0 0 60px", border }}>
+          <PaneView
+            ref={(el: HTMLElement | null) => {
+              axisRef.current = el;
+            }}
+            closable={false}
+          >
+            <div style={{ color: "white", padding: "8px" }}>Axis</div>
+          </PaneView>
+        </div>
       </div>
     );
   }

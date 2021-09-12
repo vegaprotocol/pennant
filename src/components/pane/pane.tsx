@@ -7,11 +7,12 @@ import { PaneView } from "./pane-view";
 
 export type PaneProps = {
   children?: React.ReactNode;
-  onClose: () => void;
+  closable?: boolean;
+  onClose?: () => void;
 };
 
 export const Pane = forwardRef<HTMLDivElement, PaneProps>(
-  ({ children, onClose }, ref) => {
+  ({ children, closable = true, onClose }, ref) => {
     const [showControls, setShowControls] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null!);
 
@@ -41,14 +42,16 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(
           style={{ pointerEvents: "none" }}
         >
           <div className={styles.childrenWrapper}>{children}</div>
-          <div
-            className={classNames(styles.closeButtonWrapper, {
-              [styles.hover]: showControls,
-            })}
-            onClick={onClose}
-          >
-            <CloseButton size={16} />
-          </div>
+          {closable && (
+            <div
+              className={classNames(styles.closeButtonWrapper, {
+                [styles.hover]: showControls,
+              })}
+              onClick={onClose}
+            >
+              <CloseButton size={16} />
+            </div>
+          )}
         </div>
       </div>
     );

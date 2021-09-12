@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { useRef, useState } from "react";
-import { Study } from "../../types";
 
+import { Study } from "../../types";
 import {
   CandlestickChart,
   CandlestickChartHandle,
@@ -43,5 +43,12 @@ const Template: Story<CandlestickChartProps & { initialOptions: Options }> = ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  initialOptions: { studies: [Study.MACD, Study.ELDAR_RAY, Study.FORCE_INDEX] },
+  initialOptions: {
+    studies: [
+      { id: "4", study: Study.MACD },
+      { id: "1", study: Study.MACD },
+      { id: "2", study: Study.ELDAR_RAY },
+      { id: "3", study: Study.FORCE_INDEX },
+    ],
+  },
 };

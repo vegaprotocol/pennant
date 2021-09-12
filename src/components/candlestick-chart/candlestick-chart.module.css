@@ -17,4 +17,6 @@
 .container {
   background-color: #0f0f0f;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }

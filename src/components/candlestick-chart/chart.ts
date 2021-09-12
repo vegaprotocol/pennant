@@ -74,7 +74,7 @@ export class Pane extends EventEmitter implements Disposable {
         }) => {
           const k = transform.k / this.lastZoomTransform.k;
 
-          if (false && point[0] > this.timeScale.range()[1] - Y_AXIS_WIDTH) {
+          if (point[0] > this.timeScale.range()[1] - Y_AXIS_WIDTH) {
             if (k === 1) {
               // Pure translation
 
@@ -225,22 +225,17 @@ export class Chart extends EventEmitter {
   >().domain([0, 100]);
 
   private timeZoom: Zoom = new Zoom();
-
-  private lastZoomTransform: ZoomTransform = zoomIdentity;
-
   private paneItems: PaneItem[] = [];
 
   constructor() {
     super();
 
-    this.timeZoom.scaleExtent = [1, 10];
+    this.timeZoom.scaleExtent = [0.1, 10];
   }
 
   public addPane(pane: Pane) {
     pane
-      .on("zoomstart", (_event) => {
-        console.log("zoomstart");
-      })
+      .on("zoomstart", (_event) => {})
       .on("zoom", (transform) => {
         this.timeZoom.__zoom = transform;
 
@@ -248,9 +243,7 @@ export class Chart extends EventEmitter {
           paneItem.pane.timeZoom = this.timeZoom;
         });
       })
-      .on("zoomend", (_event) => {
-        console.log("zoomend");
-      });
+      .on("zoomend", (_event) => {});
 
     pane.update();
     pane.render();

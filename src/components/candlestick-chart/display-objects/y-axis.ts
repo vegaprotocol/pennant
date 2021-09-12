@@ -3,8 +3,6 @@ import { ScaleLinear } from "d3-scale";
 import { Y_AXIS_WIDTH } from "../../../constants";
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
-import { Text } from "../../../renderer/text";
-import { FONT_SIZE } from "../candlestick-chart";
 import { Rect } from "./rect";
 
 /**
@@ -21,7 +19,7 @@ export class YAxis extends Container {
     super();
 
     this.rectangle.interactive = true;
-    this.rectangle.cursor = "grab";
+    this.rectangle.cursor = "ns-resize";
 
     this.addChild(this.rectangle);
   }

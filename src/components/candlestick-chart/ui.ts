@@ -77,7 +77,7 @@ export class Ui extends EventEmitter implements Disposable {
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
 
     this.yAxis.interactive = true;
-    this.yAxis.cursor = "grab";
+    this.yAxis.cursor = "ns-resize";
 
     this.stage.addChild(this.yAxis);
 
