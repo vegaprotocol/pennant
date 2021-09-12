@@ -27,6 +27,9 @@ function pointer(event: any, resolution: number = 1): [number, number] {
  * Reponsible for drawing axes and handling interactivity for panes in a candlestick chart
  */
 export class Ui extends EventEmitter implements Disposable {
+  /**
+   * The root display container that's rendered.
+   */
   public stage: Container = new Container();
   public renderer: Renderer;
   public yAxis: VerticalAxis = new VerticalAxis();
@@ -39,8 +42,6 @@ export class Ui extends EventEmitter implements Disposable {
 
   public zoom: Zoom = new Zoom();
   public inertia: Inertia = new Inertia();
-
-  private lastEvent: InteractionEvent | null = null;
 
   // TODO: Shouldn't need this but was seeing issues where a closed over variable was being mutated
   private firstPoint: [number, number] | null = null;
@@ -65,12 +66,10 @@ export class Ui extends EventEmitter implements Disposable {
 
     const resolution = this.renderer.resolution;
 
+    this.yAxis.interactive = true;
+
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
-
-    this.yAxis.interactive = true;
-    this.yAxis.cursor = "ns-resize";
-
     this.stage.addChild(this.yAxis);
 
     this.stage
@@ -246,6 +245,8 @@ export class Ui extends EventEmitter implements Disposable {
     const resolution = this.renderer.resolution;
     const p = pointer(event.data?.originalEvent, resolution);
 
+    this.inertia.removeAllListeners();
+
     this.firstPoint = p ?? [0, 0];
 
     let previousT = 0;
@@ -256,13 +257,13 @@ export class Ui extends EventEmitter implements Disposable {
 
     const handleRender = (t: number) => {
       this.zoom.translateBy(
-        ((t - previousT) * this.inertia.velocity[0]) / 30,
-        ((t - previousT) * this.inertia.velocity[1]) / 30
+        (t - previousT) * this.inertia.velocity[0],
+        (t - previousT) * this.inertia.velocity[1]
       );
 
-      this.gesture.zoom(this.zoom.__zoom, this.firstPoint!);
-
       previousT = t;
+
+      this.gesture.zoom(this.zoom.__zoom, this.firstPoint!);
     };
 
     this.inertia.on("render", handleRender);

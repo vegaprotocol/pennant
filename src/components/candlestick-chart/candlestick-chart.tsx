@@ -134,11 +134,7 @@ export const CandlestickChart = forwardRef(
               axisRef.current = el;
             }}
             closable={false}
-          >
-            <div style={{ color: "white", padding: "8px", userSelect: "none" }}>
-              Axis
-            </div>
-          </PaneView>
+          ></PaneView>
         </div>
       </div>
     );

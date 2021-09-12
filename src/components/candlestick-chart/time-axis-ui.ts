@@ -245,6 +245,8 @@ export class TimeAxisUi extends EventEmitter implements Disposable {
     const resolution = this.renderer.resolution;
     const p = pointer(event.data?.originalEvent, resolution);
 
+    this.inertia.removeAllListeners();
+
     this.firstPoint = p ?? [0, 0];
 
     let previousT = 0;

@@ -38,13 +38,6 @@ export class InteractionManager extends EventEmitter {
   public renderer: AbstractRenderer;
   public resolution: number;
   public search = new TreeSearch();
-  public cursorStyles: {
-    [key: string]: string | ((mode: string) => void) | CSSStyleDeclaration;
-  } = {
-    default: "inherit",
-    grab: "grab",
-    pointer: "pointer",
-  };
   public currentCursorMode: string | null = null;
 
   public eventData: InteractionEvent;
@@ -151,52 +144,16 @@ export class InteractionManager extends EventEmitter {
   }
 
   public setCursorMode(mode: string | null): void {
-    mode = mode || "default";
-    let applyStyles = true;
+    mode = mode || "inherit";
 
-    if (
-      self.OffscreenCanvas &&
-      this.interactionDOMElement instanceof OffscreenCanvas
-    ) {
-      applyStyles = false;
-    }
-    // if the mode didn't actually change, bail early
+    // If the mode didn't actually change, bail early
     if (this.currentCursorMode === mode) {
       return;
     }
-    this.currentCursorMode = mode;
-    const style = this.cursorStyles[mode];
 
-    // only do things if there is a cursor style for it
-    if (style) {
-      switch (typeof style) {
-        case "string":
-          // string styles are handled as cursor CSS
-          if (applyStyles && this.interactionDOMElement) {
-            this.interactionDOMElement.style.cursor = style;
-          }
-          break;
-        case "function":
-          // functions are just called, and passed the cursor mode
-          style(mode);
-          break;
-        case "object":
-          // if it is an object, assume that it is a dictionary of CSS styles,
-          // apply it to the interactionDOMElement
-          if (applyStyles) {
-            Object.assign(this.interactionDOMElement!.style, style);
-          }
-          break;
-      }
-    } else if (
-      applyStyles &&
-      typeof mode === "string" &&
-      !Object.prototype.hasOwnProperty.call(this.cursorStyles, mode)
-    ) {
-      // if it mode is a string (not a Symbol) and cursorStyles doesn't have any entry
-      // for the mode, then assume that the dev wants it to be CSS for the cursor.
-      this.interactionDOMElement!.style.cursor = mode;
-    }
+    this.currentCursorMode = mode;
+
+    this.interactionDOMElement!.style.cursor = mode;
   }
 
   public destroy(): void {
@@ -212,7 +169,7 @@ export class InteractionManager extends EventEmitter {
 
     const style = this.interactionDOMElement.style as CrossCSSStyleDeclaration;
 
-    if (self.navigator.msPointerEnabled) {
+    if ((self.navigator as any).msPointerEnabled) {
       style.msContentZooming = "none";
       style.msTouchAction = "none";
     } else if (this.supportsPointerEvents) {
@@ -330,6 +287,9 @@ export class InteractionManager extends EventEmitter {
     this.delayedEvents.push({ displayObject, eventString, eventData });
   }
 
+  /**
+   * Is called when the pointer moves across the renderer element
+   */
   private onPointerMove = (originalEvent: InteractivePointerEvent): void => {
     const events = this.normalizeToPointerData(originalEvent);
 
@@ -438,6 +398,9 @@ export class InteractionManager extends EventEmitter {
     }
   };
 
+  /**
+   * Is called when the pointer button is pressed down on the renderer element
+   */
   private onPointerDown = (originalEvent: InteractivePointerEvent): void => {
     const events = this.normalizeToPointerData(originalEvent);
 
@@ -569,6 +532,9 @@ export class InteractionManager extends EventEmitter {
     }
   };
 
+  /**
+   * Is called when the pointer button is released on the renderer element
+   */
   private onPointerUp = (event: InteractivePointerEvent): void => {
     this.onPointerComplete(event, false, this.processPointerUp);
   };

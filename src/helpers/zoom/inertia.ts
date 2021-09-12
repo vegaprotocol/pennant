@@ -29,6 +29,8 @@ export class Inertia extends EventEmitter {
       const deltaPos = position[i] - this.position[i];
       const deltaTime = time - this.time;
 
+      return (1 - decay) * d + (decay * deltaPos) / (deltaTime / 1000);
+
       return (1000 * (1 - decay) * deltaPos) / deltaTime + d * decay;
     }) as [number, number];
 
