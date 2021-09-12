@@ -3,25 +3,31 @@ import { ScaleLinear } from "d3-scale";
 import { Y_AXIS_WIDTH } from "../../../constants";
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
+import { Text } from "../../../renderer/text";
+import { FONT_SIZE } from "../../depth-chart";
 import { Rect } from "./rect";
+import { VerticalLine } from "./vertical-line";
 
 /**
  * Draws vertical grid lines
  */
-export class YAxis extends Container {
+export class VerticalAxis extends Container {
   /**
    * Cache ticks
    */
-  private nodeByKeyValue = new Map<string, Graphics>();
+  private nodeByKeyValue = new Map<string, Text>();
   private rectangle: Rect = new Rect(0x000000, 0.5);
+  private border: VerticalLine = new VerticalLine(1, 0xaaaaaa);
+  private tooltip: Graphics = new Graphics();
 
   constructor() {
     super();
 
     this.rectangle.interactive = true;
     this.rectangle.cursor = "ns-resize";
-
     this.addChild(this.rectangle);
+    this.addChild(this.border);
+    this.addChild(this.tooltip);
   }
 
   public update(
@@ -47,29 +53,27 @@ export class YAxis extends Container {
     );
 
     for (const node of enter) {
-      const line = new Graphics();
-
-      line.clear();
-      line.lineStyle({
-        width: 10,
-        color: 0x3d3d3d,
-        lineDash: [],
+      const text = new Text(tickFormat(node), {
+        fill: 0xffffff,
+        fontFamily: "monospace",
+        fontSize: FONT_SIZE,
       });
-      line.moveTo(-Y_AXIS_WIDTH, 0.5);
-      line.lineTo(0, 0.5);
-      line.endFill();
-      line.x = width;
-      line.y = scale(node);
 
-      this.nodeByKeyValue.set(tickFormat(node), line);
-      this.addChild(line);
+      text.x = width - Y_AXIS_WIDTH + resolution * 7;
+      text.y = scale(node);
+      text.anchor.set(0, 0.5);
+
+      text.updateText(); // TODO: Should not need to call this
+
+      this.nodeByKeyValue.set(tickFormat(node), text);
+      this.addChild(text);
     }
 
     for (const node of update) {
-      const line = this.nodeByKeyValue.get(tickFormat(node))!;
+      const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
-      line.x = width;
-      line.y = Math.round(scale(node));
+      text.x = width - Y_AXIS_WIDTH + resolution * 7;
+      text.y = scale(node);
     }
 
     for (const node of exit) {
@@ -80,5 +84,6 @@ export class YAxis extends Container {
     }
 
     this.rectangle.update(width - Y_AXIS_WIDTH, 0, Y_AXIS_WIDTH, height);
+    this.border.update(width - Y_AXIS_WIDTH, height, resolution);
   }
 }

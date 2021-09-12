@@ -10,7 +10,7 @@ import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { VerticalAxis } from "./display-objects/y-axis";
+import { HorizontalAxis } from "./display-objects/x-axis";
 import { Disposable } from "./disposable";
 
 function pointer(event: any, resolution: number = 1): [number, number] {
@@ -24,12 +24,12 @@ function pointer(event: any, resolution: number = 1): [number, number] {
 }
 
 /**
- * Reponsible for drawing axes and handling interactivity for panes in a candlestick chart
+ * Reponsible for drawing axes and handling interactivity for a time axis in a candlestick chart
  */
-export class Ui extends EventEmitter implements Disposable {
+export class TimeAxisUi extends EventEmitter implements Disposable {
   public stage: Container = new Container();
   public renderer: Renderer;
-  public yAxis: VerticalAxis = new VerticalAxis();
+  public xAxis: HorizontalAxis = new HorizontalAxis();
 
   /**
    * The scale extent to the specified array of numbers [k0, k1] where k0 is the minimum allowed scale factor
@@ -68,10 +68,10 @@ export class Ui extends EventEmitter implements Disposable {
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
 
-    this.yAxis.interactive = true;
-    this.yAxis.cursor = "ns-resize";
+    this.xAxis.interactive = true;
+    this.xAxis.cursor = "ew-resize";
 
-    this.stage.addChild(this.yAxis);
+    this.stage.addChild(this.xAxis);
 
     this.stage
       .on("wheel", this.onWheel)
@@ -89,7 +89,6 @@ export class Ui extends EventEmitter implements Disposable {
 
   public update(
     timeScale: ScaleLinear<number, number>,
-    priceScale: ScaleLinear<number, number>,
     width: number,
     height: number
   ): void {
@@ -102,7 +101,7 @@ export class Ui extends EventEmitter implements Disposable {
       this.renderer.screen.height
     );
 
-    this.yAxis.update(priceScale, width, height, resolution);
+    this.xAxis.update(timeScale, width, height, resolution);
   }
 
   private onTouchStart = (event: InteractionEvent) => {
@@ -327,7 +326,6 @@ export class Ui extends EventEmitter implements Disposable {
 
   public dispose() {
     this.stage.destroy();
-
     this.renderer.destroy();
   }
 }

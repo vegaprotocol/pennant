@@ -1,23 +1,13 @@
 import "banderole/dist/style.css";
 
 import { Banderole } from "banderole";
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 
-import { Colors } from "../../helpers";
-import { useThrottledResizeObserver } from "../../hooks";
-import { string2hex } from "../../renderer/utils";
 import { Study } from "../../types";
-import chartStories from "../chart/chart.stories";
 import { Pane as PaneView } from "../pane";
-import { CloseButton } from "../pane-view/close-button";
 import styles from "./candlestick-chart.module.css";
-import { Chart, Pane } from "./chart";
+import { Chart } from "./chart";
+import { Pane } from "./pane";
 
 export interface StudyOptions {
   id: string;
@@ -49,17 +39,13 @@ export const CandlestickChart = forwardRef(
     const studies = options.studies;
 
     useEffect(() => {
-      chartRef.current = new Chart();
+      if (axisRef.current) {
+        chartRef.current = new Chart(axisRef.current);
+      }
 
       if (mainRef.current) {
         chartRef.current.addPane(
           new Pane(mainRef.current, { closable: false })
-        );
-      }
-
-      if (axisRef.current) {
-        chartRef.current.addPane(
-          new Pane(axisRef.current, { closable: false })
         );
       }
     }, []);
@@ -113,7 +99,11 @@ export const CandlestickChart = forwardRef(
               }}
               closable={false}
             >
-              <div style={{ color: "white", padding: "8px" }}>Main</div>
+              <div
+                style={{ color: "white", padding: "8px", userSelect: "none" }}
+              >
+                Main
+              </div>
             </PaneView>
             {studies.map((study) => (
               <PaneView
@@ -129,19 +119,25 @@ export const CandlestickChart = forwardRef(
                   handleClosePane(study.id);
                 }}
               >
-                <div style={{ color: "white", padding: "8px" }}>{study.id}</div>
+                <div
+                  style={{ color: "white", padding: "8px", userSelect: "none" }}
+                >
+                  {study.id}
+                </div>
               </PaneView>
             ))}
           </Banderole>
         </div>
-        <div style={{ flex: "0 0 60px", border }}>
+        <div style={{ flex: "0 0 20px" }}>
           <PaneView
             ref={(el: HTMLElement | null) => {
               axisRef.current = el;
             }}
             closable={false}
           >
-            <div style={{ color: "white", padding: "8px" }}>Axis</div>
+            <div style={{ color: "white", padding: "8px", userSelect: "none" }}>
+              Axis
+            </div>
           </PaneView>
         </div>
       </div>

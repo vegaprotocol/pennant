@@ -1,16 +1,14 @@
 import { ScaleLinear } from "d3-scale";
-import { curveStepAfter } from "d3-shape";
-import { times } from "lodash";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
-import { Disposable } from "../banderole/disposable";
 import { Rect } from "./display-objects/rect";
 import { XGrid } from "./display-objects/x-grid";
 import { YGrid } from "./display-objects/y-grid";
+import { Disposable } from "./disposable";
 
 /**
- * Responsible for drawing area curves for depth chart.
+ * Responsible for drawing candlestick chart contents.
  */
 export class Contents implements Disposable {
   public stage: Container = new Container();

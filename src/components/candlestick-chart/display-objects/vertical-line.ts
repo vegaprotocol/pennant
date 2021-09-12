@@ -1,5 +1,4 @@
 import { Graphics } from "../../../renderer/graphics";
-import { AXIS_HEIGHT } from "../candlestick-chart";
 
 /**
  * Draw a vertical line
@@ -25,7 +24,7 @@ export class VerticalLine extends Graphics {
       lineDash: this.lineDash,
     });
     this.moveTo(0.5, 0);
-    this.lineTo(0.5, height - resolution * AXIS_HEIGHT);
+    this.lineTo(0.5, height);
     this.endFill();
     this.x = x;
   }
