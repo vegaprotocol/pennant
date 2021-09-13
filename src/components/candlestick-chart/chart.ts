@@ -45,6 +45,22 @@ export class Chart extends EventEmitter {
 
   public addPane(pane: Pane) {
     pane
+      .on("mousemove", (point: [number, number]) => {
+        this.paneItems.forEach((paneItem) => {
+          paneItem.pane.crosshair = [point[0], null];
+        });
+
+        pane.crosshair = point;
+
+        this.emit("mousemove", point[0]);
+      })
+      .on("mouseout", (event) => {
+        this.emit("mousemove", null);
+
+        this.paneItems.forEach((paneItem) => {
+          paneItem.pane.crosshair = [null, null];
+        });
+      })
       .on("zoomstart", (_event) => {})
       .on("zoom", (transform) => {
         this.timeZoom.__zoom = transform;

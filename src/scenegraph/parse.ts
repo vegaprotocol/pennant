@@ -323,7 +323,8 @@ export function parse(
     panes: isVConcatSpec(specification)
       ? specification.vconcat.map((pane, paneIndex) => {
           return {
-            id: pane.name ?? "",
+            id: pane.id ?? pane.name ?? String(paneIndex),
+            name: pane.name ?? "",
             renderableElements: parseLayer(
               pane,
               { values: newData },

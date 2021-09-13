@@ -10,6 +10,7 @@ import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { Crosshair } from "./display-objects";
 import { VerticalAxis } from "./display-objects/y-axis";
 import { Disposable } from "./disposable";
 
@@ -33,6 +34,7 @@ export class Ui extends EventEmitter implements Disposable {
   public stage: Container = new Container();
   public renderer: Renderer;
   public yAxis: VerticalAxis = new VerticalAxis();
+  public crosshair: Crosshair = new Crosshair(1, 0xffffff, [4, 6]);
 
   /**
    * The scale extent to the specified array of numbers [k0, k1] where k0 is the minimum allowed scale factor
@@ -71,6 +73,7 @@ export class Ui extends EventEmitter implements Disposable {
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
     this.stage.addChild(this.yAxis);
+    this.stage.addChild(this.crosshair);
 
     this.stage
       .on("wheel", this.onWheel)
@@ -79,7 +82,8 @@ export class Ui extends EventEmitter implements Disposable {
       .on("touchend", this.onTouchEnd)
       .on("pointerdown", this.onPointerDown)
       .on("pointermove", this.onPointerMove)
-      .on("pointerout", this.onPointerOut);
+      .on("pointerout", this.onPointerOut)
+      .on("dblclick", this.onDoubleClick);
   }
 
   public render(): void {
@@ -90,7 +94,8 @@ export class Ui extends EventEmitter implements Disposable {
     timeScale: ScaleLinear<number, number>,
     priceScale: ScaleLinear<number, number>,
     width: number,
-    height: number
+    height: number,
+    crosshair: [number | null, number | null]
   ): void {
     const resolution = this.renderer.resolution;
 
@@ -102,6 +107,13 @@ export class Ui extends EventEmitter implements Disposable {
     );
 
     this.yAxis.update(priceScale, width, height, resolution);
+    this.crosshair.update(
+      crosshair[0],
+      crosshair[1],
+      width,
+      height,
+      resolution
+    );
   }
 
   private onTouchStart = (event: InteractionEvent) => {
@@ -322,9 +334,24 @@ export class Ui extends EventEmitter implements Disposable {
     window.addEventListener("mouseup", handleMouseUp);
   };
 
-  private onPointerMove = (event: InteractionEvent) => {};
+  private onPointerMove = (event: InteractionEvent) => {
+    const tempEvent = event.data?.originalEvent as WheelEvent;
+    const resolution = this.renderer.resolution;
+    const p = pointer(tempEvent, resolution);
 
-  private onPointerOut = (event: InteractionEvent) => {};
+    // Do not respond to events triggered by elements 'above' the canvas
+    if (tempEvent.target === this.renderer.context.canvas) {
+      this.emit("mousemove", p);
+    }
+  };
+
+  private onPointerOut = (event: InteractionEvent) => {
+    this.emit("mouseout");
+  };
+
+  private onDoubleClick = (event: InteractionEvent) => {
+    this.emit("dblclick");
+  };
 
   public dispose() {
     this.stage.destroy();

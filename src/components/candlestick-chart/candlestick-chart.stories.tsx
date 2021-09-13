@@ -1,7 +1,8 @@
 import { Meta, Story } from "@storybook/react";
 import { useRef, useState } from "react";
 
-import { Study } from "../../types";
+import { JsonDataSource } from "../../stories/data-source/json-data-source";
+import { Interval, Study } from "../../types";
 import {
   CandlestickChart,
   CandlestickChartHandle,
@@ -43,12 +44,24 @@ const Template: Story<CandlestickChartProps & { initialOptions: Options }> = ({
 
 export const Basic = Template.bind({});
 Basic.args = {
+  dataSource: new JsonDataSource("", 5),
+  interval: Interval.I5M,
   initialOptions: {
     studies: [
-      { id: "4", study: Study.MACD },
-      { id: "1", study: Study.MACD },
-      { id: "2", study: Study.ELDAR_RAY },
-      { id: "3", study: Study.FORCE_INDEX },
+      { id: "macd", study: Study.MACD },
+      { id: "macd(1)", study: Study.MACD },
+      { id: "eldar-ray", study: Study.ELDAR_RAY },
+      { id: "force index", study: Study.FORCE_INDEX },
     ],
+  },
+};
+
+export const Simple = Template.bind({});
+Simple.args = {
+  dataSource: new JsonDataSource("", 5),
+  interval: Interval.I5M,
+  initialOptions: {
+    simple: true,
+    studies: [{ id: "macd", study: Study.MACD }],
   },
 };

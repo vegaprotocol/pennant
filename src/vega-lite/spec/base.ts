@@ -12,6 +12,10 @@ export interface BaseSpec {
    * Name for later reference
    */
   name?: string;
+  /**
+   * Unique identifier
+   */
+  id?: string;
   layer?: BaseSpec[];
   transform?: Transform[];
 }

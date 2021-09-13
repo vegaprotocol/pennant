@@ -1,3 +1,4 @@
+import { StudyOptions } from "../components/candlestick-chart";
 import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";
@@ -455,6 +456,83 @@ export function constructTopLevelSpec(
     };
 
     vconcat.push(studySpecification);
+  }
+
+  // Calculate change
+  const percentageChangeData = indicatorPercentageChange().period(2)(
+    data.map((d) => d.close)
+  );
+
+  const percentageChangeData24 = indicatorPercentageChange().period(25)(
+    data.map((d) => d.close)
+  );
+
+  const absoluteChangeData = indicatorAbsoluteChange().period(2)(
+    data.map((d) => d.close)
+  );
+
+  data = data.map((d, i) => ({
+    ...d,
+    percentageChange: percentageChangeData[i],
+    percentageChangeData24: percentageChangeData24[i],
+    absoluteChange: absoluteChangeData[i],
+  }));
+
+  if (priceMonitoringBounds) {
+    data = data.map((d) => ({
+      ...d,
+      maxValidPrice: priceMonitoringBounds.maxValidPrice,
+      minValidPrice: priceMonitoringBounds.minValidPrice,
+      referencePrice: priceMonitoringBounds.referencePrice,
+    }));
+  }
+
+  const topLevelSpec: TopLevelSpec = {
+    data: { values: data },
+    transform: transform,
+    encoding: {
+      x: { field: "date", type: "temporal" },
+    },
+    vconcat: vconcat,
+  };
+
+  return topLevelSpec;
+}
+
+export function constructTopLevelSpecV2(
+  data: Candle[],
+  chartType: ChartType,
+  overlay?: Overlay,
+  studyOptions?: StudyOptions[],
+  priceMonitoringBounds?: any
+) {
+  const vconcat: BaseSpec[] = [];
+  const transform: Transform[] = [];
+
+  const mainSpecification: BaseSpec = {
+    name: "main",
+    layer: constructMainLayerSpec(chartType),
+  };
+
+  if (overlay) {
+    transform.push(...constructOverlayTransform(overlay));
+    mainSpecification.layer?.push(...constructOverlayLayerSpec(overlay));
+  }
+
+  vconcat.push(mainSpecification);
+
+  if (studyOptions) {
+    studyOptions.forEach((option) => {
+      transform.push(...constructStudyTransform(option.study));
+
+      const studySpecification: BaseSpec = {
+        id: option.id,
+        name: option.id,
+        layer: constructStudyLayerSpec(option.study),
+      };
+
+      vconcat.push(studySpecification);
+    });
   }
 
   // Calculate change

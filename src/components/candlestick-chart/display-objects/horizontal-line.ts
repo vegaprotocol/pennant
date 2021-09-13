@@ -16,7 +16,7 @@ export class HorizontalLine extends Graphics {
     this.lineDash = lineDash;
   }
 
-  public update(y: number, width: number) {
+  public update(y: number, width: number, resolution: number = 1) {
     this.clear();
     this.lineStyle({
       width: this.width,

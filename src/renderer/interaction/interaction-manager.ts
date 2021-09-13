@@ -246,6 +246,12 @@ export class InteractionManager extends EventEmitter {
       this._eventListenerOptions
     );
 
+    this.interactionDOMElement.addEventListener(
+      "dblclick",
+      this.onDoubleClick,
+      this._eventListenerOptions
+    );
+
     // always look directly for touch events so that we can provide original data
     // In a future version we should change this to being just a fallback and rely solely on
     // PointerEvents whenever available
@@ -276,6 +282,104 @@ export class InteractionManager extends EventEmitter {
   private removeEvents(): void {
     if (!this.interactionDOMElement) {
       return;
+    }
+
+    if (this.supportsPointerEvents) {
+      self.document.removeEventListener(
+        "pointermove",
+        this.onPointerMove,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "pointerdown",
+        this.onPointerDown,
+        this._eventListenerOptions
+      );
+
+      this.interactionDOMElement.removeEventListener(
+        "pointerleave",
+        this.onPointerOut,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "pointerover",
+        this.onPointerOver,
+        this._eventListenerOptions
+      );
+      /*       self.removeEventListener(
+        "pointercancel",
+        this.onPointerCancel,
+        this._eventListenerOptions
+      ); */
+      self.removeEventListener(
+        "pointerup",
+        this.onPointerUp,
+        this._eventListenerOptions
+      );
+    } else {
+      self.document.removeEventListener(
+        "mousemove",
+        this.onPointerMove,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "mousedown",
+        this.onPointerDown,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "mouseout",
+        this.onPointerOut,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "mouseover",
+        this.onPointerOver,
+        this._eventListenerOptions
+      );
+      self.removeEventListener(
+        "mouseup",
+        this.onPointerUp,
+        this._eventListenerOptions
+      );
+    }
+
+    this.interactionDOMElement.removeEventListener(
+      "wheel",
+      this.onWheel,
+      this._eventListenerOptions
+    );
+
+    this.interactionDOMElement.removeEventListener(
+      "dblclick",
+      this.onDoubleClick,
+      this._eventListenerOptions
+    );
+
+    // always look directly for touch events so that we can provide original data
+    // In a future version we should change this to being just a fallback and rely solely on
+    // PointerEvents whenever available
+    if (this.supportsTouchEvents) {
+      this.interactionDOMElement.removeEventListener(
+        "touchstart",
+        this.onPointerDown,
+        this._eventListenerOptions
+      );
+      /*       this.interactionDOMElement.addEventListener(
+        "touchcancel",
+        this.onPointerCancel,
+        this._eventListenerOptions
+      ); */
+      this.interactionDOMElement.removeEventListener(
+        "touchend",
+        this.onPointerUp,
+        this._eventListenerOptions
+      );
+      this.interactionDOMElement.removeEventListener(
+        "touchmove",
+        this.onPointerMove,
+        this._eventListenerOptions
+      );
     }
   }
 
@@ -717,6 +821,35 @@ export class InteractionManager extends EventEmitter {
     }
   };
 
+  private onDoubleClick = (originalEvent: InteractivePointerEvent): void => {
+    const events = this.normalizeToPointerData(originalEvent);
+
+    if (events[0].pointerType === "mouse" || events[0].pointerType === "pen") {
+      this.cursor = null;
+    }
+
+    for (const event of events) {
+      const interactionData = this.getInteractionDataForPointerId(event);
+
+      const interactionEvent = this.configureInteractionEventForDOMEvent(
+        this.eventData,
+        event,
+        interactionData
+      );
+
+      interactionEvent.data!.originalEvent = originalEvent;
+
+      this.processInteractive(
+        interactionEvent,
+        this.lastObjectRendered,
+        this.processDoubleClick,
+        true
+      );
+
+      this.emit("dblclick", interactionEvent);
+    }
+  };
+
   private processWheel = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
@@ -725,6 +858,17 @@ export class InteractionManager extends EventEmitter {
     if (hit) {
       interactionEvent.data?.originalEvent?.preventDefault();
       this.dispatchEvent(displayObject, "wheel", interactionEvent);
+    }
+  };
+
+  private processDoubleClick = (
+    interactionEvent: InteractionEvent,
+    displayObject: DisplayObject,
+    hit?: boolean
+  ): void => {
+    if (hit) {
+      interactionEvent.data?.originalEvent?.preventDefault();
+      this.dispatchEvent(displayObject, "dblclick", interactionEvent);
     }
   };
 

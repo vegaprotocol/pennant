@@ -34,6 +34,7 @@ export class Pane extends EventEmitter implements Disposable {
     number
   >().domain([0, 100]);
 
+  private _crosshair: [number | null, number | null] = [null, null];
   private _timeZoom: Zoom = new Zoom();
   private priceZoom: Zoom = new Zoom();
   private lastZoomTransform: ZoomTransform = zoomIdentity;
@@ -136,6 +137,20 @@ export class Pane extends EventEmitter implements Disposable {
       )
       .on("zoomend", () => {
         this.emit("zoomend");
+      })
+      .on("dblclick", () => {
+        this.priceZoom.__zoom = zoomIdentity;
+        this.emit("zoom", zoomIdentity);
+      })
+      .on("mousemove", (point: [number, number]) => {
+        if (point[0] <= this.timeScale.range()[1] - Y_AXIS_WIDTH) {
+          this.emit("mousemove", point);
+        } else {
+          this.emit("mousemove", [null, null]);
+        }
+      })
+      .on("mouseout", () => {
+        this.emit("mouseout");
       });
 
     this.resizeObserver = new ResizeObserver((entries) => {
@@ -165,6 +180,16 @@ export class Pane extends EventEmitter implements Disposable {
     container.prepend(wrapper);
 
     this.isClosable = options?.closable ?? false;
+  }
+
+  get crosshair() {
+    return this._crosshair;
+  }
+
+  set crosshair(point) {
+    this._crosshair = point;
+    this.update();
+    this.render();
   }
 
   get height(): number {
@@ -222,7 +247,8 @@ export class Pane extends EventEmitter implements Disposable {
       rescaledTimeScale as any,
       rescaledPriceScale as any,
       this.ui.renderer.width,
-      this.ui.renderer.height
+      this.ui.renderer.height,
+      this._crosshair
     );
   }
 }
