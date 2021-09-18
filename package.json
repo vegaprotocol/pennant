@@ -73,6 +73,7 @@
     "use-resize-observer": "^7.0.0"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'dist/*.js'",
     "build": "rollup -c && yarn build:types",
     "build:types": "tsc",
     "build-storybook": "build-storybook -s assets",
@@ -127,6 +128,7 @@
     "@types/react-test-renderer": "17.0.1",
     "@types/resize-observer-browser": "0.1.6",
     "@typescript-eslint/parser": "4.28.0",
+    "add": "^2.0.6",
     "babel-jest": "27.0.6",
     "bignumber.js": "9.0.1",
     "eslint": "7.32.0",
@@ -148,11 +150,13 @@
     "rollup-plugin-postcss": "4.0.1",
     "rollup-plugin-terser": "7.0.2",
     "sass-loader": "10.2.0",
+    "source-map-explorer": "^2.5.2",
     "standard-version": "9.3.1",
     "subscriptions-transport-ws": "0.9.19",
     "ts-jest": "27.0.5",
     "ts-node": "10.2.0",
-    "tslib": "2.3.1"
+    "tslib": "2.3.1",
+    "yarn": "^1.22.11"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0",
