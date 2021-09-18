@@ -16,7 +16,6 @@ import {
   THROTTLE_INTERVAL,
 } from "../../constants";
 import {
-  constructTopLevelSpec,
   constructTopLevelSpecV2,
   getCandleWidth,
   getSubMinutes,

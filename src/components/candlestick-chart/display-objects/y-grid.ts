@@ -2,8 +2,6 @@ import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
-import { Text } from "../../../renderer/text";
-import { FONT_SIZE } from "../candlestick-chart";
 
 /**
  * Draws vertical grid lines
