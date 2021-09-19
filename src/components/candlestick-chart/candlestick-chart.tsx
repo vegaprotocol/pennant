@@ -18,6 +18,7 @@ import {
 import {
   constructTopLevelSpec,
   constructTopLevelSpecV2,
+  formatter,
   getCandleWidth,
   getSubMinutes,
   mergeData,
@@ -35,7 +36,11 @@ import { useOnReady } from "../chart/hooks";
 import { IndicatorInfo } from "../indicator-info";
 import { NonIdealState } from "../non-ideal-state";
 import { Pane as PaneView } from "../pane";
-import { studyInfoFields } from "../pane-view/helpers";
+import {
+  getIntent,
+  getStudyInfoFieldValue,
+  studyInfoFields,
+} from "../pane-view/helpers";
 import styles from "./candlestick-chart.module.css";
 import { Chart } from "./chart";
 import { Pane } from "./pane";
@@ -98,7 +103,10 @@ export const CandlestickChart = forwardRef(
     const chartType = options.chartType ?? ChartType.CANDLE;
     const initialNumCandlesToFetch =
       options.initialNumCandlesToFetch ?? INITIAL_NUM_CANDLES_TO_FETCH;
+    const simple = options.simple ?? false;
     const studies = useMemo(() => options.studies ?? [], [options.studies]);
+
+    const decimalPlaces = 5; //FIXME: Needs addressing
 
     // Callback for fetching historical data
     const query = useCallback(
@@ -250,25 +258,44 @@ export const CandlestickChart = forwardRef(
         <div className={styles.panesContainer}>
           <Banderole vertical>
             {scenegraph.panes.map((pane, paneIndex) => (
-              <PaneView
-                key={pane.id}
-                ref={(el: HTMLElement | null) => {
-                  if (el) {
-                    paneRef.current[pane.id] = el;
-                  } else {
-                    delete paneRef.current[pane.id];
-                  }
-                }}
-                closable={paneIndex > 0}
-                onClose={() => {
-                  handleClosePane(pane.id);
-                }}
-              >
-                <IndicatorInfo
-                  title={pane.id}
-                  info={[{ id: "S", label: "S", value: String(dataIndex) }]}
-                />
-              </PaneView>
+              <Banderole.Pane>
+                <PaneView
+                  key={pane.id}
+                  ref={(el: HTMLElement | null) => {
+                    if (el) {
+                      paneRef.current[pane.id] = el;
+                    } else {
+                      delete paneRef.current[pane.id];
+                    }
+                  }}
+                  closable={paneIndex > 0}
+                  onClose={() => {
+                    handleClosePane(pane.id);
+                  }}
+                >
+                  <IndicatorInfo
+                    title={studyInfoFields[simple ? "simple" : pane.name].label}
+                    info={studyInfoFields[
+                      simple ? "simple" : pane.name
+                    ].fields.map((field) => {
+                      const value = getStudyInfoFieldValue(
+                        pane.originalData,
+                        dataIndex,
+                        field.id
+                      );
+
+                      return {
+                        id: field.id,
+                        label: field.label,
+                        value: field.format
+                          ? field.format(value, decimalPlaces)
+                          : formatter(value, decimalPlaces),
+                        intent: getIntent(field, value),
+                      };
+                    })}
+                  />
+                </PaneView>
+              </Banderole.Pane>
             ))}
           </Banderole>
         </div>
