@@ -79,6 +79,7 @@ export const CandlestickChart = forwardRef(
     ref: React.Ref<CandlestickChartHandle>
   ) => {
     const chartRef = useRef<Chart>(null!);
+    const containerRef = useRef<HTMLDivElement>(null!);
     const paneRef = useRef<Record<string, HTMLElement>>({});
     const axisRef = useRef<HTMLElement | null>(null);
     const previousIds = useRef<string[]>([]);
@@ -202,7 +203,7 @@ export const CandlestickChart = forwardRef(
 
     useEffect(() => {
       if (!loading && specification && axisRef.current) {
-        chartRef.current = new Chart(axisRef.current)
+        chartRef.current = new Chart(containerRef.current, axisRef.current)
           .on("bounds_changed", (bounds: Bounds) => {
             handleBoundsChanged(bounds);
           })
@@ -242,6 +243,12 @@ export const CandlestickChart = forwardRef(
       }
     }, [loading, scenegraph, studies]);
 
+    useEffect(() => {
+      if (scenegraph) {
+        chartRef.current.data = scenegraph.panes[0].originalData;
+      }
+    }, [scenegraph]);
+
     // Show fallback UI while waiting for data
     if (loading) {
       return <NonIdealState title="Loading" />;
@@ -252,14 +259,15 @@ export const CandlestickChart = forwardRef(
       return <NonIdealState title="No data found" />;
     }
 
+    console.log(scenegraph);
+
     return (
-      <div className={styles.container}>
+      <div ref={containerRef} className={styles.container}>
         <div className={styles.panesContainer}>
           <Banderole vertical>
             {scenegraph.panes.map((pane, paneIndex) => (
-              <Banderole.Pane>
+              <Banderole.Pane key={pane.id}>
                 <PaneView
-                  key={pane.id}
                   ref={(el: HTMLElement | null) => {
                     if (el) {
                       paneRef.current[pane.id] = el;
@@ -304,7 +312,7 @@ export const CandlestickChart = forwardRef(
               axisRef.current = el;
             }}
             closable={false}
-          ></PaneView>
+          />
         </div>
       </div>
     );

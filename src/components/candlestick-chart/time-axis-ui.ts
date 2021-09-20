@@ -1,4 +1,4 @@
-import { ScaleLinear } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "d3-scale";
 import { zoomIdentity } from "d3-zoom";
 import EventEmitter from "eventemitter3";
 
@@ -88,7 +88,7 @@ export class TimeAxisUi extends EventEmitter implements Disposable {
   }
 
   public update(
-    timeScale: ScaleLinear<number, number>,
+    timeScale: ScaleTime<number, number>,
     width: number,
     height: number
   ): void {

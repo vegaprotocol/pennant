@@ -1,4 +1,4 @@
-import { ScaleLinear, scaleLinear } from "d3-scale";
+import { ScaleTime, scaleTime } from "d3-scale";
 import EventEmitter from "eventemitter3";
 
 import { Y_AXIS_WIDTH } from "../../constants";
@@ -19,7 +19,7 @@ export class TimeAxis extends EventEmitter implements Disposable {
   private ui: TimeAxisUi;
   private resizeObserver: ResizeObserver;
 
-  private timeScale: ScaleLinear<number, number> = scaleLinear<
+  public timeScale: ScaleTime<number, number> = scaleTime<
     number,
     number
   >().domain([0, 100]);
@@ -133,17 +133,14 @@ export class TimeAxis extends EventEmitter implements Disposable {
 
   public resize(width: number, height: number) {
     this.ui.renderer.resize(width, height);
-    this.timeScale.range([0, this.width]);
     this.update();
   }
 
   public update() {
     const resolution = this.ui.renderer.resolution;
 
-    const rescaledTimeScale = this.timeZoom.__zoom.rescaleX(this.timeScale);
-
     this.ui.update(
-      rescaledTimeScale as any,
+      this.timeScale,
       this.ui.renderer.width,
       this.ui.renderer.height
     );

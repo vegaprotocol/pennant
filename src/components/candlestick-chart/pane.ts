@@ -1,4 +1,10 @@
-import { ScaleLinear, scaleLinear } from "d3-scale";
+import {
+  ScaleLinear,
+  scaleLinear,
+  scaleThreshold,
+  ScaleTime,
+  scaleTime,
+} from "d3-scale";
 import EventEmitter from "eventemitter3";
 
 import { Y_AXIS_WIDTH } from "../../constants";
@@ -24,11 +30,6 @@ export class Pane extends EventEmitter implements Disposable {
   private isFreePan = false;
   private isPinned = true;
 
-  private timeScale: ScaleLinear<number, number> = scaleLinear<
-    number,
-    number
-  >().domain([0, 100]);
-
   private priceScale: ScaleLinear<number, number> = scaleLinear<
     number,
     number
@@ -38,6 +39,11 @@ export class Pane extends EventEmitter implements Disposable {
   private _timeZoom: Zoom = new Zoom();
   private priceZoom: Zoom = new Zoom();
   private lastZoomTransform: ZoomTransform = zoomIdentity;
+
+  public timeScale: ScaleTime<number, number> = scaleTime<
+    number,
+    number
+  >().domain([new Date(), new Date()]);
 
   constructor(container: HTMLElement, options: PaneOptions = {}) {
     super();
@@ -211,6 +217,7 @@ export class Pane extends EventEmitter implements Disposable {
   }
 
   public dispose() {
+    // TODO: Dispose of resizeObserver
     this.contents.dispose();
     this.ui.dispose();
   }
@@ -224,7 +231,6 @@ export class Pane extends EventEmitter implements Disposable {
     this.contents.renderer.resize(width, height);
     this.ui.renderer.resize(width, height);
 
-    this.timeScale.range([0, this.width]);
     this.priceScale.range([this.height, 0]);
 
     this.update();
@@ -233,18 +239,17 @@ export class Pane extends EventEmitter implements Disposable {
   public update() {
     const resolution = this.ui.renderer.resolution;
 
-    const rescaledTimeScale = this.timeZoom.__zoom.rescaleX(this.timeScale);
     const rescaledPriceScale = this.priceZoom.__zoom.rescaleY(this.priceScale);
 
     this.contents.update(
-      rescaledTimeScale as any,
+      this.timeScale,
       rescaledPriceScale as any,
       this.ui.renderer.width,
       this.ui.renderer.height
     );
 
     this.ui.update(
-      rescaledTimeScale as any,
+      this.timeScale,
       rescaledPriceScale as any,
       this.ui.renderer.width,
       this.ui.renderer.height,

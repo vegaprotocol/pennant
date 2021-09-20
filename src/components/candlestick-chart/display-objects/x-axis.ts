@@ -1,4 +1,4 @@
-import { ScaleLinear } from "d3-scale";
+import { ScaleTime } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
@@ -30,7 +30,7 @@ export class HorizontalAxis extends Container {
   }
 
   public update(
-    scale: ScaleLinear<number, number>,
+    scale: ScaleTime<number, number>,
     width: number,
     height: number,
     resolution: number = 1

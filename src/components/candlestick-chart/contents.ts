@@ -1,4 +1,4 @@
-import { ScaleLinear } from "d3-scale";
+import { ScaleLinear, ScaleTime } from "d3-scale";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
@@ -42,7 +42,7 @@ export class Contents implements Disposable {
   }
 
   public update(
-    timeScale: ScaleLinear<number, number>,
+    timeScale: ScaleTime<number, number>,
     priceScale: ScaleLinear<number, number>,
     width: number,
     height: number
