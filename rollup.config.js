@@ -20,6 +20,7 @@ const config = {
   output: [
     {
       file: meta.exports["."],
+      sourcemap: true,
       format: "es",
       plugins: [
         getBabelOutputPlugin({
@@ -39,6 +40,7 @@ const config = {
     },
     {
       file: meta.module,
+      sourcemap: true,
       format: "es",
       plugins: [
         getBabelOutputPlugin({
@@ -58,6 +60,7 @@ const config = {
     },
     {
       file: meta.main,
+      sourcemap: true,
       format: "cjs",
       globals,
       plugins: [
