@@ -510,6 +510,7 @@ export function constructTopLevelSpecV2(
   const transform: Transform[] = [];
 
   const mainSpecification: BaseSpec = {
+    id: "main",
     name: "main",
     layer: constructMainLayerSpec(chartType),
   };
@@ -527,7 +528,7 @@ export function constructTopLevelSpecV2(
 
       const studySpecification: BaseSpec = {
         id: option.id,
-        name: option.id,
+        name: option.study,
         layer: constructStudyLayerSpec(option.study),
       };
 

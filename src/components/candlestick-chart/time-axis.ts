@@ -4,11 +4,9 @@ import EventEmitter from "eventemitter3";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { zoomIdentity, ZoomTransform } from "../../helpers/zoom/transform";
 import { Zoom } from "../../helpers/zoom/zoom";
-import { Contents } from "./contents";
 import { Disposable } from "./disposable";
 import styles from "./pane.module.css";
 import { TimeAxisUi } from "./time-axis-ui";
-import { Ui } from "./ui";
 
 export interface PaneOptions {
   closable?: boolean;

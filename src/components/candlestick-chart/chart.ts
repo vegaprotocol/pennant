@@ -52,6 +52,8 @@ export class Chart extends EventEmitter {
 
         pane.crosshair = point;
 
+        console.log(point);
+
         this.emit("mousemove", point[0]);
       })
       .on("mouseout", (event) => {

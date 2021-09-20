@@ -17,6 +17,7 @@ export interface PositionalElement extends RenderableElement {
 
 export interface Pane {
   id: string;
+  name: string;
   originalData: any[];
   renderableElements: RenderableElement[][];
   grid?: RenderableElement;
