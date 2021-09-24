@@ -127,6 +127,7 @@ export class Pane extends EventEmitter implements Disposable {
                 );
               }
             } else {
+              console.log(point[0]);
               this._timeZoom.scaleBy(k, [
                 this.isPinned
                   ? this.timeScale.range()[1] - Y_AXIS_WIDTH

@@ -107,13 +107,13 @@ export class Chart extends EventEmitter implements Disposable {
         const dates = this.dates;
 
         const index = bisectCenter(dates, xm);
-
+/* 
         console.log(
           this.timeScale.domain(),
           this.timeScale.range(),
           dates[index],
           this.timeScale(dates[index])
-        );
+        ); */
 
         pane.crosshair = [this.timeScale(dates[index]), point[1]];
 

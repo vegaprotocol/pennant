@@ -1,6 +1,6 @@
-import "banderole/dist/style.css";
+import "allotment/dist/style.css";
 
-import { Banderole } from "banderole";
+import { Allotment } from "allotment";
 import { throttle } from "lodash";
 import React, {
   forwardRef,
@@ -264,47 +264,46 @@ export const CandlestickChart = forwardRef(
     return (
       <div ref={containerRef} className={styles.container}>
         <div className={styles.panesContainer}>
-          <Banderole vertical>
+          <Allotment vertical>
             {scenegraph.panes.map((pane, paneIndex) => (
-              <Banderole.Pane key={pane.id}>
-                <PaneView
-                  ref={(el: HTMLElement | null) => {
-                    if (el) {
-                      paneRef.current[pane.id] = el;
-                    } else {
-                      delete paneRef.current[pane.id];
-                    }
-                  }}
-                  closable={paneIndex > 0}
-                  onClose={() => {
-                    handleClosePane(pane.id);
-                  }}
-                >
-                  <IndicatorInfo
-                    title={studyInfoFields[simple ? "simple" : pane.name].label}
-                    info={studyInfoFields[
-                      simple ? "simple" : pane.name
-                    ].fields.map((field) => {
-                      const value = getStudyInfoFieldValue(
-                        pane.originalData,
-                        dataIndex,
-                        field.id
-                      );
+              <PaneView
+                key={pane.id}
+                ref={(el: HTMLElement | null) => {
+                  if (el) {
+                    paneRef.current[pane.id] = el;
+                  } else {
+                    delete paneRef.current[pane.id];
+                  }
+                }}
+                closable={paneIndex > 0}
+                onClose={() => {
+                  handleClosePane(pane.id);
+                }}
+              >
+                <IndicatorInfo
+                  title={studyInfoFields[simple ? "simple" : pane.name].label}
+                  info={studyInfoFields[
+                    simple ? "simple" : pane.name
+                  ].fields.map((field) => {
+                    const value = getStudyInfoFieldValue(
+                      pane.originalData,
+                      dataIndex,
+                      field.id
+                    );
 
-                      return {
-                        id: field.id,
-                        label: field.label,
-                        value: field.format
-                          ? field.format(value, decimalPlaces)
-                          : formatter(value, decimalPlaces),
-                        intent: getIntent(field, value),
-                      };
-                    })}
-                  />
-                </PaneView>
-              </Banderole.Pane>
+                    return {
+                      id: field.id,
+                      label: field.label,
+                      value: field.format
+                        ? field.format(value, decimalPlaces)
+                        : formatter(value, decimalPlaces),
+                      intent: getIntent(field, value),
+                    };
+                  })}
+                />
+              </PaneView>
             ))}
-          </Banderole>
+          </Allotment>
         </div>
         <div className={styles.timeAxisContainer}>
           <PaneView

@@ -59,6 +59,7 @@ export class Zoom {
   }
 
   public scaleTo(k: number, p: [number, number]) {
+    console.log(this.scale(this.__zoom, k), p, this.__zoom.invert(p));
     this.transform(
       this.constrain(
         this.translate(this.scale(this.__zoom, k), p, this.__zoom.invert(p)),
