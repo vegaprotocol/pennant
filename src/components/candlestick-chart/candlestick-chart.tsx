@@ -259,49 +259,51 @@ export const CandlestickChart = forwardRef(
       return <NonIdealState title="No data found" />;
     }
 
-    console.log(scenegraph);
+    //console.log(scenegraph);
 
     return (
       <div ref={containerRef} className={styles.container}>
         <div className={styles.panesContainer}>
           <Allotment vertical>
             {scenegraph.panes.map((pane, paneIndex) => (
-              <PaneView
-                key={pane.id}
-                ref={(el: HTMLElement | null) => {
-                  if (el) {
-                    paneRef.current[pane.id] = el;
-                  } else {
-                    delete paneRef.current[pane.id];
-                  }
-                }}
-                closable={paneIndex > 0}
-                onClose={() => {
-                  handleClosePane(pane.id);
-                }}
-              >
-                <IndicatorInfo
-                  title={studyInfoFields[simple ? "simple" : pane.name].label}
-                  info={studyInfoFields[
-                    simple ? "simple" : pane.name
-                  ].fields.map((field) => {
-                    const value = getStudyInfoFieldValue(
-                      pane.originalData,
-                      dataIndex,
-                      field.id
-                    );
+              <Allotment.Pane key={pane.id}>
+                <PaneView
+                  key={pane.id}
+                  ref={(el: HTMLElement | null) => {
+                    if (el) {
+                      paneRef.current[pane.id] = el;
+                    } else {
+                      delete paneRef.current[pane.id];
+                    }
+                  }}
+                  closable={paneIndex > 0}
+                  onClose={() => {
+                    handleClosePane(pane.id);
+                  }}
+                >
+                  <IndicatorInfo
+                    title={studyInfoFields[simple ? "simple" : pane.name].label}
+                    info={studyInfoFields[
+                      simple ? "simple" : pane.name
+                    ].fields.map((field) => {
+                      const value = getStudyInfoFieldValue(
+                        pane.originalData,
+                        dataIndex,
+                        field.id
+                      );
 
-                    return {
-                      id: field.id,
-                      label: field.label,
-                      value: field.format
-                        ? field.format(value, decimalPlaces)
-                        : formatter(value, decimalPlaces),
-                      intent: getIntent(field, value),
-                    };
-                  })}
-                />
-              </PaneView>
+                      return {
+                        id: field.id,
+                        label: field.label,
+                        value: field.format
+                          ? field.format(value, decimalPlaces)
+                          : formatter(value, decimalPlaces),
+                        intent: getIntent(field, value),
+                      };
+                    })}
+                  />
+                </PaneView>
+              </Allotment.Pane>
             ))}
           </Allotment>
         </div>
