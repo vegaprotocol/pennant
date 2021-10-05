@@ -59,7 +59,7 @@ export class VerticalAxis extends Container {
         fontSize: FONT_SIZE,
       });
 
-      text.x = width - Y_AXIS_WIDTH + resolution * 7;
+      text.x = width - resolution * (Y_AXIS_WIDTH + 7);
       text.y = scale(node);
       text.anchor.set(0, 0.5);
 
@@ -72,7 +72,7 @@ export class VerticalAxis extends Container {
     for (const node of update) {
       const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
-      text.x = width - Y_AXIS_WIDTH + resolution * 7;
+      text.x = width - resolution * (Y_AXIS_WIDTH - 7);
       text.y = scale(node);
     }
 
@@ -83,7 +83,13 @@ export class VerticalAxis extends Container {
       this.removeChild(text);
     }
 
-    this.rectangle.update(width - Y_AXIS_WIDTH, 0, Y_AXIS_WIDTH, height);
-    this.border.update(width - Y_AXIS_WIDTH, height, resolution);
+    this.rectangle.update(
+      width - resolution * Y_AXIS_WIDTH,
+      0,
+      resolution * Y_AXIS_WIDTH,
+      height
+    );
+
+    this.border.update(width - resolution * Y_AXIS_WIDTH, height, resolution);
   }
 }

@@ -14,7 +14,7 @@ export class HorizontalAxis extends Container {
   /**
    * Cache ticks
    */
-  private nodeByKeyValue = new Map<string, Text>();
+  private nodeByKeyValue = new Map<number, Text>();
   private rectangle: Rect = new Rect(0x000000, 0.5);
   private border: HorizontalLine = new HorizontalLine(1, 0xaaaaaa);
   private tooltip: Graphics = new Graphics();
@@ -35,20 +35,20 @@ export class HorizontalAxis extends Container {
     height: number,
     resolution: number = 1
   ) {
-    const numTicks = width / resolution / 50;
+    const numTicks = width / resolution / 100;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tick.getTime())
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tick.getTime())
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
     );
 
     for (const node of enter) {
@@ -59,20 +59,20 @@ export class HorizontalAxis extends Container {
       });
 
       text.x = scale(node);
-      text.y = 10;
-      text.anchor.set(0, 0.5);
+      text.y = resolution * 10;
+      text.anchor.set(0.5, 0.5);
 
       text.updateText(); // TODO: Should not need to call this
 
-      this.nodeByKeyValue.set(tickFormat(node), text);
+      this.nodeByKeyValue.set(node.getTime(), text);
       this.addChild(text);
     }
 
     for (const node of update) {
-      const text = this.nodeByKeyValue.get(tickFormat(node))!;
+      const text = this.nodeByKeyValue.get(node.getTime())!;
 
       text.x = scale(node);
-      text.y = 10;
+      text.y = resolution * 10;
     }
 
     for (const node of exit) {

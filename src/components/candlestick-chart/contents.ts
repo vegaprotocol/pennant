@@ -1,7 +1,10 @@
 import { ScaleLinear, ScaleTime } from "d3-scale";
+import { curveStepAfter } from "d3-shape";
+import { times } from "lodash";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
+import { LineCurve } from "./display-objects";
 import { Rect } from "./display-objects/rect";
 import { XGrid } from "./display-objects/x-grid";
 import { YGrid } from "./display-objects/y-grid";
@@ -16,6 +19,7 @@ export class Contents implements Disposable {
 
   public xGrid: XGrid = new XGrid();
   public yGrid: YGrid = new YGrid();
+  public curve: LineCurve = new LineCurve(0xffffff, 0xaaaaaa, curveStepAfter);
 
   public rectangle: Rect = new Rect(0xff0000, 0.5);
 
@@ -35,6 +39,7 @@ export class Contents implements Disposable {
     this.stage.addChild(this.xGrid);
     this.stage.addChild(this.yGrid);
     this.stage.addChild(this.rectangle);
+    this.stage.addChild(this.curve);
   }
 
   public render(): void {
@@ -42,6 +47,7 @@ export class Contents implements Disposable {
   }
 
   public update(
+    data: any[],
     timeScale: ScaleTime<number, number>,
     priceScale: ScaleLinear<number, number>,
     width: number,
@@ -57,6 +63,11 @@ export class Contents implements Disposable {
       priceScale(20),
       timeScale(20) - timeScale(0),
       priceScale(60) - priceScale(0)
+    );
+
+    this.curve.update(
+      data.map((d) => [timeScale(d.date), priceScale(d.close - 500)]),
+      height
     );
   }
 

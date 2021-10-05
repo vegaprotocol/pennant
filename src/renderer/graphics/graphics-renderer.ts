@@ -1,6 +1,6 @@
 import { area, line } from "d3-shape";
 
-import { Renderer } from "../core";
+import { Renderer, Texture } from "../core";
 import {
   Area,
   Circle,
@@ -10,9 +10,105 @@ import {
   Rectangle,
   SHAPES,
 } from "../math";
+import { hex2rgb, rgb2hex } from "../utils";
 import { Graphics } from "./graphics";
 import { FillStyle } from "./styles/fill-style";
 import { LineStyle } from "./styles/line-style";
+
+const cacheStepsPerColorChannel: number = 8;
+let canvas: null | HTMLCanvasElement = null;
+
+function tintWithMultiply(
+  texture: Texture,
+  color: number,
+  canvas: HTMLCanvasElement
+): void {
+  const context = canvas.getContext("2d");
+  const crop = texture._frame.clone();
+  const resolution = texture.baseTexture.resolution;
+
+  crop.x *= resolution;
+  crop.y *= resolution;
+  crop.width *= resolution;
+  crop.height *= resolution;
+
+  canvas.width = Math.ceil(crop.width);
+  canvas.height = Math.ceil(crop.height);
+
+  if (context) {
+    context.save();
+    context.fillStyle = `#${`00000${(color | 0).toString(16)}`.substr(-6)}`;
+
+    context.fillRect(0, 0, crop.width, crop.height);
+
+    context.globalCompositeOperation = "multiply";
+
+    const source = texture.baseTexture.getDrawableSource();
+
+    context.drawImage(
+      source,
+      crop.x,
+      crop.y,
+      crop.width,
+      crop.height,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+
+    context.globalCompositeOperation = "destination-atop";
+
+    context.drawImage(
+      source,
+      crop.x,
+      crop.y,
+      crop.width,
+      crop.height,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+    context.restore();
+  }
+}
+
+function roundColor(color: number): number {
+  const step = cacheStepsPerColorChannel;
+
+  const rgbValues = hex2rgb(color);
+
+  rgbValues[0] = Math.min(255, (rgbValues[0] / step) * step);
+  rgbValues[1] = Math.min(255, (rgbValues[1] / step) * step);
+  rgbValues[2] = Math.min(255, (rgbValues[2] / step) * step);
+
+  return rgb2hex(rgbValues);
+}
+
+function getTintedPattern(texture: Texture, color: number): CanvasPattern {
+  color = roundColor(color);
+
+  const stringColor = `#${`00000${(color | 0).toString(16)}`.substr(-6)}`;
+
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+  }
+
+  let pattern: CanvasPattern;
+
+  if (canvas) {
+    tintWithMultiply(texture, color, canvas);
+
+    const context = canvas.getContext("2d");
+
+    if (context) {
+      pattern = context.createPattern(canvas, "repeat")!;
+    }
+  }
+
+  return pattern!;
+}
 
 export class GraphicsRenderer {
   public renderer: Renderer;
@@ -62,14 +158,14 @@ export class GraphicsRenderer {
         (((((fillColor >> 8) & 0xff) / 255) * tintG * 255) << 8) +
         ((fillColor & 0xff) / 255) * tintB * 255;
 
-      contextFillStyle = this._calcCanvasStyle(fillTint);
+      contextFillStyle = this._calcCanvasStyle(fillStyle, fillTint);
 
       const lineTint =
         (((((lineColor >> 16) & 0xff) / 255) * tintR * 255) << 16) +
         (((((lineColor >> 8) & 0xff) / 255) * tintG * 255) << 8) +
         ((lineColor & 0xff) / 255) * tintB * 255;
 
-      contextStrokeStyle = this._calcCanvasStyle(lineTint);
+      contextStrokeStyle = this._calcCanvasStyle(lineStyle, lineTint);
 
       context.lineWidth = lineStyle?.width ?? 0;
 
@@ -199,7 +295,21 @@ export class GraphicsRenderer {
     context.stroke();
   }
 
-  private _calcCanvasStyle(tint: number): string {
-    return `#${`00000${(tint | 0).toString(16)}`.substr(-6)}`;
+  private _calcCanvasStyle(
+    style: FillStyle,
+    tint: number
+  ): string | CanvasPattern {
+    let res;
+
+    if (
+      style.texture &&
+      style.texture.baseTexture !== Texture.WHITE.baseTexture
+    ) {
+      res = getTintedPattern(style.texture, tint);
+    } else {
+      res = `#${`00000${(tint | 0).toString(16)}`.substr(-6)}`;
+    }
+
+    return res;
   }
 }

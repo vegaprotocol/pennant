@@ -203,7 +203,11 @@ export const CandlestickChart = forwardRef(
 
     useEffect(() => {
       if (!loading && specification && axisRef.current) {
-        chartRef.current = new Chart(containerRef.current, axisRef.current)
+        chartRef.current = new Chart({
+          container: containerRef.current,
+          timeAxis: axisRef.current,
+          resolution: window.devicePixelRatio,
+        })
           .on("bounds_changed", (bounds: Bounds) => {
             handleBoundsChanged(bounds);
           })
@@ -233,7 +237,10 @@ export const CandlestickChart = forwardRef(
           if (flag) {
             if (paneRef.current[ids[index]]) {
               chartRef.current?.addPane(
-                new Pane(paneRef.current[ids[index]], { closable: true })
+                new Pane(paneRef.current[ids[index]], {
+                  closable: true,
+                  resolution: window.devicePixelRatio,
+                })
               );
             }
           }

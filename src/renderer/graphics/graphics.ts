@@ -1,6 +1,6 @@
 import { CurveFactory, CurveFactoryLineOnly, curveLinear } from "d3-shape";
 
-import { Renderer } from "../core";
+import { Renderer, Texture } from "../core";
 import { Container } from "../display";
 import {
   Area,
@@ -20,6 +20,7 @@ import { LineStyle } from "./styles/line-style";
 export interface FillStyleOptions {
   alpha?: number;
   color?: number;
+  texture?: Texture;
 }
 
 export interface LineStyleOptions extends FillStyleOptions {
@@ -96,6 +97,7 @@ export class Graphics extends Container {
   public beginTextureFill(options?: FillStyleOptions): this {
     options = Object.assign(
       {
+        texture: Texture.WHITE,
         alpha: 1,
         color: 0xffffff,
       },

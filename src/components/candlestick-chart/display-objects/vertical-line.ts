@@ -20,12 +20,12 @@ export class VerticalLine extends Graphics {
     this.clear();
     this.lineStyle({
       width: this.width,
-      color: this.color,
-      lineDash: this.lineDash,
+      color: 0xffffff,
+      lineDash: this.lineDash.map((value) => value * resolution),
     });
     this.moveTo(0.5, 0);
     this.lineTo(0.5, height);
     this.endFill();
-    this.x = x;
+    this.x = Math.floor(x);
   }
 }

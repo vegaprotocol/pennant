@@ -24,6 +24,8 @@ export class HorizontalAxis extends Container {
     height: number,
     resolution: number = 1
   ) {
+    console.log(width);
+
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);

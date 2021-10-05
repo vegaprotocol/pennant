@@ -17,6 +17,7 @@ import { Ui } from "./ui";
 
 export interface PaneOptions {
   closable?: boolean;
+  resolution?: number;
 }
 
 /**
@@ -29,6 +30,8 @@ export class Pane extends EventEmitter implements Disposable {
   private isClosable: boolean;
   private isFreePan = false;
   private isPinned = true;
+
+  public data: any[] = [];
 
   private priceScale: ScaleLinear<number, number> = scaleLinear<
     number,
@@ -55,7 +58,7 @@ export class Pane extends EventEmitter implements Disposable {
 
     this.contents = new Contents({
       view: contents,
-      resolution: 1,
+      resolution: options.resolution ?? 1,
       width: 300,
       height: 300,
     });
@@ -65,7 +68,7 @@ export class Pane extends EventEmitter implements Disposable {
 
     this.ui = new Ui({
       view: ui,
-      resolution: 1,
+      resolution: options.resolution ?? 1,
       width: 300,
       height: 300,
     })
@@ -127,7 +130,6 @@ export class Pane extends EventEmitter implements Disposable {
                 );
               }
             } else {
-              console.log(point[0]);
               this._timeZoom.scaleBy(k, [
                 this.isPinned
                   ? this.timeScale.range()[1] - Y_AXIS_WIDTH
@@ -162,13 +164,25 @@ export class Pane extends EventEmitter implements Disposable {
 
     this.resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        if (entry.contentBoxSize) {
+        if (entry.devicePixelContentBoxSize) {
+          const devicePixelContentBoxSize = entry.devicePixelContentBoxSize[0];
+
+          this.resize(
+            devicePixelContentBoxSize.inlineSize / devicePixelRatio,
+            devicePixelContentBoxSize.blockSize / devicePixelRatio
+          );
+
+          this.render();
+        } else if (entry.contentBoxSize) {
           // Firefox implements `contentBoxSize` as a single content rect, rather than an array
           const contentBoxSize = Array.isArray(entry.contentBoxSize)
             ? entry.contentBoxSize[0]
             : entry.contentBoxSize;
 
-          this.resize(contentBoxSize.inlineSize, contentBoxSize.blockSize);
+          this.resize(
+            contentBoxSize.inlineSize / devicePixelRatio,
+            contentBoxSize.blockSize / devicePixelRatio
+          );
           this.render();
         }
       }
@@ -243,6 +257,7 @@ export class Pane extends EventEmitter implements Disposable {
     const rescaledPriceScale = this.priceZoom.__zoom.rescaleY(this.priceScale);
 
     this.contents.update(
+      this.data,
       this.timeScale,
       rescaledPriceScale as any,
       this.ui.renderer.width,

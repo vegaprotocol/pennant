@@ -67,10 +67,7 @@ export class TimeAxisUi extends EventEmitter implements Disposable {
 
     this.stage.interactive = true;
     this.stage.hitArea = new Rectangle(0, 0, options.width, options.height);
-
     this.xAxis.interactive = true;
-    this.xAxis.cursor = "ew-resize";
-
     this.stage.addChild(this.xAxis);
 
     this.stage

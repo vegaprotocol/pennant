@@ -21,7 +21,7 @@ export class HorizontalLine extends Graphics {
     this.lineStyle({
       width: this.width,
       color: this.color,
-      lineDash: this.lineDash,
+      lineDash: this.lineDash.map((value) => value * resolution),
     });
     this.moveTo(0, 0.5);
     this.lineTo(width, 0.5);

@@ -1,4 +1,4 @@
-import { ScaleLinear, ScaleTime } from "d3-scale";
+import { ScaleTime } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
@@ -10,7 +10,7 @@ export class XGrid extends Container {
   /**
    * Cache ticks
    */
-  private nodeByKeyValue = new Map<string, Graphics>();
+  private nodeByKeyValue = new Map<number, Graphics>();
 
   constructor() {
     super();
@@ -27,15 +27,15 @@ export class XGrid extends Container {
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tick.getTime())
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tick.getTime())
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
     );
 
     for (const node of enter) {
@@ -52,12 +52,12 @@ export class XGrid extends Container {
       line.endFill();
       line.x = scale(node);
 
-      this.nodeByKeyValue.set(tickFormat(node), line);
+      this.nodeByKeyValue.set(node.getTime(), line);
       this.addChild(line);
     }
 
     for (const node of update) {
-      const line = this.nodeByKeyValue.get(tickFormat(node))!;
+      const line = this.nodeByKeyValue.get(node.getTime())!;
 
       line.clear();
       line.lineStyle({

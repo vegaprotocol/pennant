@@ -34,12 +34,26 @@ export class Chart extends EventEmitter implements Disposable {
   private _data: (Record<string, number> & { date: Date })[] = [];
   private dates: Date[] = [];
 
-  constructor(container: HTMLElement, timeAxis: HTMLElement) {
+  constructor(options: {
+    container: HTMLElement;
+    timeAxis: HTMLElement;
+    resolution: number;
+  }) {
     super();
 
     this.resizeObserver = new ResizeObserver((entries) => {
+      const devicePixelRatio = window.devicePixelRatio;
+
       for (let entry of entries) {
-        if (entry.contentBoxSize) {
+        if (entry.devicePixelContentBoxSize) {
+          const devicePixelContentBoxSize = entry.devicePixelContentBoxSize[0];
+
+          this.resize(
+            devicePixelContentBoxSize.inlineSize,
+            devicePixelContentBoxSize.blockSize
+          );
+          this.render();
+        } else if (entry.contentBoxSize) {
           // Firefox implements `contentBoxSize` as a single content rect, rather than an array
           const contentBoxSize = Array.isArray(entry.contentBoxSize)
             ? entry.contentBoxSize[0]
@@ -51,9 +65,13 @@ export class Chart extends EventEmitter implements Disposable {
       }
     });
 
-    this.resizeObserver.observe(container);
+    this.resizeObserver.observe(options.container);
 
-    this.timeAxis = new TimeAxis(timeAxis);
+    this.timeAxis = new TimeAxis({
+      container: options.timeAxis,
+      resolution: options.resolution,
+    });
+
     this.timeAxis
       .on("zoomstart", (_event) => {})
       .on("zoom", (transform) => {
@@ -87,9 +105,15 @@ export class Chart extends EventEmitter implements Disposable {
 
     const dateExtent = extent(this.dates);
 
+    console.log(data);
+
     if (dateExtent[0]) {
-      // FIXME: Thisis wrong, should only be set once on construction
-      this.timeScale.domain();
+      // FIXME: This is wrong, should only be set once on construction
+      this.timeScale.domain(dateExtent);
+    }
+
+    for (const item of this.paneItems) {
+      item.pane.data = this.data;
     }
 
     this.update();
@@ -99,21 +123,14 @@ export class Chart extends EventEmitter implements Disposable {
   public addPane(pane: Pane) {
     pane
       .on("mousemove", (point: [number, number]) => {
-        this.paneItems.forEach((paneItem) => {
-          paneItem.pane.crosshair = [point[0], null];
-        });
-
         const xm = this.timeScale.invert(point[0]);
         const dates = this.dates;
 
         const index = bisectCenter(dates, xm);
-/* 
-        console.log(
-          this.timeScale.domain(),
-          this.timeScale.range(),
-          dates[index],
-          this.timeScale(dates[index])
-        ); */
+
+        this.paneItems.forEach((paneItem) => {
+          paneItem.pane.crosshair = [this.timeScale(dates[index]), null];
+        });
 
         pane.crosshair = [this.timeScale(dates[index]), point[1]];
 

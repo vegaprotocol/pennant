@@ -27,7 +27,7 @@ export class TimeAxis extends EventEmitter implements Disposable {
   private _timeZoom: Zoom = new Zoom();
   private lastZoomTransform: ZoomTransform = zoomIdentity;
 
-  constructor(container: HTMLElement, options: PaneOptions = {}) {
+  constructor(options: { container: HTMLElement; resolution: number }) {
     super();
 
     const ui = document.createElement("canvas");
@@ -35,7 +35,7 @@ export class TimeAxis extends EventEmitter implements Disposable {
 
     this.ui = new TimeAxisUi({
       view: ui,
-      resolution: 1,
+      resolution: options.resolution,
       width: 300,
       height: 300,
     })
@@ -93,7 +93,7 @@ export class TimeAxis extends EventEmitter implements Disposable {
       }
     });
 
-    this.resizeObserver.observe(container);
+    this.resizeObserver.observe(options.container);
 
     this.ui.render();
 
@@ -102,7 +102,7 @@ export class TimeAxis extends EventEmitter implements Disposable {
 
     wrapper.appendChild(ui);
 
-    container.prepend(wrapper);
+    options.container.prepend(wrapper);
   }
 
   get height(): number {
