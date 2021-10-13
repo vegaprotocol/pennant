@@ -5,4 +5,5 @@ export * from "./indicator";
 export * from "./label";
 export * from "./line-curve";
 export * from "./rect";
+export * from "./rule";
 export * from "./vertical-line";

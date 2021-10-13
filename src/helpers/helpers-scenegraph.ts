@@ -1,11 +1,16 @@
 import {
+  LineCurve,
+  Rule,
+} from "../components/candlestick-chart/display-objects";
+import {
   AreaElement,
   BarElement,
   LineElement,
   RuleElement,
   TickElement,
 } from "../elements";
-import { PositionalElement } from "../types";
+import { UpdatableObject } from "../renderer/core/updatable-object";
+import { string2hex } from "../renderer/utils";
 import { Color, Gradient, Mark } from "../vega-lite/mark";
 import {
   isFieldGTPredicate,
@@ -16,17 +21,24 @@ import { Colors } from ".";
 
 export const PADDING_INNER = 0.4;
 
-export function createElement(type: Mark, options: any): PositionalElement {
+export function createElement(type: Mark, options: any): any {
   if (type === "area") {
-    return new AreaElement(options);
+    return null;
   } else if (type === "bar") {
-    return new BarElement(options);
+    return null;
   } else if (type === "line") {
-    return new LineElement(options);
+    const object = new LineCurve(string2hex(options.color));
+    object.points = options.points;
+    return object;
   } else if (type === "rule") {
-    return new RuleElement(options);
+    const object = new Rule(string2hex(options.color));
+    object.x1 = options.x;
+    object.x2 = options.x;
+    object.y1 = options.y;
+    object.y2 = options.y2;
+    return object;
   } else if (type === "tick") {
-    return new TickElement(options);
+    return null;
   }
 
   throw new Error(`Element type not recognized: ${type}`);

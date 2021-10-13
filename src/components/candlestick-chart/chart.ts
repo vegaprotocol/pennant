@@ -4,6 +4,8 @@ import EventEmitter from "eventemitter3";
 
 import { Zoom } from "../../helpers/zoom/zoom";
 import { bisectCenter } from "../../math/array";
+import { studyInfoFields } from "../pane-view/helpers";
+import { LineCurve } from "./display-objects";
 import { Disposable } from "./disposable";
 import { Pane } from "./pane";
 import { TimeAxis } from "./time-axis";
@@ -105,15 +107,9 @@ export class Chart extends EventEmitter implements Disposable {
 
     const dateExtent = extent(this.dates);
 
-    console.log(data);
-
     if (dateExtent[0]) {
       // FIXME: This is wrong, should only be set once on construction
       this.timeScale.domain(dateExtent);
-    }
-
-    for (const item of this.paneItems) {
-      item.pane.data = this.data;
     }
 
     this.update();

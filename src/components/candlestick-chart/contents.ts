@@ -3,9 +3,10 @@ import { curveStepAfter } from "d3-shape";
 import { times } from "lodash";
 
 import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
+import { RenderableObject } from "../../renderer/core/renderable-object";
+import { UpdatableObject } from "../../renderer/core/updatable-object";
+import { Container, DisplayObject } from "../../renderer/display";
 import { LineCurve } from "./display-objects";
-import { Rect } from "./display-objects/rect";
 import { XGrid } from "./display-objects/x-grid";
 import { YGrid } from "./display-objects/y-grid";
 import { Disposable } from "./disposable";
@@ -19,9 +20,7 @@ export class Contents implements Disposable {
 
   public xGrid: XGrid = new XGrid();
   public yGrid: YGrid = new YGrid();
-  public curve: LineCurve = new LineCurve(0xffffff, 0xaaaaaa, curveStepAfter);
-
-  public rectangle: Rect = new Rect(0xff0000, 0.5);
+  public content: (UpdatableObject & DisplayObject)[] = [];
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -38,8 +37,6 @@ export class Contents implements Disposable {
 
     this.stage.addChild(this.xGrid);
     this.stage.addChild(this.yGrid);
-    this.stage.addChild(this.rectangle);
-    this.stage.addChild(this.curve);
   }
 
   public render(): void {
@@ -47,7 +44,6 @@ export class Contents implements Disposable {
   }
 
   public update(
-    data: any[],
     timeScale: ScaleTime<number, number>,
     priceScale: ScaleLinear<number, number>,
     width: number,
@@ -58,17 +54,12 @@ export class Contents implements Disposable {
     this.xGrid.update(timeScale, width, height, resolution);
     this.yGrid.update(priceScale, width, height, resolution);
 
-    this.rectangle.update(
-      timeScale(10),
-      priceScale(20),
-      timeScale(20) - timeScale(0),
-      priceScale(60) - priceScale(0)
-    );
-
-    this.curve.update(
-      data.map((d) => [timeScale(d.date), priceScale(d.close - 500)]),
-      height
-    );
+    for (const element of this.content) {
+      //(element as any).points = data.map((d) => [d.date, d.close]);
+      if (element.update) {
+        element.update(timeScale, priceScale, width, height, resolution);
+      }
+    }
   }
 
   public dispose() {}

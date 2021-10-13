@@ -59,7 +59,7 @@ export class VerticalAxis extends Container {
         fontSize: FONT_SIZE,
       });
 
-      text.x = width - resolution * (Y_AXIS_WIDTH + 7);
+      text.x = width - resolution * (Y_AXIS_WIDTH - 7);
       text.y = scale(node);
       text.anchor.set(0, 0.5);
 

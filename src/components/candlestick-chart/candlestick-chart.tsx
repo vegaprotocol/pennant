@@ -236,12 +236,21 @@ export const CandlestickChart = forwardRef(
         enter.forEach((flag, index) => {
           if (flag) {
             if (paneRef.current[ids[index]]) {
-              chartRef.current?.addPane(
-                new Pane(paneRef.current[ids[index]], {
-                  closable: true,
-                  resolution: window.devicePixelRatio,
-                })
-              );
+              const pane = new Pane(paneRef.current[ids[index]], {
+                closable: true,
+                resolution: window.devicePixelRatio,
+              });
+
+              if (scenegraph.panes[index].yDomain) {
+                pane.domain = scenegraph.panes[index].yDomain as [
+                  number,
+                  number
+                ];
+              }
+
+              pane.renderableObjects = scenegraph.panes[index].objects as any;
+
+              chartRef.current?.addPane(pane);
             }
           }
         });
@@ -265,8 +274,6 @@ export const CandlestickChart = forwardRef(
     if (!scenegraph) {
       return <NonIdealState title="No data found" />;
     }
-
-    //console.log(scenegraph);
 
     return (
       <div ref={containerRef} className={styles.container}>

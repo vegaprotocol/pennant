@@ -32,6 +32,7 @@ import {
   getTickConfig,
 } from "../helpers";
 import { calculateScales } from "../helpers";
+import { UpdatableObject } from "../renderer/core/updatable-object";
 import { Annotation, Candle, Scenegraph } from "../types";
 import { Field } from "../vega-lite/channeldef";
 import { compile } from "../vega-lite/compile/compile";
@@ -115,7 +116,7 @@ export function compileLayer(
 
       return createElement((markType as any) ?? "bar", cfg);
     })
-    .filter((d) => d.x !== undefined);
+    .filter((d) => d !== null && d.x !== undefined);
 }
 
 export function parseLayer(
@@ -123,8 +124,9 @@ export function parseLayer(
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number
-) {
+): UpdatableObject[] {
   const series: any[] = [];
+
   let layerData = data;
   let layerEncoding = encoding;
 
@@ -150,7 +152,7 @@ export function parseLayer(
     }
   }
 
-  return series;
+  return series.flat().filter((s) => s !== null);
 }
 
 function extractYDomain(layer: BaseSpec, data: any[]) {
@@ -319,7 +321,7 @@ export function parse(
           return {
             id: pane.id ?? pane.name ?? String(paneIndex),
             name: pane.name ?? "",
-            renderableElements: parseLayer(
+            objects: parseLayer(
               pane,
               { values: newData },
               specification.encoding ?? {},
@@ -331,55 +333,10 @@ export function parse(
               extractYEncodingFields(pane)
             ),
             originalData: newData ?? [],
-            grid: new GridElement(),
-            axis: new YAxisElement(),
-            crosshair: new CrosshairElement(),
-            axisTooltip: new YAxisTooltipElement(decimalPlaces),
-            annotations:
-              paneIndex === 0
-                ? [
-                    new YAxisAnnotationElement(
-                      newData[newData.length - 1].close,
-                      decimalPlaces
-                    ),
-                  ]
-                : [],
-            labels:
-              paneIndex === 0
-                ? [
-                    new LabelAnnotationHtmlElement({
-                      labels: annotations,
-                    }),
-                  ]
-                : [],
-            labelLines:
-              paneIndex === 0
-                ? [
-                    new LabelAnnotationElement({
-                      labels: annotations,
-                    }),
-                  ]
-                : [],
             yEncodingFields: extractYEncodingFields(pane),
             yDomain: extractYDomain(pane, newData), // FIXME: duplicate of bounds
           };
         })
       : [], // FIXME: If not a vconcat spec what should we do?
-    xAxis: {
-      id: "x-axis",
-      name: "x-axis",
-      originalData: data,
-      renderableElements: [
-        data.map(
-          (d) =>
-            new DummyElement({
-              x: d.date,
-            })
-        ),
-      ],
-      axis: new XAxisElement(),
-      axisTooltip: new XAxisTooltipElement(),
-      yEncodingFields: [],
-    },
   };
 }

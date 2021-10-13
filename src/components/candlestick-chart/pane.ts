@@ -1,15 +1,13 @@
-import {
-  ScaleLinear,
-  scaleLinear,
-  scaleThreshold,
-  ScaleTime,
-  scaleTime,
-} from "d3-scale";
+import { extent } from "d3-array";
+import { ScaleLinear, scaleLinear, ScaleTime, scaleTime } from "d3-scale";
 import EventEmitter from "eventemitter3";
 
 import { Y_AXIS_WIDTH } from "../../constants";
 import { zoomIdentity, ZoomTransform } from "../../helpers/zoom/transform";
 import { Zoom } from "../../helpers/zoom/zoom";
+import { RenderableObject } from "../../renderer/core/renderable-object";
+import { UpdatableObject } from "../../renderer/core/updatable-object";
+import { DisplayObject } from "../../renderer/display";
 import { Contents } from "./contents";
 import { Disposable } from "./disposable";
 import styles from "./pane.module.css";
@@ -32,6 +30,7 @@ export class Pane extends EventEmitter implements Disposable {
   private isPinned = true;
 
   public data: any[] = [];
+  public fields: string[] = [];
 
   private priceScale: ScaleLinear<number, number> = scaleLinear<
     number,
@@ -39,6 +38,7 @@ export class Pane extends EventEmitter implements Disposable {
   >().domain([0, 100]);
 
   private _crosshair: [number | null, number | null] = [null, null];
+  private _renderableObjects: (DisplayObject & UpdatableObject)[] = [];
   private _timeZoom: Zoom = new Zoom();
   private priceZoom: Zoom = new Zoom();
   private lastZoomTransform: ZoomTransform = zoomIdentity;
@@ -51,6 +51,8 @@ export class Pane extends EventEmitter implements Disposable {
   constructor(container: HTMLElement, options: PaneOptions = {}) {
     super();
 
+    const resolution = options.resolution ?? 1;
+
     const contents = document.createElement("canvas");
     contents.classList.add(styles.canvas);
 
@@ -58,7 +60,7 @@ export class Pane extends EventEmitter implements Disposable {
 
     this.contents = new Contents({
       view: contents,
-      resolution: options.resolution ?? 1,
+      resolution: resolution,
       width: 300,
       height: 300,
     });
@@ -68,7 +70,7 @@ export class Pane extends EventEmitter implements Disposable {
 
     this.ui = new Ui({
       view: ui,
-      resolution: options.resolution ?? 1,
+      resolution: resolution,
       width: 300,
       height: 300,
     })
@@ -86,7 +88,10 @@ export class Pane extends EventEmitter implements Disposable {
         }) => {
           const k = transform.k / this.lastZoomTransform.k;
 
-          if (point[0] > this.timeScale.range()[1] - Y_AXIS_WIDTH) {
+          if (
+            point[0] >
+            this.timeScale.range()[1] - resolution * Y_AXIS_WIDTH
+          ) {
             this.isFreePan = true;
 
             if (k === 1) {
@@ -132,7 +137,7 @@ export class Pane extends EventEmitter implements Disposable {
             } else {
               this._timeZoom.scaleBy(k, [
                 this.isPinned
-                  ? this.timeScale.range()[1] - Y_AXIS_WIDTH
+                  ? this.timeScale.range()[1] - resolution * Y_AXIS_WIDTH
                   : point[0],
                 0,
               ]);
@@ -152,7 +157,7 @@ export class Pane extends EventEmitter implements Disposable {
         this.emit("zoom", zoomIdentity);
       })
       .on("mousemove", (point: [number, number]) => {
-        if (point[0] <= this.timeScale.range()[1] - Y_AXIS_WIDTH) {
+        if (point[0] <= this.timeScale.range()[1] - resolution * Y_AXIS_WIDTH) {
           this.emit("mousemove", point);
         } else {
           this.emit("mousemove", [null, null]);
@@ -217,6 +222,37 @@ export class Pane extends EventEmitter implements Disposable {
     return this.contents.renderer.view.height;
   }
 
+  set renderableObjects(
+    renderableObjects: (DisplayObject & UpdatableObject)[]
+  ) {
+    this._renderableObjects = renderableObjects;
+
+    for (const object of this.contents.content) {
+      //this.contents.stage.removeChild(object);
+    }
+
+    this.contents.content = this._renderableObjects;
+
+    for (const object of this.contents.content) {
+      this.contents.stage.addChild(object);
+    }
+
+    if (this.data.length > 0) {
+      const domain = extent(
+        this.data.flatMap((d) => this.fields?.map((field) => d[field]))
+      ) as [number, number];
+
+      this.priceScale.domain(domain);
+    }
+
+    this.update();
+    this.render();
+  }
+
+  set domain(domain: [number, number]) {
+    this.priceScale.domain(domain)
+  }
+
   get timeZoom() {
     return this._timeZoom;
   }
@@ -257,7 +293,6 @@ export class Pane extends EventEmitter implements Disposable {
     const rescaledPriceScale = this.priceZoom.__zoom.rescaleY(this.priceScale);
 
     this.contents.update(
-      this.data,
       this.timeScale,
       rescaledPriceScale as any,
       this.ui.renderer.width,

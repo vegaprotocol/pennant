@@ -38,6 +38,8 @@ export class DepthCurve extends Container {
     height: number,
     resolution: number = 1
   ): void {
+    console.log(this.fill);
+
     this.area.clear();
     this.area.beginFill(this.fill, 0.5);
     this.area.drawArea(points, this.curve, height - resolution * AXIS_HEIGHT);
