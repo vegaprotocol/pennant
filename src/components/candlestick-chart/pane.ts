@@ -250,7 +250,7 @@ export class Pane extends EventEmitter implements Disposable {
   }
 
   set domain(domain: [number, number]) {
-    this.priceScale.domain(domain)
+    this.priceScale.domain(domain);
   }
 
   get timeZoom() {
@@ -259,8 +259,6 @@ export class Pane extends EventEmitter implements Disposable {
 
   set timeZoom(zoom) {
     this._timeZoom = zoom;
-    this.update();
-    this.render();
   }
 
   get width(): number {

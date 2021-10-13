@@ -18,6 +18,7 @@ import {
   Predicate,
 } from "../vega-lite/predicate";
 import { Colors } from ".";
+import { Bar } from "../components/candlestick-chart/display-objects/bar";
 
 export const PADDING_INNER = 0.4;
 
@@ -25,7 +26,15 @@ export function createElement(type: Mark, options: any): any {
   if (type === "area") {
     return null;
   } else if (type === "bar") {
-    return null;
+    const object = new Bar(
+      string2hex(options.fill),
+      string2hex(options.stroke)
+    );
+    object.x1 = options.x;
+    object.y1 = options.y;
+    object.width = options.width;
+    object.height = options.height;
+    return object;
   } else if (type === "line") {
     const object = new LineCurve(string2hex(options.color));
     object.points = options.points;
