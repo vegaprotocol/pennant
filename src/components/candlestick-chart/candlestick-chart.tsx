@@ -78,6 +78,8 @@ export const CandlestickChart = forwardRef(
     }: CandlestickChartProps,
     ref: React.Ref<CandlestickChartHandle>
   ) => {
+    const isInitialized = useRef(false);
+
     const chartRef = useRef<Chart>(null!);
     const containerRef = useRef<HTMLDivElement>(null!);
     const paneRef = useRef<Record<string, HTMLElement>>({});
@@ -202,7 +204,12 @@ export const CandlestickChart = forwardRef(
     );
 
     useEffect(() => {
-      if (!loading && specification && axisRef.current) {
+      if (
+        !isInitialized.current &&
+        !loading &&
+        specification &&
+        axisRef.current
+      ) {
         chartRef.current = new Chart({
           container: containerRef.current,
           timeAxis: axisRef.current,
@@ -217,6 +224,8 @@ export const CandlestickChart = forwardRef(
           .on("mouseout", () => {
             handleDataIndexChanged(null);
           });
+
+        isInitialized.current = true;
       }
     }, [handleBoundsChanged, handleDataIndexChanged, loading, specification]);
 
