@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/vegaprotocol/pennant/compare/v0.3.1...v0.3.2) (2021-10-27)
+
+
+### Bug Fixes
+
+* use fallback values if getPropertyValue returns empty string ([#360](https://github.com/vegaprotocol/pennant/issues/360)) ([d799197](https://github.com/vegaprotocol/pennant/commit/d799197afb33960fe6b266e47b088319fdefab75))
+* **deps:** update dependency use-resize-observer to v8 ([#343](https://github.com/vegaprotocol/pennant/issues/343)) ([8bc5edf](https://github.com/vegaprotocol/pennant/commit/8bc5edfb0571da71adba3329f9700427d51abc69))
+
 ### [0.3.1](https://github.com/vegaprotocol/pennant/compare/v0.3.0...v0.3.1) (2021-08-26)
 
 ## [0.3.0](https://github.com/vegaprotocol/pennant/compare/v0.3.0-alpha.8...v0.3.0) (2021-08-25)
