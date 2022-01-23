@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /*
   Based on https://github.com/ZeeCoder/use-resize-observer
 */

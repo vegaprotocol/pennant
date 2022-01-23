@@ -62,7 +62,6 @@ const config = {
       file: meta.main,
       sourcemap: true,
       format: "cjs",
-      globals,
       plugins: [
         getBabelOutputPlugin({
           presets: ["@babel/preset-env"],
