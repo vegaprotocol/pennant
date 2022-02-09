@@ -1,5 +1,9 @@
 {
-  "extends": ["plugin:react-hooks/recommended", "prettier"],
+  "extends": [
+    "plugin:storybook/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["simple-import-sort"],
   "rules": {
