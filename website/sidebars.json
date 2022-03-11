@@ -1,0 +1,10 @@
+{
+  "docs": [
+    {
+      "Getting Started": ["getting-started"],
+      "API reference": ["overview", "chart", "depth-chart"],
+      "Examples": ["basic"]
+    },
+    { "type": "doc", "id": "faq" }
+  ]
+}
