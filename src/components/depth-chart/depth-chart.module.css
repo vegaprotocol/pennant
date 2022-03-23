@@ -1,9 +1,14 @@
+.container {
+  height: 100%;
+  width: 100%;
+}
+
 .canvasContainer {
   cursor: crosshair;
   height: 100%;
   position: relative;
   width: 100%;
-  background-color: #0f0f0f;
+  background-color: var(--pennant-background-surface-color);
 }
 
 .canvas {

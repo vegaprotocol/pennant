@@ -36,10 +36,15 @@ export class DepthCurve extends Container {
   public update(
     points: [number, number][],
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
+    fill: number = 0xffffff,
+    stroke: number = 0
   ): void {
+    this.fill = fill;
+    this.stroke = stroke;
+
     this.area.clear();
-    this.area.beginFill(this.fill, 0.5);
+    this.area.beginFill(this.fill, 1);
     this.area.drawArea(points, this.curve, height - resolution * AXIS_HEIGHT);
     this.area.endFill();
 

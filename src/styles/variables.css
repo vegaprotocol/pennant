@@ -11,8 +11,8 @@
   --pennant-color-warning: var(--vega-orange);
   --pennant-color-danger: var(--vega-red);
 
-  --pennant-color-white: #fff;
-  --pennant-color-black: #000;
+  --pennant-color-white: #ffffff;
+  --pennant-color-black: #000000;
 
   --pennant-color-gray-0: var(--pennant-color-white);
   --pennant-color-gray-100: #f5f6f7;
@@ -26,26 +26,31 @@
   --pennant-color-gray-900: #1c1e21;
   --pennant-color-gray-1000: var(--pennant-color-black);
 
-  --pennant-color-emphasis-100: var(--pennant-color-gray-900);
-  --pennant-color-emphasis-200: var(--pennant-color-gray-800);
-  --pennant-color-emphasis-300: var(--pennant-color-gray-700);
-  --pennant-color-emphasis-400: var(--pennant-color-gray-600);
+  --pennant-color-emphasis-0: var(--pennant-color-gray-0);
+  --pennant-color-emphasis-100: var(--pennant-color-gray-100);
+  --pennant-color-emphasis-200: var(--pennant-color-gray-200);
+  --pennant-color-emphasis-300: var(--pennant-color-gray-300);
+  --pennant-color-emphasis-400: var(--pennant-color-gray-400);
   --pennant-color-emphasis-500: var(--pennant-color-gray-500);
-  --pennant-color-emphasis-600: var(--pennant-color-gray-400);
-  --pennant-color-emphasis-700: var(--pennant-color-gray-300);
-  --pennant-color-emphasis-800: var(--pennant-color-gray-200);
-  --pennant-color-emphasis-900: var(--pennant-color-gray-100);
+  --pennant-color-emphasis-600: var(--pennant-color-gray-600);
+  --pennant-color-emphasis-700: var(--pennant-color-gray-700);
+  --pennant-color-emphasis-800: var(--pennant-color-gray-800);
+  --pennant-color-emphasis-900: var(--pennant-color-gray-900);
+  --pennant-color-emphasis-1000: var(--pennant-color-gray-1000);
 
   /* Base. */
   --pennant-color-content: var(--pennant-color-emphasis-900);
-  --pennant-color-content-secondary: var(--pennant-color-emphasis-500);
+  --pennant-color-content-secondary: var(--pennant-color-emphasis-700);
+  --pennant-color-content-inverse: var(--pennant-color-emphasis-0);
+
+  --pennant-background-surface-color: var(--pennant-color-content-inverse);
 
   --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
 
   /* Depth chart. */
-  --pennant-color-buy-fill: #16452d;
+  --pennant-color-buy-fill: #eaf5ee;
   --pennant-color-buy-stroke: var(--vega-green);
-  --pennant-color-sell-fill: #800700;
+  --pennant-color-sell-fill: #f8e9ea;
   --pennant-color-sell-stroke: var(--vega-red);
 
   /* Typography. */
@@ -64,4 +69,33 @@
   /* Transitions. */
   --pennant-transition-fast: 100ms;
   --pennant-transition-slow: 300ms;
+}
+
+[data-theme="dark"] {
+  --pennant-color-emphasis-0: var(--pennant-color-gray-1000);
+  --pennant-color-emphasis-100: var(--pennant-color-gray-900);
+  --pennant-color-emphasis-200: var(--pennant-color-gray-800);
+  --pennant-color-emphasis-300: var(--pennant-color-gray-700);
+  --pennant-color-emphasis-400: var(--pennant-color-gray-600);
+  --pennant-color-emphasis-500: var(--pennant-color-gray-500);
+  --pennant-color-emphasis-600: var(--pennant-color-gray-400);
+  --pennant-color-emphasis-700: var(--pennant-color-gray-300);
+  --pennant-color-emphasis-800: var(--pennant-color-gray-200);
+  --pennant-color-emphasis-900: var(--pennant-color-gray-100);
+  --pennant-color-emphasis-1000: var(--pennant-color-gray-0);
+
+  --pennant-background-surface-color: #242526;
+
+  --pennant-color-content: var(--pennant-color-emphasis-900);
+  --pennant-color-content-secondary: var(--pennant-color-emphasis-700);
+
+  /* Depth chart. */
+  --pennant-color-buy-fill: #1e2c29;
+  --pennant-color-buy-stroke: var(--vega-green);
+  --pennant-color-sell-fill: #2c2024;
+  --pennant-color-sell-stroke: var(--vega-red);
+
+  /* Typography. */
+  --pennant-font-color-base: var(--pennant-color-content);
+  --pennant-font-color-secondary: var(--pennant-color-content-secondary);
 }
