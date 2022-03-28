@@ -1,5 +1,4 @@
 import { align, getNumXTicks, getNumYTicks } from "../helpers";
-import { Colors } from "../helpers";
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
 
@@ -7,7 +6,8 @@ function addGridPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
   yScale: ScaleLinear,
-  pixelRatio: number = 1
+  pixelRatio: number = 1,
+  color: string
 ) {
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
@@ -22,7 +22,7 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.GRAY_DARK_2;
+    ctx.strokeStyle = color;
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
@@ -40,7 +40,7 @@ function addGridPath(
     ctx.save();
     ctx.beginPath();
 
-    ctx.strokeStyle = Colors.GRAY_DARK_2;
+    ctx.strokeStyle = color;
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
@@ -60,8 +60,9 @@ export class GridElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio: number = 1
+    pixelRatio: number = 1,
+    color: string
   ) {
-    addGridPath(ctx, xScale, yScale, pixelRatio);
+    addGridPath(ctx, xScale, yScale, pixelRatio, color);
   }
 }

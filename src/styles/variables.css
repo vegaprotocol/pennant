@@ -6,7 +6,7 @@
   --vega-red: #ff261a;
   --vega-yellow: #daff0d;
 
-  --pennant-color-success: var(--vega-green);
+  --pennant-color-success: #5dc887;
   --pennant-color-info: var(--vega-blue);
   --pennant-color-warning: var(--vega-orange);
   --pennant-color-danger: var(--vega-red);
@@ -45,7 +45,7 @@
 
   --pennant-background-surface-color: var(--pennant-color-content-inverse);
 
-  --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
+  --pennant-hover-overlay: rgba(255, 255, 255, 0.5);
 
   /* Depth chart. */
   --pennant-color-buy-fill: #eaf5ee;
@@ -85,6 +85,7 @@
   --pennant-color-emphasis-1000: var(--pennant-color-gray-0);
 
   --pennant-background-surface-color: #242526;
+  --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
 
   --pennant-color-content: var(--pennant-color-emphasis-900);
   --pennant-color-content-secondary: var(--pennant-color-emphasis-700);

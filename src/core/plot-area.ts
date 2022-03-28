@@ -2,8 +2,9 @@ import { bisector, extent } from "d3-array";
 import { closestIndexTo, isValid } from "date-fns";
 import { clamp } from "lodash";
 
+import { Colors } from "../components/chart";
 import { CrosshairElement, GridElement } from "../elements";
-import { clearCanvas, Colors } from "../helpers";
+import { clearCanvas } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 export class PlotArea {
@@ -21,6 +22,7 @@ export class PlotArea {
   private _yEncodingFields: string[];
   private _yScale: ScaleLinear;
   private isSimple: boolean = false;
+  private colors: Colors;
 
   constructor(
     x: ScaleTime,
@@ -29,7 +31,8 @@ export class PlotArea {
     originalData: any[],
     fields: string[],
     labels: RenderableElement[],
-    isSimple: boolean
+    isSimple: boolean,
+    colors: Colors
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -38,6 +41,7 @@ export class PlotArea {
     this._yEncodingFields = fields;
     this._labels = labels;
     this.isSimple = isSimple;
+    this.colors = colors;
   }
 
   context(context: CanvasRenderingContext2D) {
@@ -57,13 +61,14 @@ export class PlotArea {
 
   draw() {
     if (this.ctx) {
-      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+      clearCanvas(this.ctx.canvas, this.ctx, this.colors.backgroundSurface);
 
       this.gridline.draw(
         this.ctx,
         this._xScale,
         this._yScale,
-        this._pixelRatio
+        this._pixelRatio,
+        this.colors.emphasis300
       );
 
       this._renderableElements[0].draw(
@@ -83,7 +88,8 @@ export class PlotArea {
           this._xScale,
           this._yScale,
           this._pixelRatio,
-          [null, this.latestPricePosition]
+          [null, this.latestPricePosition],
+          this.colors.textPrimary
         );
       }
 
@@ -92,7 +98,8 @@ export class PlotArea {
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.position
+        this.position,
+        this.colors.textPrimary
       );
 
       for (const label of this._labels) {

@@ -22,6 +22,7 @@ import {
   Viewport,
 } from "../../types";
 import { FcElement, Interval } from "../../types";
+import { Colors } from "../chart";
 import { PaneView } from "../pane-view";
 import { SplitView } from "../split-view";
 import { XAxisView } from "../x-axis-view";
@@ -37,6 +38,7 @@ export type PlotContainerProps = {
   proportion: number;
   simple: boolean;
   initialNumCandles: number;
+  colors: Colors;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -58,6 +60,7 @@ export const PlotContainer = forwardRef<
       proportion,
       simple,
       initialNumCandles,
+      colors,
       onViewportChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
@@ -151,7 +154,8 @@ export const PlotContainer = forwardRef<
         initialViewport,
         decimalPlaces,
         simple,
-        initialNumCandles
+        initialNumCandles,
+        colors
       )
         .interval(interval)
         .on("redraw", () => {

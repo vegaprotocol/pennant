@@ -1,8 +1,10 @@
 import { Meta, Story } from "@storybook/react/types-6-0";
+import { useState } from "react";
 
 import { Interval } from "../../stories/api/vega-graphql";
 import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
+import { ThemeVariant } from "../../types";
 import { Chart, ChartProps } from "./chart";
 
 export default {
@@ -44,4 +46,35 @@ export const SimpleMode = Template.bind({});
 SimpleMode.args = {
   ...Default.args,
   options: { studies: ["volume"], simple: true },
+};
+
+export const Theme: Story<ChartProps> = (args) => {
+  const [theme, setTheme] = useState<ThemeVariant>("dark");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "80vw",
+        height: "80vh",
+      }}
+    >
+      <Chart {...args} theme="light" />
+      <Chart {...args} theme="dark" />
+      <Chart {...args} theme={theme} />
+      <button
+        type="button"
+        onClick={() =>
+          setTheme((theme) => (theme === "dark" ? "light" : "dark"))
+        }
+      >
+        Switch theme
+      </button>
+    </div>
+  );
+};
+
+Theme.args = {
+  ...Default.args,
 };

@@ -205,7 +205,7 @@ export class Chart extends EventEmitter {
       ];
     }
 
-    this.axis.colors = (this._colors);
+    this.axis.colors = this._colors;
 
     this.axis.update(
       this.prices.map((price) => priceScale(price)),

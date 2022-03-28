@@ -1,5 +1,6 @@
+import { Colors } from "../components/chart";
 import { XAxisElement, XAxisTooltipElement } from "../elements";
-import { clearCanvas,Colors } from "../helpers";
+import { clearCanvas } from "../helpers";
 import { Interval, ScaleTime } from "../types";
 
 /**
@@ -13,10 +14,12 @@ export class XAxis {
   private position: Date | null = null;
   private tooltip: XAxisTooltipElement = new XAxisTooltipElement();
   private _xScale: ScaleTime;
+  private colors: Colors;
 
-  constructor(x: ScaleTime, interval: Interval) {
+  constructor(x: ScaleTime, interval: Interval, colors: Colors) {
     this._interval = interval;
     this._xScale = x.copy();
+    this.colors = colors;
   }
 
   context(context: CanvasRenderingContext2D): this {
@@ -31,14 +34,15 @@ export class XAxis {
 
   draw() {
     if (this.ctx) {
-      clearCanvas(this.ctx.canvas, this.ctx, Colors.BACKGROUND);
+      clearCanvas(this.ctx.canvas, this.ctx, this.colors.backgroundSurface);
 
       this.axis.draw(
         this.ctx,
         this._xScale,
         null!,
         this._pixelRatio,
-        this._interval
+        this._interval,
+        this.colors.textSecondary
       );
 
       this.tooltip.draw(
@@ -47,7 +51,8 @@ export class XAxis {
         null!,
         this._pixelRatio,
         this.position,
-        this._interval
+        this._interval,
+        this.colors
       );
     }
   }

@@ -1,13 +1,16 @@
+import { Colors } from "../components/chart";
 import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";
-import { Colors } from "./helpers-color";
 import {
   indicatorAbsoluteChange,
   indicatorPercentageChange,
 } from "./helpers-technical-indicators";
 
-function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
+function constructMainLayerSpec(
+  chartType: ChartType,
+  colors: Colors
+): BaseSpec[] {
   switch (chartType) {
     case ChartType.AREA:
       return [
@@ -57,9 +60,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN,
+                value: colors.buyStroke,
               },
-              value: Colors.RED,
+              value: colors.sellStroke,
             },
           },
           mark: {
@@ -72,9 +75,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN,
+                value: colors.buyStroke,
               },
-              value: Colors.RED,
+              value: colors.sellStroke,
             },
           },
           mark: {
@@ -88,9 +91,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN,
+                value: colors.buyStroke,
               },
-              value: Colors.RED,
+              value: colors.sellStroke,
             },
           },
           mark: {
@@ -108,9 +111,9 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             color: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN,
+                value: colors.buyStroke,
               },
-              value: Colors.RED,
+              value: colors.sellStroke,
             },
           },
           mark: {
@@ -124,16 +127,16 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
             fill: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN_DARK,
+                value: colors.buyFill,
               },
-              value: Colors.RED,
+              value: colors.sellFill,
             },
             stroke: {
               condition: {
                 test: { field: "open", lt: "close" },
-                value: Colors.GREEN,
+                value: colors.buyStroke,
               },
-              value: Colors.RED,
+              value: colors.sellStroke,
             },
           },
           mark: {
@@ -144,7 +147,7 @@ function constructMainLayerSpec(chartType: ChartType): BaseSpec[] {
   }
 }
 
-function constructStudyLayerSpec(study: Study): BaseSpec[] {
+function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
   switch (study) {
     case "eldarRay":
       return [
@@ -175,7 +178,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -187,9 +190,9 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
             fill: {
               condition: {
                 test: { field: "divergence", gt: 0 },
-                value: Colors.GREEN_DARK,
+                value: colors.buyFill,
               },
-              value: Colors.RED,
+              value: colors.sellFill,
             },
           },
           mark: {
@@ -202,7 +205,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_ORANGE,
+            color: colors.vegaOrange,
           },
         },
         {
@@ -223,7 +226,7 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -243,7 +246,10 @@ function constructStudyLayerSpec(study: Study): BaseSpec[] {
   }
 }
 
-function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
+function constructOverlayLayerSpec(
+  overlay: Overlay,
+  colors: Colors
+): BaseSpec[] {
   switch (overlay) {
     case "bollinger":
       return [
@@ -253,7 +259,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_ORANGE,
+            color: colors.vegaOrange,
           },
         },
         {
@@ -262,7 +268,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -274,7 +280,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_ORANGE,
+            color: colors.vegaOrange,
           },
         },
         {
@@ -283,7 +289,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -295,7 +301,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -307,7 +313,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -319,7 +325,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_ORANGE,
+            color: colors.vegaOrange,
           },
         },
         {
@@ -328,7 +334,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_GREEN,
+            color: colors.vegaGreen,
           },
         },
         {
@@ -337,7 +343,7 @@ function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: Colors.VEGA_YELLOW,
+            color: colors.vegaYellow,
           },
         },
       ];
@@ -427,6 +433,7 @@ function constructStudyTransform(study: Study): Transform[] {
 export function constructTopLevelSpec(
   data: Candle[],
   chartType: ChartType,
+  colors: Colors,
   overlay?: Overlay,
   study?: Study,
   priceMonitoringBounds?: any
@@ -436,12 +443,14 @@ export function constructTopLevelSpec(
 
   const mainSpecification: BaseSpec = {
     name: "main",
-    layer: constructMainLayerSpec(chartType),
+    layer: constructMainLayerSpec(chartType, colors),
   };
 
   if (overlay) {
     transform.push(...constructOverlayTransform(overlay));
-    mainSpecification.layer?.push(...constructOverlayLayerSpec(overlay));
+    mainSpecification.layer?.push(
+      ...constructOverlayLayerSpec(overlay, colors)
+    );
   }
 
   vconcat.push(mainSpecification);
@@ -451,7 +460,7 @@ export function constructTopLevelSpec(
 
     const studySpecification: BaseSpec = {
       name: study,
-      layer: constructStudyLayerSpec(study),
+      layer: constructStudyLayerSpec(study, colors),
     };
 
     vconcat.push(studySpecification);

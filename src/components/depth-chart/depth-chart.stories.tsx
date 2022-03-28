@@ -328,7 +328,7 @@ UNIDAI.args = {
 
 export const BTCUSD = Template.bind({});
 BTCUSD.args = {
-  data: BTCUSD_data,
+  data: { buy: [], sell: [] },
   priceFormat: (price: number) => priceFormatter(5).format(price),
   midPrice: 44256,
 };

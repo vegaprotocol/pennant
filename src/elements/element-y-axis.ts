@@ -1,5 +1,7 @@
+import { Colors } from "../components/chart";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
-import { align, Colors, getNumYTicks } from "../helpers";
+import { align, getNumYTicks } from "../helpers";
+import { hex2rgb, string2hex } from "../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
 
@@ -10,7 +12,8 @@ function addYAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
   yScale: ScaleLinear,
-  pixelRatio: number
+  pixelRatio: number,
+  colors: Colors
 ) {
   const xRange = xScale.range();
   const yRange = yScale.range();
@@ -19,7 +22,8 @@ function addYAxisPath(
   const tickFormat = yScale.tickFormat(numYTicks);
 
   ctx.beginPath();
-  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  const rgb = hex2rgb(string2hex(colors.backgroundSurface)).map((c) => 255 * c);
+  ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.8)`;
 
   ctx.fillRect(
     xScale.range()[1] - Y_AXIS_WIDTH,
@@ -30,8 +34,8 @@ function addYAxisPath(
 
   ctx.closePath();
 
-  ctx.strokeStyle = "#fff";
-  ctx.fillStyle = Colors.GRAY_LIGHT;
+  ctx.strokeStyle = "#ffffff";
+  ctx.fillStyle = colors.textSecondary;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
   ctx.font = `${TICK_LABEL_FONT_SIZE}px monospace`;
@@ -49,8 +53,8 @@ function addYAxisPath(
   });
 
   const gradientTop = ctx.createLinearGradient(0, 0, 0, FADE_HEIGHT);
-  gradientTop.addColorStop(0, "#000");
-  gradientTop.addColorStop(1, "rgba(0,0,0,0)");
+  gradientTop.addColorStop(0, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},1)`);
+  gradientTop.addColorStop(1, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
 
   ctx.fillStyle = gradientTop;
   ctx.fillRect(xRange[1] - Y_AXIS_WIDTH, 0, Y_AXIS_WIDTH, FADE_HEIGHT);
@@ -61,8 +65,8 @@ function addYAxisPath(
     0,
     yRange[0]
   );
-  gradientBottom.addColorStop(0, "rgba(0,0,0,0)");
-  gradientBottom.addColorStop(1, "#000");
+  gradientBottom.addColorStop(0, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
+  gradientBottom.addColorStop(1, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},1)`);
 
   ctx.fillStyle = gradientBottom;
   ctx.fillRect(
@@ -73,7 +77,7 @@ function addYAxisPath(
   );
 
   ctx.beginPath();
-  ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+  ctx.strokeStyle = "#ff0000";
   ctx.moveTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[0]);
   ctx.lineTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[1]);
   ctx.stroke();
@@ -85,8 +89,9 @@ export class YAxisElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio = 1
+    pixelRatio = 1,
+    colors: Colors
   ) {
-    addYAxisPath(ctx, xScale, yScale, pixelRatio);
+    addYAxisPath(ctx, xScale, yScale, pixelRatio, colors);
   }
 }

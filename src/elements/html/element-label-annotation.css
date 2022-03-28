@@ -1,6 +1,6 @@
 .annotation {
   align-items: stretch;
-  background-color: var(--pennant-color-black);
+  background-color: var(--pennant-background-surface-color);
   border-color: var(--pennant-color-gray-500);
   border-style: solid;
   border-width: 2px;
@@ -104,7 +104,7 @@
 }
 
 .spinner-track {
-  stroke: rgba(16, 22, 26, 0.5);
+  stroke: var(--pennant-background-surface-color);
 }
 
 .spinner-animation {
@@ -113,6 +113,7 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
+  height: 14px;
 }
 
 .no-spin {

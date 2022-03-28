@@ -12,6 +12,7 @@ import { compareAsc } from "date-fns";
 import { difference, intersection, omit, union } from "lodash";
 import { MutableRefObject } from "react";
 
+import { Colors } from "../components/chart";
 import {
   DEFAULT_INTERVAL_WIDTH,
   INITIAL_NUM_CANDLES_TO_DISPLAY,
@@ -102,6 +103,7 @@ export class Core {
   private isFreePan = false;
 
   private isSimple = false;
+  private colors: Colors;
 
   // Data
   private dates: Date[];
@@ -134,11 +136,13 @@ export class Core {
     initialViewport: Viewport,
     decimalPlaces: number = 5,
     simple = false,
-    initialNumCandles = 24
+    initialNumCandles = 24,
+    colors: Colors
   ) {
     this._decimalPlaces = decimalPlaces;
     this.isSimple = simple;
     this.initialNumCandles = initialNumCandles;
+    this.colors = colors;
 
     // x-axis
     this.dates = axis.data;
@@ -148,7 +152,7 @@ export class Core {
       .select<Element>(".x-axis")
       .style("pointer-events", "none");
 
-    this.xAxis = new XAxis(this.xScale, this._interval);
+    this.xAxis = new XAxis(this.xScale, this._interval, colors);
     this.xAxisInteraction = new XAxisInteraction()
       .on("drag", (e) => {
         handleXAxisDrag(
@@ -182,7 +186,7 @@ export class Core {
     this.yAxes = Object.fromEntries(
       Object.entries(this.yScales).map(([id, scale]) => [
         id,
-        new YAxis(this.xScale, scale, this._decimalPlaces),
+        new YAxis(this.xScale, scale, this._decimalPlaces, this.colors),
       ])
     );
 
@@ -233,7 +237,8 @@ export class Core {
           pane.data,
           pane.yEncodingFields,
           pane.labelLines,
-          this.isSimple
+          this.isSimple,
+          this.colors
         ),
       ])
     );
@@ -647,7 +652,8 @@ export class Core {
         this.yAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
           this.yScales[id],
-          this._decimalPlaces
+          this._decimalPlaces,
+          this.colors
         );
 
         this.yAxisInteractions[id] = new YAxisInteraction()
@@ -679,7 +685,8 @@ export class Core {
           panes[id].data,
           panes[id].yEncodingFields,
           panes[id].labelLines,
-          this.isSimple
+          this.isSimple,
+          this.colors
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
