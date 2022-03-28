@@ -6,6 +6,8 @@ import { ScaleLinear, ScaleTime } from "../types";
  * The y-axis component renders human readable reference marks.
  */
 export class YAxis {
+  public colors: Colors;
+
   private axis: YAxisElement = new YAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private latestPricePosition: number | null = null;
@@ -15,7 +17,6 @@ export class YAxis {
   private latestPriceTooltip: YAxisTooltipElement;
   private _xScale: ScaleTime;
   private _yScale: ScaleLinear;
-  public colors: Colors;
 
   constructor(
     x: ScaleTime,

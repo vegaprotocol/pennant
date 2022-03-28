@@ -103,7 +103,7 @@ export class Core {
   private isFreePan = false;
 
   private isSimple = false;
-  private colors: Colors;
+  private _colors: Colors;
 
   // Data
   private dates: Date[];
@@ -142,7 +142,7 @@ export class Core {
     this._decimalPlaces = decimalPlaces;
     this.isSimple = simple;
     this.initialNumCandles = initialNumCandles;
-    this.colors = colors;
+    this._colors = colors;
 
     // x-axis
     this.dates = axis.data;
@@ -186,7 +186,7 @@ export class Core {
     this.yAxes = Object.fromEntries(
       Object.entries(this.yScales).map(([id, scale]) => [
         id,
-        new YAxis(this.xScale, scale, this._decimalPlaces, this.colors),
+        new YAxis(this.xScale, scale, this._decimalPlaces, this._colors),
       ])
     );
 
@@ -238,7 +238,7 @@ export class Core {
           pane.yEncodingFields,
           pane.labelLines,
           this.isSimple,
-          this.colors
+          this._colors
         ),
       ])
     );
@@ -653,7 +653,7 @@ export class Core {
           this.xTransform().rescaleX(this.xScale),
           this.yScales[id],
           this._decimalPlaces,
-          this.colors
+          this._colors
         );
 
         this.yAxisInteractions[id] = new YAxisInteraction()
@@ -686,7 +686,7 @@ export class Core {
           panes[id].yEncodingFields,
           panes[id].labelLines,
           this.isSimple,
-          this.colors
+          this._colors
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
@@ -930,5 +930,21 @@ export class Core {
 
   zoomOut(delta: number): void {
     this.zoom(-delta);
+  }
+
+  set colors(colors: Colors) {
+    this._colors = colors;
+
+    Object.values(this.plotAreas).forEach((plotArea) => {
+      plotArea.colors = colors;
+    });
+
+    Object.values(this.yAxes).map((yAxis) => {
+      yAxis.colors = colors;
+    });
+
+    this.xAxis.colors = colors;
+
+    this.listeners.call("redraw");
   }
 }

@@ -77,7 +77,7 @@ function addYAxisPath(
   );
 
   ctx.beginPath();
-  ctx.strokeStyle = "#ff0000";
+  ctx.strokeStyle = colors.emphasis300;
   ctx.moveTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[0]);
   ctx.lineTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[1]);
   ctx.stroke();

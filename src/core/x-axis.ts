@@ -7,6 +7,8 @@ import { Interval, ScaleTime } from "../types";
  * The x-axis component renders human readable reference marks.
  */
 export class XAxis {
+  public colors: Colors;
+
   private axis: XAxisElement = new XAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private _interval: Interval;
@@ -14,7 +16,6 @@ export class XAxis {
   private position: Date | null = null;
   private tooltip: XAxisTooltipElement = new XAxisTooltipElement();
   private _xScale: ScaleTime;
-  private colors: Colors;
 
   constructor(x: ScaleTime, interval: Interval, colors: Colors) {
     this._interval = interval;

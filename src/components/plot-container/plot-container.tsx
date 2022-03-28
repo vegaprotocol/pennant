@@ -233,6 +233,12 @@ export const PlotContainer = forwardRef<
       }
     }, [interval]);
 
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current.colors = colors;
+      }
+    }, [colors]);
+
     const showStudy = scenegraph.panes.length === 2;
 
     return (

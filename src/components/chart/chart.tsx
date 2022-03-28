@@ -104,13 +104,6 @@ export function getColors(element: HTMLElement | null): Colors {
   };
 }
 
-// TODO: Delete me
-/* --vega-blue: #48aff0;
---vega-green: #26ff8a;
---vega-orange: #d9822b;
---vega-red: #ff261a;
---vega-yellow: #daff0d; */
-
 export type Options = {
   chartType?: ChartType;
   overlays?: Overlay[];

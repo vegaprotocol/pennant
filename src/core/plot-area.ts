@@ -8,6 +8,8 @@ import { clearCanvas } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 export class PlotArea {
+  public colors: Colors;
+
   private _crosshair: CrosshairElement = new CrosshairElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private _data: any[];
@@ -22,7 +24,6 @@ export class PlotArea {
   private _yEncodingFields: string[];
   private _yScale: ScaleLinear;
   private isSimple: boolean = false;
-  private colors: Colors;
 
   constructor(
     x: ScaleTime,

@@ -5,4 +5,5 @@
   font-weight: var(--pennant-font-weight-normal);
   height: 100%;
   position: relative;
+  --separator-border: var(--pennant-color-emphasis-300);
 }
