@@ -56,7 +56,7 @@ export interface Colors {
   vegaOrange: string;
 }
 
-function getColors(element: HTMLElement | null): Colors {
+export function getColors(element: HTMLElement | null): Colors {
   const cssStyleDeclaration = element ? getComputedStyle(element) : null;
 
   return {

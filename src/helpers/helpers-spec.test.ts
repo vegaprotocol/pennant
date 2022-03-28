@@ -1,4 +1,7 @@
 import { constructTopLevelSpec } from ".";
+import { getColors } from "../components/chart";
+
+const colors = getColors(null);
 
 const data: any[] = [{ open: 100, close: 100 }];
 
@@ -14,7 +17,7 @@ const outputData: any[] = [
 
 describe("constructTopLevelSpec", () => {
   test("Basic candle chart spec", () => {
-    expect(constructTopLevelSpec(data, "candle")).toEqual({
+    expect(constructTopLevelSpec(data, "candle", colors)).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
@@ -29,7 +32,7 @@ describe("constructTopLevelSpec", () => {
                     test: { field: "open", lt: "close" },
                     value: "#26ff8a",
                   },
-                  value: "#ff2641",
+                  value: "#ff261a",
                 },
                 y: { field: "low", type: "quantitative" },
                 y2: { field: "high", type: "quantitative" },
@@ -41,16 +44,16 @@ describe("constructTopLevelSpec", () => {
                 fill: {
                   condition: {
                     test: { field: "open", lt: "close" },
-                    value: "#246340",
+                    value: "#16452d",
                   },
-                  value: "#ff2641",
+                  value: "#800700",
                 },
                 stroke: {
                   condition: {
                     test: { field: "open", lt: "close" },
                     value: "#26ff8a",
                   },
-                  value: "#ff2641",
+                  value: "#ff261a",
                 },
                 y: { field: "open", type: "quantitative" },
                 y2: { field: "close", type: "quantitative" },
@@ -64,7 +67,7 @@ describe("constructTopLevelSpec", () => {
   });
 
   test("Basic area chart spec", () => {
-    expect(constructTopLevelSpec(data, "area")).toEqual({
+    expect(constructTopLevelSpec(data, "area", colors)).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
@@ -93,7 +96,7 @@ describe("constructTopLevelSpec", () => {
   });
 
   test("Basic line chart spec", () => {
-    expect(constructTopLevelSpec(data, "line")).toEqual({
+    expect(constructTopLevelSpec(data, "line", colors)).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
@@ -115,7 +118,7 @@ describe("constructTopLevelSpec", () => {
   });
 
   test("Basic area chart spec with overlay", () => {
-    expect(constructTopLevelSpec(data, "area", "bollinger")).toEqual({
+    expect(constructTopLevelSpec(data, "area", colors, "bollinger")).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [
@@ -158,7 +161,9 @@ describe("constructTopLevelSpec", () => {
   });
 
   test("Basic area chart spec with study", () => {
-    expect(constructTopLevelSpec(data, "area", undefined, "volume")).toEqual({
+    expect(
+      constructTopLevelSpec(data, "area", colors, undefined, "volume")
+    ).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },
       transform: [],
