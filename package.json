@@ -124,7 +124,7 @@
     "@types/d3-delaunay": "6.0.0",
     "@types/d3-format": "2.0.2",
     "@types/react-test-renderer": "17.0.1",
-    "@types/resize-observer-browser": "0.1.6",
+    "@types/resize-observer-browser": "0.1.7",
     "@typescript-eslint/parser": "5.16.0",
     "babel-jest": "27.4.6",
     "bignumber.js": "9.0.2",
