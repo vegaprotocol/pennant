@@ -119,7 +119,7 @@
     "@storybook/react": "6.4.19",
     "@storybook/theming": "6.4.19",
     "@testing-library/jest-dom": "5.16.3",
-    "@testing-library/react": "12.1.2",
+    "@testing-library/react": "12.1.4",
     "@testing-library/user-event": "13.5.0",
     "@types/d3-delaunay": "6.0.0",
     "@types/d3-format": "2.0.2",
