@@ -10,7 +10,7 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { AXIS_HEIGHT, Colors, GRAY } from "./depth-chart";
+import { AXIS_HEIGHT } from "./depth-chart";
 import {
   HorizontalAxis,
   HorizontalLine,
@@ -21,6 +21,7 @@ import {
   VerticalAxis,
   VerticalLine,
 } from "./display-objects";
+import { Colors } from "./helpers";
 
 const OVERLAY_OPACITY = 0.05;
 
@@ -123,9 +124,9 @@ export class UI extends EventEmitter {
   private sellOverlay: Rect = new Rect(0x0, OVERLAY_OPACITY);
 
   private midMarketPriceLabel: MidMarketPriceLabel;
-  private midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
+  private midPriceLine: VerticalLine = new VerticalLine(1, 0x494949);
 
-  private separator: HorizontalLine = new HorizontalLine(1, GRAY);
+  private separator: HorizontalLine = new HorizontalLine(1, 0x494949);
 
   private lastEvent: InteractionEvent | null = null;
 

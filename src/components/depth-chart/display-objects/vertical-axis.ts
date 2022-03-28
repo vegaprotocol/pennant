@@ -2,7 +2,8 @@ import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
-import { Colors, FONT_SIZE } from "../depth-chart";
+import { FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
 
 type VerticalAxisColors = Pick<
   Colors,

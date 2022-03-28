@@ -1,4 +1,4 @@
-import { align, alignSpan,Colors } from "../helpers";
+import { align, alignSpan } from "../helpers";
 import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Bar = {
@@ -46,12 +46,12 @@ export class BarElement implements PositionalElement {
       alignSpan(Math.abs(yScale(this.height) - yScale(0)), pixelRatio)
     );
 
-    ctx.fillStyle = this.fill ?? Colors.GRAY;
+    ctx.fillStyle = this.fill;
     ctx.fill();
 
     if (this.stroke) {
       ctx.lineWidth = 1 / pixelRatio;
-      ctx.strokeStyle = this.stroke ?? Colors.GRAY;
+      ctx.strokeStyle = this.stroke;
       ctx.stroke();
     }
   }

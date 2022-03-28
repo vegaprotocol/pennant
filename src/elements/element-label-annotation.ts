@@ -1,7 +1,8 @@
 import { sum } from "d3-array";
+import { Colors } from "../components/chart/helpers";
 
 import { LABEL_ANNOTATION_HEIGHT } from "../constants";
-import { calculateShiftedPositions, Colors } from "../helpers";
+import { calculateShiftedPositions } from "../helpers";
 import {
   LabelAnnotation,
   RenderableElement,
@@ -10,14 +11,6 @@ import {
 } from "../types";
 
 const PADDING = 4;
-
-const styles = window.getComputedStyle(document.documentElement);
-
-const colorSuccess =
-  styles.getPropertyValue("--pennant-color-success") ?? Colors.GREEN;
-
-const colorDanger =
-  styles.getPropertyValue("--pennant-color-danger") ?? Colors.GREEN;
 
 export function cumsum(values: number[]) {
   let sum = 0;
@@ -30,9 +23,11 @@ function addLabel(
   yScale: ScaleLinear,
   pixelRatio: number,
   label: LabelAnnotation,
-  y: number
+  y: number,
+  colors: Colors
 ) {
-  const stroke = label.intent === "success" ? colorSuccess : colorDanger;
+  const stroke =
+    label.intent === "success" ? colors.buyStroke : colors.sellStroke;
 
   ctx.font = `${14}px sans-serif`;
   ctx.textBaseline = "middle";
@@ -69,7 +64,8 @@ export class LabelAnnotationElement implements RenderableElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio: number = 1
+    pixelRatio: number = 1,
+    colors: Colors
   ) {
     const yPositions = this.labels.map((label) => yScale(label.y));
     const shiftedYPositions = calculateShiftedPositions(
@@ -84,7 +80,8 @@ export class LabelAnnotationElement implements RenderableElement {
         yScale,
         pixelRatio,
         this.labels[i],
-        shiftedYPositions[i]
+        shiftedYPositions[i],
+        colors
       );
     }
   }

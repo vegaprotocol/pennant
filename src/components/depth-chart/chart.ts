@@ -5,7 +5,8 @@ import { orderBy, sortBy, zip } from "lodash";
 
 import cumsum from "../../math/array/cumsum";
 import { Contents } from "./contents";
-import { AXIS_HEIGHT, Colors, PriceLevel } from "./depth-chart";
+import { AXIS_HEIGHT, PriceLevel } from "./depth-chart";
+import { Colors } from "./helpers";
 import { UI } from "./ui";
 
 export const volumeFormatter = new Intl.NumberFormat("en-gb", {

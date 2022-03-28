@@ -1,4 +1,3 @@
-import { Colors } from "../components/chart";
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
 import { tickFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";

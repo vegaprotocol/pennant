@@ -22,7 +22,7 @@ import {
   Viewport,
 } from "../../types";
 import { FcElement, Interval } from "../../types";
-import { Colors } from "../chart";
+import { Colors } from "../chart/helpers";
 import { PaneView } from "../pane-view";
 import { SplitView } from "../split-view";
 import { XAxisView } from "../x-axis-view";

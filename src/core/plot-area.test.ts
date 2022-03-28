@@ -1,5 +1,5 @@
 import { scaleLinear, scaleTime } from "d3-scale";
-import { getColors } from "../components/chart";
+import { getColors } from "../components/chart/helpers";
 
 import { PlotArea } from "./plot-area";
 

@@ -1,4 +1,4 @@
-import { Colors } from "../components/chart";
+import { Colors } from "../components/chart/helpers";
 import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";

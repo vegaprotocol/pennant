@@ -2,7 +2,8 @@ import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
-import { AXIS_HEIGHT, Colors, FONT_SIZE } from "../depth-chart";
+import { AXIS_HEIGHT, FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
 
 type HorizontalAxisColors = Pick<
   Colors,

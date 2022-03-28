@@ -1,7 +1,8 @@
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
-import { Colors, FONT_SIZE } from "../depth-chart";
+import { FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
 
 type MidMarketPriceLabelColors = Pick<
   Colors,

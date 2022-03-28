@@ -2,8 +2,8 @@ import { curveStepAfter } from "d3-shape";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
-import { Colors } from "./depth-chart";
 import { DepthCurve } from "./display-objects";
+import { Colors } from "./helpers";
 
 type ContentsColors = Pick<
   Colors,

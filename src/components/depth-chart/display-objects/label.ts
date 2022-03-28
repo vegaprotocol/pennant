@@ -1,7 +1,7 @@
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
-import { Colors } from "../depth-chart";
+import { Colors } from "../helpers";
 
 type LabelColors = Pick<Colors, "backgroundSurface" | "textPrimary">;
 

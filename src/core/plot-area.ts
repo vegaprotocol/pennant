@@ -2,7 +2,7 @@ import { bisector, extent } from "d3-array";
 import { closestIndexTo, isValid } from "date-fns";
 import { clamp } from "lodash";
 
-import { Colors } from "../components/chart";
+import { Colors } from "../components/chart/helpers";
 import { CrosshairElement, GridElement } from "../elements";
 import { clearCanvas } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";

@@ -1,5 +1,5 @@
 import { constructTopLevelSpec } from ".";
-import { getColors } from "../components/chart";
+import { getColors } from "../components/chart/helpers";
 
 const colors = getColors(null);
 

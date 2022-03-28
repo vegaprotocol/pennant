@@ -1,4 +1,4 @@
-import { Colors } from "../components/chart";
+import { Colors } from "../components/chart/helpers";
 import { dateFormat } from "../helpers";
 import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
