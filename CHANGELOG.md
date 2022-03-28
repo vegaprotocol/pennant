@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/vegaprotocol/pennant/compare/v0.3.2...v0.3.3) (2022-03-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @types/node to v16 ([#363](https://github.com/vegaprotocol/pennant/issues/363)) ([631078e](https://github.com/vegaprotocol/pennant/commit/631078ebe6d513c6e7b0386db43d54bb5fc0799c))
+
 ### [0.3.2](https://github.com/vegaprotocol/pennant/compare/v0.3.1...v0.3.2) (2021-10-27)
 
 
