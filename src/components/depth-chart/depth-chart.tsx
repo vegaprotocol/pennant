@@ -8,6 +8,7 @@ import React, {
 import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { string2hex } from "../../renderer/utils";
+import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 
@@ -159,6 +160,10 @@ export const DepthChart = forwardRef(
         chartRef.current.clearPrice();
       },
     }));
+
+    if (data.buy.length === 0 && data.sell.length === 0) {
+      return <NonIdealState title="No data" />;
+    }
 
     return (
       <div ref={resizeOberverRef} className={styles.canvasContainer}>

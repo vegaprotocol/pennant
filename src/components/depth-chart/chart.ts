@@ -1,4 +1,4 @@
-import { extent, max, min } from "d3-array";
+import { extent, max, mean, min } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
 import { orderBy, sortBy, zip } from "lodash";
@@ -7,6 +7,23 @@ import cumsum from "../../math/array/cumsum";
 import { Contents } from "./contents";
 import { AXIS_HEIGHT, PriceLevel } from "./depth-chart";
 import { UI } from "./ui";
+
+function getMidPrice(
+  indicativePrice: number,
+  midPrice: number,
+  buyPrice: number,
+  sellPrice: number
+): number {
+  if (indicativePrice) {
+    return indicativePrice;
+  }
+
+  if (midPrice) {
+    return midPrice;
+  }
+
+  return mean([buyPrice, sellPrice]) as number;
+}
 
 export const volumeFormatter = new Intl.NumberFormat("en-gb", {
   maximumFractionDigits: 0,
@@ -112,12 +129,12 @@ export class Chart extends EventEmitter {
       cumsum(this._data.sell.map((priceLevel) => priceLevel.volume))
     ) as [number, number][];
 
-    const midPrice =
-      this._indicativePrice > 0
-        ? this._indicativePrice
-        : this._midPrice > 0
-        ? this._midPrice
-        : (this._data.buy[0].price + this._data.sell[0].price) / 2;
+    const midPrice = getMidPrice(
+      this._indicativePrice,
+      this._midPrice,
+      this._data.buy?.[0]?.price,
+      this._data.sell?.[0]?.price
+    );
 
     if (!this.maxPriceDifference) {
       this.maxPriceDifference =
@@ -153,15 +170,19 @@ export class Chart extends EventEmitter {
 
     // Add dummy data points at extreme points of price range
     // to ensure the chart looks symmetric
-    cumulativeBuy.push([
-      midPrice - this.maxPriceDifference,
-      cumulativeBuy[cumulativeBuy.length - 1][1],
-    ]);
+    if (cumulativeBuy.length > 0) {
+      cumulativeBuy.push([
+        midPrice - this.maxPriceDifference,
+        cumulativeBuy[cumulativeBuy.length - 1][1],
+      ]);
+    }
 
-    cumulativeSell.push([
-      midPrice + this.maxPriceDifference,
-      cumulativeSell[cumulativeSell.length - 1][1],
-    ]);
+    if (cumulativeSell.length > 0) {
+      cumulativeSell.push([
+        midPrice + this.maxPriceDifference,
+        cumulativeSell[cumulativeSell.length - 1][1],
+      ]);
+    }
 
     this.chart.update(
       cumulativeBuy.map((point) => [
