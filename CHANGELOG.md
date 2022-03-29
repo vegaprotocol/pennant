@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.8](https://github.com/vegaprotocol/pennant/compare/v0.3.7...v0.3.8) (2022-03-29)
+
+
+### Features
+
+* use allotment in place of split-view component ([#426](https://github.com/vegaprotocol/pennant/issues/426)) ([4ac520f](https://github.com/vegaprotocol/pennant/commit/4ac520f8323f7b000189e7a242e7136415483668))
+
 ### [0.3.7](https://github.com/vegaprotocol/pennant/compare/v0.3.6...v0.3.7) (2022-03-29)
 
 ### [0.3.6](https://github.com/vegaprotocol/pennant/compare/v0.3.5...v0.3.6) (2022-03-29)
