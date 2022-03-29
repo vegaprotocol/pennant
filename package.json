@@ -45,6 +45,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
+    "allotment": "^1.11.1",
     "classnames": "^2.2.6",
     "d3-array": "2.3.3",
     "d3-delaunay": "^6.0.2",
