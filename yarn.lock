@@ -4800,10 +4800,10 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.2, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-allotment@1.11.2-alpha.1:
-  version "1.11.2-alpha.1"
-  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.11.2-alpha.1.tgz#c284d45d106facb6ade03183efd7b30b1b0b2bb6"
-  integrity sha512-3lBTVZCwCfsyVGUWG1rlDJgT6N+xQzdibThrWSVEqD/nxUesOLJuP3443QhEj2EZYJNhMJpZBTbV2R+ijXqXdQ==
+allotment@1.11.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.11.1.tgz#125b4ab3e50ea0a2a3882e3f380cf4272cb8d3b7"
+  integrity sha512-37N4B4FB95oaF0tLOHuJefybiR0zxLSX9a0gmTgsbqiYXKTelM6TG26Zfxrsc1GWKFmKlmFgVjFtjYNRNjIrOg==
   dependencies:
     classnames "^2.3.0"
     eventemitter3 "^4.0.0"
