@@ -1,7 +1,6 @@
 import "./plot-container.css";
 
-import { Allotment, AllotmentHandle } from "allotment";
-import { sum } from "d3-array";
+import { Allotment } from "allotment";
 import { throttle } from "lodash";
 import {
   createRef,
