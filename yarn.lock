@@ -2366,11 +2366,6 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@d3fc/d3fc-element@^6.1.2":
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-element/-/d3fc-element-6.1.2.tgz#0b9cb4cd988e12b61a135e244e343ed5aea6ff20"
-  integrity sha512-1kBs0pzHTanLsDAL43xTSXD9htSQIs9huKTk9Fsse25kQN8tMM5YnUfYKdnyaF+o4qJ41FGX93ot7GHNQlk9AA==
-
 "@d3fc/d3fc-rebind@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@d3fc/d3fc-rebind/-/d3fc-rebind-6.0.1.tgz#b66e21d938893a92dd939e55e3147f24f46b652e"

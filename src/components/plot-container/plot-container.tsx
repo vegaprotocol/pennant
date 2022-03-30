@@ -1,4 +1,5 @@
 import "./plot-container.css";
+import "../../lib/d3fc-element";
 
 import { Allotment } from "allotment";
 import { throttle } from "lodash";
@@ -232,8 +233,10 @@ export const PlotContainer = forwardRef<
         <Allotment
           minSize={100}
           vertical
-          onChange={(sizes) => {
-            chartRef.current?.requestRedraw();
+          onChange={(_sizes) => {
+            if (typeof chartRef.current?.requestRedraw === "function") {
+              chartRef.current?.requestRedraw();
+            }
           }}
         >
           <PaneView

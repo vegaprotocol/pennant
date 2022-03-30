@@ -26,7 +26,6 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.13.10",
-    "@d3fc/d3fc-element": "^6.1.2",
     "@d3fc/d3fc-technical-indicator": "^8.0.1",
     "@types/classnames": "^2.2.11",
     "@types/d3-array": "^2.9.0",
