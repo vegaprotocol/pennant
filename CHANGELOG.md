@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/vegaprotocol/pennant/compare/v0.3.8...v0.4.0) (2022-03-30)
+
+
+### Features
+
+* support server-side rendering ([51bf554](https://github.com/vegaprotocol/pennant/commit/51bf5542a25369b3307a9f9ac35effdd2a2810db))
+
 ### [0.3.8](https://github.com/vegaprotocol/pennant/compare/v0.3.7...v0.3.8) (2022-03-29)
 
 
