@@ -2,7 +2,7 @@ import "./plot-container.css";
 
 import { Allotment } from "allotment";
 import { throttle } from "lodash";
-import {
+import React, {
   createRef,
   forwardRef,
   useCallback,

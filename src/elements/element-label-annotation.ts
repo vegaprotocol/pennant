@@ -11,13 +11,17 @@ import {
 
 const PADDING = 4;
 
-const styles = window.getComputedStyle(document.documentElement);
+let styles: CSSStyleDeclaration | null = null;
+
+if (typeof window !== "undefined") {
+  styles = window.getComputedStyle(document.documentElement);
+}
 
 const colorSuccess =
-  styles.getPropertyValue("--pennant-color-success") ?? Colors.GREEN;
+  styles?.getPropertyValue("--pennant-color-success") ?? Colors.GREEN;
 
 const colorDanger =
-  styles.getPropertyValue("--pennant-color-danger") ?? Colors.GREEN;
+  styles?.getPropertyValue("--pennant-color-danger") ?? Colors.GREEN;
 
 export function cumsum(values: number[]) {
   let sum = 0;

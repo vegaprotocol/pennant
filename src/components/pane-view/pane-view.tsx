@@ -1,7 +1,6 @@
 import "./pane-view.css";
-import "@d3fc/d3fc-element";
 
-import { forwardRef, useState } from "react";
+import React, { forwardRef, useState } from "react";
 
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";

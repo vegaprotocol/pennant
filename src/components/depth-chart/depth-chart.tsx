@@ -36,25 +36,29 @@ export const FONT_SIZE = 12;
  */
 export const AXIS_HEIGHT = FONT_SIZE + 5;
 
-const cssStyleDeclaration = getComputedStyle(document.documentElement);
+let cssStyleDeclaration: CSSStyleDeclaration | null = null;
+
+if (typeof window !== "undefined") {
+  cssStyleDeclaration = getComputedStyle(document.documentElement);
+}
 
 export const BUY_FILL = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-fill").trim() ||
+  cssStyleDeclaration?.getPropertyValue("--pennant-color-buy-fill").trim() ||
     "#16452d"
 );
 
 export const BUY_STROKE = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-stroke").trim() ||
+  cssStyleDeclaration?.getPropertyValue("--pennant-color-buy-stroke").trim() ||
     "#26ff8a"
 );
 
 export const SELL_FILL = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-fill").trim() ||
+  cssStyleDeclaration?.getPropertyValue("--pennant-color-sell-fill").trim() ||
     "#800700"
 );
 
 export const SELL_STROKE = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-stroke").trim() ||
+  cssStyleDeclaration?.getPropertyValue("--pennant-color-sell-stroke").trim() ||
     "#ff261a"
 );
 
