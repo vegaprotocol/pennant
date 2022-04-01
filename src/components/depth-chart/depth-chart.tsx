@@ -152,7 +152,11 @@ export const DepthChart = forwardRef(
     }));
 
     if (data.buy.length === 0 && data.sell.length === 0) {
-      return <NonIdealState title="No data" />;
+      return (
+        <div ref={styleRef} className={styles.container} data-theme={theme}>
+          <NonIdealState title="No data" />
+        </div>
+      );
     }
 
     return (
