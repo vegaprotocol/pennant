@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/vegaprotocol/pennant/compare/v0.4.4...v0.4.5) (2022-04-01)
+
+
+### Bug Fixes
+
+* depth chart non ideal state should be theme aware ([d21c9a4](https://github.com/vegaprotocol/pennant/commit/d21c9a43a6d8a9d7f6748c01690731d05ae4f48d))
+
 ### [0.4.4](https://github.com/vegaprotocol/pennant/compare/v0.4.3...v0.4.4) (2022-04-01)
 
 
