@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/vegaprotocol/pennant/compare/v0.4.2...v0.4.3) (2022-04-01)
+
+
+### Features
+
+* support light mode ([#398](https://github.com/vegaprotocol/pennant/issues/398)) ([482310c](https://github.com/vegaprotocol/pennant/commit/482310cc851f88ea6a1c9307bb3adf1988c08be1))
+
 ### [0.4.2](https://github.com/vegaprotocol/pennant/compare/v0.4.1...v0.4.2) (2022-03-30)
 
 ### [0.4.1](https://github.com/vegaprotocol/pennant/compare/v0.4.0...v0.4.1) (2022-03-30)
