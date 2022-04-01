@@ -1,4 +1,5 @@
-import { Colors, dateFormat } from "../helpers";
+import { Colors } from "../components/chart/helpers";
+import { dateFormat } from "../helpers";
 import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addXAxisTooltipPath(
@@ -6,7 +7,8 @@ function addXAxisTooltipPath(
   xScale: ScaleTime,
   pixelRatio: number,
   position: Date | null,
-  interval: Interval
+  interval: Interval,
+  colors: Colors
 ) {
   if (position) {
     const x = xScale(position);
@@ -43,14 +45,14 @@ function addXAxisTooltipPath(
     ctx.lineTo(x - 5, height - rectHeight);
     ctx.closePath();
 
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+    ctx.fillStyle = colors.backgroundSurface;
+    ctx.strokeStyle = colors.emphasis300;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
+    ctx.fillStyle = colors.textPrimary;
     ctx.fillText(text, xAdjusted, height - rectHeight / 2);
     ctx.closePath();
   }
@@ -63,8 +65,9 @@ export class XAxisTooltipElement implements RenderableElement {
     _yScale: ScaleLinear,
     pixelRatio: number = 1,
     position: Date | null,
-    interval: Interval
+    interval: Interval,
+    colors: Colors
   ) {
-    addXAxisTooltipPath(ctx, xScale, pixelRatio, position, interval);
+    addXAxisTooltipPath(ctx, xScale, pixelRatio, position, interval, colors);
   }
 }

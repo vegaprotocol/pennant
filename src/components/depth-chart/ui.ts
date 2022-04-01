@@ -10,7 +10,7 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { AXIS_HEIGHT, BUY_STROKE, GRAY, SELL_STROKE } from "./depth-chart";
+import { AXIS_HEIGHT } from "./depth-chart";
 import {
   HorizontalAxis,
   HorizontalLine,
@@ -21,6 +21,18 @@ import {
   VerticalAxis,
   VerticalLine,
 } from "./display-objects";
+import { Colors } from "./helpers";
+
+const OVERLAY_OPACITY = 0.05;
+
+type UiColors = Pick<
+  Colors,
+  | "backgroundSurface"
+  | "buyStroke"
+  | "sellStroke"
+  | "textPrimary"
+  | "textSecondary"
+>;
 
 function pointer(event: any) {
   const node = event.target;
@@ -77,6 +89,8 @@ export class UI extends EventEmitter {
    */
   public scaleExtent = [0, Infinity];
 
+  public colors: UiColors;
+
   private prices: number[] = [];
   private volumes: number[] = [];
   private priceLabels: string[] = [];
@@ -93,8 +107,8 @@ export class UI extends EventEmitter {
   private horizontalAxis: HorizontalAxis = new HorizontalAxis();
   private verticalAxis: VerticalAxis = new VerticalAxis();
 
-  private buyIndicator: Indicator = new Indicator(BUY_STROKE);
-  private sellIndicator: Indicator = new Indicator(SELL_STROKE);
+  private buyIndicator: Indicator;
+  private sellIndicator: Indicator;
   private auctionIndicator: Indicator = new Indicator(0xcccccc);
 
   private buyPriceText = new Label();
@@ -106,13 +120,13 @@ export class UI extends EventEmitter {
   private auctionPriceText = new Label();
   private auctionVolumeText = new Label();
 
-  private buyOverlay: Rect = new Rect(0x0, 0.5);
-  private sellOverlay: Rect = new Rect(0x0, 0.5);
+  private buyOverlay: Rect = new Rect(0x0, OVERLAY_OPACITY);
+  private sellOverlay: Rect = new Rect(0x0, OVERLAY_OPACITY);
 
-  private midMarketPriceLabel: MidMarketPriceLabel = new MidMarketPriceLabel();
-  private midPriceLine: VerticalLine = new VerticalLine(1, GRAY);
+  private midMarketPriceLabel: MidMarketPriceLabel;
+  private midPriceLine: VerticalLine = new VerticalLine(1, 0x494949);
 
-  private separator: HorizontalLine = new HorizontalLine(1, GRAY);
+  private separator: HorizontalLine = new HorizontalLine(1, 0x494949);
 
   private lastEvent: InteractionEvent | null = null;
 
@@ -124,6 +138,7 @@ export class UI extends EventEmitter {
     resolution: number;
     width: number;
     height: number;
+    colors: UiColors;
   }) {
     super();
 
@@ -133,6 +148,13 @@ export class UI extends EventEmitter {
       width: options.width,
       height: options.height,
     });
+
+    this.colors = options.colors;
+
+    this.buyIndicator = new Indicator(options.colors.buyStroke);
+    this.sellIndicator = new Indicator(options.colors.sellStroke);
+
+    this.midMarketPriceLabel = new MidMarketPriceLabel(options.colors);
 
     const resolution = this.renderer.resolution;
 
@@ -339,19 +361,33 @@ export class UI extends EventEmitter {
     const height = this.renderer.view.height;
     const resolution = this.renderer.resolution;
 
-    this.horizontalAxis.update(this.priceScale, width, height, resolution);
-    this.verticalAxis.update(volumeScale, width, height, resolution);
+    this.horizontalAxis.update(
+      this.priceScale,
+      width,
+      height,
+      resolution,
+      this.colors
+    );
+
+    this.verticalAxis.update(
+      volumeScale,
+      width,
+      height,
+      resolution,
+      this.colors
+    );
 
     this.midMarketPriceLabel.update(
-      midPriceLabel,
-      midPriceTitle,
       width / 2,
       10,
       {
         x: 0.5,
         y: 0,
       },
-      resolution
+      resolution,
+      this.colors,
+      midPriceLabel,
+      midPriceTitle
     );
 
     this.midPriceLine.update(width / 2, height, resolution);
@@ -422,7 +458,8 @@ export class UI extends EventEmitter {
             ),
             height - (resolution * AXIS_HEIGHT) / 2,
             { x: 0.5, y: 0.5 },
-            resolution
+            resolution,
+            this.colors
           );
 
           this.auctionVolumeText.update(
@@ -447,7 +484,8 @@ export class UI extends EventEmitter {
                 2
             ),
             { x: this.prices[index] > width / 2 ? 0 : 1, y: 0.5 },
-            resolution
+            resolution,
+            this.colors
           );
 
           this.auctionIndicator.update(
@@ -514,7 +552,8 @@ export class UI extends EventEmitter {
           ),
           height - (resolution * AXIS_HEIGHT) / 2,
           { x: 0.5, y: 0.5 },
-          resolution
+          resolution,
+          this.colors
         );
 
         this.buyVolumeText.update(
@@ -533,7 +572,8 @@ export class UI extends EventEmitter {
               2
           ),
           { x: 1, y: 0.5 },
-          resolution
+          resolution,
+          this.colors
         );
 
         this.sellPriceText.update(
@@ -549,7 +589,8 @@ export class UI extends EventEmitter {
           ),
           height - (resolution * AXIS_HEIGHT) / 2,
           { x: 0.5, y: 0.5 },
-          resolution
+          resolution,
+          this.colors
         );
 
         this.sellVolumeText.update(
@@ -568,7 +609,8 @@ export class UI extends EventEmitter {
               2
           ),
           { x: 0, y: 0.5 },
-          resolution
+          resolution,
+          this.colors
         );
 
         const sellPricesPresent =
@@ -583,14 +625,16 @@ export class UI extends EventEmitter {
           0,
           0,
           buyNearestX,
-          height - resolution * AXIS_HEIGHT
+          height - resolution * AXIS_HEIGHT,
+          this.colors.textPrimary
         );
 
         this.sellOverlay.update(
           sellNearestX,
           0,
           width - sellNearestX,
-          height - resolution * AXIS_HEIGHT
+          height - resolution * AXIS_HEIGHT,
+          this.colors.textPrimary
         );
 
         // TODO: Changing visibility in groups like this suggests they should be in a Container

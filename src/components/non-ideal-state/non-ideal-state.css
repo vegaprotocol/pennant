@@ -1,5 +1,6 @@
 .non-ideal-state {
   align-items: center;
+  background-color: var(--pennant-background-surface-color);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -19,6 +20,7 @@
 }
 
 h4.heading {
+  color: var(--pennant-font-base-color);
   font-size: 18px;
   line-height: 21px;
 }

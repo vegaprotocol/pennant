@@ -24,6 +24,7 @@ import {
   Viewport,
 } from "../../types";
 import { FcElement, Interval } from "../../types";
+import { Colors } from "../chart/helpers";
 import { PaneView } from "../pane-view";
 import { XAxisView } from "../x-axis-view";
 
@@ -37,6 +38,7 @@ export type PlotContainerProps = {
   overlays: string[];
   simple: boolean;
   initialNumCandles: number;
+  colors: Colors;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -56,6 +58,7 @@ export const PlotContainer = forwardRef<
       overlays,
       simple,
       initialNumCandles,
+      colors,
       onViewportChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
@@ -148,7 +151,8 @@ export const PlotContainer = forwardRef<
         initialViewport,
         decimalPlaces,
         simple,
-        initialNumCandles
+        initialNumCandles,
+        colors
       )
         .interval(interval)
         .on("redraw", () => {
@@ -220,13 +224,19 @@ export const PlotContainer = forwardRef<
       }
     }, [chartElement, refs, scenegraph.panes]);
 
-    const showStudy = scenegraph.panes.length === 2;
-
     useEffect(() => {
       if (chartElement.current) {
         chartElement.current.interval(interval);
       }
     }, [interval]);
+
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current.colors = colors;
+      }
+    }, [colors]);
+
+    const showStudy = scenegraph.panes.length === 2;
 
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">

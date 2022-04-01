@@ -1,11 +1,13 @@
+import { Colors } from "../components/chart/helpers";
 import { YAxisElement, YAxisTooltipElement } from "../elements";
-import { Colors } from "../helpers";
 import { ScaleLinear, ScaleTime } from "../types";
 
 /**
  * The y-axis component renders human readable reference marks.
  */
 export class YAxis {
+  public colors: Colors;
+
   private axis: YAxisElement = new YAxisElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private latestPricePosition: number | null = null;
@@ -16,11 +18,17 @@ export class YAxis {
   private _xScale: ScaleTime;
   private _yScale: ScaleLinear;
 
-  constructor(x: ScaleTime, y: ScaleLinear, decimalPlaces: number = 5) {
+  constructor(
+    x: ScaleTime,
+    y: ScaleLinear,
+    decimalPlaces: number = 5,
+    colors: Colors
+  ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
     this.tooltip = new YAxisTooltipElement(decimalPlaces);
     this.latestPriceTooltip = new YAxisTooltipElement(decimalPlaces);
+    this.colors = colors;
   }
 
   context(context: CanvasRenderingContext2D): this {
@@ -35,14 +43,21 @@ export class YAxis {
 
   draw() {
     if (this.ctx) {
-      this.axis.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+      this.axis.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.colors
+      );
 
       this.latestPriceTooltip.draw(
         this.ctx,
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.latestPricePosition
+        this.latestPricePosition,
+        this.colors
       );
 
       this.tooltip.draw(
@@ -50,7 +65,8 @@ export class YAxis {
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.position
+        this.position,
+        this.colors
       );
     }
   }

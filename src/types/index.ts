@@ -11,3 +11,4 @@ export * from "./price-monitoring-bounds";
 export * from "./scales";
 export * from "./scenegraph-types";
 export * from "./study";
+export * from "./theme";

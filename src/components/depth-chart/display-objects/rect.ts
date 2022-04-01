@@ -14,9 +14,15 @@ export class Rect extends Graphics {
     this.alpha = alpha;
   }
 
-  public update(x: number, y: number, width: number, height: number) {
+  public update(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: number
+  ) {
     this.clear();
-    this.beginFill(this.color, this.alpha);
+    this.beginFill(color, this.alpha);
     this.drawRect(x, y, width, height);
     this.endFill();
   }

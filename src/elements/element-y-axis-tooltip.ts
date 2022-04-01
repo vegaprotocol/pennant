@@ -1,5 +1,5 @@
+import { Colors } from "../components/chart/helpers";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
-import { Colors } from "../helpers";
 import { formatter } from "../helpers";
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
@@ -9,7 +9,8 @@ function addYAxisPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   position: number | null,
-  decimalPlaces: number
+  decimalPlaces: number,
+  colors: Colors
 ) {
   if (position) {
     const width = xScale.range()[1];
@@ -32,14 +33,14 @@ function addYAxisPath(
     ctx.lineTo(width - Y_AXIS_WIDTH, y + rectHeight / 2);
     ctx.closePath();
 
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+    ctx.fillStyle = colors.backgroundSurface;
+    ctx.strokeStyle = colors.emphasis300;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
+    ctx.fillStyle = colors.textPrimary;
     ctx.fillText(text, width - Y_AXIS_WIDTH + xPad, y);
     ctx.closePath();
   }
@@ -57,8 +58,9 @@ export class YAxisTooltipElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio: number = 1,
-    position: number | null
+    position: number | null,
+    colors: Colors
   ) {
-    addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces);
+    addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces, colors);
   }
 }

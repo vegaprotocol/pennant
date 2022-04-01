@@ -6,6 +6,7 @@ import { orderBy, sortBy, zip } from "lodash";
 import cumsum from "../../math/array/cumsum";
 import { Contents } from "./contents";
 import { AXIS_HEIGHT, PriceLevel } from "./depth-chart";
+import { Colors } from "./helpers";
 import { UI } from "./ui";
 
 function getMidPrice(
@@ -55,6 +56,8 @@ export class Chart extends EventEmitter {
 
   private priceFormat: (price: number) => string;
 
+  private _colors: Colors;
+
   constructor(options: {
     chartView: HTMLCanvasElement;
     axisView: HTMLCanvasElement;
@@ -62,16 +65,19 @@ export class Chart extends EventEmitter {
     width: number;
     height: number;
     priceFormat: (price: number) => string;
+    colors: Colors;
   }) {
     super();
 
     this.priceFormat = options.priceFormat;
+    this._colors = options.colors;
 
     this.chart = new Contents({
       view: options.chartView,
       resolution: options.resolution,
       width: options.width,
       height: options.height,
+      colors: options.colors,
     });
 
     this.axis = new UI({
@@ -79,6 +85,7 @@ export class Chart extends EventEmitter {
       resolution: options.resolution,
       width: options.width,
       height: options.height,
+      colors: options.colors,
     });
 
     this.axis
@@ -184,6 +191,8 @@ export class Chart extends EventEmitter {
       ]);
     }
 
+    this.chart.colors = this._colors;
+
     this.chart.update(
       cumulativeBuy.map((point) => [
         priceScale(point[0]),
@@ -218,6 +227,8 @@ export class Chart extends EventEmitter {
       ];
     }
 
+    this.axis.colors = this._colors;
+
     this.axis.update(
       this.prices.map((price) => priceScale(price)),
       this.volumes.map((volume) => volumeScale(volume)),
@@ -229,6 +240,13 @@ export class Chart extends EventEmitter {
       priceScale,
       volumeScale
     );
+  }
+
+  set colors(colors: Colors) {
+    this._colors = colors;
+
+    this.update();
+    this.render();
   }
 
   get data() {
