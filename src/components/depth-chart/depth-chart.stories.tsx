@@ -332,3 +332,27 @@ BTCUSD.args = {
   priceFormat: (price: number) => priceFormatter(5).format(price),
   midPrice: 44256,
 };
+
+export const SinglePriceLevel = Template.bind({});
+SinglePriceLevel.args = {
+  data: { buy: AAPL_data.buy.slice(0, 1), sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const LeftSided = Template.bind({});
+LeftSided.args = {
+  data: { buy: AAPL_data.buy, sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const RightSided = Template.bind({});
+RightSided.args = {
+  data: { buy: [], sell: AAPL_data.sell },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const NoData = Template.bind({});
+NoData.args = {
+  data: { buy: [], sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};

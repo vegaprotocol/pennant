@@ -1,3 +1,4 @@
+import "allotment/dist/style.css";
 import "../../styles/variables.css";
 import "./chart.css";
 
@@ -119,7 +120,6 @@ export const Chart = forwardRef(
     const listeners = useRef(dispatch("contextmenu"));
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
-    const [proportion, setProportion] = useState(2 / 3);
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
 
@@ -300,14 +300,12 @@ export const Chart = forwardRef(
             interval={internalInterval}
             initialViewport={viewport}
             overlays={overlays}
-            proportion={proportion}
             simple={simple}
             initialNumCandles={initialNumCandles}
             colors={colors}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
-            onProportionChanged={setProportion}
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
             }}

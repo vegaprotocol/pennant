@@ -506,27 +506,34 @@ export class UI extends EventEmitter {
         const index = bisectCenter(this.prices, x);
         const nearestX = this.prices[index];
 
-        let buyIndex;
-        let sellIndex;
-        let buyNearestX;
-        let sellNearestX;
+        let buyIndex: number;
+        let sellIndex: number;
+        let buyNearestX: number;
+        let sellNearestX: number;
 
         if (x > width / 2) {
-          buyIndex = bisectLeft(
-            this.prices,
-            2 * this.priceScale(this.midPrice) - nearestX
-          );
+          buyIndex =
+            this.prices[0] >= width / 2
+              ? -1
+              : bisectLeft(
+                  this.prices,
+                  2 * this.priceScale(this.midPrice) - nearestX
+                );
+
           sellIndex = index;
 
           buyNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
           sellNearestX = nearestX;
         } else {
           buyIndex = index;
+
           sellIndex =
-            bisectRight(
-              this.prices,
-              2 * this.priceScale(this.midPrice) - nearestX
-            ) - 1;
+            this.prices[0] <= width / 2
+              ? -1
+              : bisectRight(
+                  this.prices,
+                  2 * this.priceScale(this.midPrice) - nearestX
+                ) - 1;
 
           buyNearestX = nearestX;
           sellNearestX = 2 * this.priceScale(this.midPrice) - nearestX;
@@ -606,6 +613,11 @@ export class UI extends EventEmitter {
           this.colors
         );
 
+        const sellPricesPresent =
+          this.prices[this.prices.length - 1] > width / 2;
+
+        const buyPricesPresent = this.prices[0] < width / 2;
+
         this.buyIndicator.update(buyNearestX, this.volumes[buyIndex], width);
         this.sellIndicator.update(sellNearestX, this.volumes[sellIndex], width);
 
@@ -626,7 +638,10 @@ export class UI extends EventEmitter {
         );
 
         // TODO: Changing visibility in groups like this suggests they should be in a Container
-        if (this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0]) {
+        if (
+          this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0] &&
+          buyPricesPresent
+        ) {
           this.buyPriceText.visible = true;
           this.buyVolumeText.visible = true;
           this.buyIndicator.visible = true;
@@ -639,7 +654,8 @@ export class UI extends EventEmitter {
         }
 
         if (
-          this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1]
+          this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1] &&
+          sellPricesPresent
         ) {
           this.sellPriceText.visible = true;
           this.sellVolumeText.visible = true;

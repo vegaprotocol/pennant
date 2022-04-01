@@ -684,7 +684,7 @@ export class TextMetrics {
   }
 }
 
-const canvas = ((): HTMLCanvasElement | OffscreenCanvas => {
+const canvasFunc = (): HTMLCanvasElement | OffscreenCanvas => {
   try {
     // OffscreenCanvas2D measureText can be up to 40% faster.
     const c = new OffscreenCanvas(0, 0);
@@ -698,19 +698,24 @@ const canvas = ((): HTMLCanvasElement | OffscreenCanvas => {
   } catch (ex) {
     return document.createElement("canvas");
   }
-})();
+};
 
-canvas.width = canvas.height = 10;
+let canvas: HTMLCanvasElement | OffscreenCanvas | null = null;
 
-/**
- * Cached canvas element for measuring text
- */
-TextMetrics._canvas = canvas;
+if (typeof window !== "undefined") {
+  canvas = canvasFunc();
+  canvas.width = canvas.height = 10;
 
-/**
- * Cache for context to use.
- */
-TextMetrics._context = canvas.getContext("2d") as CanvasRenderingContext2D;
+  /**
+   * Cached canvas element for measuring text
+   */
+  TextMetrics._canvas = canvas;
+
+  /**
+   * Cache for context to use.
+   */
+  TextMetrics._context = canvas.getContext("2d") as CanvasRenderingContext2D;
+}
 
 /**
  * Cache of {@see TextMetrics.FontMetrics} objects.

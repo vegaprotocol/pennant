@@ -9,6 +9,7 @@ import React, {
 
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
+import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 import { getColors } from "./helpers";
@@ -149,6 +150,10 @@ export const DepthChart = forwardRef(
         chartRef.current.clearPrice();
       },
     }));
+
+    if (data.buy.length === 0 && data.sell.length === 0) {
+      return <NonIdealState title="No data" />;
+    }
 
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>

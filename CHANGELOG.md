@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/vegaprotocol/pennant/compare/v0.4.1...v0.4.2) (2022-03-30)
+
+### [0.4.1](https://github.com/vegaprotocol/pennant/compare/v0.4.0...v0.4.1) (2022-03-30)
+
+## [0.4.0](https://github.com/vegaprotocol/pennant/compare/v0.3.8...v0.4.0) (2022-03-30)
+
+
+### Features
+
+* support server-side rendering ([51bf554](https://github.com/vegaprotocol/pennant/commit/51bf5542a25369b3307a9f9ac35effdd2a2810db))
+
+### [0.3.8](https://github.com/vegaprotocol/pennant/compare/v0.3.7...v0.3.8) (2022-03-29)
+
+
+### Features
+
+* use allotment in place of split-view component ([#426](https://github.com/vegaprotocol/pennant/issues/426)) ([4ac520f](https://github.com/vegaprotocol/pennant/commit/4ac520f8323f7b000189e7a242e7136415483668))
+
+### [0.3.7](https://github.com/vegaprotocol/pennant/compare/v0.3.6...v0.3.7) (2022-03-29)
+
+### [0.3.6](https://github.com/vegaprotocol/pennant/compare/v0.3.5...v0.3.6) (2022-03-29)
+
+
+### Features
+
+* handle empty depth chart data ([#418](https://github.com/vegaprotocol/pennant/issues/418)) ([d24809a](https://github.com/vegaprotocol/pennant/commit/d24809aeb9826b6341a0bcf79332c62b0b29e234))
+
+### [0.3.5](https://github.com/vegaprotocol/pennant/compare/v0.3.4...v0.3.5) (2022-03-28)
+
+### [0.3.4](https://github.com/vegaprotocol/pennant/compare/v0.3.3...v0.3.4) (2022-03-28)
+
+### [0.3.3](https://github.com/vegaprotocol/pennant/compare/v0.3.2...v0.3.3) (2022-03-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @types/node to v16 ([#363](https://github.com/vegaprotocol/pennant/issues/363)) ([631078e](https://github.com/vegaprotocol/pennant/commit/631078ebe6d513c6e7b0386db43d54bb5fc0799c))
+
 ### [0.3.2](https://github.com/vegaprotocol/pennant/compare/v0.3.1...v0.3.2) (2021-10-27)
 
 

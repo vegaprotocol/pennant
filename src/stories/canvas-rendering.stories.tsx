@@ -1,5 +1,3 @@
-import "@d3fc/d3fc-element";
-
 import { Meta, Story } from "@storybook/react";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { select } from "d3-selection";
