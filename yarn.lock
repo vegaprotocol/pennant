@@ -4795,15 +4795,16 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.2, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-allotment@1.11.2-alpha.1:
-  version "1.11.2-alpha.1"
-  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.11.2-alpha.1.tgz#c284d45d106facb6ade03183efd7b30b1b0b2bb6"
-  integrity sha512-3lBTVZCwCfsyVGUWG1rlDJgT6N+xQzdibThrWSVEqD/nxUesOLJuP3443QhEj2EZYJNhMJpZBTbV2R+ijXqXdQ==
+allotment@1.12.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.12.1.tgz#1efa19967f3b955fb3db18d938925619f4e0f313"
+  integrity sha512-jEQ1hB0f+dMgEmzLWRcGjwek5w3PTWI1seYqgedyNQefX+u0xdoOsB6UKV6dTEcrAue5nx7wO87GTch3IaUqgw==
   dependencies:
     classnames "^2.3.0"
     eventemitter3 "^4.0.0"
     lodash.clamp "^4.0.0"
     lodash.debounce "^4.0.0"
+    lodash.isequal "^4.5.0"
     use-resize-observer "^8.0.0"
 
 alphanum-sort@^1.0.2:
@@ -10498,6 +10499,11 @@ lodash.debounce@^4.0.0, lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
 
 lodash.ismatch@^4.4.0:
   version "4.4.0"
