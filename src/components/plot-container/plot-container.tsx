@@ -259,7 +259,7 @@ export const PlotContainer = forwardRef<
             simple={simple}
             onClosePane={onClosePane}
           />
-          <Allotment.Pane visible={showStudy}>
+          <Allotment.Pane preferredSize="33%" visible={showStudy}>
             {showStudy ? (
               <PaneView
                 ref={refs[scenegraph.panes[1].id]}
@@ -276,7 +276,6 @@ export const PlotContainer = forwardRef<
             )}
           </Allotment.Pane>
         </Allotment>
-
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>
     );
