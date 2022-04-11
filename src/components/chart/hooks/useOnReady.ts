@@ -7,21 +7,21 @@ import { Configuration, DataSource } from "../../../types";
  * Also returns the configuration data from the onReady call.
  */
 export function useOnReady(dataSource: DataSource) {
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(true);
   const [configuration, setConfiguration] = useState<Configuration | null>(
     null
   );
 
   useEffect(() => {
     const onReady = async () => {
-      setLoading(true);
+      setReady(true);
       const configuration = await dataSource.onReady();
       setConfiguration(configuration);
-      setLoading(false);
+      setReady(false);
     };
 
     onReady();
   }, [dataSource]);
 
-  return { loading, configuration };
+  return { ready, configuration };
 }
