@@ -21,12 +21,6 @@ const measure = (element) => {
   data.set(element, { pixelRatio, width, height, resized, child });
 };
 
-if (typeof CustomEvent !== "function") {
-  console.warn(
-    "d3fc-element depends on CustomEvent. Make sure that you load a polyfill in older browsers. See README."
-  );
-}
-
 const resize = (element) => {
   const detail = data.get(element);
   const event = new CustomEvent("measure", { detail });

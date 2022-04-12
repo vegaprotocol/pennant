@@ -1,11 +1,5 @@
 import requestRedraw from "./requestRedraw";
 
-if (typeof HTMLElement !== "function") {
-  console.warn(
-    "d3fc-element depends on Custom Elements (v1). Make sure that you load a polyfill in older browsers. See README."
-  );
-}
-
 const addMeasureListener = (element) => {
   if (element.__measureListener__ != null) {
     return;
