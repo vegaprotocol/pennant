@@ -39,8 +39,8 @@ import {
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { useOnReady } from "./hooks";
 import { Colors, getColors } from "./helpers";
+import { useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -122,6 +122,7 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
+    const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
     const query = useCallback(
@@ -133,12 +134,14 @@ export const Chart = forwardRef(
         );
 
         setData((data) => mergeData(newData, merge ? data : []));
+        setLoading(false);
       },
       [dataSource]
     );
 
     // Wait for data source onReady call before showing content
-    const { loading, configuration } = useOnReady(dataSource);
+    const { ready: dataSourceInitializing, configuration } =
+      useOnReady(dataSource);
 
     const specification = useMemo(
       () =>
@@ -194,7 +197,7 @@ export const Chart = forwardRef(
         });
       }
 
-      if (!loading) {
+      if (!dataSourceInitializing) {
         const myDataSource = dataSource;
 
         // Initial data fetch
@@ -208,7 +211,13 @@ export const Chart = forwardRef(
           setData([]);
         };
       }
-    }, [dataSource, initialNumCandlesToFetch, interval, loading, query]);
+    }, [
+      dataSource,
+      dataSourceInitializing,
+      initialNumCandlesToFetch,
+      interval,
+      query,
+    ]);
 
     // React to streaming annotations changes
     useEffect(() => {
@@ -220,7 +229,7 @@ export const Chart = forwardRef(
         }
       }
 
-      if (!loading) {
+      if (!dataSourceInitializing) {
         const myDataSource = dataSource;
 
         subscribe();
@@ -231,7 +240,7 @@ export const Chart = forwardRef(
           setAnnotations([]);
         };
       }
-    }, [dataSource, loading, simple]);
+    }, [dataSource, dataSourceInitializing, simple]);
 
     useEffect(() => {
       setColors(getColors(styleRef?.current));
@@ -269,6 +278,8 @@ export const Chart = forwardRef(
         },
       [data, initialViewport]
     );
+
+    console.log(loading, dataSourceInitializing);
 
     // Show fallback UI while waiting for data
     if (loading) {
