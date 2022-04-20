@@ -18,8 +18,8 @@ FocusStyleManager.onlyShowFocusOnTabs();
 const Template: Story<ChartControlsProps> = (args) => {
   const [interval, setInterval] = useState<Interval>(Interval.I5M);
   const [chartType, setChartType] = useState<ChartType>(ChartType.CANDLE);
-  const [overlay, setOverlay] = useState<Overlay | null>(null);
-  const [study, setStudy] = useState<Study | null>(null);
+  const [overlays, setOverlays] = useState<Overlay[]>([]);
+  const [studies, setStudies] = useState<Study[]>([]);
 
   return (
     <div className="bp3-dark docs-example">
@@ -27,12 +27,12 @@ const Template: Story<ChartControlsProps> = (args) => {
         {...args}
         interval={interval}
         chartType={chartType}
-        overlay={overlay}
-        study={study}
+        overlays={overlays}
+        studies={studies}
         onSetInterval={setInterval}
         onSetChartType={setChartType}
-        onSetOverlay={setOverlay}
-        onSetStudy={setStudy}
+        onSetOverlays={setOverlays}
+        onSetStudies={setStudies}
       />
     </div>
   );

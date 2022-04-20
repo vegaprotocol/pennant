@@ -32,24 +32,24 @@ const chartTypeIcon = new Map<ChartType, IconName>([
 export type ChartControlsProps = {
   interval: Interval;
   chartType: ChartType;
-  overlay: Overlay | null;
-  study: Study | null;
+  overlays: Overlay[];
+  studies: Study[];
   onSetInterval: (interval: Interval) => void;
   onSetChartType: (chartType: ChartType) => void;
-  onSetOverlay: (overlay: Overlay | null) => void;
-  onSetStudy: (study: Study | null) => void;
+  onSetOverlays: (overlay: Overlay[]) => void;
+  onSetStudies: (study: Study[]) => void;
   onSnapshot: () => void;
 };
 
 export const ChartControls = ({
   interval,
   chartType,
-  overlay,
-  study,
+  overlays,
+  studies,
   onSetInterval,
   onSetChartType,
-  onSetOverlay,
-  onSetStudy,
+  onSetOverlays,
+  onSetStudies,
   onSnapshot,
 }: ChartControlsProps) => (
   <div className="chart-controls">
@@ -133,18 +133,40 @@ export const ChartControls = ({
             {Object.values(Overlay).map((item) => (
               <MenuItem
                 key={item}
-                icon={overlay === item ? "tick" : "blank"}
+                icon={overlays.includes(item) ? "tick" : "blank"}
                 text={overlayLabels[item]}
-                onClick={() => onSetOverlay(overlay === item ? null : item)}
+                onClick={() => {
+                  const newOverlays = [...overlays];
+
+                  const index = overlays.findIndex(
+                    (overlay) => overlay === item
+                  );
+
+                  index !== -1
+                    ? newOverlays.splice(index, 1)
+                    : newOverlays.push(item);
+
+                  onSetOverlays(newOverlays);
+                }}
               />
             ))}
             <MenuDivider title="Studies" />
             {Object.values(Study).map((item) => (
               <MenuItem
                 key={item}
-                icon={study === item ? "tick" : "blank"}
+                icon={studies.includes(item) ? "tick" : "blank"}
                 text={studyLabels[item]}
-                onClick={() => onSetStudy(study === item ? null : item)}
+                onClick={() => {
+                  const newStudies = [...studies];
+
+                  const index = studies.findIndex((study) => study === item);
+
+                  index !== -1
+                    ? newStudies.splice(index, 1)
+                    : newStudies.push(item);
+
+                  onSetStudies(newStudies);
+                }}
               />
             ))}
           </Menu>

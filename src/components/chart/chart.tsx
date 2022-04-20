@@ -149,8 +149,8 @@ export const Chart = forwardRef(
           data,
           chartType,
           colors,
-          overlays[0],
-          studies[0],
+          overlays,
+          studies,
           configuration?.priceMonitoringBounds
         ),
       [

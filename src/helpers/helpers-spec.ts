@@ -434,8 +434,8 @@ export function constructTopLevelSpec(
   data: Candle[],
   chartType: ChartType,
   colors: Colors,
-  overlay?: Overlay,
-  study?: Study,
+  overlays?: Overlay[],
+  studies?: Study[],
   priceMonitoringBounds?: any
 ) {
   const vconcat: BaseSpec[] = [];
@@ -446,24 +446,28 @@ export function constructTopLevelSpec(
     layer: constructMainLayerSpec(chartType, colors),
   };
 
-  if (overlay) {
-    transform.push(...constructOverlayTransform(overlay));
-    mainSpecification.layer?.push(
-      ...constructOverlayLayerSpec(overlay, colors)
-    );
+  if (overlays && overlays.length) {
+    for (const overlay of overlays) {
+      transform.push(...constructOverlayTransform(overlay));
+      mainSpecification.layer?.push(
+        ...constructOverlayLayerSpec(overlay, colors)
+      );
+    }
   }
 
   vconcat.push(mainSpecification);
 
-  if (study) {
-    transform.push(...constructStudyTransform(study));
+  if (studies && studies.length > 0) {
+    for (const study of studies) {
+      transform.push(...constructStudyTransform(study));
 
-    const studySpecification: BaseSpec = {
-      name: study,
-      layer: constructStudyLayerSpec(study, colors),
-    };
+      const studySpecification: BaseSpec = {
+        name: study,
+        layer: constructStudyLayerSpec(study, colors),
+      };
 
-    vconcat.push(studySpecification);
+      vconcat.push(studySpecification);
+    }
   }
 
   // Calculate change
