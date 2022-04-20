@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/vegaprotocol/pennant/compare/v0.4.5...v0.4.6) (2022-04-20)
+
+
+### Features
+
+* support multiple studies ([#438](https://github.com/vegaprotocol/pennant/issues/438)) ([e52dcb0](https://github.com/vegaprotocol/pennant/commit/e52dcb0fe022d180982e81f305535c74a72eb81b))
+
+
+### Bug Fixes
+
+* separate loading and initializing states ([#436](https://github.com/vegaprotocol/pennant/issues/436)) ([4714ed8](https://github.com/vegaprotocol/pennant/commit/4714ed84f0ab3f9655bfdafb45faeeb3555c15b0))
+
 ### [0.4.5](https://github.com/vegaprotocol/pennant/compare/v0.4.4...v0.4.5) (2022-04-01)
 
 
