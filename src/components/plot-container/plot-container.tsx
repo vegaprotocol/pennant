@@ -236,12 +236,10 @@ export const PlotContainer = forwardRef<
       }
     }, [colors]);
 
-    const showStudy = scenegraph.panes.length === 2;
-
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
         <Allotment
-          minSize={100}
+          minSize={20}
           vertical
           onChange={(_sizes) => {
             if (typeof chartRef.current?.requestRedraw === "function") {
@@ -249,32 +247,20 @@ export const PlotContainer = forwardRef<
             }
           }}
         >
-          <PaneView
-            ref={refs[scenegraph.panes[0].id]}
-            bounds={bounds}
-            dataIndex={dataIndex}
-            decimalPlaces={decimalPlaces}
-            overlays={overlays}
-            pane={scenegraph.panes[0]}
-            simple={simple}
-            onClosePane={onClosePane}
-          />
-          <Allotment.Pane preferredSize="33%" visible={showStudy}>
-            {showStudy ? (
+          {scenegraph.panes.map((pane) => (
+            <Allotment.Pane key={pane.id}>
               <PaneView
-                ref={refs[scenegraph.panes[1].id]}
+                ref={refs[pane.id]}
                 bounds={bounds}
                 dataIndex={dataIndex}
                 decimalPlaces={decimalPlaces}
                 overlays={overlays}
-                pane={scenegraph.panes[1]}
+                pane={pane}
                 simple={simple}
                 onClosePane={onClosePane}
               />
-            ) : (
-              <div>No study selected</div>
-            )}
-          </Allotment.Pane>
+            </Allotment.Pane>
+          ))}
         </Allotment>
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>

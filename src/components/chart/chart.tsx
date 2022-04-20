@@ -39,8 +39,8 @@ import {
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { useOnReady } from "./hooks";
 import { Colors, getColors } from "./helpers";
+import { useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -146,8 +146,8 @@ export const Chart = forwardRef(
           data,
           chartType,
           colors,
-          overlays[0],
-          studies[0],
+          overlays,
+          studies,
           configuration?.priceMonitoringBounds
         ),
       [

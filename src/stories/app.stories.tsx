@@ -90,8 +90,8 @@ export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState(data.markets[1].id);
   const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [study, setStudy] = useState<Study | null>(null);
-  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [interval, setInterval] = useState(Interval.I1M);
 
   const dataSource = useMemo(
@@ -131,12 +131,12 @@ export const VegaProtocol: Story = () => {
         <ChartControls
           interval={interval}
           chartType={chartType}
-          overlay={overlay}
-          study={study}
+          overlays={overlays}
+          studies={studies}
           onSetInterval={setInterval}
           onSetChartType={setChartType}
-          onSetOverlay={setOverlay}
-          onSetStudy={setStudy}
+          onSetOverlays={setOverlays}
+          onSetStudies={setStudies}
           onSnapshot={async () => {
             const blob = await ref.current.snapshot();
 
@@ -163,12 +163,13 @@ export const VegaProtocol: Story = () => {
           dataSource={dataSource}
           options={{
             chartType: chartType,
-            studies: study === null ? [] : [study],
-            overlays: overlay === null ? [] : [overlay],
+            studies: studies,
+            overlays: overlays,
           }}
           interval={interval}
           onOptionsChanged={(options) => {
-            setStudy(options.studies?.length === 0 ? null : study);
+            setOverlays(options.overlays ?? []);
+            setStudies(options.studies ?? []);
           }}
         />
       </div>
@@ -198,14 +199,14 @@ export const CryptoCompare: Story = () => {
     null
   );
   const { styles, attributes } = usePopper(
-    virtualReference.current,
+    virtualReference.current as any,
     popperElement,
     { placement: "bottom-start" }
   );
 
   const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [study, setStudy] = useState<Study | null>(null);
-  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [interval, setInterval] = useState(Interval.I1M);
 
   const dataSource = useMemo(() => new CryptoCompareDataSource(), []);
@@ -283,12 +284,12 @@ export const CryptoCompare: Story = () => {
         <ChartControls
           interval={interval}
           chartType={chartType}
-          overlay={overlay}
-          study={study}
+          overlays={overlays}
+          studies={studies}
           onSetInterval={setInterval}
           onSetChartType={setChartType}
-          onSetOverlay={setOverlay}
-          onSetStudy={setStudy}
+          onSetOverlays={setOverlays}
+          onSetStudies={setStudies}
           onSnapshot={async () => {
             const blob = await ref.current.snapshot();
 
@@ -327,12 +328,13 @@ export const CryptoCompare: Story = () => {
             dataSource={dataSource}
             options={{
               chartType: chartType,
-              studies: study === null ? [] : [study],
-              overlays: overlay === null ? [] : [overlay],
+              studies: studies,
+              overlays: overlays,
             }}
             interval={interval}
             onOptionsChanged={(options) => {
-              setStudy(options.studies?.length === 0 ? null : study);
+              setOverlays(options.overlays ?? []);
+              setStudies(options.studies ?? []);
             }}
           />
         </div>
