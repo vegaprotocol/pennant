@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/vegaprotocol/pennant/compare/v0.4.6...v0.4.7) (2022-04-22)
+
+
+### Bug Fixes
+
+* red candles should be filled ([#447](https://github.com/vegaprotocol/pennant/issues/447)) ([69ac677](https://github.com/vegaprotocol/pennant/commit/69ac67794fc1f7ae6ff19a53f35db1686e22e01a))
+* use true black for background ([#448](https://github.com/vegaprotocol/pennant/issues/448)) ([852b9ff](https://github.com/vegaprotocol/pennant/commit/852b9ffb884870e9c6b4e7e9295c22eaddc8cc54))
+
 ### [0.4.6](https://github.com/vegaprotocol/pennant/compare/v0.4.5...v0.4.6) (2022-04-20)
 
 
