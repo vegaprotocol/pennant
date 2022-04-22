@@ -87,7 +87,7 @@
   --pennant-color-emphasis-900: var(--pennant-color-gray-100);
   --pennant-color-emphasis-1000: var(--pennant-color-gray-0);
 
-  --pennant-background-surface-color: #242526;
+  --pennant-background-surface-color: #000000;
   --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
 
   --pennant-color-content: var(--pennant-color-emphasis-900);
