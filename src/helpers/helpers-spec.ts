@@ -129,7 +129,7 @@ function constructMainLayerSpec(
                 test: { field: "open", lt: "close" },
                 value: colors.buyFill,
               },
-              value: colors.sellFill,
+              value: colors.sellStroke,
             },
             stroke: {
               condition: {
