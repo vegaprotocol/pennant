@@ -46,7 +46,7 @@ describe("constructTopLevelSpec", () => {
                     test: { field: "open", lt: "close" },
                     value: "#16452d",
                   },
-                  value: "#800700",
+                  value: "#ff261a",
                 },
                 stroke: {
                   condition: {
