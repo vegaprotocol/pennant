@@ -93,7 +93,7 @@ export class Core {
     "viewport_changed"
   );
 
-  private _interval = Interval.I1M;
+  private _interval: Interval = Interval.I1M;
 
   private _decimalPlaces = 5;
   private initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY;
