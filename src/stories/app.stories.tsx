@@ -20,9 +20,8 @@ import { usePopper } from "react-popper";
 
 import { Chart } from "../components/chart";
 import { formatter } from "../helpers";
-import { ChartType, Overlay, Study } from "../types";
+import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
-import { Interval } from "./api/vega-graphql";
 import data from "./app.stories.json";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
@@ -92,7 +91,7 @@ export const VegaProtocol: Story = () => {
   const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [studies, setStudies] = useState<Study[]>([]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
-  const [interval, setInterval] = useState(Interval.I1M);
+  const [interval, setInterval] = useState<Interval>(Interval.I1M);
 
   const dataSource = useMemo(
     () =>
@@ -207,7 +206,7 @@ export const CryptoCompare: Story = () => {
   const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [studies, setStudies] = useState<Study[]>([]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
-  const [interval, setInterval] = useState(Interval.I1M);
+  const [interval, setInterval] = useState<Interval>(Interval.I1M);
 
   const dataSource = useMemo(() => new CryptoCompareDataSource(), []);
 

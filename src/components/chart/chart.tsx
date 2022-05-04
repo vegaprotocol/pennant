@@ -279,8 +279,6 @@ export const Chart = forwardRef(
       [data, initialViewport]
     );
 
-    console.log(loading, dataSourceInitializing);
-
     // Show fallback UI while waiting for data
     if (loading) {
       return (

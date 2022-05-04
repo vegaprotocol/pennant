@@ -4,8 +4,7 @@ import { FocusStyleManager } from "@blueprintjs/core";
 import { Meta, Story } from "@storybook/react";
 import { useState } from "react";
 
-import { ChartType, Overlay, Study } from "../../../types";
-import { Interval } from "../../api/vega-graphql";
+import { ChartType, Interval, Overlay, Study } from "../../../types";
 import { ChartControls, ChartControlsProps } from "./chart-controls";
 
 export default {
