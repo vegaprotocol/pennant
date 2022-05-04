@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/vegaprotocol/pennant/compare/v0.4.7...v0.4.8) (2022-05-04)
+
+
+### Features
+
+* export interval labels ([#452](https://github.com/vegaprotocol/pennant/issues/452)) ([d53ec09](https://github.com/vegaprotocol/pennant/commit/d53ec0909ba8a291301ebb9750659833247bc730))
+
+
+### Bug Fixes
+
+* use theme for area chart background ([#453](https://github.com/vegaprotocol/pennant/issues/453)) ([72d9ca5](https://github.com/vegaprotocol/pennant/commit/72d9ca546f9657996a7ab4b5d67381cb2ccb9ca6))
+
 ### [0.4.7](https://github.com/vegaprotocol/pennant/compare/v0.4.6...v0.4.7) (2022-04-22)
 
 
