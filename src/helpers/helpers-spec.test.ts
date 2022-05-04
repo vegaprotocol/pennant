@@ -82,7 +82,7 @@ describe("constructTopLevelSpec", () => {
                   gradient: "linear",
                   stops: [
                     { color: "#044e80", offset: 0 },
-                    { color: "#000000", offset: 1 },
+                    { color: "#d9822b", offset: 1 },
                   ],
                 },
                 line: { color: "#009cff" },
@@ -139,7 +139,7 @@ describe("constructTopLevelSpec", () => {
                   gradient: "linear",
                   stops: [
                     { color: "#044e80", offset: 0 },
-                    { color: "#000000", offset: 1 },
+                    { color: "#d9822b", offset: 1 },
                   ],
                 },
                 line: { color: "#009cff" },
@@ -178,7 +178,7 @@ describe("constructTopLevelSpec", () => {
                   gradient: "linear",
                   stops: [
                     { color: "#044e80", offset: 0 },
-                    { color: "#000000", offset: 1 },
+                    { color: "#d9822b", offset: 1 },
                   ],
                 },
                 line: { color: "#009cff" },

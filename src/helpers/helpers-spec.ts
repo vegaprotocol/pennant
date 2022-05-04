@@ -32,7 +32,7 @@ function constructMainLayerSpec(
                 },
                 {
                   offset: 1,
-                  color: "#000000",
+                  color: colors.backgroundSurface,
                 },
               ],
             },
