@@ -87,8 +87,8 @@ export const DepthChart = forwardRef(
       ref: resizeOberverRef,
       width = 300,
       height = 300,
-      devicePixelContentBoxSizeInlineSize = window.devicePixelRatio * 300,
-      devicePixelContentBoxSizeBlockSize = window.devicePixelRatio * 300,
+      devicePixelContentBoxSizeInlineSize,
+      devicePixelContentBoxSizeBlockSize,
     } = useThrottledResizeObserver<HTMLDivElement>(50);
 
     /**
@@ -116,8 +116,12 @@ export const DepthChart = forwardRef(
     // Update chart when dimensions or data change
     useEffect(() => {
       chartRef.current.resize(
-        devicePixelContentBoxSizeInlineSize / window.devicePixelRatio,
-        devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
+        devicePixelContentBoxSizeInlineSize
+          ? devicePixelContentBoxSizeInlineSize / window.devicePixelRatio
+          : width,
+        devicePixelContentBoxSizeBlockSize
+          ? devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
+          : height
       );
 
       chartRef.current.data = data;
