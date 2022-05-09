@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.9](https://github.com/vegaprotocol/pennant/compare/v0.4.8...v0.4.9) (2022-05-09)
+
+
+### Bug Fixes
+
+* enable resizing depth chart in browsers which don't support device-pixel-content-box ([#461](https://github.com/vegaprotocol/pennant/issues/461)) ([49494da](https://github.com/vegaprotocol/pennant/commit/49494da27b9a797f4b107d01608cbae1491d034c))
+* **deps:** update docusaurus monorepo to v2.0.0-beta.20 ([#415](https://github.com/vegaprotocol/pennant/issues/415)) ([0f5b75a](https://github.com/vegaprotocol/pennant/commit/0f5b75a35f887f2dac1afd50a51fb47f6109b07d))
+* remove log messages when attempting to register custom elements ([#460](https://github.com/vegaprotocol/pennant/issues/460)) ([36a966f](https://github.com/vegaprotocol/pennant/commit/36a966f2a1d48456b780d1e8482f0be5d7741ffa))
+
 ### [0.4.8](https://github.com/vegaprotocol/pennant/compare/v0.4.7...v0.4.8) (2022-05-04)
 
 
