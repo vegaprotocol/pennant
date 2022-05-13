@@ -150,13 +150,13 @@ describe("constructTopLevelSpec", () => {
               encoding: {
                 y: { field: "bollingerLower", type: "quantitative" },
               },
-              mark: { color: "#d9822b", type: "line" },
+              mark: { color: "#ff261a", type: "line" },
             },
             {
               encoding: {
                 y: { field: "bollingerUpper", type: "quantitative" },
               },
-              mark: { color: "#daff0d", type: "line" },
+              mark: { color: "#ff261a", type: "line" },
             },
           ],
         },
@@ -195,7 +195,12 @@ describe("constructTopLevelSpec", () => {
           name: "volume",
           layer: [
             {
-              encoding: { y: { field: "volume", type: "quantitative" } },
+              encoding: {
+                fill: {
+                  value: "#494949",
+                },
+                y: { field: "volume", type: "quantitative" },
+              },
               mark: { type: "bar" },
             },
           ],
