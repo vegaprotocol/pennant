@@ -180,6 +180,7 @@ export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [price, setPrice] = useState(0);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   const virtualReference = useRef({
     getBoundingClientRect() {
@@ -279,6 +280,14 @@ export const CryptoCompare: Story = () => {
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
+        <button
+          type="button"
+          onClick={() => {
+            setTheme((theme) => (theme === "dark" ? "light" : "dark"));
+          }}
+        >
+          {theme}
+        </button>
         <h1>Crypto Compare Charts</h1>
         <ChartControls
           interval={interval}
@@ -335,6 +344,7 @@ export const CryptoCompare: Story = () => {
               setOverlays(options.overlays ?? []);
               setStudies(options.studies ?? []);
             }}
+            theme={theme}
           />
         </div>
         <BPOverlay

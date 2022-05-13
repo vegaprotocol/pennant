@@ -88,8 +88,8 @@ export const studyInfoFields: Record<
   bollinger: {
     label: "Bollinger",
     fields: [
-      { id: "upper", label: "Upper" },
-      { id: "lower", label: "Lower" },
+      { id: "bollingerUpper", label: "Upper" },
+      { id: "bollingerLower", label: "Lower" },
     ],
   },
   eldarRay: {
@@ -102,8 +102,8 @@ export const studyInfoFields: Record<
   envelope: {
     label: "Envelope",
     fields: [
-      { id: "upper", label: "Upper" },
-      { id: "lower", label: "Lower" },
+      { id: "envelopeUpper", label: "Upper" },
+      { id: "envelopeLower", label: "Lower" },
     ],
   },
   exponentialMovingAverage: {
