@@ -178,7 +178,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent1,
           },
         },
       ];
@@ -226,7 +226,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent1,
           },
         },
       ];
@@ -235,6 +235,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
         {
           encoding: {
             y: { field: "volume", type: "quantitative" },
+            fill: { value: colors.emphasis400 },
           },
           mark: {
             type: "bar",
@@ -255,20 +256,20 @@ function constructOverlayLayerSpec(
       return [
         {
           encoding: {
-            y: { field: "lower", type: "quantitative" },
+            y: { field: "bollingerLower", type: "quantitative" },
           },
           mark: {
             type: "line",
-            color: colors.vegaOrange,
+            color: colors.accent3,
           },
         },
         {
           encoding: {
-            y: { field: "upper", type: "quantitative" },
+            y: { field: "bollingerUpper", type: "quantitative" },
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent3,
           },
         },
       ];
@@ -276,20 +277,20 @@ function constructOverlayLayerSpec(
       return [
         {
           encoding: {
-            y: { field: "lower", type: "quantitative" },
+            y: { field: "envelopeLower", type: "quantitative" },
           },
           mark: {
             type: "line",
-            color: colors.vegaOrange,
+            color: colors.accent1,
           },
         },
         {
           encoding: {
-            y: { field: "upper", type: "quantitative" },
+            y: { field: "envelopeUpper", type: "quantitative" },
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent1,
           },
         },
       ];
@@ -301,7 +302,7 @@ function constructOverlayLayerSpec(
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent2,
           },
         },
       ];
@@ -313,7 +314,7 @@ function constructOverlayLayerSpec(
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent1,
           },
         },
       ];
@@ -343,7 +344,7 @@ function constructOverlayLayerSpec(
           },
           mark: {
             type: "line",
-            color: colors.vegaYellow,
+            color: colors.accent1,
           },
         },
       ];
@@ -359,7 +360,7 @@ function constructOverlayTransform(overlay: Overlay): Transform[] {
         {
           indicator: "bollinger",
           on: ["close"],
-          as: ["upper", "average", "lower"],
+          as: ["bollingerUpper", "bollingerAverage", "bollingerLower"],
         },
       ];
     case "envelope":
@@ -367,7 +368,7 @@ function constructOverlayTransform(overlay: Overlay): Transform[] {
         {
           indicator: "envelope",
           on: ["close"],
-          as: ["upper", "lower"],
+          as: ["envelopeUpper", "envelopeLower"],
         },
       ];
     case "exponentialMovingAverage":
