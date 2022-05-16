@@ -16,22 +16,22 @@ export function getColors(element: HTMLElement | null): Colors {
   return {
     buyFill: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-buy-fill")
+        ?.getPropertyValue("--pennant-color-depth-buy-fill")
         .trim() || "#16452d"
     ),
     buyStroke: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-buy-stroke")
+        ?.getPropertyValue("--pennant-color-depth-buy-stroke")
         .trim() || "#26ff8a"
     ),
     sellFill: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-sell-fill")
+        ?.getPropertyValue("--pennant-color-depth-sell-fill")
         .trim() || "#800700"
     ),
     sellStroke: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-sell-stroke")
+        ?.getPropertyValue("--pennant-color-depth-sell-stroke")
         .trim() || "#ff261a"
     ),
     textPrimary: string2hex(

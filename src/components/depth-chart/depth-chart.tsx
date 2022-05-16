@@ -143,7 +143,9 @@ export const DepthChart = forwardRef(
     }, [midPrice]);
 
     useEffect(() => {
-      chartRef.current.colors = getColors(styleRef?.current);
+      requestAnimationFrame(
+        () => (chartRef.current.colors = getColors(styleRef?.current))
+      );
     }, [theme]);
 
     useImperativeHandle(ref, () => ({

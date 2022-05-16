@@ -61,34 +61,3 @@ SimpleMode.args = {
   ...Default.args,
   options: { studies: ["volume"], simple: true },
 };
-
-export const Theme: Story<ChartProps> = (args) => {
-  const [theme, setTheme] = useState<ThemeVariant>("dark");
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: "80vw",
-        height: "80vh",
-      }}
-    >
-      <Chart {...args} theme="light" />
-      <Chart {...args} theme="dark" />
-      <Chart {...args} theme={theme} />
-      <button
-        type="button"
-        onClick={() =>
-          setTheme((theme) => (theme === "dark" ? "light" : "dark"))
-        }
-      >
-        Switch theme
-      </button>
-    </div>
-  );
-};
-
-Theme.args = {
-  ...Default.args,
-};

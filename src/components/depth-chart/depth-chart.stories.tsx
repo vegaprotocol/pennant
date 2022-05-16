@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/react";
 import { orderBy } from "lodash";
 import { useRef, useState } from "react";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { useInterval } from "../../hooks";
-import { ThemeVariant } from "../../types";
 import {
   DepthChart,
   DepthChartHandle,
@@ -220,6 +220,8 @@ export const Binance: Story<DepthChartProps> = (args) => {
     fetchData();
   }, 1000);
 
+  const theme = useDarkMode() ? "dark" : "light";
+
   if (isLoading) {
     return <p>Loading</p>;
   }
@@ -234,7 +236,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
           height: "300px",
         }}
       >
-        <DepthChart ref={ref} data={data} theme="light" />
+        <DepthChart ref={ref} data={data} theme={theme} />
       </div>
       <div>
         <ul>
@@ -273,37 +275,6 @@ const Template: Story<DepthChartProps> = (args) => {
       <DepthChart ref={ref} {...args} />
     </div>
   );
-};
-
-export const Theme: Story<DepthChartProps> = (args) => {
-  const [theme, setTheme] = useState<ThemeVariant>("dark");
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: "80vw",
-        height: "80vh",
-      }}
-    >
-      <DepthChart {...args} theme="light" />
-      <DepthChart {...args} theme="dark" />
-      <DepthChart {...args} theme={theme} />
-      <button
-        type="button"
-        onClick={() =>
-          setTheme((theme) => (theme === "dark" ? "light" : "dark"))
-        }
-      >
-        Switch theme
-      </button>
-    </div>
-  );
-};
-Theme.args = {
-  data: AAPL_data,
-  priceFormat: (price: number) => priceFormatter(5).format(price),
 };
 
 export const AAPL = Template.bind({});
