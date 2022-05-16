@@ -1,0 +1,22 @@
+a.closeButton.closeButton:not(.disabled):hover {
+  background: var(--pennant-hover-overlay);
+  color: var(--vega-pink);
+}
+
+a.closeButton.closeButton {
+  align-items: center;
+  border-radius: 5px;
+  color: var(--pennant-color-content);
+  display: inline-flex;
+  font-size: 11px;
+  justify-content: center;
+  padding: 3px;
+}
+
+.closeButton > svg {
+  width: 16px;
+}
+
+.svgIcon {
+  fill: currentColor;
+}

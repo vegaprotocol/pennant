@@ -104,7 +104,13 @@ export class PlotArea {
       );
 
       for (const label of this._labels) {
-        label.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
+        label.draw(
+          this.ctx,
+          this._xScale,
+          this._yScale,
+          this._pixelRatio,
+          this.colors
+        );
       }
     }
   }

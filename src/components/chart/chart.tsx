@@ -243,7 +243,8 @@ export const Chart = forwardRef(
     }, [dataSource, dataSourceInitializing, simple]);
 
     useEffect(() => {
-      setColors(getColors(styleRef?.current));
+      // Hack to ensure we pick up the changed css
+      requestAnimationFrame(() => setColors(getColors(styleRef?.current)));
     }, [theme]);
 
     const handleViewportChanged = useCallback(
@@ -268,6 +269,16 @@ export const Chart = forwardRef(
         });
       },
       [onOptionsChanged, options, studies]
+    );
+
+    const handleRemoveOverlay = useCallback(
+      (id: string) => {
+        onOptionsChanged({
+          ...options,
+          overlays: overlays.filter((study) => study !== id),
+        });
+      },
+      [onOptionsChanged, options, overlays]
     );
 
     const viewport = useMemo(
@@ -315,6 +326,7 @@ export const Chart = forwardRef(
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
+            onRemoveOverlay={handleRemoveOverlay}
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
             }}
