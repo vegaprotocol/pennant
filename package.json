@@ -147,7 +147,7 @@
     "storybook-dark-mode": "^1.1.0",
     "subscriptions-transport-ws": "0.11.0",
     "ts-jest": "27.1.4",
-    "ts-node": "10.4.0",
+    "ts-node": "10.7.0",
     "tslib": "2.3.1"
   },
   "peerDependencies": {
