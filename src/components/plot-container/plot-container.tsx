@@ -43,6 +43,7 @@ export type PlotContainerProps = {
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePane: (id: string) => void;
+  onRemoveOverlay: (id: string) => void;
 };
 
 export const PlotContainer = forwardRef<
@@ -63,6 +64,7 @@ export const PlotContainer = forwardRef<
       onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
+      onRemoveOverlay,
     },
     ref
   ) => {
@@ -258,6 +260,7 @@ export const PlotContainer = forwardRef<
                 pane={pane}
                 simple={simple}
                 onClosePane={onClosePane}
+                onRemoveOverlay={onRemoveOverlay}
               />
             </Allotment.Pane>
           ))}

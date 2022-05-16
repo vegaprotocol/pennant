@@ -27,6 +27,8 @@ import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
 import { VegaDataSource } from "./data-source/vega-protocol-data-source";
+import { useDarkMode } from "storybook-dark-mode";
+import classnames from "classnames";
 
 export default {
   title: "Overview/Application Examples",
@@ -104,8 +106,10 @@ export const VegaProtocol: Story = () => {
     [market]
   );
 
+  const darkmode = useDarkMode();
+
   return (
-    <div className="container bp3-dark">
+    <div className={classnames("container", { ["bp3-dark"]: darkmode })}>
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
@@ -180,7 +184,7 @@ export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [price, setPrice] = useState(0);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const theme = useDarkMode() ? "dark" : "light";
 
   const virtualReference = useRef({
     getBoundingClientRect() {
@@ -272,22 +276,16 @@ export const CryptoCompare: Story = () => {
 
   const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
+  const darkmode = useDarkMode();
+
   return (
     <HotkeysProvider>
       <div
         tabIndex={0}
-        className="container bp3-dark"
+        className={classnames("container", { ["bp3-dark"]: darkmode })}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
-        <button
-          type="button"
-          onClick={() => {
-            setTheme((theme) => (theme === "dark" ? "light" : "dark"));
-          }}
-        >
-          {theme}
-        </button>
         <h1>Crypto Compare Charts</h1>
         <ChartControls
           interval={interval}

@@ -2,6 +2,7 @@ import "./indicator-info.css";
 
 import classNames from "classnames";
 import React from "react";
+import { CloseButton } from "../close-button";
 
 export type IndicatorInfoProps = {
   title?: string;
@@ -11,9 +12,16 @@ export type IndicatorInfoProps = {
     value: string;
     intent?: "success" | "danger";
   }[];
+  closeable?: boolean;
+  onClose?: () => void;
 };
 
-export const IndicatorInfo = ({ title, info }: IndicatorInfoProps) => {
+export const IndicatorInfo = ({
+  title,
+  info,
+  closeable = false,
+  onClose,
+}: IndicatorInfoProps) => {
   return (
     <div className="indicator-info-wrapper">
       {title && <span className="text-muted">{`${title}: `}</span>}
@@ -35,6 +43,7 @@ export const IndicatorInfo = ({ title, info }: IndicatorInfoProps) => {
           </span>
         </div>
       ))}
+      {closeable && <CloseButton title="Remove" onClick={onClose} />}
     </div>
   );
 };
