@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.10](https://github.com/vegaprotocol/pennant/compare/v0.4.9...v0.4.10) (2022-05-16)
+
+
+### Features
+
+* remove overlays from chart ([#471](https://github.com/vegaprotocol/pennant/issues/471)) ([bd318c1](https://github.com/vegaprotocol/pennant/commit/bd318c16d779e9e1de3f4fa150989e7c8702dc6c))
+* use more appropriate colours for light theme ([#467](https://github.com/vegaprotocol/pennant/issues/467)) ([e578367](https://github.com/vegaprotocol/pennant/commit/e578367da857eb43771f54bb1cf5b9f6423f37bb))
+
 ### [0.4.9](https://github.com/vegaprotocol/pennant/compare/v0.4.8...v0.4.9) (2022-05-09)
 
 
