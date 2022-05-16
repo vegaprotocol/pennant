@@ -47,6 +47,14 @@
 
   --pennant-hover-overlay: rgba(255, 255, 255, 0.5);
 
+  /* Accent colors. */
+  --pennant-accent1: #4285f4;
+  --pennant-accent2: #ea4335;
+  --pennant-accent3: #fbbc04;
+  --pennant-accent4: #34a853;
+  --pennant-accent5: #ff6d01;
+  --pennant-accent6: #46bdc6;
+
   /* Depth chart. */
   --pennant-color-buy-fill: #eaf5ee;
   --pennant-color-buy-stroke: var(--vega-green);

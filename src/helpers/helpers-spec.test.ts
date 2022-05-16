@@ -125,7 +125,7 @@ describe("constructTopLevelSpec", () => {
         {
           indicator: "bollinger",
           on: ["close"],
-          as: ["upper", "average", "lower"],
+          as: ["bollingerUpper", "bollingerAverage", "bollingerLower"],
         },
       ],
       vconcat: [
@@ -147,12 +147,16 @@ describe("constructTopLevelSpec", () => {
               },
             },
             {
-              encoding: { y: { field: "lower", type: "quantitative" } },
-              mark: { color: "#d9822b", type: "line" },
+              encoding: {
+                y: { field: "bollingerLower", type: "quantitative" },
+              },
+              mark: { color: "#ff261a", type: "line" },
             },
             {
-              encoding: { y: { field: "upper", type: "quantitative" } },
-              mark: { color: "#daff0d", type: "line" },
+              encoding: {
+                y: { field: "bollingerUpper", type: "quantitative" },
+              },
+              mark: { color: "#ff261a", type: "line" },
             },
           ],
         },
@@ -191,7 +195,12 @@ describe("constructTopLevelSpec", () => {
           name: "volume",
           layer: [
             {
-              encoding: { y: { field: "volume", type: "quantitative" } },
+              encoding: {
+                fill: {
+                  value: "#494949",
+                },
+                y: { field: "volume", type: "quantitative" },
+              },
               mark: { type: "bar" },
             },
           ],
