@@ -5,8 +5,8 @@ import React, { forwardRef, useState } from "react";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";
 import { Bounds, Pane } from "../../types";
-import { IndicatorInfo } from "../indicator-info";
 import { CloseButton } from "../close-button";
+import { IndicatorInfo } from "../indicator-info";
 import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PaneViewProps = {

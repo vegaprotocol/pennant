@@ -15,8 +15,10 @@ import {
 } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
+import classnames from "classnames";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { Chart } from "../components/chart";
 import { formatter } from "../helpers";
@@ -27,8 +29,6 @@ import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
 import { VegaDataSource } from "./data-source/vega-protocol-data-source";
-import { useDarkMode } from "storybook-dark-mode";
-import classnames from "classnames";
 
 export default {
   title: "Overview/Application Examples",
