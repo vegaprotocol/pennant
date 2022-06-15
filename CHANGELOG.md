@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/vegaprotocol/pennant/compare/v0.4.10...v0.4.11) (2022-06-15)
+
+
+### Bug Fixes
+
+* support 3-digit hex colors ([#490](https://github.com/vegaprotocol/pennant/issues/490)) ([2342be2](https://github.com/vegaprotocol/pennant/commit/2342be2c89a6b1a59b30fc66cb9188b28e7879b3))
+
 ### [0.4.10](https://github.com/vegaprotocol/pennant/compare/v0.4.9...v0.4.10) (2022-05-16)
 
 
