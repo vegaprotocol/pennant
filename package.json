@@ -116,7 +116,7 @@
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "13.5.0",
-    "@types/d3-delaunay": "6.0.0",
+    "@types/d3-delaunay": "6.0.1",
     "@types/d3-format": "2.0.2",
     "@types/react-test-renderer": "17.0.2",
     "@types/resize-observer-browser": "0.1.7",
