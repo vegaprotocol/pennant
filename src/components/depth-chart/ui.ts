@@ -438,7 +438,11 @@ export class UI extends EventEmitter {
         const radius = 50 * resolution;
 
         // TODO: Cache the result of this calculation
-        const points = zip<number>(this.prices, this.volumes);
+        const points = zip<number>(this.prices, this.volumes) as [
+          number,
+          number
+        ][];
+
         const delaunay = Delaunay.from(points);
         const index = delaunay.find(x, y);
 
