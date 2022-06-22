@@ -125,7 +125,7 @@
     "bignumber.js": "9.0.2",
     "eslint": "8.15.0",
     "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-react-hooks": "4.5.0",
+    "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "eslint-plugin-storybook": "0.5.12",
     "graphql": "15.8.0",
