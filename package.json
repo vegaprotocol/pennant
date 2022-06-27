@@ -41,7 +41,7 @@
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.168",
     "@types/node": "^16.0.0",
-    "@types/react": "^17.0.0",
+    "@types/react": "^18.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "allotment": "1.14.2",
