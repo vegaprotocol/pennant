@@ -8,7 +8,13 @@ export default {
 } as Meta;
 
 const Template: Story<IndicatorInfoProps> = (args) => (
-  <div style={{ backgroundColor: "black", padding: "24px 24px" }}>
+  <div
+    style={{
+      backgroundColor: "var(--pennant-background-surface-color)",
+      color: "var(--pennant-font-color-base)",
+      padding: "24px 24px",
+    }}
+  >
     <IndicatorInfo {...args} />
   </div>
 );
@@ -39,4 +45,19 @@ export const RelativeStrengthIndicator = Template.bind({});
 RelativeStrengthIndicator.args = {
   title: "RSI",
   info: [{ id: "index", label: "", value: "100" }],
+};
+
+export const Closable = Template.bind({});
+
+Closable.args = {
+  title: "RSI",
+  info: [{ id: "index", label: "", value: "100" }],
+  closeable: true,
+};
+
+export const Colors = Template.bind({});
+
+Colors.args = {
+  title: "RSI",
+  info: [{ id: "index", label: "", value: "100", color: "#ffff00" }],
 };

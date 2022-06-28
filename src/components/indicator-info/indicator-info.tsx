@@ -12,6 +12,7 @@ export type IndicatorInfoProps = {
     label?: string;
     value: string;
     intent?: "success" | "danger";
+    color?: string;
   }[];
   closeable?: boolean;
   onClose?: () => void;
@@ -39,6 +40,9 @@ export const IndicatorInfo = ({
                 danger: d.intent === "danger",
               }
             )}
+            {...(d.color && {
+              style: { color: d.color },
+            })}
           >
             {d.value}
           </span>
