@@ -124,7 +124,7 @@ export function parseLayer(
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number
-): UpdatableObject[] {
+) {
   const series: any[] = [];
 
   let layerData = data;
@@ -226,7 +226,12 @@ export function parse(
               (datum) => datum.close
             )(data);
 
-            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+            newData = newData.map((d, i) => ({
+              ...d,
+              bollingerUpper: indicatorData[i].upper,
+              bollingerAverage: indicatorData[i].average,
+              bollingerLower: indicatorData[i].lower,
+            }));
           }
           break;
         case "eldarRay":
@@ -242,7 +247,11 @@ export function parse(
               (datum) => datum.close
             )(data);
 
-            newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
+            newData = newData.map((d, i) => ({
+              ...d,
+              envelopeUpper: indicatorData[i].upper,
+              envelopeLower: indicatorData[i].lower,
+            }));
           }
           break;
         case "exponentialMovingAverage":
@@ -319,7 +328,13 @@ export function parse(
     panes: isVConcatSpec(specification)
       ? specification.vconcat.map((pane, paneIndex) => {
           return {
-            id: pane.id ?? pane.name ?? String(paneIndex),
+            id: pane.name ?? String(paneIndex),
+            renderableElements: parseLayer(
+              pane,
+              { values: newData },
+              specification.encoding ?? {},
+              candleWidth
+            ),
             name: pane.name ?? "",
             objects: parseLayer(
               pane,

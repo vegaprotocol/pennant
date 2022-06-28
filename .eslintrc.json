@@ -1,7 +1,7 @@
 {
   "extends": [
-    "plugin:storybook/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:storybook/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",

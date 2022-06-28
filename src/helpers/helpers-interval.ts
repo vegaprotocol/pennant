@@ -1,79 +1,8 @@
-import {
-  differenceInMinutes,
-  format,
-  subDays,
-  subHours,
-  subMinutes,
-} from "date-fns";
+import { differenceInMinutes, format } from "date-fns";
 
 import { Interval } from "../types";
 
 export type GQLInterval = keyof typeof Interval;
-
-export interface IntervalOption {
-  label: string;
-  interval: Interval;
-}
-
-const unitMap = {
-  M: 0,
-  H: 1,
-  D: 2,
-};
-
-/**
- * Creates an array of {interval,label} objects sorted by interval length
- * with translations from i18n/index.ts
- */
-export function createIntervalOptions(
-  intervals: GQLInterval[]
-): IntervalOption[] {
-  return (
-    intervals
-      .map((interval: GQLInterval) => ({
-        interval: interval as Interval,
-        label: INTERVALS[interval],
-      }))
-
-      // Remove any intervals which dont have a translation string
-      .filter((interval) => !!interval.label)
-
-      // Sort by interval length
-      .sort((a, b) => {
-        const [aValue, aUnit] = parseInterval(a.interval);
-        const [bValue, bUnit] = parseInterval(b.interval);
-
-        // Sort by unit first
-        if (unitMap[aUnit] < unitMap[bUnit]) {
-          return -1;
-        }
-
-        if (unitMap[aUnit] > unitMap[bUnit]) {
-          return 1;
-        }
-
-        // The unit is the same, sort by value
-        if (aValue < bValue) {
-          return -1;
-        }
-
-        if (aValue > bValue) {
-          return 1;
-        }
-
-        return 0;
-      })
-  );
-}
-
-export const INTERVALS: { [I in Interval]: string } = {
-  I1M: "1m",
-  I5M: "5m",
-  I15M: "15m",
-  I1H: "1h",
-  I6H: "6h",
-  I1D: "1d",
-};
 
 type IntervalUnit = "M" | "H" | "D";
 type ParsedInterval = [number, IntervalUnit];
@@ -93,38 +22,6 @@ export function parseInterval(interval: Interval): ParsedInterval {
 
 export const DEFAULT_CANDLES = 110;
 export const CANDLE_BUFFER = 20;
-
-export function getInitialExtents(
-  interval: Interval,
-  endDate = new Date(Date.now())
-): [Date, Date] {
-  let startDate: Date;
-
-  switch (interval) {
-    case Interval.I1M:
-      startDate = subMinutes(endDate, DEFAULT_CANDLES);
-      break;
-    case Interval.I5M:
-      startDate = subMinutes(endDate, DEFAULT_CANDLES * 5);
-      break;
-    case Interval.I15M:
-      startDate = subMinutes(endDate, DEFAULT_CANDLES * 15);
-      break;
-    case Interval.I1H:
-      startDate = subHours(endDate, DEFAULT_CANDLES);
-      break;
-    case Interval.I6H:
-      startDate = subHours(endDate, DEFAULT_CANDLES * 6);
-      break;
-    case Interval.I1D:
-      startDate = subDays(endDate, DEFAULT_CANDLES);
-      break;
-    default:
-      throw new Error("Invalid interval");
-  }
-
-  return [startDate, endDate];
-}
 
 export function getTimeFormat(interval: Interval) {
   switch (interval) {

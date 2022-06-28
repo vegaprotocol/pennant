@@ -1,4 +1,4 @@
-import { Colors } from "../helpers";
+import { Colors } from "../components/chart/helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addAnnotationPath(
@@ -6,7 +6,8 @@ function addAnnotationPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   position: number | null,
-  decimalPlaces: number
+  decimalPlaces: number,
+  colors: Colors
 ) {
   if (position) {
     ctx.beginPath();
@@ -46,14 +47,14 @@ function addAnnotationPath(
     ctx.lineTo(width - rectWidth, yAdjusted + rectHeight / 2);
     ctx.closePath();
 
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = "white";
+    ctx.fillStyle = colors.emphasis300;
+    ctx.strokeStyle = colors.textPrimary;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
+    ctx.fillStyle = colors.textPrimary;
     ctx.fillText(text, width - xPad, yAdjusted);
     ctx.closePath();
   }
@@ -68,7 +69,21 @@ export class AnnotationElement implements RenderableElement {
     this.position = position;
   }
 
-  draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
-    addAnnotationPath(ctx, xScale, yScale, this.position, this.decimalPlaces);
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1,
+    position: number | null,
+    colors: Colors
+  ) {
+    addAnnotationPath(
+      ctx,
+      xScale,
+      yScale,
+      this.position,
+      this.decimalPlaces,
+      colors
+    );
   }
 }

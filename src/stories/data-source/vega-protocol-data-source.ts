@@ -1,4 +1,4 @@
-import { ApolloClient } from "@apollo/client";
+import { ApolloClient, ObservableSubscription } from "@apollo/client";
 
 import { Annotation, Candle, DataSource, LabelAnnotation } from "../..";
 import {
@@ -72,10 +72,10 @@ export class VegaDataSource implements DataSource {
   partyId: string;
   _decimalPlaces: number = 0;
 
-  candlesSub: ZenObservable.Subscription | null = null;
-  marketDataSub: ZenObservable.Subscription | null = null;
-  positionsSub: ZenObservable.Subscription | null = null;
-  ordersSub: ZenObservable.Subscription | null = null;
+  candlesSub: ObservableSubscription | null = null;
+  marketDataSub: ObservableSubscription | null = null;
+  positionsSub: ObservableSubscription | null = null;
+  ordersSub: ObservableSubscription | null = null;
   orderAnnotations: Annotation[] = [];
   positionAnnotations: Annotation[] = [];
 

@@ -47,12 +47,7 @@ Basic.args = {
   dataSource: new JsonDataSource("", 5),
   interval: Interval.I5M,
   initialOptions: {
-    studies: [
-      { id: "macd", study: Study.MACD },
-      { id: "macd(1)", study: Study.MACD },
-      { id: "eldar-ray", study: Study.ELDAR_RAY },
-      { id: "force index", study: Study.FORCE_INDEX },
-    ],
+    studies: [Study.MACD, Study.MACD, Study.ELDAR_RAY, Study.FORCE_INDEX],
   },
 };
 
@@ -62,6 +57,6 @@ Simple.args = {
   interval: Interval.I5M,
   initialOptions: {
     simple: true,
-    studies: [{ id: "macd", study: Study.MACD }],
+    studies: [Study.MACD],
   },
 };

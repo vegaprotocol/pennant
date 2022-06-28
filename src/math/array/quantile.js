@@ -1,7 +1,7 @@
 import max from "./max.js";
 import min from "./min.js";
-import quickselect from "./quickselect.js";
 import number, {numbers} from "./number.js";
+import quickselect from "./quickselect.js";
 
 export default function quantile(values, p, valueof) {
   values = Float64Array.from(numbers(values, valueof));

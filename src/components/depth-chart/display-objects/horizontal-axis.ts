@@ -2,8 +2,13 @@ import { ScaleLinear } from "d3-scale";
 
 import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
-import { AXIS_HEIGHT } from "../depth-chart";
-import { FONT_SIZE } from "../depth-chart";
+import { AXIS_HEIGHT, FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
+
+type HorizontalAxisColors = Pick<
+  Colors,
+  "backgroundSurface" | "textPrimary" | "textSecondary"
+>;
 
 /**
  * Draws a horizontal axis at the bottom of the chart
@@ -22,7 +27,8 @@ export class HorizontalAxis extends Container {
     scale: ScaleLinear<number, number>,
     width: number,
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
+    colors: HorizontalAxisColors
   ) {
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
@@ -42,7 +48,7 @@ export class HorizontalAxis extends Container {
 
     for (const node of enter) {
       const text = new Text(tickFormat(node), {
-        fill: 0xa1a1a1,
+        fill: colors.textSecondary,
         fontFamily: "monospace",
         fontSize: FONT_SIZE,
       });
@@ -60,6 +66,7 @@ export class HorizontalAxis extends Container {
     for (const node of update) {
       const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
+      text.style.fill = colors.textSecondary;
       text.x = scale(node);
       text.y = height - (resolution * AXIS_HEIGHT) / 2;
     }

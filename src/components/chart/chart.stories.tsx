@@ -1,8 +1,11 @@
 import { Meta, Story } from "@storybook/react/types-6-0";
+import { useState } from "react";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { Interval } from "../../stories/api/vega-graphql";
 import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
+import { ThemeVariant } from "../../types";
 import { Chart, ChartProps } from "./chart";
 
 export default {
@@ -10,11 +13,15 @@ export default {
   component: Chart,
 } as Meta;
 
-const Template: Story<ChartProps> = (args) => (
-  <div style={{ height: "400px" }}>
-    <Chart {...args} />
-  </div>
-);
+const Template: Story<ChartProps> = (args) => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  return (
+    <div style={{ height: "400px" }}>
+      <Chart {...args} theme={theme} />
+    </div>
+  );
+};
 
 export const Default = Template.bind({});
 Default.args = {
@@ -28,6 +35,15 @@ Study.args = {
   options: {
     chartType: "area",
     studies: ["macd"],
+  },
+};
+
+export const Overlays = Template.bind({});
+Overlays.args = {
+  ...Default.args,
+  options: {
+    chartType: "candle",
+    overlays: ["exponentialMovingAverage", "movingAverage"],
   },
 };
 

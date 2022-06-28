@@ -1,3 +1,4 @@
+import "allotment/dist/style.css";
 import "../../styles/variables.css";
 import "./chart.css";
 
@@ -32,11 +33,13 @@ import {
   Interval,
   Overlay,
   Study,
+  ThemeVariant,
   Viewport,
 } from "../../types";
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
+import { Colors, getColors } from "./helpers";
 import { useOnReady } from "./hooks";
 
 const noop = () => {};
@@ -56,6 +59,7 @@ export type ChartProps = {
   initialViewport?: Viewport;
   interval: Interval;
   options?: Options;
+  theme?: ThemeVariant;
   onOptionsChanged?: (options: Options) => void;
   onViewportChanged?: (viewport: Viewport) => void;
 };
@@ -73,6 +77,7 @@ export const Chart = forwardRef(
         initialNumCandlesToFetch: INITIAL_NUM_CANDLES_TO_FETCH,
       },
       initialViewport,
+      theme = "dark",
       onOptionsChanged = noop,
       onViewportChanged = noop,
     }: ChartProps,
@@ -111,11 +116,13 @@ export const Chart = forwardRef(
     }));
 
     const chartRef = useRef<ChartElement>(null!);
+    const styleRef = useRef<HTMLDivElement>(null!);
     const listeners = useRef(dispatch("contextmenu"));
     const [data, setData] = useState<Candle[]>([]);
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
-    const [proportion, setProportion] = useState(2 / 3);
     const [internalInterval, setInternalInterval] = useState(interval);
+    const [colors, setColors] = useState<Colors>(getColors(null));
+    const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
     const query = useCallback(
@@ -127,23 +134,33 @@ export const Chart = forwardRef(
         );
 
         setData((data) => mergeData(newData, merge ? data : []));
+        setLoading(false);
       },
       [dataSource]
     );
 
     // Wait for data source onReady call before showing content
-    const { loading, configuration } = useOnReady(dataSource);
+    const { ready: dataSourceInitializing, configuration } =
+      useOnReady(dataSource);
 
     const specification = useMemo(
       () =>
         constructTopLevelSpec(
           data,
           chartType,
-          overlays[0],
-          studies[0],
+          colors,
+          overlays,
+          studies,
           configuration?.priceMonitoringBounds
         ),
-      [chartType, data, overlays, configuration?.priceMonitoringBounds, studies]
+      [
+        data,
+        chartType,
+        colors,
+        overlays,
+        studies,
+        configuration?.priceMonitoringBounds,
+      ]
     );
 
     // Compile data and view specification into scenegraph ready for rendering
@@ -180,7 +197,7 @@ export const Chart = forwardRef(
         });
       }
 
-      if (!loading) {
+      if (!dataSourceInitializing) {
         const myDataSource = dataSource;
 
         // Initial data fetch
@@ -194,7 +211,13 @@ export const Chart = forwardRef(
           setData([]);
         };
       }
-    }, [dataSource, initialNumCandlesToFetch, interval, loading, query]);
+    }, [
+      dataSource,
+      dataSourceInitializing,
+      initialNumCandlesToFetch,
+      interval,
+      query,
+    ]);
 
     // React to streaming annotations changes
     useEffect(() => {
@@ -206,7 +229,7 @@ export const Chart = forwardRef(
         }
       }
 
-      if (!loading) {
+      if (!dataSourceInitializing) {
         const myDataSource = dataSource;
 
         subscribe();
@@ -217,7 +240,12 @@ export const Chart = forwardRef(
           setAnnotations([]);
         };
       }
-    }, [dataSource, loading, simple]);
+    }, [dataSource, dataSourceInitializing, simple]);
+
+    useEffect(() => {
+      // Hack to ensure we pick up the changed css
+      requestAnimationFrame(() => setColors(getColors(styleRef?.current)));
+    }, [theme]);
 
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
@@ -243,6 +271,16 @@ export const Chart = forwardRef(
       [onOptionsChanged, options, studies]
     );
 
+    const handleRemoveOverlay = useCallback(
+      (id: string) => {
+        onOptionsChanged({
+          ...options,
+          overlays: overlays.filter((study) => study !== id),
+        });
+      },
+      [onOptionsChanged, options, overlays]
+    );
+
     const viewport = useMemo(
       () =>
         initialViewport ?? {
@@ -254,17 +292,25 @@ export const Chart = forwardRef(
 
     // Show fallback UI while waiting for data
     if (loading) {
-      return <NonIdealState title="Loading" />;
+      return (
+        <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
+          <NonIdealState title="Loading" />
+        </div>
+      );
     }
 
     // We failed to construct a scenegraph. Something went wrong with the data
     if (!scenegraph) {
-      return <NonIdealState title="No data found" />;
+      return (
+        <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
+          <NonIdealState title="No data found" />
+        </div>
+      );
     }
 
     return (
       <ErrorBoundary>
-        <div className="chart__wrapper">
+        <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
           <PlotContainer
             ref={chartRef}
             width={400}
@@ -274,13 +320,13 @@ export const Chart = forwardRef(
             interval={internalInterval}
             initialViewport={viewport}
             overlays={overlays}
-            proportion={proportion}
             simple={simple}
             initialNumCandles={initialNumCandles}
+            colors={colors}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
-            onProportionChanged={setProportion}
+            onRemoveOverlay={handleRemoveOverlay}
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
             }}

@@ -18,6 +18,20 @@ const SPINNER_TRACK = `M 50,50 m 0,-${R} a ${R},${R} 0 1 1 0,${
   R * 2
 } a ${R},${R} 0 1 1 0,-${R * 2}`;
 
+export interface RenderableElement {
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime | null,
+    yScale: ScaleLinear | null,
+    pixelRatio?: number,
+    ...rest: any[]
+  ): void;
+}
+
+export interface PositionalElement extends RenderableElement {
+  readonly x: Date;
+}
+
 export interface RenderableHTMLElement {
   draw(
     selection: Selection<Element, any, any, any>,

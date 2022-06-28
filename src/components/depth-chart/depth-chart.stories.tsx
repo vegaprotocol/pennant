@@ -1,6 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { orderBy } from "lodash";
 import { useRef, useState } from "react";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { useInterval } from "../../hooks";
 import {
@@ -217,7 +218,9 @@ export const Binance: Story<DepthChartProps> = (args) => {
     }
 
     fetchData();
-  }, 5000);
+  }, 1000);
+
+  const theme = useDarkMode() ? "dark" : "light";
 
   if (isLoading) {
     return <p>Loading</p>;
@@ -233,7 +236,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
           height: "300px",
         }}
       >
-        <DepthChart ref={ref} data={data} />
+        <DepthChart ref={ref} data={data} theme={theme} />
       </div>
       <div>
         <ul>
@@ -296,7 +299,31 @@ UNIDAI.args = {
 
 export const BTCUSD = Template.bind({});
 BTCUSD.args = {
-  data: BTCUSD_data,
+  data: { buy: [], sell: [] },
   priceFormat: (price: number) => priceFormatter(5).format(price),
   midPrice: 44256,
+};
+
+export const SinglePriceLevel = Template.bind({});
+SinglePriceLevel.args = {
+  data: { buy: AAPL_data.buy.slice(0, 1), sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const LeftSided = Template.bind({});
+LeftSided.args = {
+  data: { buy: AAPL_data.buy, sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const RightSided = Template.bind({});
+RightSided.args = {
+  data: { buy: [], sell: AAPL_data.sell },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
+};
+
+export const NoData = Template.bind({});
+NoData.args = {
+  data: { buy: [], sell: [] },
+  priceFormat: (price: number) => priceFormatter(5).format(price),
 };

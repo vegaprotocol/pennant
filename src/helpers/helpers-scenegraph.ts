@@ -17,8 +17,8 @@ import {
   isFieldLTPredicate,
   Predicate,
 } from "../vega-lite/predicate";
-import { Colors } from ".";
 import { Bar } from "../components/candlestick-chart/display-objects/bar";
+import { COLORS } from ".";
 
 export const PADDING_INNER = 0.4;
 
@@ -64,14 +64,14 @@ export function getAreaConfig(
   if (y2 === undefined) {
     return {
       points: data.map((d: any) => [d[x], 0, d[y]]),
-      fill: fill ?? Colors.GRAY,
+      fill: fill ?? COLORS.GRAY,
       line: line,
     };
   }
 
   return {
     points: data.map((d: any) => [d[x], d[y], d[y2]]),
-    fill: fill ?? Colors.GRAY,
+    fill: fill ?? COLORS.GRAY,
     line: line,
   };
 }
@@ -183,8 +183,8 @@ export function getConditionalColor(colorDef: any | undefined) {
 
       color = (datum) =>
         datum[predicate.field] < comparison(datum)
-          ? colorDef.condition.value ?? Colors.GRAY
-          : colorDef.value ?? Colors.GRAY;
+          ? colorDef.condition.value ?? COLORS.GRAY
+          : colorDef.value ?? COLORS.GRAY;
     } else if (isFieldGTPredicate(predicate)) {
       const comparison =
         typeof predicate.gt === "string"
@@ -193,8 +193,8 @@ export function getConditionalColor(colorDef: any | undefined) {
 
       color = (datum) =>
         datum[predicate.field] > comparison(datum)
-          ? colorDef.condition.value ?? Colors.GRAY
-          : colorDef.value ?? Colors.GRAY;
+          ? colorDef.condition.value ?? COLORS.GRAY
+          : colorDef.value ?? COLORS.GRAY;
     } else {
       color = () => null;
     }

@@ -1,3 +1,5 @@
+import "../../styles/variables.css";
+
 import React, {
   forwardRef,
   useEffect,
@@ -5,11 +7,12 @@ import React, {
   useRef,
 } from "react";
 
-import { Colors } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
-import { string2hex } from "../../renderer/utils";
+import { ThemeVariant } from "../../types";
+import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
+import { getColors } from "./helpers";
 
 /**
  * Creates a price formatter
@@ -35,30 +38,6 @@ export const FONT_SIZE = 12;
  */
 export const AXIS_HEIGHT = FONT_SIZE + 5;
 
-const cssStyleDeclaration = getComputedStyle(document.documentElement);
-
-export const BUY_FILL = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-fill").trim() ||
-    "#16452d"
-);
-
-export const BUY_STROKE = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-buy-stroke").trim() ||
-    "#26ff8a"
-);
-
-export const SELL_FILL = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-fill").trim() ||
-    "#800700"
-);
-
-export const SELL_STROKE = string2hex(
-  cssStyleDeclaration.getPropertyValue("--pennant-color-sell-stroke").trim() ||
-    "#ff261a"
-);
-
-export const GRAY = string2hex(Colors.GRAY);
-
 export type PriceLevel = {
   price: number;
   volume: number;
@@ -72,6 +51,8 @@ export type DepthChartProps = {
   indicativePrice?: number;
   /** Arithmetic average of the best bid price and best offer price. */
   midPrice?: number;
+  /** Light or dark theme */
+  theme?: ThemeVariant;
 };
 
 export interface DepthChartHandle {
@@ -93,25 +74,29 @@ export const DepthChart = forwardRef(
       priceFormat = defaultPriceFormat,
       indicativePrice = 0,
       midPrice = 0,
+      theme = "dark",
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
   ) => {
     const contentsRef = useRef<HTMLCanvasElement>(null!);
     const uiRef = useRef<HTMLCanvasElement>(null!);
     const chartRef = useRef<Chart>(null!);
+    const styleRef = useRef<HTMLDivElement>(null!);
 
     const {
       ref: resizeOberverRef,
       width = 300,
       height = 300,
-      devicePixelContentBoxSizeInlineSize = window.devicePixelRatio * 300,
-      devicePixelContentBoxSizeBlockSize = window.devicePixelRatio * 300,
+      devicePixelContentBoxSizeInlineSize,
+      devicePixelContentBoxSizeBlockSize,
     } = useThrottledResizeObserver<HTMLDivElement>(50);
 
     /**
      * Create a new instance of the depth chart
      */
     useEffect(() => {
+      const colors = getColors(styleRef?.current);
+
       chartRef.current = new Chart({
         chartView: contentsRef.current,
         axisView: uiRef.current,
@@ -119,18 +104,24 @@ export const DepthChart = forwardRef(
         width: 300,
         height: 300,
         priceFormat,
+        colors,
       });
 
       return () => {
         chartRef.current.destroy();
       };
-    }, [priceFormat]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Update chart when dimensions or data change
     useEffect(() => {
       chartRef.current.resize(
-        devicePixelContentBoxSizeInlineSize / window.devicePixelRatio,
-        devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
+        devicePixelContentBoxSizeInlineSize
+          ? devicePixelContentBoxSizeInlineSize / window.devicePixelRatio
+          : width,
+        devicePixelContentBoxSizeBlockSize
+          ? devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
+          : height
       );
 
       chartRef.current.data = data;
@@ -151,6 +142,12 @@ export const DepthChart = forwardRef(
       chartRef.current.midPrice = midPrice;
     }, [midPrice]);
 
+    useEffect(() => {
+      requestAnimationFrame(
+        () => (chartRef.current.colors = getColors(styleRef?.current))
+      );
+    }, [theme]);
+
     useImperativeHandle(ref, () => ({
       update(price: number) {
         chartRef.current.updatePrice(price);
@@ -160,10 +157,20 @@ export const DepthChart = forwardRef(
       },
     }));
 
+    if (data.buy.length === 0 && data.sell.length === 0) {
+      return (
+        <div ref={styleRef} className={styles.container} data-theme={theme}>
+          <NonIdealState title="No data" />
+        </div>
+      );
+    }
+
     return (
-      <div ref={resizeOberverRef} className={styles.canvasContainer}>
-        <canvas ref={contentsRef} className={styles.canvas} />
-        <canvas ref={uiRef} className={styles.canvas} />
+      <div ref={styleRef} className={styles.container} data-theme={theme}>
+        <div ref={resizeOberverRef} className={styles.canvasContainer}>
+          <canvas ref={contentsRef} className={styles.canvas} />
+          <canvas ref={uiRef} className={styles.canvas} />
+        </div>
       </div>
     );
   }

@@ -19,46 +19,6 @@ const config = {
   external: [/@babel\/runtime/, ...Object.keys(globals)],
   output: [
     {
-      file: meta.exports["."],
-      sourcemap: true,
-      format: "es",
-      plugins: [
-        getBabelOutputPlugin({
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: { esmodules: true },
-                bugfixes: true,
-                loose: true,
-                debug: false,
-              },
-            ],
-          ],
-        }),
-      ],
-    },
-    {
-      file: meta.module,
-      sourcemap: true,
-      format: "es",
-      plugins: [
-        getBabelOutputPlugin({
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: { esmodules: true },
-                bugfixes: false,
-                loose: true,
-                debug: false,
-              },
-            ],
-          ],
-        }),
-      ],
-    },
-    {
       file: meta.main,
       sourcemap: true,
       format: "cjs",
@@ -80,7 +40,12 @@ const config = {
       extensions,
       plugins: ["@babel/plugin-transform-runtime"],
       presets: [
-        "@babel/preset-react",
+        [
+          "@babel/preset-react",
+          {
+            runtime: "automatic",
+          },
+        ],
         ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
       ],
       babelHelpers: "runtime",

@@ -4,8 +4,8 @@ import constant from "./constant.js";
 import extent from "./extent.js";
 import identity from "./identity.js";
 import nice from "./nice.js";
-import ticks, {tickIncrement} from "./ticks.js";
 import sturges from "./threshold/sturges.js";
+import ticks, {tickIncrement} from "./ticks.js";
 
 export default function() {
   var value = identity,

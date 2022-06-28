@@ -3,6 +3,12 @@ import { ScaleLinear } from "d3-scale";
 import { Container } from "../../../renderer/display";
 import { Text } from "../../../renderer/text";
 import { FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
+
+type VerticalAxisColors = Pick<
+  Colors,
+  "backgroundSurface" | "textPrimary" | "textSecondary"
+>;
 
 /**
  * Draws a vertical axis at the right of the chart
@@ -21,7 +27,8 @@ export class VerticalAxis extends Container {
     scale: ScaleLinear<number, number>,
     width: number,
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
+    colors: VerticalAxisColors
   ) {
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
@@ -41,7 +48,7 @@ export class VerticalAxis extends Container {
 
     for (const node of enter) {
       const text = new Text(tickFormat(node), {
-        fill: 0xa1a1a1,
+        fill: colors.textSecondary,
         fontFamily: "monospace",
         fontSize: FONT_SIZE,
       });
@@ -59,6 +66,7 @@ export class VerticalAxis extends Container {
     for (const node of update) {
       const text = this.nodeByKeyValue.get(tickFormat(node))!;
 
+      text.style.fill = colors.textSecondary;
       text.x = width - resolution * 7;
       text.y = scale(node);
     }

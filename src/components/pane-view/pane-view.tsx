@@ -1,13 +1,12 @@
 import "./pane-view.css";
-import "@d3fc/d3fc-element";
 
-import { forwardRef, useState } from "react";
+import React, { forwardRef, useState } from "react";
 
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";
 import { Bounds, Pane } from "../../types";
+import { CloseButton } from "../close-button";
 import { IndicatorInfo } from "../indicator-info";
-import { CloseButton } from "./close-button";
 import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PaneViewProps = {
@@ -18,11 +17,21 @@ export type PaneViewProps = {
   pane: Pane;
   simple: boolean;
   onClosePane: (id: string) => void;
+  onRemoveOverlay: (id: string) => void;
 };
 
 export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
   (
-    { bounds, dataIndex, decimalPlaces, overlays, pane, simple, onClosePane },
+    {
+      bounds,
+      dataIndex,
+      decimalPlaces,
+      overlays,
+      pane,
+      simple,
+      onClosePane,
+      onRemoveOverlay,
+    },
     ref
   ) => {
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
@@ -59,13 +68,12 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
               visibility: showPaneControls === pane.id ? "visible" : "hidden",
             }}
           >
-            <div
-              className="pane__close-button"
-              onClick={() => {
-                onClosePane(pane.id);
-              }}
-            >
-              <CloseButton size={16} />
+            <div className="pane__close-button">
+              <CloseButton
+                onClick={() => {
+                  onClosePane(pane.id);
+                }}
+              />
             </div>
           </div>
         )}
@@ -115,6 +123,10 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                       : formatter(value, decimalPlaces),
                   };
                 })}
+                closeable
+                onClose={() => {
+                  onRemoveOverlay(overlay);
+                }}
               />
             ))}
         </div>

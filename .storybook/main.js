@@ -6,6 +6,7 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/preset-scss",
+    "storybook-dark-mode",
   ],
   webpackFinal: async (baseConfig, options) => {
     // Modify or replace config. Mutating the original reference object can cause unexpected bugs.

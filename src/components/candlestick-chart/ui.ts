@@ -234,6 +234,8 @@ export class Ui extends EventEmitter implements Disposable {
     } else {
       this.gesture.mouse = [p, p];
       this.gesture.start();
+      this.gesture.wheelHorizontal =
+        Math.abs(tempEvent.deltaX) > Math.abs(tempEvent.deltaY); // To simple?
     }
 
     this.gesture.wheel = window.setTimeout(() => {
@@ -241,14 +243,19 @@ export class Ui extends EventEmitter implements Disposable {
       this.gesture.end();
     }, 150);
 
-    this.zoom.wheeled(
-      -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
-      this.gesture.mouse[0] ?? [0, 0],
-      [
-        [0, 0],
-        [100, 100],
-      ]
-    );
+    if (this.gesture.wheelHorizontal) {
+      console.log(-tempEvent.deltaX);
+      this.zoom.translateBy(-tempEvent.deltaX / this.zoom.__zoom.k, 0);
+    } else {
+      this.zoom.wheeled(
+        -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
+        this.gesture.mouse[0] ?? [0, 0],
+        [
+          [0, 0],
+          [100, 100],
+        ]
+      );
+    }
 
     this.emit("zoom", { transform: this.zoom.__zoom, point: p });
   };

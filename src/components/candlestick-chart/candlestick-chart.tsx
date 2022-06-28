@@ -12,6 +12,7 @@ import React, {
 } from "react";
 
 import {
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
   INITIAL_NUM_CANDLES_TO_FETCH,
   THROTTLE_INTERVAL,
 } from "../../constants";
@@ -29,6 +30,7 @@ import {
   ChartType,
   DataSource,
   Interval,
+  Overlay,
   Study,
 } from "../../types";
 import { useOnReady } from "../chart/hooks";
@@ -42,7 +44,10 @@ import {
 } from "../pane-view/helpers";
 import styles from "./candlestick-chart.module.css";
 import { Chart } from "./chart";
+import { Colors, getColors } from "./helpers";
 import { Pane } from "./pane";
+
+const noop = () => {};
 
 export interface StudyOptions {
   id: string;
@@ -50,8 +55,10 @@ export interface StudyOptions {
 }
 export interface Options {
   chartType?: ChartType;
+  initialNumCandlesToDisplay?: number;
   initialNumCandlesToFetch?: number;
-  studies: StudyOptions[];
+  overlays?: Overlay[];
+  studies: Study[];
   simple?: boolean;
 }
 
@@ -72,14 +79,14 @@ export const CandlestickChart = forwardRef(
       options = {
         chartType: ChartType.CANDLE,
         studies: [],
+        overlays: [],
+        initialNumCandlesToDisplay: INITIAL_NUM_CANDLES_TO_DISPLAY,
         initialNumCandlesToFetch: INITIAL_NUM_CANDLES_TO_FETCH,
       },
-      onOptionsChanged,
+      onOptionsChanged = noop,
     }: CandlestickChartProps,
     ref: React.Ref<CandlestickChartHandle>
   ) => {
-    const isInitialized = useRef(false);
-
     const chartRef = useRef<Chart>(null!);
     const containerRef = useRef<HTMLDivElement>(null!);
     const paneRef = useRef<Record<string, HTMLElement>>({});
@@ -91,6 +98,8 @@ export const CandlestickChart = forwardRef(
     const [data, setData] = useState<Candle[]>([]);
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const [internalInterval, setInternalInterval] = useState(interval);
+    const [colors, setColors] = useState<Colors>(getColors(null));
+    const [loading, setLoading] = useState(true);
 
     const handleBoundsChanged = useMemo(
       () => throttle(setBounds, THROTTLE_INTERVAL),
@@ -102,11 +111,16 @@ export const CandlestickChart = forwardRef(
       []
     );
 
-    const chartType = options.chartType ?? ChartType.CANDLE;
-    const initialNumCandlesToFetch =
-      options.initialNumCandlesToFetch ?? INITIAL_NUM_CANDLES_TO_FETCH;
-    const simple = options.simple ?? false;
-    const studies = useMemo(() => options.studies ?? [], [options.studies]);
+    const {
+      chartType = ChartType.CANDLE,
+      studies = [],
+      overlays = [],
+      simple = false,
+      initialNumCandlesToDisplay:
+        initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY,
+      initialNumCandlesToFetch:
+        initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
+    } = options;
 
     const decimalPlaces = 5; //FIXME: Needs addressing
 
@@ -120,26 +134,24 @@ export const CandlestickChart = forwardRef(
         );
 
         setData((data) => mergeData(newData, merge ? data : []));
+        setLoading(false);
       },
       [dataSource]
     );
 
-    const handleClosePane = (id: string) => {
-      const index = studies.findIndex((study) => study.id === id);
-
-      if (index !== -1) {
-        const newStudies = [...options.studies];
-        newStudies.splice(index, 1);
-
-        onOptionsChanged?.({
+    const handleClosePane = useCallback(
+      (id: string) => {
+        onOptionsChanged({
           ...options,
-          studies: newStudies,
+          studies: studies.filter((study) => study !== id),
         });
-      }
-    };
+      },
+      [onOptionsChanged, options, studies]
+    );
 
     // Wait for data source onReady call before showing content
-    const { loading, configuration } = useOnReady(dataSource);
+    const { ready: dataSourceInitializing, configuration } =
+      useOnReady(dataSource);
 
     // Initial data fetch and subscriptions
     useEffect(() => {
@@ -163,7 +175,7 @@ export const CandlestickChart = forwardRef(
         });
       }
 
-      if (!loading) {
+      if (!dataSourceInitializing) {
         const myDataSource = dataSource;
 
         // Initial data fetch
@@ -177,18 +189,32 @@ export const CandlestickChart = forwardRef(
           setData([]);
         };
       }
-    }, [dataSource, initialNumCandlesToFetch, interval, loading, query]);
+    }, [
+      dataSource,
+      dataSourceInitializing,
+      initialNumCandlesToFetch,
+      interval,
+      query,
+    ]);
 
     const specification = useMemo(
       () =>
         constructTopLevelSpecV2(
           data,
           chartType,
-          undefined,
+          colors,
+          overlays,
           studies,
           configuration?.priceMonitoringBounds
         ),
-      [chartType, data, configuration?.priceMonitoringBounds, studies]
+      [
+        data,
+        chartType,
+        colors,
+        overlays,
+        studies,
+        configuration?.priceMonitoringBounds,
+      ]
     );
 
     // Compile data and view specification into scenegraph ready for rendering
@@ -204,28 +230,24 @@ export const CandlestickChart = forwardRef(
     );
 
     useEffect(() => {
-      if (
-        !isInitialized.current &&
-        !loading &&
-        specification &&
-        axisRef.current
-      ) {
+      console.log("New chart?", loading, specification, axisRef.current);
+
+      if (!loading && specification && axisRef.current) {
+        console.log("New chart");
         chartRef.current = new Chart({
           container: containerRef.current,
           timeAxis: axisRef.current,
           resolution: window.devicePixelRatio,
         })
           .on("bounds_changed", (bounds: Bounds) => {
-            handleBoundsChanged(bounds);
+            //handleBoundsChanged(bounds);
           })
           .on("mousemove", (index: number, id: string) => {
-            handleDataIndexChanged(index);
+            //handleDataIndexChanged(index);
           })
           .on("mouseout", () => {
-            handleDataIndexChanged(null);
+            //handleDataIndexChanged(null);
           });
-
-        isInitialized.current = true;
       }
     }, [handleBoundsChanged, handleDataIndexChanged, loading, specification]);
 
@@ -269,10 +291,10 @@ export const CandlestickChart = forwardRef(
     }, [loading, scenegraph, studies]);
 
     useEffect(() => {
-      if (scenegraph) {
+      if (scenegraph && !loading) {
         chartRef.current.data = scenegraph.panes[0].originalData;
       }
-    }, [scenegraph]);
+    }, [loading, scenegraph]);
 
     // Show fallback UI while waiting for data
     if (loading) {

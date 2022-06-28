@@ -14,6 +14,7 @@ export class Gesture<T extends EventEmitter & { zoom: Zoom }> {
   public sourceEvent: Event | null = null;
 
   public wheel: number | null = null;
+  public wheelHorizontal: boolean = false;
   public mouse: [[number, number], [number, number]] | [null, null] = [
     null,
     null,

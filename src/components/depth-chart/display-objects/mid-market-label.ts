@@ -2,25 +2,33 @@ import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
 import { FONT_SIZE } from "../depth-chart";
+import { Colors } from "../helpers";
+
+type MidMarketPriceLabelColors = Pick<
+  Colors,
+  "backgroundSurface" | "textPrimary" | "textSecondary"
+>;
 
 /**
  * Draw a title and subtitle at the top of the chart
  */
 export class MidMarketPriceLabel extends Container {
-  private price: Text = new Text("9999", {
-    fill: 0xffffff,
-    fontSize: 18,
-  });
-
-  private label: Text = new Text("Mid Market Price", {
-    fill: 0xa1a1a1,
-    fontSize: FONT_SIZE,
-  });
-
+  private price: Text;
+  private label: Text;
   private background: Graphics = new Graphics();
 
-  constructor() {
+  constructor(colors: MidMarketPriceLabelColors) {
     super();
+
+    this.price = new Text("9999", {
+      fill: colors.textPrimary,
+      fontSize: 18,
+    });
+
+    this.label = new Text("Mid Market Price", {
+      fill: colors.textSecondary,
+      fontSize: FONT_SIZE,
+    });
 
     this.addChild(this.background);
     this.addChild(this.label);
@@ -28,23 +36,32 @@ export class MidMarketPriceLabel extends Container {
   }
 
   public update(
-    price: string,
-    title: string,
     x: number,
     y: number,
     anchor: { x: number; y: number },
-    resolution: number = 1
+    resolution: number = 1,
+    colors: MidMarketPriceLabelColors,
+    price?: string,
+    title?: string
   ) {
     this.price.x = x;
     this.price.y = y;
-    this.price.text = price;
     this.price.anchor.x = anchor.x;
     this.price.anchor.y = anchor.y;
+    this.price.style.fill = colors.textPrimary;
+
+    if (price) {
+      this.price.text = price;
+    }
 
     this.label.x = x;
     this.label.anchor.x = anchor.x;
     this.label.anchor.y = anchor.y;
-    this.label.text = title;
+    this.label.style.fill = colors.textSecondary;
+
+    if (title) {
+      this.label.text = title;
+    }
 
     const width = resolution * Math.max(this.price.width, this.label.width);
     const height = resolution * (this.price.height + this.label.height);
@@ -57,7 +74,7 @@ export class MidMarketPriceLabel extends Container {
     const padding = resolution * 4;
 
     this.background.clear();
-    this.background.beginFill(0x000000, 0.9);
+    this.background.beginFill(colors.backgroundSurface, 0.9);
     this.background.drawRect(
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),

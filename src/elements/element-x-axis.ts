@@ -1,5 +1,5 @@
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../constants";
-import { Colors, tickFormat } from "../helpers";
+import { tickFormat } from "../helpers";
 import { getNumXTicks } from "../helpers/helpers-axis";
 import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
@@ -7,7 +7,8 @@ function addXAxisPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
   pixelRatio: number,
-  interval: Interval
+  interval: Interval,
+  color: string
 ) {
   ctx.strokeStyle = "#fff";
 
@@ -18,7 +19,7 @@ function addXAxisPath(
 
   for (let i = 0; i < xTicks.length; i++) {
     ctx.beginPath();
-    ctx.fillStyle = Colors.GRAY_LIGHT;
+    ctx.fillStyle = color;
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     ctx.font = `${TICK_LABEL_FONT_SIZE}px ${TICK_LABEL_FONT}`;
@@ -33,8 +34,9 @@ export class XAxisElement implements RenderableElement {
     xScale: ScaleTime,
     _yScale: ScaleLinear,
     pixelRatio = 1,
-    interval: Interval
+    interval: Interval,
+    color: string
   ) {
-    addXAxisPath(ctx, xScale, pixelRatio, interval);
+    addXAxisPath(ctx, xScale, pixelRatio, interval, color);
   }
 }

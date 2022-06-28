@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
-import { CloseButton } from "../pane-view/close-button";
+import { CloseButton } from "../close-button";
 import styles from "./pane.module.css";
 
 export type PaneProps = {
@@ -29,7 +29,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(
             })}
             onClick={onClose}
           >
-            <CloseButton size={16} />
+            <CloseButton />
           </div>
         )}
       </div>

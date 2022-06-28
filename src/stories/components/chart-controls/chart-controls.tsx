@@ -11,16 +11,16 @@ import {
 } from "@blueprintjs/core";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 
-import { INTERVALS } from "../../../helpers";
 import {
   ChartType,
   chartTypeLabels,
+  Interval,
+  intervalLabels,
   Overlay,
   overlayLabels,
   Study,
   studyLabels,
 } from "../../../types";
-import { Interval } from "../../api/vega-graphql";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
   [ChartType.AREA, "timeline-area-chart"],
@@ -32,24 +32,24 @@ const chartTypeIcon = new Map<ChartType, IconName>([
 export type ChartControlsProps = {
   interval: Interval;
   chartType: ChartType;
-  overlay: Overlay | null;
-  study: Study | null;
+  overlays: Overlay[];
+  studies: Study[];
   onSetInterval: (interval: Interval) => void;
   onSetChartType: (chartType: ChartType) => void;
-  onSetOverlay: (overlay: Overlay | null) => void;
-  onSetStudy: (study: Study | null) => void;
+  onSetOverlays: (overlay: Overlay[]) => void;
+  onSetStudies: (study: Study[]) => void;
   onSnapshot: () => void;
 };
 
 export const ChartControls = ({
   interval,
   chartType,
-  overlay,
-  study,
+  overlays,
+  studies,
   onSetInterval,
   onSetChartType,
-  onSetOverlay,
-  onSetStudy,
+  onSetOverlays,
+  onSetStudies,
   onSnapshot,
 }: ChartControlsProps) => (
   <div className="chart-controls">
@@ -60,35 +60,20 @@ export const ChartControls = ({
           <Menu>
             <MenuDivider title="Minutes" />
             <MenuItem
-              icon={INTERVALS[interval] === "1m" ? "tick" : "blank"}
-              text="1m"
+              icon={interval === Interval.I1M ? "tick" : "blank"}
+              text={intervalLabels[Interval.I1M]}
               onClick={() => onSetInterval(Interval.I1M)}
-            />
-            <MenuItem
-              icon={INTERVALS[interval] === "5m" ? "tick" : "blank"}
-              text="5m"
-              onClick={() => onSetInterval(Interval.I5M)}
-            />
-            <MenuItem
-              icon={INTERVALS[interval] === "15m" ? "tick" : "blank"}
-              text="15m"
-              onClick={() => onSetInterval(Interval.I15M)}
             />
             <MenuDivider title="Hours" />
             <MenuItem
-              icon={INTERVALS[interval] === "1h" ? "tick" : "blank"}
-              text="1h"
+              icon={interval === Interval.I1H ? "tick" : "blank"}
+              text={intervalLabels[Interval.I1H]}
               onClick={() => onSetInterval(Interval.I1H)}
-            />
-            <MenuItem
-              icon={INTERVALS[interval] === "6h" ? "tick" : "blank"}
-              text="6h"
-              onClick={() => onSetInterval(Interval.I6H)}
             />
             <MenuDivider title="Days" />
             <MenuItem
-              icon={INTERVALS[interval] === "1d" ? "tick" : "blank"}
-              text="1d"
+              icon={interval === Interval.I1D ? "tick" : "blank"}
+              text={intervalLabels[Interval.I1D]}
               onClick={() => onSetInterval(Interval.I1D)}
             />
           </Menu>
@@ -100,7 +85,7 @@ export const ChartControls = ({
             alignText={Alignment.LEFT}
             fill
             rightIcon="caret-down"
-            text={INTERVALS[interval]}
+            text={intervalLabels[interval]}
           />
         </div>
       </Popover2>
@@ -133,18 +118,40 @@ export const ChartControls = ({
             {Object.values(Overlay).map((item) => (
               <MenuItem
                 key={item}
-                icon={overlay === item ? "tick" : "blank"}
+                icon={overlays.includes(item) ? "tick" : "blank"}
                 text={overlayLabels[item]}
-                onClick={() => onSetOverlay(overlay === item ? null : item)}
+                onClick={() => {
+                  const newOverlays = [...overlays];
+
+                  const index = overlays.findIndex(
+                    (overlay) => overlay === item
+                  );
+
+                  index !== -1
+                    ? newOverlays.splice(index, 1)
+                    : newOverlays.push(item);
+
+                  onSetOverlays(newOverlays);
+                }}
               />
             ))}
             <MenuDivider title="Studies" />
             {Object.values(Study).map((item) => (
               <MenuItem
                 key={item}
-                icon={study === item ? "tick" : "blank"}
+                icon={studies.includes(item) ? "tick" : "blank"}
                 text={studyLabels[item]}
-                onClick={() => onSetStudy(study === item ? null : item)}
+                onClick={() => {
+                  const newStudies = [...studies];
+
+                  const index = studies.findIndex((study) => study === item);
+
+                  index !== -1
+                    ? newStudies.splice(index, 1)
+                    : newStudies.push(item);
+
+                  onSetStudies(newStudies);
+                }}
               />
             ))}
           </Menu>

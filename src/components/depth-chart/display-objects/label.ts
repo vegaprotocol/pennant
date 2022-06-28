@@ -1,6 +1,9 @@
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Text } from "../../../renderer/text";
+import { Colors } from "../helpers";
+
+type LabelColors = Pick<Colors, "backgroundSurface" | "textPrimary">;
 
 /**
  * Draw a label
@@ -26,13 +29,15 @@ export class Label extends Container {
     x: number,
     y: number,
     anchor: { x: number; y: number },
-    resolution: number = 1
+    resolution: number = 1,
+    colors: LabelColors
   ) {
     this.text.x = x;
     this.text.y = y;
     this.text.text = text;
     this.text.anchor.x = anchor.x;
     this.text.anchor.y = anchor.y;
+    this.text.style.fill = colors.textPrimary;
 
     const width = resolution * this.text.width;
     const height = resolution * this.text.height;
@@ -40,10 +45,10 @@ export class Label extends Container {
     const anchorX = anchor.x;
     const anchorY = anchor.y;
 
-    const padding = resolution * 2;
+    const padding = resolution * 1.5;
 
     this.background.clear();
-    this.background.beginFill(0x000000, 1);
+    this.background.beginFill(colors.backgroundSurface, 1);
     this.background.drawRect(
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),

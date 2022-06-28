@@ -1,7 +1,9 @@
 import "./plot-container.css";
+import "../../lib/d3fc-element";
 
+import { Allotment } from "allotment";
 import { throttle } from "lodash";
-import {
+import React, {
   createRef,
   forwardRef,
   useCallback,
@@ -22,8 +24,8 @@ import {
   Viewport,
 } from "../../types";
 import { FcElement, Interval } from "../../types";
+import { Colors } from "../chart/helpers";
 import { PaneView } from "../pane-view";
-import { SplitView } from "../split-view";
 import { XAxisView } from "../x-axis-view";
 
 export type PlotContainerProps = {
@@ -34,14 +36,14 @@ export type PlotContainerProps = {
   interval: Interval;
   initialViewport: Viewport;
   overlays: string[];
-  proportion: number;
   simple: boolean;
   initialNumCandles: number;
+  colors: Colors;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePane: (id: string) => void;
-  onProportionChanged: (proportion: number) => void;
+  onRemoveOverlay: (id: string) => void;
 };
 
 export const PlotContainer = forwardRef<
@@ -55,14 +57,14 @@ export const PlotContainer = forwardRef<
       initialViewport,
       decimalPlaces,
       overlays,
-      proportion,
       simple,
       initialNumCandles,
+      colors,
       onViewportChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
-      onProportionChanged,
+      onRemoveOverlay,
     },
     ref
   ) => {
@@ -151,7 +153,8 @@ export const PlotContainer = forwardRef<
         initialViewport,
         decimalPlaces,
         simple,
-        initialNumCandles
+        initialNumCandles,
+        colors
       )
         .interval(interval)
         .on("redraw", () => {
@@ -229,47 +232,39 @@ export const PlotContainer = forwardRef<
       }
     }, [interval]);
 
-    const showStudy = scenegraph.panes.length === 2;
+    useEffect(() => {
+      if (chartElement.current) {
+        chartElement.current.colors = colors;
+      }
+    }, [colors]);
 
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
-        <SplitView
-          main={
-            <PaneView
-              ref={refs[scenegraph.panes[0].id]}
-              bounds={bounds}
-              dataIndex={dataIndex}
-              decimalPlaces={decimalPlaces}
-              overlays={overlays}
-              pane={scenegraph.panes[0]}
-              simple={simple}
-              onClosePane={onClosePane}
-            />
-          }
-          study={
-            showStudy ? (
+        <Allotment
+          minSize={20}
+          vertical
+          onChange={(_sizes) => {
+            if (typeof chartRef.current?.requestRedraw === "function") {
+              chartRef.current?.requestRedraw();
+            }
+          }}
+        >
+          {scenegraph.panes.map((pane) => (
+            <Allotment.Pane key={pane.id}>
               <PaneView
-                ref={refs[scenegraph.panes[1].id]}
+                ref={refs[pane.id]}
                 bounds={bounds}
                 dataIndex={dataIndex}
                 decimalPlaces={decimalPlaces}
                 overlays={overlays}
-                pane={scenegraph.panes[1]}
+                pane={pane}
                 simple={simple}
                 onClosePane={onClosePane}
+                onRemoveOverlay={onRemoveOverlay}
               />
-            ) : (
-              <div>No study selected</div>
-            )
-          }
-          showStudy={showStudy}
-          initialProportion={proportion}
-          onResize={(proportion: number) => {
-            chartRef.current?.requestRedraw();
-            onProportionChanged(proportion);
-          }}
-          simple={simple}
-        />
+            </Allotment.Pane>
+          ))}
+        </Allotment>
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>
     );

@@ -1,4 +1,5 @@
 import {InternMap} from "internmap";
+
 import identity from "./identity.js";
 
 export default function group(values, ...keys) {

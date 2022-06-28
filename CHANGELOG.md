@@ -2,6 +2,121 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/vegaprotocol/pennant/compare/v0.4.10...v0.4.11) (2022-06-15)
+
+
+### Bug Fixes
+
+* support 3-digit hex colors ([#490](https://github.com/vegaprotocol/pennant/issues/490)) ([2342be2](https://github.com/vegaprotocol/pennant/commit/2342be2c89a6b1a59b30fc66cb9188b28e7879b3))
+
+### [0.4.10](https://github.com/vegaprotocol/pennant/compare/v0.4.9...v0.4.10) (2022-05-16)
+
+
+### Features
+
+* remove overlays from chart ([#471](https://github.com/vegaprotocol/pennant/issues/471)) ([bd318c1](https://github.com/vegaprotocol/pennant/commit/bd318c16d779e9e1de3f4fa150989e7c8702dc6c))
+* use more appropriate colours for light theme ([#467](https://github.com/vegaprotocol/pennant/issues/467)) ([e578367](https://github.com/vegaprotocol/pennant/commit/e578367da857eb43771f54bb1cf5b9f6423f37bb))
+
+### [0.4.9](https://github.com/vegaprotocol/pennant/compare/v0.4.8...v0.4.9) (2022-05-09)
+
+
+### Bug Fixes
+
+* enable resizing depth chart in browsers which don't support device-pixel-content-box ([#461](https://github.com/vegaprotocol/pennant/issues/461)) ([49494da](https://github.com/vegaprotocol/pennant/commit/49494da27b9a797f4b107d01608cbae1491d034c))
+* **deps:** update docusaurus monorepo to v2.0.0-beta.20 ([#415](https://github.com/vegaprotocol/pennant/issues/415)) ([0f5b75a](https://github.com/vegaprotocol/pennant/commit/0f5b75a35f887f2dac1afd50a51fb47f6109b07d))
+* remove log messages when attempting to register custom elements ([#460](https://github.com/vegaprotocol/pennant/issues/460)) ([36a966f](https://github.com/vegaprotocol/pennant/commit/36a966f2a1d48456b780d1e8482f0be5d7741ffa))
+
+### [0.4.8](https://github.com/vegaprotocol/pennant/compare/v0.4.7...v0.4.8) (2022-05-04)
+
+
+### Features
+
+* export interval labels ([#452](https://github.com/vegaprotocol/pennant/issues/452)) ([d53ec09](https://github.com/vegaprotocol/pennant/commit/d53ec0909ba8a291301ebb9750659833247bc730))
+
+
+### Bug Fixes
+
+* use theme for area chart background ([#453](https://github.com/vegaprotocol/pennant/issues/453)) ([72d9ca5](https://github.com/vegaprotocol/pennant/commit/72d9ca546f9657996a7ab4b5d67381cb2ccb9ca6))
+
+### [0.4.7](https://github.com/vegaprotocol/pennant/compare/v0.4.6...v0.4.7) (2022-04-22)
+
+
+### Bug Fixes
+
+* red candles should be filled ([#447](https://github.com/vegaprotocol/pennant/issues/447)) ([69ac677](https://github.com/vegaprotocol/pennant/commit/69ac67794fc1f7ae6ff19a53f35db1686e22e01a))
+* use true black for background ([#448](https://github.com/vegaprotocol/pennant/issues/448)) ([852b9ff](https://github.com/vegaprotocol/pennant/commit/852b9ffb884870e9c6b4e7e9295c22eaddc8cc54))
+
+### [0.4.6](https://github.com/vegaprotocol/pennant/compare/v0.4.5...v0.4.6) (2022-04-20)
+
+
+### Features
+
+* support multiple studies ([#438](https://github.com/vegaprotocol/pennant/issues/438)) ([e52dcb0](https://github.com/vegaprotocol/pennant/commit/e52dcb0fe022d180982e81f305535c74a72eb81b))
+
+
+### Bug Fixes
+
+* separate loading and initializing states ([#436](https://github.com/vegaprotocol/pennant/issues/436)) ([4714ed8](https://github.com/vegaprotocol/pennant/commit/4714ed84f0ab3f9655bfdafb45faeeb3555c15b0))
+
+### [0.4.5](https://github.com/vegaprotocol/pennant/compare/v0.4.4...v0.4.5) (2022-04-01)
+
+
+### Bug Fixes
+
+* depth chart non ideal state should be theme aware ([d21c9a4](https://github.com/vegaprotocol/pennant/commit/d21c9a43a6d8a9d7f6748c01690731d05ae4f48d))
+
+### [0.4.4](https://github.com/vegaprotocol/pennant/compare/v0.4.3...v0.4.4) (2022-04-01)
+
+
+### Bug Fixes
+
+* depth chart should not error outside browser ([c52f957](https://github.com/vegaprotocol/pennant/commit/c52f957344850ef39dd6960792b3b79220698b84))
+
+### [0.4.3](https://github.com/vegaprotocol/pennant/compare/v0.4.2...v0.4.3) (2022-04-01)
+
+
+### Features
+
+* support light mode ([#398](https://github.com/vegaprotocol/pennant/issues/398)) ([482310c](https://github.com/vegaprotocol/pennant/commit/482310cc851f88ea6a1c9307bb3adf1988c08be1))
+
+### [0.4.2](https://github.com/vegaprotocol/pennant/compare/v0.4.1...v0.4.2) (2022-03-30)
+
+### [0.4.1](https://github.com/vegaprotocol/pennant/compare/v0.4.0...v0.4.1) (2022-03-30)
+
+## [0.4.0](https://github.com/vegaprotocol/pennant/compare/v0.3.8...v0.4.0) (2022-03-30)
+
+
+### Features
+
+* support server-side rendering ([51bf554](https://github.com/vegaprotocol/pennant/commit/51bf5542a25369b3307a9f9ac35effdd2a2810db))
+
+### [0.3.8](https://github.com/vegaprotocol/pennant/compare/v0.3.7...v0.3.8) (2022-03-29)
+
+
+### Features
+
+* use allotment in place of split-view component ([#426](https://github.com/vegaprotocol/pennant/issues/426)) ([4ac520f](https://github.com/vegaprotocol/pennant/commit/4ac520f8323f7b000189e7a242e7136415483668))
+
+### [0.3.7](https://github.com/vegaprotocol/pennant/compare/v0.3.6...v0.3.7) (2022-03-29)
+
+### [0.3.6](https://github.com/vegaprotocol/pennant/compare/v0.3.5...v0.3.6) (2022-03-29)
+
+
+### Features
+
+* handle empty depth chart data ([#418](https://github.com/vegaprotocol/pennant/issues/418)) ([d24809a](https://github.com/vegaprotocol/pennant/commit/d24809aeb9826b6341a0bcf79332c62b0b29e234))
+
+### [0.3.5](https://github.com/vegaprotocol/pennant/compare/v0.3.4...v0.3.5) (2022-03-28)
+
+### [0.3.4](https://github.com/vegaprotocol/pennant/compare/v0.3.3...v0.3.4) (2022-03-28)
+
+### [0.3.3](https://github.com/vegaprotocol/pennant/compare/v0.3.2...v0.3.3) (2022-03-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @types/node to v16 ([#363](https://github.com/vegaprotocol/pennant/issues/363)) ([631078e](https://github.com/vegaprotocol/pennant/commit/631078ebe6d513c6e7b0386db43d54bb5fc0799c))
+
 ### [0.3.2](https://github.com/vegaprotocol/pennant/compare/v0.3.1...v0.3.2) (2021-10-27)
 
 

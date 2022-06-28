@@ -1,18 +1,11 @@
-import { subHours, subMinutes } from "date-fns";
-
 import { Interval } from "../types";
 import {
-  createIntervalOptions,
-  DEFAULT_CANDLES,
   getCandlesCount,
-  getInitialExtents,
   getSubMinutes,
   getTimeFormat,
   GQLInterval,
   parseInterval,
 } from "./helpers-interval";
-
-const intervals: GQLInterval[] = ["I15M", "I1D", "I1H", "I1M", "I5M", "I6H"];
 
 describe("interval", () => {
   describe("parseInterval", () => {
@@ -25,46 +18,6 @@ describe("interval", () => {
     it("Returns a tuple containing the value and unit", () => {
       expect(parseInterval(Interval.I15M)).toEqual([15, "M"]);
       expect(parseInterval(Interval.I6H)).toEqual([6, "H"]);
-    });
-  });
-
-  describe("createIntervalOptions", () => {
-    it("Sorts the result by interval length", () => {
-      const res = createIntervalOptions(intervals);
-      const intervalOptionsSortedByTime = [
-        { label: "1m", interval: "I1M" },
-        { label: "5m", interval: "I5M" },
-        { label: "15m", interval: "I15M" },
-        { label: "1h", interval: "I1H" },
-        { label: "6h", interval: "I6H" },
-        { label: "1d", interval: "I1D" },
-      ];
-
-      expect(res).toEqual(intervalOptionsSortedByTime);
-    });
-  });
-
-  describe("getInitialExtents", () => {
-    it("returns the correct initial date to display 10 candles", () => {
-      const endDate = new Date();
-      const resultI1M = getInitialExtents(Interval.I1M, endDate);
-
-      expect(resultI1M).toEqual([
-        subMinutes(endDate, DEFAULT_CANDLES),
-        endDate,
-      ]);
-
-      const resultI15M = getInitialExtents(Interval.I15M, endDate);
-      expect(resultI15M).toEqual([
-        subMinutes(endDate, DEFAULT_CANDLES * 15),
-        endDate,
-      ]);
-
-      const resultI6H = getInitialExtents(Interval.I6H, endDate);
-      expect(resultI6H).toEqual([
-        subHours(endDate, DEFAULT_CANDLES * 6),
-        endDate,
-      ]);
     });
   });
 

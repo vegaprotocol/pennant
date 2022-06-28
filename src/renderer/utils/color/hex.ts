@@ -24,6 +24,15 @@ export function string2hex(string: string): number {
     }
   }
 
+  if (string.length === 3) {
+    string = string
+      .split("")
+      .map(function (hex) {
+        return hex + hex;
+      })
+      .join("");
+  }
+
   return parseInt(string, 16);
 }
 

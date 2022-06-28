@@ -1,5 +1,6 @@
+import { Colors } from "../components/chart/helpers";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
-import { align, Colors, formatter } from "../helpers";
+import { align, formatter } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addYAxisPath(
@@ -7,7 +8,8 @@ function addYAxisPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   position: number | null,
-  decimalPlaces: number
+  decimalPlaces: number,
+  colors: Colors
 ) {
   if (position) {
     const width = xScale.range()[1];
@@ -25,7 +27,7 @@ function addYAxisPath(
     ctx.save();
 
     ctx.setLineDash([2, 2]);
-    ctx.strokeStyle = Colors.GRAY_LIGHT;
+    ctx.strokeStyle = colors.textSecondary;
 
     ctx.beginPath();
     ctx.moveTo(xScale.range()[0], align(y) + 0.5);
@@ -43,14 +45,14 @@ function addYAxisPath(
     ctx.lineTo(width - Y_AXIS_WIDTH, y + rectHeight / 2);
     ctx.closePath();
 
-    ctx.fillStyle = Colors.GRAY_DARK_1;
-    ctx.strokeStyle = Colors.GRAY_LIGHT_1;
+    ctx.fillStyle = colors.backgroundSurface;
+    ctx.strokeStyle = colors.emphasis300;
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
 
     ctx.beginPath();
-    ctx.fillStyle = Colors.WHITE;
+    ctx.fillStyle = colors.textPrimary;
     ctx.fillText(text, width - Y_AXIS_WIDTH + xPad, y);
     ctx.closePath();
   }
@@ -65,7 +67,21 @@ export class YAxisAnnotationElement implements RenderableElement {
     this.decimalPlaces = decimalPlaces;
   }
 
-  draw(ctx: CanvasRenderingContext2D, xScale: ScaleTime, yScale: ScaleLinear) {
-    addYAxisPath(ctx, xScale, yScale, this.position, this.decimalPlaces);
+  draw(
+    ctx: CanvasRenderingContext2D,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
+    pixelRatio: number = 1,
+    position: number | null,
+    colors: Colors
+  ) {
+    addYAxisPath(
+      ctx,
+      xScale,
+      yScale,
+      this.position,
+      this.decimalPlaces,
+      colors
+    );
   }
 }

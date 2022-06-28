@@ -1,7 +1,6 @@
 import "./x-axis-view.css";
-import "@d3fc/d3fc-element";
 
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 export type XAxisViewProps = {
   simple: boolean;

@@ -1,6 +1,9 @@
 import { scaleLinear, scaleTime } from "d3-scale";
 
+import { getColors } from "../components/chart/helpers";
 import { PlotArea } from "./plot-area";
+
+const colors = getColors(null);
 
 describe("getIndex", () => {
   test("returns corect value if inside domain", () => {
@@ -23,7 +26,8 @@ describe("getIndex", () => {
       ],
       fields,
       [],
-      false
+      false,
+      colors
     );
 
     expect(plotArea.getIndex(200)).toEqual([2, new Date(2021, 6, 11)]);
@@ -38,7 +42,16 @@ describe("getIndex", () => {
 
     const fields = ["date"];
 
-    const plotArea = new PlotArea(xScale, yScale, [], [], fields, [], false);
+    const plotArea = new PlotArea(
+      xScale,
+      yScale,
+      [],
+      [],
+      fields,
+      [],
+      false,
+      colors
+    );
 
     expect(plotArea.getIndex(100)).toEqual(null);
   });
@@ -63,7 +76,8 @@ describe("getIndex", () => {
       ],
       fields,
       [],
-      false
+      false,
+      colors
     );
 
     expect(plotArea.getIndex(200)).toEqual([2, new Date(2021, 6, 11)]);

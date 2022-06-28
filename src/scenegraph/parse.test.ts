@@ -1,6 +1,8 @@
-import { Colors } from "../helpers";
+import { getColors } from "../components/chart/helpers";
 import { TopLevelSpec } from "../vega-lite/spec";
 import { parse, parseLayer } from "./parse";
+
+const colors = getColors(null);
 
 test("simple case", () => {
   const input: TopLevelSpec = {
@@ -48,9 +50,9 @@ test("candlestick chart with study", () => {
           color: {
             condition: {
               test: { field: "open", lt: "close" },
-              value: Colors.GREEN,
+              value: colors.buyStroke,
             },
-            value: Colors.RED,
+            value: colors.sellStroke,
           },
         },
         layer: [
@@ -68,16 +70,16 @@ test("candlestick chart with study", () => {
               fill: {
                 condition: {
                   test: { field: "open", lt: "close" },
-                  value: Colors.GREEN_DARK,
+                  value: colors.buyFill,
                 },
-                value: Colors.RED,
+                value: colors.sellFill,
               },
               stroke: {
                 condition: {
                   test: { field: "open", lt: "close" },
-                  value: Colors.GREEN,
+                  value: colors.buyStroke,
                 },
-                value: Colors.RED,
+                value: colors.sellStroke,
               },
             },
           },
@@ -142,9 +144,9 @@ test("recursively parse a layer", () => {
           color: {
             condition: {
               test: { field: "open", lt: "close" },
-              value: Colors.GREEN,
+              value: colors.buyFill,
             },
-            value: Colors.RED,
+            value: colors.sellFill,
           },
         },
         layer: [
@@ -162,16 +164,16 @@ test("recursively parse a layer", () => {
               fill: {
                 condition: {
                   test: { field: "open", lt: "close" },
-                  value: Colors.GREEN_DARK,
+                  value: colors.buyStroke,
                 },
-                value: Colors.RED,
+                value: colors.sellStroke,
               },
               stroke: {
                 condition: {
                   test: { field: "open", lt: "close" },
-                  value: Colors.GREEN,
+                  value: colors.buyFill,
                 },
-                value: Colors.RED,
+                value: colors.sellFill,
               },
             },
           },

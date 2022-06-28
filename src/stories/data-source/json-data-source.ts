@@ -29,33 +29,6 @@ const annotations: LabelAnnotation[] = [
   },
   {
     type: "label",
-    id: "1",
-    cells: [
-      { label: `Limit GTT`, stroke: true },
-      { label: `${596}` },
-      {
-        label: "Cancel",
-        onClick: () => {
-          console.log({ type: "order", id: "1" });
-          const annotation = annotations.find(
-            (annotation) => annotation.id === "1"
-          );
-
-          if (annotation) {
-            annotation.cells[annotation.cells.length - 1].spinner =
-              !annotation.cells[annotation.cells.length - 1].spinner;
-          }
-
-          console.log(annotations);
-        },
-        spinner: false,
-      },
-    ],
-    intent: "danger",
-    y: 596,
-  },
-  {
-    type: "label",
     id: "2",
     cells: [
       { label: `Limit GTT`, stroke: true },

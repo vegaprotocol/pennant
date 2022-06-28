@@ -1,6 +1,7 @@
 import "./non-ideal-state.css";
 
 import classNames from "classnames";
+import React from "react";
 
 import { useDelayShow } from "../../hooks";
 

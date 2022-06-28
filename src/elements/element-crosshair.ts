@@ -1,11 +1,11 @@
-import { Colors } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
 
 function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
   xScale: ScaleTime,
   yScale: ScaleLinear,
-  position: [Date | null, number | null]
+  position: [Date | null, number | null],
+  color: string
 ) {
   const x = position[0];
   const y = position[1];
@@ -17,7 +17,7 @@ function addCrosshairPath(
 
   ctx.setLineDash([4, 6]);
   ctx.lineWidth = 1;
-  ctx.strokeStyle = Colors.WHITE;
+  ctx.strokeStyle = color;
 
   if (x) {
     ctx.beginPath();
@@ -44,8 +44,9 @@ export class CrosshairElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio: number = 1,
-    position: [Date | null, number | null]
+    position: [Date | null, number | null],
+    color: string
   ) {
-    addCrosshairPath(ctx, xScale, yScale, position);
+    addCrosshairPath(ctx, xScale, yScale, position, color);
   }
 }

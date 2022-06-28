@@ -2,8 +2,13 @@ import { curveStepAfter } from "d3-shape";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
-import { BUY_FILL, BUY_STROKE, SELL_FILL, SELL_STROKE } from "./depth-chart";
 import { DepthCurve } from "./display-objects";
+import { Colors } from "./helpers";
+
+type ContentsColors = Pick<
+  Colors,
+  "buyFill" | "buyStroke" | "sellFill" | "sellStroke"
+>;
 
 /**
  * Responsible for drawing area curves for depth chart.
@@ -12,23 +17,17 @@ export class Contents {
   public stage: Container = new Container();
   public renderer: Renderer;
 
-  public buyCurve: DepthCurve = new DepthCurve(
-    BUY_STROKE,
-    BUY_FILL,
-    curveStepAfter
-  );
+  public buyCurve: DepthCurve;
+  public sellCurve: DepthCurve;
 
-  public sellCurve: DepthCurve = new DepthCurve(
-    SELL_STROKE,
-    SELL_FILL,
-    curveStepAfter
-  );
+  public colors: ContentsColors;
 
   constructor(options: {
     view: HTMLCanvasElement;
     resolution: number;
     width: number;
     height: number;
+    colors: ContentsColors;
   }) {
     this.renderer = new Renderer({
       view: options.view,
@@ -36,6 +35,20 @@ export class Contents {
       width: options.width,
       height: options.height,
     });
+
+    this.colors = options.colors;
+
+    this.buyCurve = new DepthCurve(
+      options.colors.buyStroke,
+      options.colors.buyFill,
+      curveStepAfter
+    );
+
+    this.sellCurve = new DepthCurve(
+      options.colors.sellStroke,
+      options.colors.sellFill,
+      curveStepAfter
+    );
 
     this.stage.addChild(this.buyCurve);
     this.stage.addChild(this.sellCurve);
@@ -51,7 +64,20 @@ export class Contents {
   ): void {
     const resolution = this.renderer.resolution;
 
-    this.buyCurve.update(buyPoints, this.renderer.view.height, resolution);
-    this.sellCurve.update(sellPoints, this.renderer.view.height, resolution);
+    this.buyCurve.update(
+      buyPoints,
+      this.renderer.view.height,
+      resolution,
+      this.colors.buyFill,
+      this.colors.buyStroke
+    );
+
+    this.sellCurve.update(
+      sellPoints,
+      this.renderer.view.height,
+      resolution,
+      this.colors.sellFill,
+      this.colors.sellStroke
+    );
   }
 }

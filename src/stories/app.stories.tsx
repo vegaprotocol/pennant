@@ -15,14 +15,15 @@ import {
 } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
+import classnames from "classnames";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { Chart } from "../components/chart";
 import { formatter } from "../helpers";
-import { ChartType, Overlay, Study } from "../types";
+import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
-import { Interval } from "./api/vega-graphql";
 import data from "./app.stories.json";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
@@ -90,9 +91,9 @@ export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState(data.markets[1].id);
   const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [study, setStudy] = useState<Study | null>(null);
-  const [overlay, setOverlay] = useState<Overlay | null>(null);
-  const [interval, setInterval] = useState(Interval.I1M);
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [overlays, setOverlays] = useState<Overlay[]>([]);
+  const [interval, setInterval] = useState<Interval>(Interval.I1M);
 
   const dataSource = useMemo(
     () =>
@@ -105,8 +106,10 @@ export const VegaProtocol: Story = () => {
     [market]
   );
 
+  const darkmode = useDarkMode();
+
   return (
-    <div className="container bp3-dark">
+    <div className={classnames("container", { ["bp3-dark"]: darkmode })}>
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
@@ -131,12 +134,12 @@ export const VegaProtocol: Story = () => {
         <ChartControls
           interval={interval}
           chartType={chartType}
-          overlay={overlay}
-          study={study}
+          overlays={overlays}
+          studies={studies}
           onSetInterval={setInterval}
           onSetChartType={setChartType}
-          onSetOverlay={setOverlay}
-          onSetStudy={setStudy}
+          onSetOverlays={setOverlays}
+          onSetStudies={setStudies}
           onSnapshot={async () => {
             const blob = await ref.current.snapshot();
 
@@ -163,12 +166,13 @@ export const VegaProtocol: Story = () => {
           dataSource={dataSource}
           options={{
             chartType: chartType,
-            studies: study === null ? [] : [study],
-            overlays: overlay === null ? [] : [overlay],
+            studies: studies,
+            overlays: overlays,
           }}
           interval={interval}
           onOptionsChanged={(options) => {
-            setStudy(options.studies?.length === 0 ? null : study);
+            setOverlays(options.overlays ?? []);
+            setStudies(options.studies ?? []);
           }}
         />
       </div>
@@ -180,6 +184,7 @@ export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [price, setPrice] = useState(0);
+  const theme = useDarkMode() ? "dark" : "light";
 
   const virtualReference = useRef({
     getBoundingClientRect() {
@@ -198,15 +203,15 @@ export const CryptoCompare: Story = () => {
     null
   );
   const { styles, attributes } = usePopper(
-    virtualReference.current,
+    virtualReference.current as any,
     popperElement,
     { placement: "bottom-start" }
   );
 
   const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [study, setStudy] = useState<Study | null>(null);
-  const [overlay, setOverlay] = useState<Overlay | null>(null);
-  const [interval, setInterval] = useState(Interval.I1M);
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [overlays, setOverlays] = useState<Overlay[]>([]);
+  const [interval, setInterval] = useState<Interval>(Interval.I1M);
 
   const dataSource = useMemo(() => new CryptoCompareDataSource(), []);
 
@@ -271,11 +276,13 @@ export const CryptoCompare: Story = () => {
 
   const { handleKeyDown, handleKeyUp } = useHotkeys(hotkeys);
 
+  const darkmode = useDarkMode();
+
   return (
     <HotkeysProvider>
       <div
         tabIndex={0}
-        className="container bp3-dark"
+        className={classnames("container", { ["bp3-dark"]: darkmode })}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
@@ -283,12 +290,12 @@ export const CryptoCompare: Story = () => {
         <ChartControls
           interval={interval}
           chartType={chartType}
-          overlay={overlay}
-          study={study}
+          overlays={overlays}
+          studies={studies}
           onSetInterval={setInterval}
           onSetChartType={setChartType}
-          onSetOverlay={setOverlay}
-          onSetStudy={setStudy}
+          onSetOverlays={setOverlays}
+          onSetStudies={setStudies}
           onSnapshot={async () => {
             const blob = await ref.current.snapshot();
 
@@ -327,13 +334,15 @@ export const CryptoCompare: Story = () => {
             dataSource={dataSource}
             options={{
               chartType: chartType,
-              studies: study === null ? [] : [study],
-              overlays: overlay === null ? [] : [overlay],
+              studies: studies,
+              overlays: overlays,
             }}
             interval={interval}
             onOptionsChanged={(options) => {
-              setStudy(options.studies?.length === 0 ? null : study);
+              setOverlays(options.overlays ?? []);
+              setStudies(options.studies ?? []);
             }}
+            theme={theme}
           />
         </div>
         <BPOverlay
