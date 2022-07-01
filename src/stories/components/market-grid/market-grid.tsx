@@ -4,6 +4,7 @@ import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Icon } from "@blueprintjs/core";
+import { createClient } from "graphql-ws";
 import { useMemo } from "react";
 
 import { Chart } from "../../../components/chart";
@@ -15,12 +16,11 @@ const httpLink = new HttpLink({
   uri: "https://lb.testnet.vega.xyz/query",
 });
 
-const wsLink = new GraphQLWsLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "wss://lb.testnet.vega.xyz/query",
+  })
+);
 
 const splitLink = split(
   ({ query }) => {

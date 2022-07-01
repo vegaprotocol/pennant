@@ -9,6 +9,7 @@ import {
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Meta, Story } from "@storybook/react";
+import { createClient } from "graphql-ws";
 
 import { markets } from "./api/vega-graphql";
 import { marketsQuery } from "./api/vega-graphql/queries/markets";
@@ -22,12 +23,11 @@ const httpLink = new HttpLink({
   uri: "https://lb.testnet.vega.xyz/query",
 });
 
-const wsLink = new GraphQLWsLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "wss://lb.testnet.vega.xyz/query",
+  })
+);
 
 const splitLink = split(
   ({ query }) => {

@@ -16,6 +16,7 @@ import {
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 import classnames from "classnames";
+import { createClient } from "graphql-ws";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
@@ -38,12 +39,11 @@ const httpLink = new HttpLink({
   uri: "https://lb.testnet.vega.xyz/query",
 });
 
-const wsLink = new GraphQLWsLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "wss://lb.testnet.vega.xyz/query",
+  })
+);
 
 const splitLink = split(
   ({ query }) => {
