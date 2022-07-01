@@ -1,7 +1,7 @@
 import "./app.stories.css";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { WebSocketLink } from "@apollo/client/link/ws";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import {
   Button,
@@ -38,7 +38,7 @@ const httpLink = new HttpLink({
   uri: "https://lb.testnet.vega.xyz/query",
 });
 
-const wsLink = new WebSocketLink({
+const wsLink = new GraphQLWsLink({
   uri: "wss://lb.testnet.vega.xyz/query",
   options: {
     reconnect: true,
