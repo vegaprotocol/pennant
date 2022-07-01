@@ -254,6 +254,7 @@ export const PlotContainer = forwardRef<
               <PaneView
                 ref={refs[pane.id]}
                 bounds={bounds}
+                colors={colors}
                 dataIndex={dataIndex}
                 decimalPlaces={decimalPlaces}
                 overlays={overlays}

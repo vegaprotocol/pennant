@@ -150,13 +150,13 @@ describe("constructTopLevelSpec", () => {
               encoding: {
                 y: { field: "bollingerLower", type: "quantitative" },
               },
-              mark: { color: "#ff261a", type: "line" },
+              mark: { color: "#d9822b", type: "line" },
             },
             {
               encoding: {
                 y: { field: "bollingerUpper", type: "quantitative" },
               },
-              mark: { color: "#ff261a", type: "line" },
+              mark: { color: "#daff0d", type: "line" },
             },
           ],
         },

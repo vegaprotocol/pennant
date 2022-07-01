@@ -1,4 +1,4 @@
-import { Colors } from "../components/chart/helpers";
+import { Colors, getAccentColor } from "../components/chart/helpers";
 import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";
@@ -247,112 +247,6 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
   }
 }
 
-function constructOverlayLayerSpec(
-  overlay: Overlay,
-  colors: Colors
-): BaseSpec[] {
-  switch (overlay) {
-    case "bollinger":
-      return [
-        {
-          encoding: {
-            y: { field: "bollingerLower", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent3,
-          },
-        },
-        {
-          encoding: {
-            y: { field: "bollingerUpper", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent3,
-          },
-        },
-      ];
-    case "envelope":
-      return [
-        {
-          encoding: {
-            y: { field: "envelopeLower", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent1,
-          },
-        },
-        {
-          encoding: {
-            y: { field: "envelopeUpper", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent1,
-          },
-        },
-      ];
-    case "exponentialMovingAverage":
-      return [
-        {
-          encoding: {
-            y: { field: "exponentialMovingAverage", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent2,
-          },
-        },
-      ];
-    case "movingAverage":
-      return [
-        {
-          encoding: {
-            y: { field: "movingAverage", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent1,
-          },
-        },
-      ];
-    case "priceMonitoringBounds":
-      return [
-        {
-          encoding: {
-            y: { field: "minValidPrice", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.vegaOrange,
-          },
-        },
-        {
-          encoding: {
-            y: { field: "maxValidPrice", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.vegaGreen,
-          },
-        },
-        {
-          encoding: {
-            y: { field: "referencePrice", type: "quantitative" },
-          },
-          mark: {
-            type: "line",
-            color: colors.accent1,
-          },
-        },
-      ];
-    default:
-      return [];
-  }
-}
-
 function constructOverlayTransform(overlay: Overlay): Transform[] {
   switch (overlay) {
     case "bollinger":
@@ -442,6 +336,111 @@ export function constructTopLevelSpec(
   const vconcat: BaseSpec[] = [];
   const transform: Transform[] = [];
 
+  let colorIndex = 0;
+
+  function constructOverlayLayerSpec(overlay: Overlay): BaseSpec[] {
+    switch (overlay) {
+      case "bollinger":
+        return [
+          {
+            encoding: {
+              y: { field: "bollingerLower", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+          {
+            encoding: {
+              y: { field: "bollingerUpper", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+        ];
+      case "envelope":
+        return [
+          {
+            encoding: {
+              y: { field: "envelopeLower", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+          {
+            encoding: {
+              y: { field: "envelopeUpper", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+        ];
+      case "exponentialMovingAverage":
+        return [
+          {
+            encoding: {
+              y: { field: "exponentialMovingAverage", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+        ];
+      case "movingAverage":
+        return [
+          {
+            encoding: {
+              y: { field: "movingAverage", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+        ];
+      case "priceMonitoringBounds":
+        return [
+          {
+            encoding: {
+              y: { field: "minValidPrice", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+          {
+            encoding: {
+              y: { field: "maxValidPrice", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+          {
+            encoding: {
+              y: { field: "referencePrice", type: "quantitative" },
+            },
+            mark: {
+              type: "line",
+              color: colors[getAccentColor(colorIndex++)],
+            },
+          },
+        ];
+      default:
+        return [];
+    }
+  }
+
   const mainSpecification: BaseSpec = {
     name: "main",
     layer: constructMainLayerSpec(chartType, colors),
@@ -450,9 +449,7 @@ export function constructTopLevelSpec(
   if (overlays && overlays.length) {
     for (const overlay of overlays) {
       transform.push(...constructOverlayTransform(overlay));
-      mainSpecification.layer?.push(
-        ...constructOverlayLayerSpec(overlay, colors)
-      );
+      mainSpecification.layer?.push(...constructOverlayLayerSpec(overlay));
     }
   }
 

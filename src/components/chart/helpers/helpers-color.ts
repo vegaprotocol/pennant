@@ -95,3 +95,7 @@ export function getColors(element: HTMLElement | null): Colors {
       COLORS.VEGA_RED,
   };
 }
+
+export function getAccentColor(n: number) {
+  return `accent${1 + (n % 6)}` as keyof Colors;
+}
