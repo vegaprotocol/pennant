@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.12](https://github.com/vegaprotocol/pennant/compare/v0.4.11...v0.4.12) (2022-07-01)
+
+
+### Features
+
+* match overlay indicator info colors with chart colors ([#515](https://github.com/vegaprotocol/pennant/issues/515)) ([ebd3668](https://github.com/vegaprotocol/pennant/commit/ebd3668443ff060ff95708a821a0da0c00a4153a))
+
+
+### Bug Fixes
+
+* **deps:** update dependency allotment to v1.14.2 ([#499](https://github.com/vegaprotocol/pennant/issues/499)) ([87a51c4](https://github.com/vegaprotocol/pennant/commit/87a51c4c6da9ff35808e4ac342413e38f350ede7))
+* **deps:** update dependency use-resize-observer to v9 ([#518](https://github.com/vegaprotocol/pennant/issues/518)) ([9868a53](https://github.com/vegaprotocol/pennant/commit/9868a539ee7c864dc95294748a0ea3ca014bcce8))
+* **deps:** update docusaurus monorepo to v2.0.0-beta.21 ([#489](https://github.com/vegaprotocol/pennant/issues/489)) ([b7aa2b0](https://github.com/vegaprotocol/pennant/commit/b7aa2b0214b73f99ffb062e91ac61c1a0823afc0))
+
 ### [0.4.11](https://github.com/vegaprotocol/pennant/compare/v0.4.10...v0.4.11) (2022-06-15)
 
 
