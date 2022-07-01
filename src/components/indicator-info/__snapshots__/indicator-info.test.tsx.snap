@@ -12,7 +12,6 @@ exports[`IndicatorInfo renders correctly 1`] = `
   <div
     className="indicator-info__item"
   >
-    
     <span
       className="monospace-text"
     >
