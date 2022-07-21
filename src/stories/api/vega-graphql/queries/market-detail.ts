@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import { gql } from "@apollo/client";
 
 export const marketDetailQuery = gql`
   query marketDetail($id: ID!) {
@@ -7,16 +7,7 @@ export const marketDetailQuery = gql`
       name
       state
       decimalPlaces
-      tradingModeConfig {
-        ... on ContinuousTrading {
-          __typename
-          tickSize
-        }
-        ... on DiscreteTrading {
-          __typename
-          duration
-        }
-      }
+      tradingMode
       priceMonitoringSettings {
         updateFrequencySecs
         parameters {
@@ -89,7 +80,6 @@ export const marketDetailQuery = gql`
           }
           product {
             ... on Future {
-              maturity
               quoteName
               settlementAsset {
                 id
@@ -131,4 +121,4 @@ export const marketDetailQuery = gql`
       }
     }
   }
-`
+`;

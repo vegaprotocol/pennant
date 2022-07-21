@@ -1,6 +1,13 @@
 import "./app.stories.css";
 
-import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
+import {
+  ApolloClient,
+  gql,
+  HttpLink,
+  InMemoryCache,
+  split,
+  useQuery,
+} from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import {
@@ -25,7 +32,6 @@ import { Chart } from "../components/chart";
 import { formatter } from "../helpers";
 import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
-import data from "./app.stories.json";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
@@ -36,12 +42,12 @@ export default {
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: "https://n03.stagnet2.vega.xyz/query",
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://lb.testnet.vega.xyz/query",
+    url: "wss://n03.stagnet2.vega.xyz/query",
   })
 );
 
@@ -64,7 +70,8 @@ const client = new ApolloClient({
 
 type Market = {
   id: string;
-  tradableInstrument: { instrument: { name: string } };
+  name: string;
+  state: string;
 };
 
 const MarketSelect = Select.ofType<Market>();
@@ -80,20 +87,32 @@ const renderMarket: ItemRenderer<Market> = (
     <MenuItem
       active={modifiers.active}
       key={market.id}
-      label={market.tradableInstrument.instrument.name}
+      label={market.name}
       onClick={handleClick}
-      text={market.tradableInstrument.instrument.name}
+      text={market.name}
     />
   );
 };
 
+const GET_MARKETS = gql`
+  query GetMarkets {
+    markets {
+      id
+      name
+      state
+    }
+  }
+`;
+
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
-  const [market, setMarket] = useState(data.markets[1].id);
+  const [market, setMarket] = useState("");
   const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [studies, setStudies] = useState<Study[]>([]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [interval, setInterval] = useState<Interval>(Interval.I1M);
+
+  const { loading, error, data } = useQuery(GET_MARKETS);
 
   const dataSource = useMemo(
     () =>
@@ -107,6 +126,19 @@ export const VegaProtocol: Story = () => {
   );
 
   const darkmode = useDarkMode();
+
+  const marketId =
+    data?.markets?.find((market: Market) => market.state === "Active")?.id ??
+    data?.markets?.[0]?.id;
+
+  useEffect(() => {
+    if (marketId) {
+      setMarket(marketId);
+    }
+  }, [marketId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>`Error! ${error.message}`</p>;
 
   return (
     <div className={classnames("container", { ["bp3-dark"]: darkmode })}>
@@ -123,8 +155,8 @@ export const VegaProtocol: Story = () => {
         >
           <Button
             text={
-              data.markets.find((s) => s.id === market)?.tradableInstrument
-                .instrument.name ?? "No market selected"
+              data.markets.find((s: any) => s.id === market)?.name ??
+              "No market selected"
             }
             disabled={false}
           />

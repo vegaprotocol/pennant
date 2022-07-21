@@ -54,7 +54,6 @@ export const marketsQuery = gql`
           code
           product {
             ... on Future {
-              maturity
               quoteName
               settlementAsset {
                 id
