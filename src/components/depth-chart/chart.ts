@@ -31,6 +31,9 @@ export const volumeFormatter = new Intl.NumberFormat("en-gb", {
   minimumFractionDigits: 0,
 });
 
+// Ratio of price percentage change to volume percentage change used to detect outliers
+const PRICE_VOLUME_RATIO_THRESHOLD = 100;
+
 export class Chart extends EventEmitter {
   private chart: Contents;
   private axis: UI;
@@ -41,7 +44,9 @@ export class Chart extends EventEmitter {
   private volumeLabels: string[] = [];
 
   private _span: number = 1;
+  private initialSpan: number = 1;
   private maxPriceDifference: number = 0;
+  private initialPriceDifference: number = 0;
 
   private _data: { buy: PriceLevel[]; sell: PriceLevel[] } = {
     buy: [],
@@ -93,7 +98,7 @@ export class Chart extends EventEmitter {
         this.emit("zoomstart");
       })
       .on("zoom", (k: number) => {
-        this.span = 1 / k;
+        this.span = this.initialSpan / k;
         this.emit("zoom");
       })
       .on("zoomend", () => {
@@ -143,9 +148,58 @@ export class Chart extends EventEmitter {
       this._data.sell?.[0]?.price
     );
 
-    if (!this.maxPriceDifference) {
-      this.maxPriceDifference =
-        max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+    this.maxPriceDifference =
+      max(this.prices.map((price) => Math.abs(price - midPrice))) ?? 0;
+
+    if (!this.initialPriceDifference) {
+      // Remove outliers
+      const buyPriceLevels = orderBy(this._data.buy, ["price"]);
+      const sellPriceLevels = orderBy(this._data.sell, ["price"]);
+
+      while (buyPriceLevels.length > 2) {
+        if (
+          Math.abs(
+            (buyPriceLevels[0].price - buyPriceLevels[1].price) /
+              (buyPriceLevels[0].price - midPrice)
+          ) /
+            (buyPriceLevels[0].volume /
+              cumulativeBuy[cumulativeBuy.length - 1][1]) >
+          PRICE_VOLUME_RATIO_THRESHOLD
+        ) {
+          buyPriceLevels.splice(0, 1);
+        } else {
+          break;
+        }
+      }
+
+      while (sellPriceLevels.length > 2) {
+        const maxIndex = sellPriceLevels.length - 1;
+
+        if (
+          Math.abs(
+            (sellPriceLevels[maxIndex].price -
+              sellPriceLevels[maxIndex - 1].price) /
+              (sellPriceLevels[maxIndex].price - midPrice)
+          ) /
+            (sellPriceLevels[maxIndex].volume /
+              cumulativeSell[cumulativeSell.length - 1][1]) >
+          PRICE_VOLUME_RATIO_THRESHOLD
+        ) {
+          sellPriceLevels.splice(-1, 1);
+        } else {
+          break;
+        }
+      }
+
+      this.initialPriceDifference =
+        max(
+          [...buyPriceLevels, ...sellPriceLevels].map((priceLevel) =>
+            Math.abs(priceLevel.price - midPrice)
+          )
+        ) ?? 0;
+
+      this.initialSpan = this.initialPriceDifference / this.maxPriceDifference;
+      this._span = this.initialSpan;
     }
 
     const priceExtent: [number, number] = [
@@ -221,7 +275,7 @@ export class Chart extends EventEmitter {
         0;
 
       this.axis.scaleExtent = [
-        1,
+        this.initialSpan,
         this.maxPriceDifference /
           (2 * (minExtent ?? this.maxPriceDifference / 10)),
       ];
