@@ -33,6 +33,7 @@ export const volumeFormatter = new Intl.NumberFormat("en-gb", {
 
 // Ratio of price percentage change to volume percentage change used to detect outliers
 const PRICE_VOLUME_RATIO_THRESHOLD = 100;
+
 export class Chart extends EventEmitter {
   private chart: Contents;
   private axis: UI;
@@ -165,8 +166,6 @@ export class Chart extends EventEmitter {
               cumulativeBuy[cumulativeBuy.length - 1][1]) >
           PRICE_VOLUME_RATIO_THRESHOLD
         ) {
-          console.log("Removed a buy side level", buyPriceLevels[0]);
-
           buyPriceLevels.splice(0, 1);
         } else {
           break;
