@@ -8,7 +8,7 @@ import {
   DepthChart,
   DepthChartHandle,
   DepthChartProps,
-  priceFormatter,
+  numberFormatter,
   PriceLevel,
 } from "./depth-chart";
 
@@ -389,56 +389,72 @@ const Template: Story<DepthChartProps> = (args) => {
 export const AAPL = Template.bind({});
 AAPL.args = {
   data: AAPL_data,
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
 };
 
 export const ETHBTC = Template.bind({});
 ETHBTC.args = {
   data: ETHBTC_data,
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
   indicativePrice: 0.065,
 };
 
 export const UNIDAI = Template.bind({});
 UNIDAI.args = {
   data: UNIDAI_data,
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
   indicativePrice: 30,
 };
 
 export const BTCUSD = Template.bind({});
 BTCUSD.args = {
   data: BTCUSD_data,
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
   midPrice: 44256,
 };
 
 export const SinglePriceLevel = Template.bind({});
 SinglePriceLevel.args = {
   data: { buy: AAPL_data.buy.slice(0, 1), sell: [] },
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
 };
 
 export const LeftSided = Template.bind({});
 LeftSided.args = {
   data: { buy: AAPL_data.buy, sell: [] },
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
 };
 
 export const RightSided = Template.bind({});
 RightSided.args = {
   data: { buy: [], sell: AAPL_data.sell },
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
 };
 
 export const NoData = Template.bind({});
 NoData.args = {
   data: { buy: [], sell: [] },
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
 };
 
 export const InitialZoom = Template.bind({});
 InitialZoom.args = {
   data: { buy: zoomedOutData.buy, sell: zoomedOutData.sell },
-  priceFormat: (price: number) => priceFormatter(5).format(price),
+  priceFormat: (price: number) => numberFormatter(5).format(price),
+};
+
+export const FractionalVolume = Template.bind({});
+FractionalVolume.args = {
+  data: {
+    buy: AAPL_data.buy.map((priceLevel) => ({
+      price: priceLevel.price,
+      volume: priceLevel.volume / 100,
+    })),
+    sell: AAPL_data.sell.map((priceLevel) => ({
+      price: priceLevel.price,
+      volume: priceLevel.volume / 100,
+    })),
+  },
+  priceFormat: (price: number) => numberFormatter(5).format(price),
+  volumeFormat: (volume: number) => numberFormatter(2).format(volume),
 };
