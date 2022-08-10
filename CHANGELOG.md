@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.14](https://github.com/vegaprotocol/pennant/compare/v0.4.13...v0.4.14) (2022-08-10)
+
+### Features
+
+- add volumeFormat prop to depth-chart ([#544](https://github.com/vegaprotocol/pennant/issues/544)) ([e4bfdab](https://github.com/vegaprotocol/pennant/commit/e4bfdab85570b698842506bc1ca170793a28ade3))
+
 ### [0.4.13](https://github.com/vegaprotocol/pennant/compare/v0.4.12...v0.4.13) (2022-08-08)
 
 ### Features
