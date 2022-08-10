@@ -26,11 +26,6 @@ function getMidPrice(
   return mean([buyPrice, sellPrice]) as number;
 }
 
-export const volumeFormatter = new Intl.NumberFormat("en-gb", {
-  maximumFractionDigits: 0,
-  minimumFractionDigits: 0,
-});
-
 // Ratio of price percentage change to volume percentage change used to detect outliers
 const PRICE_VOLUME_RATIO_THRESHOLD = 100;
 
@@ -60,6 +55,7 @@ export class Chart extends EventEmitter {
   private _midPrice: number = 0;
 
   private priceFormat: (price: number) => string;
+  private volumeFormat: (volume: number) => string;
 
   private _colors: Colors;
 
@@ -70,11 +66,13 @@ export class Chart extends EventEmitter {
     width: number;
     height: number;
     priceFormat: (price: number) => string;
+    volumeFormat: (volume: number) => string;
     colors: Colors;
   }) {
     super();
 
     this.priceFormat = options.priceFormat;
+    this.volumeFormat = options.volumeFormat;
     this._colors = options.colors;
 
     this.chart = new Contents({
@@ -331,9 +329,7 @@ export class Chart extends EventEmitter {
       (priceLevel) => priceLevel[1]
     );
 
-    this.volumeLabels = this.volumes.map((volume) =>
-      volumeFormatter.format(volume)
-    );
+    this.volumeLabels = this.volumes.map((volume) => this.volumeFormat(volume));
 
     this.update();
     this.render();
