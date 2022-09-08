@@ -171,7 +171,7 @@ export const VegaProtocol: Story = () => {
   if (error) return <p>`Error! ${error.message}`</p>;
 
   return (
-    <div className={classnames("container", { ["bp3-dark"]: darkmode })}>
+    <div className={classnames("container", { ["bp4-dark"]: darkmode })}>
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
@@ -232,6 +232,7 @@ export const VegaProtocol: Story = () => {
             overlays: overlays,
           }}
           interval={interval}
+          theme={darkmode ? "dark" : "light"}
           onOptionsChanged={(options) => {
             setOverlays(options.overlays ?? []);
             setStudies(options.studies ?? []);
@@ -348,7 +349,7 @@ export const CryptoCompare: Story = () => {
     <HotkeysProvider>
       <div
         tabIndex={0}
-        className={classnames("container", { ["bp3-dark"]: darkmode })}
+        className={classnames("container", { ["bp4-dark"]: darkmode })}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
