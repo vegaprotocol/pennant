@@ -171,7 +171,7 @@ export const VegaProtocol: Story = () => {
   if (error) return <p>`Error! ${error.message}`</p>;
 
   return (
-    <div className={classnames("container", { ["bp4-dark"]: darkmode })}>
+    <div className="container">
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
@@ -349,7 +349,7 @@ export const CryptoCompare: Story = () => {
     <HotkeysProvider>
       <div
         tabIndex={0}
-        className={classnames("container", { ["bp4-dark"]: darkmode })}
+        className="container"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >

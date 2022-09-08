@@ -24,7 +24,7 @@ const Template: Story<ChartControlsProps> = (args) => {
   const [studies, setStudies] = useState<Study[]>([]);
 
   return (
-    <div className={classnames({ ["bp4-dark"]: darkmode }, "docs-example")}>
+    <div className="docs-example">
       <ChartControls
         {...args}
         interval={interval}

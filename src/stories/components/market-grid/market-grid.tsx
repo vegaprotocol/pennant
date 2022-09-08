@@ -12,7 +12,6 @@ import { Chart } from "../../../components/chart";
 import { Interval } from "../../../types";
 import { markets_markets } from "../../api/vega-graphql";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
-import classNames from "classnames";
 
 const httpLink = new HttpLink({
   uri: "https://api.n08.testnet.vega.xyz/graphql",
@@ -64,7 +63,6 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
 
   return (
     <div
-      className={classNames({ ["bp4-dark"]: darkmode })}
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(2, 1fr)",

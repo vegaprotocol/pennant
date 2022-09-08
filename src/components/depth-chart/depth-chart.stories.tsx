@@ -373,6 +373,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
 
 const Template: Story<DepthChartProps> = (args) => {
   const ref = useRef<DepthChartHandle>(null!);
+  const darkmode = useDarkMode();
 
   return (
     <div
@@ -381,7 +382,7 @@ const Template: Story<DepthChartProps> = (args) => {
         height: "40vh",
       }}
     >
-      <DepthChart ref={ref} {...args} />
+      <DepthChart ref={ref} {...args} theme={darkmode ? "dark" : "light"} />
     </div>
   );
 };
