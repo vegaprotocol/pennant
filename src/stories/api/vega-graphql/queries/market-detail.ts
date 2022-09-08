@@ -9,11 +9,10 @@ export const marketDetailQuery = gql`
       decimalPlaces
       tradingMode
       priceMonitoringSettings {
-        updateFrequencySecs
         parameters {
           triggers {
-            probability
             horizonSecs
+            probability
             auctionExtensionSecs
           }
         }
@@ -54,7 +53,6 @@ export const marketDetailQuery = gql`
         }
       }
       priceMonitoringSettings {
-        updateFrequencySecs
         parameters {
           triggers {
             horizonSecs

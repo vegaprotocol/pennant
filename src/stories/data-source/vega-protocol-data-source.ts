@@ -21,7 +21,7 @@ import {
   positions_party_positions,
   positionsVariables,
 } from "../api/vega-graphql";
-import { parseVegaDecimal } from "../helpers";
+import { intervalMap, parseVegaDecimal } from "../helpers";
 import {
   createOrderLabelAnnotation,
   createPositionLabelAnnotation,
@@ -173,7 +173,7 @@ export class VegaDataSource implements DataSource {
         query: candleQuery,
         variables: {
           marketId: this.marketId,
-          interval,
+          interval: intervalMap[interval],
           since: from,
         },
         fetchPolicy: "no-cache",
@@ -201,7 +201,7 @@ export class VegaDataSource implements DataSource {
   subscribeData(interval: Interval, onSubscriptionData: (data: any) => void) {
     const res = this.client.subscribe({
       query: candleSubscriptionQuery,
-      variables: { marketId: this.marketId, interval },
+      variables: { marketId: this.marketId, interval: intervalMap[interval] },
     });
 
     this.candlesSub = res.subscribe(({ data }) => {

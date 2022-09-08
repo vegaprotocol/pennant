@@ -1,3 +1,4 @@
+import { VegaInterval } from "../../../helpers";
 import { Interval } from "./globalTypes";
 
 export interface candlesQuery_market_tradableInstrument_instrument {
@@ -93,6 +94,6 @@ export interface candlesQuery {
 
 export interface candlesQueryVariables {
   marketId: string;
-  interval: Interval;
+  interval: VegaInterval;
   since: string;
 }

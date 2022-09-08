@@ -42,12 +42,12 @@ export default {
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://n03.stagnet2.vega.xyz/query",
+  uri: "https://api.n08.testnet.vega.xyz/graphql",
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://n03.stagnet2.vega.xyz/query",
+    url: "wss://api.n08.testnet.vega.xyz/graphql",
   })
 );
 
@@ -86,6 +86,7 @@ const renderMarket: ItemRenderer<Market> = (
   return (
     <MenuItem
       active={modifiers.active}
+      disabled={market.state !== MarketState.STATE_ACTIVE}
       key={market.id}
       label={market.name}
       onClick={handleClick}
@@ -103,6 +104,34 @@ const GET_MARKETS = gql`
     }
   }
 `;
+
+/** The current state of a market */
+export enum MarketState {
+  /** Enactment date reached and usual auction exit checks pass */
+  STATE_ACTIVE = "STATE_ACTIVE",
+  /**
+   * Market triggers cancellation condition or governance
+   * votes to close before market becomes Active
+   */
+  STATE_CANCELLED = "STATE_CANCELLED",
+  /** Governance vote (to close) */
+  STATE_CLOSED = "STATE_CLOSED",
+  /** Governance vote passes/wins */
+  STATE_PENDING = "STATE_PENDING",
+  /** The governance proposal valid and accepted */
+  STATE_PROPOSED = "STATE_PROPOSED",
+  /** Outcome of governance votes is to reject the market */
+  STATE_REJECTED = "STATE_REJECTED",
+  /** Settlement triggered and completed as defined by product */
+  STATE_SETTLED = "STATE_SETTLED",
+  /** Price monitoring or liquidity monitoring trigger */
+  STATE_SUSPENDED = "STATE_SUSPENDED",
+  /**
+   * Defined by the product (i.e. from a product parameter,
+   * specified in market definition, giving close date/time)
+   */
+  STATE_TRADING_TERMINATED = "STATE_TRADING_TERMINATED",
+}
 
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
@@ -128,8 +157,9 @@ export const VegaProtocol: Story = () => {
   const darkmode = useDarkMode();
 
   const marketId =
-    data?.markets?.find((market: Market) => market.state === "Active")?.id ??
-    data?.markets?.[0]?.id;
+    data?.markets?.find(
+      (market: Market) => market.state === MarketState.STATE_ACTIVE
+    )?.id ?? data?.markets?.[0]?.id;
 
   useEffect(() => {
     if (marketId) {

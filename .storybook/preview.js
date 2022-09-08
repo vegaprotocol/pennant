@@ -21,7 +21,7 @@ export const parameters = {
 };
 
 const client = new ApolloClient({
-  uri: "https://n03.stagnet2.vega.xyz/query",
+  uri: "https://api.n08.testnet.vega.xyz/graphql",
   cache: new InMemoryCache(),
 });
 
