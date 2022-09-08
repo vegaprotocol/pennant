@@ -212,6 +212,10 @@ export const VegaProtocol: Story = () => {
   );
 };
 
+VegaProtocol.parameters = {
+  controls: { hideNoControlsWarning: true },
+};
+
 export const CryptoCompare: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -437,4 +441,8 @@ export const CryptoCompare: Story = () => {
       </div>
     </HotkeysProvider>
   );
+};
+
+CryptoCompare.parameters = {
+  controls: { hideNoControlsWarning: true },
 };
