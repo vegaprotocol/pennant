@@ -5,6 +5,7 @@ module.exports = {
     builder: "webpack5",
   },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  staticDirs: ["../assets"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
