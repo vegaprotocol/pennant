@@ -14,22 +14,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 - use better initial zoom for depth chart ([#536](https://github.com/vegaprotocol/pennant/issues/536)) ([c763e7b](https://github.com/vegaprotocol/pennant/commit/c763e7b5fab335a2ada21652c41de17943d19fb4))
 
-### Bug Fixes
-
-- **deps:** update dependency allotment to v1.15.0 ([#531](https://github.com/vegaprotocol/pennant/issues/531)) ([83f2e1e](https://github.com/vegaprotocol/pennant/commit/83f2e1ee09b4af109ac94126f4420e4a4a5195b6))
-- **deps:** update docusaurus monorepo to v2.0.1 ([#532](https://github.com/vegaprotocol/pennant/issues/532)) ([93a324f](https://github.com/vegaprotocol/pennant/commit/93a324f53402890e6169a391388748292ea33e68))
-
 ### [0.4.12](https://github.com/vegaprotocol/pennant/compare/v0.4.11...v0.4.12) (2022-07-01)
 
 ### Features
 
 - match overlay indicator info colors with chart colors ([#515](https://github.com/vegaprotocol/pennant/issues/515)) ([ebd3668](https://github.com/vegaprotocol/pennant/commit/ebd3668443ff060ff95708a821a0da0c00a4153a))
-
-### Bug Fixes
-
-- **deps:** update dependency allotment to v1.14.2 ([#499](https://github.com/vegaprotocol/pennant/issues/499)) ([87a51c4](https://github.com/vegaprotocol/pennant/commit/87a51c4c6da9ff35808e4ac342413e38f350ede7))
-- **deps:** update dependency use-resize-observer to v9 ([#518](https://github.com/vegaprotocol/pennant/issues/518)) ([9868a53](https://github.com/vegaprotocol/pennant/commit/9868a539ee7c864dc95294748a0ea3ca014bcce8))
-- **deps:** update docusaurus monorepo to v2.0.0-beta.21 ([#489](https://github.com/vegaprotocol/pennant/issues/489)) ([b7aa2b0](https://github.com/vegaprotocol/pennant/commit/b7aa2b0214b73f99ffb062e91ac61c1a0823afc0))
 
 ### [0.4.11](https://github.com/vegaprotocol/pennant/compare/v0.4.10...v0.4.11) (2022-06-15)
 
@@ -49,7 +38,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 - enable resizing depth chart in browsers which don't support device-pixel-content-box ([#461](https://github.com/vegaprotocol/pennant/issues/461)) ([49494da](https://github.com/vegaprotocol/pennant/commit/49494da27b9a797f4b107d01608cbae1491d034c))
-- **deps:** update docusaurus monorepo to v2.0.0-beta.20 ([#415](https://github.com/vegaprotocol/pennant/issues/415)) ([0f5b75a](https://github.com/vegaprotocol/pennant/commit/0f5b75a35f887f2dac1afd50a51fb47f6109b07d))
 - remove log messages when attempting to register custom elements ([#460](https://github.com/vegaprotocol/pennant/issues/460)) ([36a966f](https://github.com/vegaprotocol/pennant/commit/36a966f2a1d48456b780d1e8482f0be5d7741ffa))
 
 ### [0.4.8](https://github.com/vegaprotocol/pennant/compare/v0.4.7...v0.4.8) (2022-05-04)
@@ -127,16 +115,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.3](https://github.com/vegaprotocol/pennant/compare/v0.3.2...v0.3.3) (2022-03-28)
 
-### Bug Fixes
-
-- **deps:** update dependency @types/node to v16 ([#363](https://github.com/vegaprotocol/pennant/issues/363)) ([631078e](https://github.com/vegaprotocol/pennant/commit/631078ebe6d513c6e7b0386db43d54bb5fc0799c))
-
 ### [0.3.2](https://github.com/vegaprotocol/pennant/compare/v0.3.1...v0.3.2) (2021-10-27)
 
 ### Bug Fixes
 
 - use fallback values if getPropertyValue returns empty string ([#360](https://github.com/vegaprotocol/pennant/issues/360)) ([d799197](https://github.com/vegaprotocol/pennant/commit/d799197afb33960fe6b266e47b088319fdefab75))
-- **deps:** update dependency use-resize-observer to v8 ([#343](https://github.com/vegaprotocol/pennant/issues/343)) ([8bc5edf](https://github.com/vegaprotocol/pennant/commit/8bc5edfb0571da71adba3329f9700427d51abc69))
 
 ### [0.3.1](https://github.com/vegaprotocol/pennant/compare/v0.3.0...v0.3.1) (2021-08-26)
 
@@ -253,7 +236,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 - draw latest price line for non simple charts ([ffe06d3](https://github.com/vegaprotocol/pennant/commit/ffe06d37948d16b92fc86812ed918fb218fe0ac5))
 - ensure onReady call resolves before querying or subscribing api ([5c44d6d](https://github.com/vegaprotocol/pennant/commit/5c44d6d3145b23b4216553a51b7b36d0c317d0e7))
-- **deps:** update dependency @types/node to v14 ([#205](https://github.com/vegaprotocol/pennant/issues/205)) ([f1cb466](https://github.com/vegaprotocol/pennant/commit/f1cb46635f35243a8dcaddb5f428bd576e709e16))
 
 ### [0.2.34](https://github.com/vegaprotocol/pennant/compare/v0.2.33...v0.2.34) (2021-06-10)
 
