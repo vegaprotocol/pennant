@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.15](https://github.com/vegaprotocol/pennant/compare/v0.4.14...v0.4.15) (2022-09-14)
+
+### Features
+
+- update success/danger colours for light/dark theme ([#558](https://github.com/vegaprotocol/pennant/issues/558)) ([40c3453](https://github.com/vegaprotocol/pennant/commit/40c3453790a7361aa11079e040146dc5c60eac32))
+
 ### [0.4.14](https://github.com/vegaprotocol/pennant/compare/v0.4.13...v0.4.14) (2022-08-10)
 
 ### Features
