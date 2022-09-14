@@ -2,15 +2,17 @@
   /* Colors. */
   --vega-blue: #48aff0;
   --vega-green: #00f780;
+  --vega-green-dark: #008545;
   --vega-orange: #ff7a1a;
   --vega-red: #ff261a;
+  --vega-red-dark: #EB001B;
   --vega-yellow: #edff22;
   --vega-pink: #ff2d5e;
 
-  --pennant-color-success: #26ff8a;
+  --pennant-color-success: var(--vega-green-dark);
   --pennant-color-info: var(--vega-blue);
   --pennant-color-warning: var(--vega-orange);
-  --pennant-color-danger: var(--vega-red);
+  --pennant-color-danger: var(--vega-red-dark);
 
   --pennant-color-white: #ffffff;
   --pennant-color-black: #000000;
@@ -89,6 +91,9 @@
 }
 
 [data-theme="dark"] {
+  --pennant-color-success: var(--vega-green);
+  --pennant-color-danger: var(--vega-red);
+  
   --pennant-color-emphasis-0: var(--pennant-color-gray-1000);
   --pennant-color-emphasis-100: var(--pennant-color-gray-900);
   --pennant-color-emphasis-200: var(--pennant-color-gray-800);
