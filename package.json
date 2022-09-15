@@ -124,7 +124,7 @@
     "@typescript-eslint/parser": "5.37.0",
     "babel-jest": "27.5.1",
     "bignumber.js": "9.1.0",
-    "eslint": "8.20.0",
+    "eslint": "8.23.1",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
