@@ -1,0 +1,14 @@
+.chart-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.chart-controls__button-group {
+  min-width: 120px;
+}
+
+.chart-controls__menu-button-wrapper {
+  min-width: 70px;
+}

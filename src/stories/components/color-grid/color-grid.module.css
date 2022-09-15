@@ -1,0 +1,14 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  row-gap: 0.75rem;
+  column-gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.title {
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
