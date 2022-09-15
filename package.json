@@ -69,11 +69,11 @@
   "scripts": {
     "build": "rollup -c && yarn build:types",
     "build:types": "tsc",
-    "build-storybook": "build-storybook -s assets",
+    "build-storybook": "build-storybook",
     "lint": "eslint --ext .ts,.tsx src",
     "prepare": "husky install",
     "release": "standard-version",
-    "storybook": "start-storybook -p 6006 -s assets",
+    "storybook": "start-storybook -p 6006",
     "test": "jest"
   },
   "browserslist": {
