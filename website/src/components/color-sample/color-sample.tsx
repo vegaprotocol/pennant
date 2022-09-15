@@ -9,7 +9,10 @@ export interface ColorSampleProps {
 
 export const ColorSample = ({ hex, name }: ColorSampleProps) => {
   return (
-    <div className={styles.sample}>
+    <div
+      className={styles.sample}
+      onClick={() => navigator.clipboard.writeText(hex)}
+    >
       <div className={styles.color} style={{ backgroundColor: hex }}></div>
       <div className={styles.description}>
         <div>{name}</div>

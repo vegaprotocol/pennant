@@ -9,11 +9,13 @@ import { ColorPalette } from '../src/components/color-palette';
 
 Pennant includes a default color palette out-of-the-box that is a great starting point if you don’t have your own specific branding in mind.
 
-<ColorPalette color="gray" />
-<ColorPalette color="vega-green" />
-<ColorPalette color="vega-red" />
-<ColorPalette color="vega-blue" />
-<ColorPalette color="vega-orange" />
+<div style={{display: "grid", gap: "2rem"}}>
+  <ColorPalette color="gray" />
+  <ColorPalette color="vega-green" />
+  <ColorPalette color="vega-red" />
+  <ColorPalette color="vega-blue" />
+  <ColorPalette color="vega-orange" />
+</div>
 
 ## Using custom colors
 

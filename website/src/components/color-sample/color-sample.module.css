@@ -5,6 +5,7 @@
 }
 
 .sample {
+  cursor: pointer;
 }
 
 .sample > .description {

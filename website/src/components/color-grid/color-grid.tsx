@@ -9,7 +9,7 @@ export interface ColorGridProps {
 
 export const ColorGrid = ({ children, title }: ColorGridProps) => {
   return (
-    <div>
+    <div className={styles.container}>
       <div className={styles.title}>{title}</div>
       <div className={styles.grid}>{children}</div>
     </div>
