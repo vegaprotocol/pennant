@@ -1,5 +1,6 @@
+import BrowserOnly from "@docusaurus/BrowserOnly";
 import { startCase } from "lodash";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { ColorGrid } from "../color-grid";
 import { ColorSample } from "../color-sample";
@@ -23,17 +24,26 @@ export interface ColorPaletteProps {
 }
 
 export const ColorPalette = ({ color }: ColorPaletteProps) => {
-  const cssStyleDeclaration = getComputedStyle(document.documentElement);
+  const [cssStyleDeclaration, setCssStyleDeclaration] =
+    useState<CSSStyleDeclaration>(null!);
+
+  useEffect(() => {
+    setCssStyleDeclaration(getComputedStyle(document.documentElement));
+  }, []);
 
   return (
-    <ColorGrid title={startCase(color)}>
-      {shades.map((shade) => {
-        const hex = cssStyleDeclaration.getPropertyValue(
-          `--pennant-color-${color}-${shade}`
-        );
+    <BrowserOnly>
+      {() => (
+        <ColorGrid title={startCase(color)}>
+          {shades.map((shade) => {
+            const hex = cssStyleDeclaration?.getPropertyValue(
+              `--pennant-color-${color}-${shade}`
+            );
 
-        return <ColorSample hex={hex} name={shade} />;
-      })}
-    </ColorGrid>
+            return <ColorSample hex={hex} name={shade} />;
+          })}
+        </ColorGrid>
+      )}
+    </BrowserOnly>
   );
 };
