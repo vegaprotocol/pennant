@@ -2,6 +2,12 @@ import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { Interval } from "../api/vega-graphql";
 import { parseVegaDecimal } from "../helpers";
 import json from "./data.json";
+import noChangeJson from "./no-change-data.json";
+
+const files = new Map([
+  ["data.json", json],
+  ["no-change-data.json", noChangeJson],
+]);
 
 const initialAverageEntryPrice = 595 + Math.random();
 
@@ -72,14 +78,23 @@ export class JsonDataSource implements DataSource {
   sub: any = null;
   marketId: string;
   _decimalPlaces: number;
+  filename: string;
+  annotations: boolean;
 
   get decimalPlaces(): number {
     return this._decimalPlaces;
   }
 
-  constructor(marketId: string, decimalPlaces: number) {
+  constructor(
+    marketId: string,
+    decimalPlaces: number,
+    filename: string = "data.json",
+    annotations: boolean = true
+  ) {
     this.marketId = marketId;
     this._decimalPlaces = decimalPlaces;
+    this.filename = filename;
+    this.annotations = annotations;
   }
 
   async onReady() {
@@ -91,7 +106,9 @@ export class JsonDataSource implements DataSource {
   }
 
   async query(interval: Interval, _from: string, _to: string) {
-    const candles = json[interval].candles.map((d) =>
+    const data: any = files.get(this.filename);
+
+    const candles = data[interval].candles.map((d: any) =>
       extendCandle(d, this.decimalPlaces)
     );
 
@@ -108,13 +125,15 @@ export class JsonDataSource implements DataSource {
   subscribeAnnotations(
     onSubscriptionAnnotation: (annotations: Annotation[]) => void
   ) {
-    onSubscriptionAnnotation(annotations);
-
-    setInterval(() => {
-      const averageEntryPrice = 595 + Math.random();
-
+    if (this.annotations) {
       onSubscriptionAnnotation(annotations);
-    }, 5000);
+
+      setInterval(() => {
+        const averageEntryPrice = 595 + Math.random();
+
+        onSubscriptionAnnotation(annotations);
+      }, 5000);
+    }
   }
 
   unsubscribeAnnotations() {}
