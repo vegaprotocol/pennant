@@ -6889,7 +6889,7 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pennant@^0.4.16:
+pennant@^0.4.15:
   version "0.4.16"
   resolved "https://registry.yarnpkg.com/pennant/-/pennant-0.4.16.tgz#2fa3e157669f4c7e0d3c3b577d4ff3d508e3ad34"
   integrity sha512-QA4Q8on0C7DgaY7nBOLwZBp1k+xW40ZzRGJZZPsiRECLd794OJaGeVG8BSAh4Ua2WG8MHoqEuxFKCf4p9pK6mw==
