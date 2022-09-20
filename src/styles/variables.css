@@ -1,11 +1,73 @@
 :root {
   /* Colors. */
-  --vega-blue: #48aff0;
-  --vega-green: #00f780;
-  --vega-green-dark: #008545;
-  --vega-orange: #ff7a1a;
-  --vega-red: #ff261a;
-  --vega-red-dark: #EB001B;
+  --pennant-color-white: #ffffff;
+  --pennant-color-black: #000000;
+
+  --pennant-color-gray-0: var(--pennant-color-white);
+  --pennant-color-gray-50: #ffffff;
+  --pennant-color-gray-100: #ededed;
+  --pennant-color-gray-200: #cdd0d5;
+  --pennant-color-gray-300: #acb0ba;
+  --pennant-color-gray-400: #8b919e;
+  --pennant-color-gray-500: #6b7280;
+  --pennant-color-gray-600: #5d636f;
+  --pennant-color-gray-700: #4f545f;
+  --pennant-color-gray-800: #41454e;
+  --pennant-color-gray-900: #333333;
+  --pennant-color-gray-1000: var(--pennant-color-black);
+
+  --pennant-color-vega-green-50: #b0ffd9;
+  --pennant-color-vega-green-100: #9bffcf;
+  --pennant-color-vega-green-200: #72ffbb;
+  --pennant-color-vega-green-300: #4affa8;
+  --pennant-color-vega-green-400: #21ff94;
+  --pennant-color-vega-green-500: #00f780;
+  --pennant-color-vega-green-600: #00bf63;
+  --pennant-color-vega-green-700: #008545;
+  --pennant-color-vega-green-800: #004f29;
+  --pennant-color-vega-green-900: #00170c;
+
+  --pennant-color-vega-red-50: #ffd4d2;
+  --pennant-color-vega-red-100: #ffc1bd;
+  --pennant-color-vega-red-200: #ff9a94;
+  --pennant-color-vega-red-300: #ff736c;
+  --pennant-color-vega-red-400: #ff4d43;
+  --pennant-color-vega-red-500: #ff261a;
+  --pennant-color-vega-red-600: #eb001b;
+  --pennant-color-vega-red-700: #a90900;
+  --pennant-color-vega-red-800: #710600;
+  --pennant-color-vega-red-900: #390300;
+
+  --pennant-color-vega-blue-50: #f2f9fe;
+  --pennant-color-vega-blue-100: #dff1fc;
+  --pennant-color-vega-blue-200: #b9e0f9;
+  --pennant-color-vega-blue-300: #93d0f6;
+  --pennant-color-vega-blue-400: #6ebff3;
+  --pennant-color-vega-blue-500: #48aff0;
+  --pennant-color-vega-blue-600: #1498ec;
+  --pennant-color-vega-blue-700: #0f77b9;
+  --pennant-color-vega-blue-800: #0b5685;
+  --pennant-color-vega-blue-900: #073451;
+
+  --pennant-color-vega-orange-50: #ffe5d2;
+  --pennant-color-vega-orange-100: #ffd9bd;
+  --pennant-color-vega-orange-200: #ffc194;
+  --pennant-color-vega-orange-300: #ffa96c;
+  --pennant-color-vega-orange-400: #ff9243;
+  --pennant-color-vega-orange-500: #ff7a1a;
+  --pennant-color-vega-orange-600: #e15e00;
+  --pennant-color-vega-orange-700: #a94700;
+  --pennant-color-vega-orange-800: #712f00;
+  --pennant-color-vega-orange-900: #391800;
+
+  --vega-blue: var(--pennant-color-vega-blue-500);
+  --vega-green: var(--pennant-color-vega-green-500);
+  --vega-green-light: var(--pennant-color-vega-green-50);
+  --vega-green-dark: var(--pennant-color-vega-green-700);
+  --vega-orange: var(--pennant-color-vega-orange-500);
+  --vega-red: var(--pennant-color-vega-red-500);
+  --vega-red-light: var(--pennant-color-vega-red-50);
+  --vega-red-dark: var(--pennant-color-vega-red-600);
   --vega-yellow: #edff22;
   --vega-pink: #ff2d5e;
 
@@ -13,21 +75,6 @@
   --pennant-color-info: var(--vega-blue);
   --pennant-color-warning: var(--vega-orange);
   --pennant-color-danger: var(--vega-red-dark);
-
-  --pennant-color-white: #ffffff;
-  --pennant-color-black: #000000;
-
-  --pennant-color-gray-0: var(--pennant-color-white);
-  --pennant-color-gray-100: #f5f6f7;
-  --pennant-color-gray-200: #ebedf0;
-  --pennant-color-gray-300: #dadde1;
-  --pennant-color-gray-400: #ccd0d5;
-  --pennant-color-gray-500: #bec3c9;
-  --pennant-color-gray-600: #8d949e;
-  --pennant-color-gray-700: #606770;
-  --pennant-color-gray-800: #444950;
-  --pennant-color-gray-900: #1c1e21;
-  --pennant-color-gray-1000: var(--pennant-color-black);
 
   --pennant-color-emphasis-0: var(--pennant-color-gray-0);
   --pennant-color-emphasis-100: var(--pennant-color-gray-100);
@@ -58,15 +105,15 @@
   --pennant-accent5: #ff6d01;
   --pennant-accent6: #46bdc6;
 
-  --pennant-color-buy-fill: #eaf5ee;
+  --pennant-color-buy-fill: var(--vega-green-light);
   --pennant-color-buy-stroke: var(--vega-green);
-  --pennant-color-sell-fill: #f8e9ea;
+  --pennant-color-sell-fill: var(--vega-red-light);
   --pennant-color-sell-stroke: var(--vega-red);
 
   /* Depth chart. */
-  --pennant-color-depth-buy-fill: #eaf5ee;
+  --pennant-color-depth-buy-fill: var(--vega-green-light);
   --pennant-color-depth-buy-stroke: var(--vega-green);
-  --pennant-color-depth-sell-fill: #f8e9ea;
+  --pennant-color-depth-sell-fill: var(--vega-red-light);
   --pennant-color-depth-sell-stroke: var(--vega-red);
 
   /* Typography. */
@@ -93,7 +140,7 @@
 [data-theme="dark"] {
   --pennant-color-success: var(--vega-green);
   --pennant-color-danger: var(--vega-red);
-  
+
   --pennant-color-emphasis-0: var(--pennant-color-gray-1000);
   --pennant-color-emphasis-100: var(--pennant-color-gray-900);
   --pennant-color-emphasis-200: var(--pennant-color-gray-800);
@@ -106,21 +153,21 @@
   --pennant-color-emphasis-900: var(--pennant-color-gray-100);
   --pennant-color-emphasis-1000: var(--pennant-color-gray-0);
 
-  --pennant-background-surface-color: #000000;
+  --pennant-background-surface-color: var(--pennant-color-black);
   --pennant-hover-overlay: rgba(0, 0, 0, 0.5);
 
   --pennant-color-content: var(--pennant-color-emphasis-900);
   --pennant-color-content-secondary: var(--pennant-color-emphasis-700);
 
-  --pennant-color-buy-fill: #1e2c29;
+  --pennant-color-buy-fill: var(--vega-green-dark);
   --pennant-color-buy-stroke: var(--vega-green);
-  --pennant-color-sell-fill: #2c2024;
+  --pennant-color-sell-fill: var(--vega-red-dark);
   --pennant-color-sell-stroke: var(--vega-red);
 
   /* Depth chart. */
-  --pennant-color-depth-buy-fill: #003119;
+  --pennant-color-depth-buy-fill: var(--vega-green-dark);
   --pennant-color-depth-buy-stroke: var(--vega-green);
-  --pennant-color-depth-sell-fill: #380200;
+  --pennant-color-depth-sell-fill: var(--vega-red-dark);
   --pennant-color-depth-sell-stroke: var(--vega-red);
 
   /* Typography. */

@@ -8,9 +8,11 @@ export interface Colors {
   backgroundSurface: string;
   textPrimary: string;
   textSecondary: string;
+  emphasis100: string;
   emphasis300: string;
   emphasis400: string;
   emphasis500: string;
+  emphasis900: string;
   vegaGreen: string;
   vegaYellow: string;
   vegaOrange: string;
@@ -54,6 +56,10 @@ export function getColors(element: HTMLElement | null): Colors {
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-background-surface-color")
         .trim() || "#d9822b",
+    emphasis100:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-emphasis-100")
+        .trim() || "#EDEDED",
     emphasis300:
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-emphasis-300")
@@ -66,6 +72,10 @@ export function getColors(element: HTMLElement | null): Colors {
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-emphasis-500")
         .trim() || "#494949",
+    emphasis900:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-emphasis-900")
+        .trim() || "#333333",
     vegaGreen:
       cssStyleDeclaration?.getPropertyValue("--vega-orange").trim() ||
       COLORS.VEGA_GREEN,
