@@ -3456,10 +3456,10 @@ algoliasearch@^4.13.1:
     "@algolia/requester-node-http" "4.13.1"
     "@algolia/transporter" "4.13.1"
 
-allotment@1.15.0:
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.15.0.tgz#3e27eb0d048b8da3d1acb8bc53610b63f84d5c5a"
-  integrity sha512-9JXAm59/XD5Djfpso0rgGZdA23n3v5XeicwjNoInp2qlBa/HFZtnMDujm6NHOSjOCQPWhkOt4ybYgz8H3ed+8A==
+allotment@1.17.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.17.0.tgz#a664b349c48a16602f27022d6dd6599e4ed53757"
+  integrity sha512-Iab4GCVLb9/2R5D2PFlbhR2OWZrGLpYqF6YgmonLmwc9BrA+PEMt2BkltdYaySh7vfG73tuMdBB5R7AdTuMJEA==
   dependencies:
     classnames "^2.3.0"
     eventemitter3 "^4.0.0"
@@ -6889,10 +6889,10 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pennant@^0.4.15:
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/pennant/-/pennant-0.4.15.tgz#c1ad837633eb1958a1d6c9aa80c6609e32ab732a"
-  integrity sha512-9q755cV05jN2Y0ONH+NAFh8ONFUId+08cjW4TFP6Xaenw1TkuHXNF2PG5CSDnXuS8ar0LSKL5jkL4DV3ymDKlg==
+pennant@^0.4.16:
+  version "0.4.16"
+  resolved "https://registry.yarnpkg.com/pennant/-/pennant-0.4.16.tgz#2fa3e157669f4c7e0d3c3b577d4ff3d508e3ad34"
+  integrity sha512-QA4Q8on0C7DgaY7nBOLwZBp1k+xW40ZzRGJZZPsiRECLd794OJaGeVG8BSAh4Ua2WG8MHoqEuxFKCf4p9pK6mw==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@d3fc/d3fc-technical-indicator" "^8.0.1"
@@ -6912,7 +6912,7 @@ pennant@^0.4.15:
     "@types/react" "^18.0.14"
     "@types/react-dom" "^18.0.5"
     "@types/react-virtualized-auto-sizer" "^1.0.0"
-    allotment "1.15.0"
+    allotment "1.17.0"
     classnames "^2.2.6"
     d3-array "2.3.3"
     d3-delaunay "^6.0.2"
@@ -8611,12 +8611,7 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@4.8.3:
-  version "4.8.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.3.tgz#d59344522c4bc464a65a730ac695007fdb66dd88"
-  integrity sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==
-
-typescript@^4.1.2:
+typescript@4.8.3, typescript@^4.1.2:
   version "4.8.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.3.tgz#d59344522c4bc464a65a730ac695007fdb66dd88"
   integrity sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==
