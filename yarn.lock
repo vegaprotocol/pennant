@@ -2667,6 +2667,23 @@
     react-transition-group "^4.4.1"
     tslib "~2.3.1"
 
+"@blueprintjs/core@^4.10.2":
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.10.2.tgz#3d8822717273a41f5a586858838dec2a803fe9b7"
+  integrity sha512-YbjHXDPX8rxXoRHrScrCBH+GsgiVRnhBqLnWFLlClpdJTRvk6HVUpZN5OL138lZSgcQH4quZ+Fg8PLFflIx/Yw==
+  dependencies:
+    "@blueprintjs/colors" "^4.1.6"
+    "@blueprintjs/icons" "^4.6.0"
+    "@juggle/resize-observer" "^3.3.1"
+    "@types/dom4" "^2.0.1"
+    classnames "^2.2"
+    dom4 "^2.1.5"
+    normalize.css "^8.0.1"
+    popper.js "^1.16.1"
+    react-popper "^1.3.7"
+    react-transition-group "^4.4.1"
+    tslib "~2.3.1"
+
 "@blueprintjs/icons@^4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.5.0.tgz#1b3dadaac5dd51ca56547a0f1088cef9435234c3"
@@ -2676,7 +2693,29 @@
     classnames "^2.2"
     tslib "~2.3.1"
 
-"@blueprintjs/popover2@1.6.6", "@blueprintjs/popover2@^1.6.6":
+"@blueprintjs/icons@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.6.0.tgz#2e25e741d18a984ebde807801a12d9a511c1b8dd"
+  integrity sha512-3FcL0D35l/5PXFCgJaFE1MODsloNP5BmJ5+YSWt4ZoaB7ZRTfzuZfO5pZBrg9A6gc1fc+aDS+tPITxXI3kg/nQ==
+  dependencies:
+    change-case "^4.1.2"
+    classnames "^2.2"
+    tslib "~2.3.1"
+
+"@blueprintjs/popover2@1.6.7":
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.6.7.tgz#4b788bd6e0822158ae6db5d8c3f458294a23a6e7"
+  integrity sha512-rtI1E8Mxk9tv2j9lLV1A5MPh+gtF8i4HXGDmWgCMZ8JRgbojSpa/sbaEUngP5buMgHvRnAiCE16R7UtD9qysdg==
+  dependencies:
+    "@blueprintjs/core" "^4.10.2"
+    "@juggle/resize-observer" "^3.3.1"
+    "@popperjs/core" "^2.5.4"
+    classnames "^2.2"
+    dom4 "^2.1.5"
+    react-popper "^2.2.4"
+    tslib "~2.3.1"
+
+"@blueprintjs/popover2@^1.6.6":
   version "1.6.6"
   resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.6.6.tgz#84e3d67e1e027b1138e421cb005559ba6f2c8a78"
   integrity sha512-ASZsvlcn5A42tDAgniu/fkBlUu8ebYWVcLb7oBH91Y4eLxW6I5HUL2BpMkhGhM3XYbjiLRUrLouT5n8hLIi13w==
