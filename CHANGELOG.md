@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.17) (2022-09-28)
+
+### Features
+
+- improve fill colors for depth chart ([18c28dd](https://github.com/vegaprotocol/pennant/commit/18c28dd2ddc9f4563107de9c1e49bd1119645449))
+
 ### [0.4.16](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.16) (2022-09-20)
 
 ### Features
