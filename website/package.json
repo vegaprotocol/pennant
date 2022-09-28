@@ -22,8 +22,8 @@
     "lodash": "^4.17.21",
     "pennant": "^0.4.16",
     "prism-react-renderer": "^1.2.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "2.1.0",
