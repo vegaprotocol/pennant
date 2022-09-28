@@ -2650,7 +2650,7 @@
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.6.tgz#a2e3d02b40867b3770187c69a8514f113ab4dd85"
   integrity sha512-3/kahUWyvgQUV9NtCMeeJgTFHziM2Z3f4hjDfnl03X4MW0onUeZfa2Mu4ZsRn2IAK7AmfLNkZe8vp8mxX9pDRg==
 
-"@blueprintjs/core@4.10.1", "@blueprintjs/core@^4.10.1":
+"@blueprintjs/core@4.10.1":
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.10.1.tgz#ba87e5b0d852483e5f4f676aec606addc9d16f02"
   integrity sha512-yXvbIP1P2GaX8ksrmZIX775W8nemdGfkKDnQehmCyW48Nm61xKrWeMFd8dUWCIQ8ok/xLlr3X5jAyW7YYfzzmg==
@@ -2702,7 +2702,7 @@
     classnames "^2.2"
     tslib "~2.3.1"
 
-"@blueprintjs/popover2@1.6.7":
+"@blueprintjs/popover2@1.6.7", "@blueprintjs/popover2@^1.6.7":
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.6.7.tgz#4b788bd6e0822158ae6db5d8c3f458294a23a6e7"
   integrity sha512-rtI1E8Mxk9tv2j9lLV1A5MPh+gtF8i4HXGDmWgCMZ8JRgbojSpa/sbaEUngP5buMgHvRnAiCE16R7UtD9qysdg==
@@ -2715,26 +2715,13 @@
     react-popper "^2.2.4"
     tslib "~2.3.1"
 
-"@blueprintjs/popover2@^1.6.6":
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.6.6.tgz#84e3d67e1e027b1138e421cb005559ba6f2c8a78"
-  integrity sha512-ASZsvlcn5A42tDAgniu/fkBlUu8ebYWVcLb7oBH91Y4eLxW6I5HUL2BpMkhGhM3XYbjiLRUrLouT5n8hLIi13w==
+"@blueprintjs/select@4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-4.7.0.tgz#296a25b8e885a0c76bf529ffb90da275c3ff0c32"
+  integrity sha512-YXs5kDXh1i1j6FE/EyCbaC5rLXOVY41vlbUgt3tLIHVuwzdI/99cwj3wkUmRDp20dp0VLdCMrmFWip9qPM/9lg==
   dependencies:
-    "@blueprintjs/core" "^4.10.1"
-    "@juggle/resize-observer" "^3.3.1"
-    "@popperjs/core" "^2.5.4"
-    classnames "^2.2"
-    dom4 "^2.1.5"
-    react-popper "^2.2.4"
-    tslib "~2.3.1"
-
-"@blueprintjs/select@4.6.6":
-  version "4.6.6"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-4.6.6.tgz#d88cfd67d81beb011a3606a4b7f4d6656a8efb94"
-  integrity sha512-Mw38FB96JdR1XX7cKZBWR9irUQdXtx/+6FSc+xcYEZpPyae8bQHA6NiBi5KBsNWjWBVVWSxne6TZTKYmV93C8A==
-  dependencies:
-    "@blueprintjs/core" "^4.10.1"
-    "@blueprintjs/popover2" "^1.6.6"
+    "@blueprintjs/core" "^4.10.2"
+    "@blueprintjs/popover2" "^1.6.7"
     classnames "^2.2"
     tslib "~2.3.1"
 
