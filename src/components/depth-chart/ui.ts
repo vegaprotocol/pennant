@@ -532,7 +532,7 @@ export class UI extends EventEmitter {
           buyIndex = index;
 
           sellIndex =
-            this.prices[0] <= width / 2
+            this.prices[this.prices.length - 1] <= width / 2
               ? -1
               : bisectRight(
                   this.prices,
@@ -644,7 +644,8 @@ export class UI extends EventEmitter {
         // TODO: Changing visibility in groups like this suggests they should be in a Container
         if (
           this.priceScale.invert(buyNearestX) > this.priceScale.domain()[0] &&
-          buyPricesPresent
+          buyPricesPresent &&
+          buyIndex !== -1
         ) {
           this.buyPriceText.visible = true;
           this.buyVolumeText.visible = true;
@@ -659,7 +660,8 @@ export class UI extends EventEmitter {
 
         if (
           this.priceScale.invert(sellNearestX) < this.priceScale.domain()[1] &&
-          sellPricesPresent
+          sellPricesPresent &&
+          sellIndex !== -1
         ) {
           this.sellPriceText.visible = true;
           this.sellVolumeText.visible = true;
