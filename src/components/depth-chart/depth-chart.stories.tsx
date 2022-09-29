@@ -460,8 +460,8 @@ FractionalVolume.args = {
   volumeFormat: (volume: number) => numberFormatter(2).format(volume),
 };
 
-export const Bug = Template.bind({});
-Bug.args = {
+export const UnsortedPriceLevels = Template.bind({});
+UnsortedPriceLevels.args = {
   midPrice: 0.4404,
   data: {
     buy: [
