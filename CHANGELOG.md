@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.18) (2022-09-29)
+
+### Features
+
+- better support for color customization ([#572](https://github.com/vegaprotocol/pennant/issues/572)) ([fdf041a](https://github.com/vegaprotocol/pennant/commit/fdf041adb6116e9e8d82e4e0540eda5cadc07fba))
+- improve fill colors for depth chart ([18c28dd](https://github.com/vegaprotocol/pennant/commit/18c28dd2ddc9f4563107de9c1e49bd1119645449))
+- sort depth chart data ([#600](https://github.com/vegaprotocol/pennant/issues/600)) ([1d98c3b](https://github.com/vegaprotocol/pennant/commit/1d98c3b142ce4b5bd4e6b71732edc44d84f5c24b))
+
+### Bug Fixes
+
+- show sell side tooltip correctly in depth chart ([#601](https://github.com/vegaprotocol/pennant/issues/601)) ([08c2a30](https://github.com/vegaprotocol/pennant/commit/08c2a30861b8ff2292a8c3ebcfb4a722b2a83b3a))
+- **deps:** update dependency allotment to v1.17.0 ([#575](https://github.com/vegaprotocol/pennant/issues/575)) ([fbdba48](https://github.com/vegaprotocol/pennant/commit/fbdba48a3ea070809ba6f1da83f0d52db77bae8f))
+- **deps:** update docusaurus monorepo to v2.1.0 ([#576](https://github.com/vegaprotocol/pennant/issues/576)) ([6c0b25b](https://github.com/vegaprotocol/pennant/commit/6c0b25ba7ab8983ce1acb85fe098a43c96ee22d8))
+
 ### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.17) (2022-09-28)
 
 ### Features
