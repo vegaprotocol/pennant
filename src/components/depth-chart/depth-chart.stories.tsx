@@ -459,3 +459,205 @@ FractionalVolume.args = {
   priceFormat: (price: number) => numberFormatter(5).format(price),
   volumeFormat: (volume: number) => numberFormatter(2).format(volume),
 };
+
+export const Bug = Template.bind({});
+Bug.args = {
+  midPrice: 0.4404,
+  data: {
+    buy: [
+      {
+        price: 0.4205,
+        volume: 5274,
+      },
+      {
+        price: 0.4305,
+        volume: 1511,
+      },
+      {
+        price: 0.4345,
+        volume: 3648,
+      },
+      {
+        price: 0.4347,
+        volume: 6261,
+      },
+      {
+        price: 0.4349,
+        volume: 6141,
+      },
+      {
+        price: 0.4351,
+        volume: 6599,
+      },
+      {
+        price: 0.4353,
+        volume: 3379,
+      },
+      {
+        price: 0.4355,
+        volume: 6656,
+      },
+      {
+        price: 0.4357,
+        volume: 5698,
+      },
+      {
+        price: 0.4359,
+        volume: 5595,
+      },
+      {
+        price: 0.4361,
+        volume: 5757,
+      },
+      {
+        price: 0.4363,
+        volume: 5399,
+      },
+      {
+        price: 0.4367,
+        volume: 7944,
+      },
+      {
+        price: 0.4369,
+        volume: 5368,
+      },
+      {
+        price: 0.4371,
+        volume: 7677,
+      },
+      {
+        price: 0.4373,
+        volume: 7314,
+      },
+      {
+        price: 0.4375,
+        volume: 7194,
+      },
+      {
+        price: 0.4377,
+        volume: 7077,
+      },
+      {
+        price: 0.4379,
+        volume: 6964,
+      },
+      {
+        price: 0.4381,
+        volume: 6854,
+      },
+      {
+        price: 0.4383,
+        volume: 6747,
+      },
+      {
+        price: 0.4385,
+        volume: 5753,
+      },
+      {
+        price: 0.4387,
+        volume: 4643,
+      },
+      {
+        price: 0.4389,
+        volume: 8730,
+      },
+      {
+        price: 0.4391,
+        volume: 8600,
+      },
+      {
+        price: 0.4393,
+        volume: 7264,
+      },
+      {
+        price: 0.4395,
+        volume: 9746,
+      },
+      {
+        price: 0.4396,
+        volume: 8884,
+      },
+      {
+        price: 0.4397,
+        volume: 8428,
+      },
+      {
+        price: 0.4398,
+        volume: 8174,
+      },
+      {
+        price: 0.4399,
+        volume: 194,
+      },
+      {
+        price: 0.44,
+        volume: 384,
+      },
+      {
+        price: 0.4403,
+        volume: 67373,
+      },
+      {
+        price: 0.4365,
+        volume: 38083,
+      },
+      {
+        price: 0.435,
+        volume: 5000,
+      },
+      {
+        price: 0.432,
+        volume: 7000,
+      },
+      {
+        price: 0.43,
+        volume: 10000,
+      },
+      {
+        price: 0.426,
+        volume: 52000,
+      },
+      {
+        price: 0.425,
+        volume: 50000,
+      },
+      {
+        price: 0.422,
+        volume: 15000,
+      },
+      {
+        price: 0.42,
+        volume: 35000,
+      },
+      {
+        price: 0.4158,
+        volume: 20000,
+      },
+      {
+        price: 0.415,
+        volume: 65000,
+      },
+      {
+        price: 0.412,
+        volume: 20000,
+      },
+      {
+        price: 0.41,
+        volume: 5000,
+      },
+      {
+        price: 0.402,
+        volume: 5000,
+      },
+      {
+        price: 0.3902,
+        volume: 4888,
+      },
+      {
+        price: 0.4404,
+        volume: 33414,
+      },
+    ],
+    sell: [],
+  },
+};

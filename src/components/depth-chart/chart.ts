@@ -308,6 +308,9 @@ export class Chart extends EventEmitter {
   set data(data: { buy: PriceLevel[]; sell: PriceLevel[] }) {
     this._data = data;
 
+    this._data.buy = sortBy(this._data.buy, (priceLevel) => -priceLevel.price);
+    this._data.sell = sortBy(this._data.sell, (priceLevel) => priceLevel.price);
+
     this.prices = sortBy([
       ...this._data.buy.map((priceLevel) => priceLevel.price),
       ...this._data.sell.map((priceLevel) => priceLevel.price),
