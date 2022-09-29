@@ -24,11 +24,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 - better support for color customization ([#572](https://github.com/vegaprotocol/pennant/issues/572)) ([fdf041a](https://github.com/vegaprotocol/pennant/commit/fdf041adb6116e9e8d82e4e0540eda5cadc07fba))
 
-### Bug Fixes
-
-- **deps:** update dependency allotment to v1.17.0 ([#575](https://github.com/vegaprotocol/pennant/issues/575)) ([fbdba48](https://github.com/vegaprotocol/pennant/commit/fbdba48a3ea070809ba6f1da83f0d52db77bae8f))
-- **deps:** update docusaurus monorepo to v2.1.0 ([#576](https://github.com/vegaprotocol/pennant/issues/576)) ([6c0b25b](https://github.com/vegaprotocol/pennant/commit/6c0b25ba7ab8983ce1acb85fe098a43c96ee22d8))
-
 ### [0.4.15](https://github.com/vegaprotocol/pennant/compare/v0.4.14...v0.4.15) (2022-09-14)
 
 ### Features
