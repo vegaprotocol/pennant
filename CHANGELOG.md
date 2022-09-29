@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.18) (2022-09-29)
+
+### Features
+
+- sort depth chart data ([#600](https://github.com/vegaprotocol/pennant/issues/600)) ([1d98c3b](https://github.com/vegaprotocol/pennant/commit/1d98c3b142ce4b5bd4e6b71732edc44d84f5c24b))
+
+### Bug Fixes
+
+- show sell side tooltip correctly in depth chart ([#601](https://github.com/vegaprotocol/pennant/issues/601)) ([08c2a30](https://github.com/vegaprotocol/pennant/commit/08c2a30861b8ff2292a8c3ebcfb4a722b2a83b3a))
+
 ### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.17) (2022-09-28)
 
 ### Features
