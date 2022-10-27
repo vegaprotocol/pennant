@@ -2709,7 +2709,12 @@
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.7.tgz#3ccac41eabc3245da20669e6aafafe6c0271d264"
   integrity sha512-4qmwwNabzJ6TbdWLjfVFqoCz6OPZpPDV6xvSmnEnS6tWSQ+bepi/ybzx3kKOGtNk1lu0tFDU6tnVti7uz23XaQ==
 
-"@blueprintjs/core@4.10.2", "@blueprintjs/core@^4.10.2":
+"@blueprintjs/colors@^4.1.8":
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.8.tgz#ebab4e6fe9d4e2a3bb958ae0e2385b0675a0754a"
+  integrity sha512-J3N3PIBlmZS7+br+8KkR0yilGp74Fwp8SXfs0Bf4OGgLcqrBixqCqAs+YnpS2iOV0m2D22cZc8YsnPVdx0kH7w==
+
+"@blueprintjs/core@4.10.2":
   version "4.10.2"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.10.2.tgz#3d8822717273a41f5a586858838dec2a803fe9b7"
   integrity sha512-YbjHXDPX8rxXoRHrScrCBH+GsgiVRnhBqLnWFLlClpdJTRvk6HVUpZN5OL138lZSgcQH4quZ+Fg8PLFflIx/Yw==
@@ -2743,6 +2748,23 @@
     react-transition-group "^4.4.5"
     tslib "~2.3.1"
 
+"@blueprintjs/core@^4.11.5":
+  version "4.11.5"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.11.5.tgz#fc803a82350154025869841b30828c96c06c2b4b"
+  integrity sha512-DktmpkmTA6FA23YpEHnA/CdnjrSgin7yJ8E2rN3yJ7BdnW4qRnsdY8wx9p1i9WrKe6kA3HhWUI1vrFcEWEukiA==
+  dependencies:
+    "@blueprintjs/colors" "^4.1.8"
+    "@blueprintjs/icons" "^4.9.0"
+    "@juggle/resize-observer" "^3.4.0"
+    "@types/dom4" "^2.0.2"
+    classnames "^2.3.1"
+    dom4 "^2.1.5"
+    normalize.css "^8.0.1"
+    popper.js "^1.16.1"
+    react-popper "^1.3.7"
+    react-transition-group "^4.4.5"
+    tslib "~2.3.1"
+
 "@blueprintjs/icons@^4.6.0":
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.6.0.tgz#2e25e741d18a984ebde807801a12d9a511c1b8dd"
@@ -2761,15 +2783,24 @@
     classnames "^2.3.2"
     tslib "~2.3.1"
 
-"@blueprintjs/popover2@1.6.7":
-  version "1.6.7"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.6.7.tgz#4b788bd6e0822158ae6db5d8c3f458294a23a6e7"
-  integrity sha512-rtI1E8Mxk9tv2j9lLV1A5MPh+gtF8i4HXGDmWgCMZ8JRgbojSpa/sbaEUngP5buMgHvRnAiCE16R7UtD9qysdg==
+"@blueprintjs/icons@^4.9.0":
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.9.0.tgz#21b5a51584d948e2272ed9227b2ecd641c1c6e7e"
+  integrity sha512-3EsWXfg2g+/R47WYWuXeGsCpxBhId0gnYvVxlrkcFjO76kvYXXobM9zj19T9nTvUhTEjksHUPxM61y4ltOIl3Q==
   dependencies:
-    "@blueprintjs/core" "^4.10.2"
-    "@juggle/resize-observer" "^3.3.1"
-    "@popperjs/core" "^2.5.4"
-    classnames "^2.2"
+    change-case "^4.1.2"
+    classnames "^2.3.1"
+    tslib "~2.3.1"
+
+"@blueprintjs/popover2@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.8.0.tgz#fc34ab91c0fd9fdbb2be3a30d53b3a33f6836b23"
+  integrity sha512-lHMkzd1BE9q+3g9Q/WHPVYzZhJ+sZ7Z1Wa5zf6A+VsLjMUVM3BswMi3oe6guIYfhMabFhPjrZrWLn0ccqX7rIQ==
+  dependencies:
+    "@blueprintjs/core" "^4.11.5"
+    "@juggle/resize-observer" "^3.4.0"
+    "@popperjs/core" "^2.11.6"
+    classnames "^2.3.1"
     dom4 "^2.1.5"
     react-popper "^2.2.4"
     tslib "~2.3.1"
@@ -3292,11 +3323,6 @@
   version "2.11.6"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
-
-"@popperjs/core@^2.5.4":
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.9.2.tgz#adea7b6953cbb34651766b0548468e743c6a2353"
-  integrity sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q==
 
 "@rollup/plugin-babel@5.3.1":
   version "5.3.1"
@@ -6596,7 +6622,7 @@ classnames@^2.2, classnames@^2.2.6, classnames@^2.3.0:
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
 
-classnames@^2.3.2:
+classnames@^2.3.1, classnames@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
   integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
