@@ -128,7 +128,7 @@
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "8.0.0",
-    "eslint-plugin-storybook": "0.6.4",
+    "eslint-plugin-storybook": "0.6.6",
     "graphql": "16.6.0",
     "graphql-ws": "5.11.2",
     "husky": "8.0.1",
