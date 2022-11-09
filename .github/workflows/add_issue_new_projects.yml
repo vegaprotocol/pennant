@@ -1,37 +1,39 @@
 ---
 
-name: Add Issues To Project Board
+name: "Add Issues To Project Board"
 
 "on":
   issues:
-    types: [opened]
+    types:
+      - opened
+env:
+  GH_TOKEN: ${{ secrets.GH_NEW_CARD_TO_PROJECT }}
+  PROJECT_ID: ${{ secrets.FRONT_END_PROJECT_ID }}
+  ISSUE_ID: ${{ github.event.issue.node_id }}
+  USER: ${{ github.actor }}
 
 jobs:
-  add_issue:
+  add_issue_frontend:
+    # yamllint disable rule:line-length
     runs-on: ubuntu-latest
     steps:
-      - name: Add issue project board
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_NEW_CARD_TO_PROJECT }}
-          PROJECT_ID: ${{ secrets.FRONT_END_PROJECT_ID }}
-          ISSUE_ID: ${{ github.event.issue.node_id }}
+      - name: "Add to front end project board"
         run: |
           gh api graphql -f query='
-            mutation($project:ID!, $issue:ID!) {
-              addProjectNextItem(input: {projectId: $project, contentId: $issue}) {
-                projectNextItem {
+            mutation($user:String!, $project:ID!, $issue:ID!) {
+              addProjectV2ItemById(input: {clientMutationId: $user, projectId: $project, contentId: $issue}) {
+                item {
                   id
                 }
               }
-            }' -f project=$PROJECT_ID -f issue=$ISSUE_ID --jq '.data.addProjectNextItem.projectNextItem.id'
+            }' -f project=$PROJECT_ID -f issue=$ISSUE_ID -f user=$USER
 
-  label_issues:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    steps:
-      - name: Add "pennant" label
-        uses: andymckay/labeler@3a4296e9dcdf9576b0456050db78cfd34853f260
-        with:
-          add-labels: "Trading, pennant"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Add repo identifier label"
+        run: |
+          gh api graphql -f query='
+            mutation($user:String!, $issue:ID!) {
+              addLabelsToLabelable(input: {clientMutationId: $user, labelableId: $issue, labelIds: ["LA_kwDOFDaR5872-WxC", "LA_kwDOFDaR588AAAABDzKzWQ"]}) {
+                clientMutationId
+              }
+            }' -f issue=$ISSUE_ID -f user=$USER
+      # yamllint enable rule:line-length
