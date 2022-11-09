@@ -11,7 +11,6 @@ env:
   PROJECT_ID: ${{ secrets.FRONT_END_PROJECT_ID }}
   ISSUE_ID: ${{ github.event.issue.node_id }}
   USER: ${{ github.actor }}
-  LABEL_ID: [“LA_kwDOFDaR5872-WxC”, “LA_kwDOFDaR588AAAABDzKzWQ”]
 
 jobs:
   add_issue_frontend:
@@ -31,8 +30,11 @@ jobs:
       - name: "Add repo identifier label"
         run: |
           gh api graphql -f query='
-            mutation($user:String!, $issue:ID!, $label:[ID!]!) {
-              addLabelsToLabelable(input: {clientMutationId: $user, labelableId: $issue, labelIds: $label}) {
+            mutation($user:String!, $issue:ID!, $labels:[ID!]!) {
+              addLabelsToLabelable(input: {clientMutationId: $user, labelableId: $issue, labelIds: $labels}) {
                 clientMutationId
               }
-            }' -f label=$LABEL_ID -f issue=$ISSUE_ID -f user=$USER
+            }
+            variables {
+              labels: ["LA_kwDOFDaR5872-WxC", "LA_kwDOFDaR588AAAABDzKzWQ"]
+              }' -f issue=$ISSUE_ID -f user=$USER
