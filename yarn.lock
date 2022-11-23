@@ -2699,11 +2699,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/colors@^4.1.6":
-  version "4.1.6"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.6.tgz#a2e3d02b40867b3770187c69a8514f113ab4dd85"
-  integrity sha512-3/kahUWyvgQUV9NtCMeeJgTFHziM2Z3f4hjDfnl03X4MW0onUeZfa2Mu4ZsRn2IAK7AmfLNkZe8vp8mxX9pDRg==
-
 "@blueprintjs/colors@^4.1.8":
   version "4.1.8"
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.8.tgz#ebab4e6fe9d4e2a3bb958ae0e2385b0675a0754a"
@@ -2714,21 +2709,21 @@
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.9.tgz#cabba3ba18d58070168df40234a78ce34c7fa2cc"
   integrity sha512-AxBKGwHS9Ojs7YPRMiwDlUEnSG36P/Hi0C3i4/smPmzUzqFGp1ZDqTmBBM15XoUKIuYfmpNATqIdKgNx2OzOkg==
 
-"@blueprintjs/core@4.10.2":
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.10.2.tgz#3d8822717273a41f5a586858838dec2a803fe9b7"
-  integrity sha512-YbjHXDPX8rxXoRHrScrCBH+GsgiVRnhBqLnWFLlClpdJTRvk6HVUpZN5OL138lZSgcQH4quZ+Fg8PLFflIx/Yw==
+"@blueprintjs/core@4.12.0", "@blueprintjs/core@^4.12.0":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.12.0.tgz#02685666454ab9240b31c2a28073478266337875"
+  integrity sha512-obbtEMzKOTwB56vlw4A8+9lvYwtB1mK4S8/b5Dy7WqdJ66L1WfcbIWcGxc2jWsGxanvMIzi6Pd+0XXuRRNkmhQ==
   dependencies:
-    "@blueprintjs/colors" "^4.1.6"
-    "@blueprintjs/icons" "^4.6.0"
-    "@juggle/resize-observer" "^3.3.1"
-    "@types/dom4" "^2.0.1"
-    classnames "^2.2"
+    "@blueprintjs/colors" "^4.1.9"
+    "@blueprintjs/icons" "^4.10.1"
+    "@juggle/resize-observer" "^3.4.0"
+    "@types/dom4" "^2.0.2"
+    classnames "^2.3.1"
     dom4 "^2.1.5"
     normalize.css "^8.0.1"
     popper.js "^1.16.1"
-    react-popper "^1.3.7"
-    react-transition-group "^4.4.1"
+    react-popper "^1.3.11"
+    react-transition-group "^4.4.5"
     tslib "~2.3.1"
 
 "@blueprintjs/core@^4.11.5":
@@ -2748,23 +2743,6 @@
     react-transition-group "^4.4.5"
     tslib "~2.3.1"
 
-"@blueprintjs/core@^4.12.0":
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.12.0.tgz#02685666454ab9240b31c2a28073478266337875"
-  integrity sha512-obbtEMzKOTwB56vlw4A8+9lvYwtB1mK4S8/b5Dy7WqdJ66L1WfcbIWcGxc2jWsGxanvMIzi6Pd+0XXuRRNkmhQ==
-  dependencies:
-    "@blueprintjs/colors" "^4.1.9"
-    "@blueprintjs/icons" "^4.10.1"
-    "@juggle/resize-observer" "^3.4.0"
-    "@types/dom4" "^2.0.2"
-    classnames "^2.3.1"
-    dom4 "^2.1.5"
-    normalize.css "^8.0.1"
-    popper.js "^1.16.1"
-    react-popper "^1.3.11"
-    react-transition-group "^4.4.5"
-    tslib "~2.3.1"
-
 "@blueprintjs/icons@^4.10.1":
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.10.1.tgz#55e7d497da83b2cd56b18472325c41aa9ce6e9af"
@@ -2772,15 +2750,6 @@
   dependencies:
     change-case "^4.1.2"
     classnames "^2.3.1"
-    tslib "~2.3.1"
-
-"@blueprintjs/icons@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.6.0.tgz#2e25e741d18a984ebde807801a12d9a511c1b8dd"
-  integrity sha512-3FcL0D35l/5PXFCgJaFE1MODsloNP5BmJ5+YSWt4ZoaB7ZRTfzuZfO5pZBrg9A6gc1fc+aDS+tPITxXI3kg/nQ==
-  dependencies:
-    change-case "^4.1.2"
-    classnames "^2.2"
     tslib "~2.3.1"
 
 "@blueprintjs/icons@^4.9.0":
@@ -4514,11 +4483,6 @@
   dependencies:
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
-
-"@types/dom4@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/dom4/-/dom4-2.0.1.tgz#506d5781b9bcab81bd9a878b198aec7dee2a6033"
-  integrity sha512-kSkVAvWmMZiCYtvqjqQEwOmvKwcH+V4uiv3qPQ8pAh1Xl39xggGEo8gHUqV4waYGHezdFw0rKBR8Jt0CrQSDZA==
 
 "@types/dom4@^2.0.2":
   version "2.0.2"
@@ -6617,7 +6581,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2, classnames@^2.2.6, classnames@^2.3.0:
+classnames@^2.2.6, classnames@^2.3.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -13320,16 +13284,6 @@ react-test-renderer@18.2.0:
     react-is "^18.2.0"
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.0"
-
-react-transition-group@^4.4.1:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
-  integrity sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    dom-helpers "^5.0.1"
-    loose-envify "^1.4.0"
-    prop-types "^15.6.2"
 
 react-transition-group@^4.4.5:
   version "4.4.5"
