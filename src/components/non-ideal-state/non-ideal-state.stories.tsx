@@ -8,7 +8,7 @@ export default {
 } as Meta;
 
 const Template: Story<NonIdealStateProps> = (args) => (
-  <div style={{ backgroundColor: "black", padding: "24px 24px" }}>
+  <div style={{ padding: "24px 24px" }}>
     <NonIdealState {...args} />
   </div>
 );

@@ -1,10 +1,12 @@
 import "./market-grid.css";
 
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { WebSocketLink } from "@apollo/client/link/ws";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Icon } from "@blueprintjs/core";
+import { createClient } from "graphql-ws";
 import { useMemo } from "react";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { Chart } from "../../../components/chart";
 import { Interval } from "../../../types";
@@ -12,15 +14,14 @@ import { markets_markets } from "../../api/vega-graphql";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
 
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: "https://api.n08.testnet.vega.xyz/graphql",
 });
 
-const wsLink = new WebSocketLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "wss://api.n08.testnet.vega.xyz/graphql",
+  })
+);
 
 const splitLink = split(
   ({ query }) => {
@@ -44,6 +45,8 @@ export type MarketGridProps = {
 };
 
 export const MarketGrid = ({ markets }: MarketGridProps) => {
+  const darkmode = useDarkMode();
+
   const dataSources = useMemo(
     () =>
       markets.map(
@@ -74,7 +77,6 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "black",
             padding: "8px",
           }}
         >
@@ -85,10 +87,10 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
               justifyContent: "space-between",
             }}
           >
-            <div>{market.name}</div>
+            <div className="bp4-ui-text">{market.name}</div>
             <Icon icon="more" />
           </div>
-          <div className="text-muted" style={{ fontSize: "12px" }}>
+          <div className="bp4-ui-text text-muted" style={{ fontSize: "12px" }}>
             {market.tradableInstrument.instrument.code}
           </div>
           <div style={{ flex: "1 1 0" }}>
@@ -101,6 +103,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
                 initialNumCandlesToDisplay: 25,
                 initialNumCandlesToFetch: 10000,
               }}
+              theme={darkmode ? "dark" : "light"}
             />
           </div>
         </div>

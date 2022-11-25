@@ -15,17 +15,21 @@ import styles from "./depth-chart.module.css";
 import { getColors } from "./helpers";
 
 /**
- * Creates a price formatter
+ * Creates a number formatter
  * @param decimalPlaces Number of decimal places to display
  */
-export const priceFormatter = (decimalPlaces: number): Intl.NumberFormat =>
+export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
   new Intl.NumberFormat("en-gb", {
     maximumFractionDigits: decimalPlaces,
     minimumFractionDigits: decimalPlaces,
   });
 
 function defaultPriceFormat(price: number) {
-  return priceFormatter(2).format(price);
+  return numberFormatter(2).format(price);
+}
+
+function defaultVolumeFormat(volume: number) {
+  return numberFormatter(0).format(volume);
 }
 
 /**
@@ -45,8 +49,10 @@ export type PriceLevel = {
 
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
-  /** Used to format tick labels on price axis */
+  /** Used to format values on price axis */
   priceFormat?: (price: number) => string;
+  /** Used to format values volume axis */
+  volumeFormat?: (price: number) => string;
   /** Indicative price if the auction ended now, 0 if not in auction mode */
   indicativePrice?: number;
   /** Arithmetic average of the best bid price and best offer price. */
@@ -72,6 +78,7 @@ export const DepthChart = forwardRef(
     {
       data,
       priceFormat = defaultPriceFormat,
+      volumeFormat = defaultVolumeFormat,
       indicativePrice = 0,
       midPrice = 0,
       theme = "dark",
@@ -104,6 +111,7 @@ export const DepthChart = forwardRef(
         width: 300,
         height: 300,
         priceFormat,
+        volumeFormat,
         colors,
       });
 

@@ -69,7 +69,7 @@ export class PlotArea {
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.colors.emphasis300
+        this.colors.emphasis100
       );
 
       for (const element of this._renderableElements) {

@@ -2,7 +2,9 @@ import "./chart-controls.stories.scss";
 
 import { FocusStyleManager } from "@blueprintjs/core";
 import { Meta, Story } from "@storybook/react";
+import classnames from "classnames";
 import { useState } from "react";
+import { useDarkMode } from "storybook-dark-mode";
 
 import { ChartType, Interval, Overlay, Study } from "../../../types";
 import { ChartControls, ChartControlsProps } from "./chart-controls";
@@ -15,13 +17,14 @@ export default {
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const Template: Story<ChartControlsProps> = (args) => {
+  const darkmode = useDarkMode();
   const [interval, setInterval] = useState<Interval>(Interval.I5M);
   const [chartType, setChartType] = useState<ChartType>(ChartType.CANDLE);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [studies, setStudies] = useState<Study[]>([]);
 
   return (
-    <div className="bp3-dark docs-example">
+    <div className="docs-example">
       <ChartControls
         {...args}
         interval={interval}

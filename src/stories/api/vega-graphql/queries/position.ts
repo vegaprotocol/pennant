@@ -32,7 +32,6 @@ export const positionFragment = gql`
                 decimals
               }
               quoteName
-              maturity
             }
           }
         }

@@ -5,12 +5,14 @@ import React, { forwardRef, useState } from "react";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";
 import { Bounds, Pane } from "../../types";
+import { Colors, getAccentColor } from "../chart/helpers";
 import { CloseButton } from "../close-button";
 import { IndicatorInfo } from "../indicator-info";
 import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 
 export type PaneViewProps = {
   bounds: Bounds | null;
+  colors: Colors;
   dataIndex: number | null;
   decimalPlaces: number;
   overlays: string[];
@@ -24,6 +26,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
   (
     {
       bounds,
+      colors,
       dataIndex,
       decimalPlaces,
       overlays,
@@ -37,6 +40,8 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
       null
     );
+
+    let colorCount = 0;
 
     return (
       <div
@@ -121,6 +126,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                     value: field.format
                       ? field.format(value, decimalPlaces)
                       : formatter(value, decimalPlaces),
+                    color: colors[getAccentColor(colorCount++)],
                   };
                 })}
                 closeable

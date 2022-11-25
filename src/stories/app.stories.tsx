@@ -1,7 +1,14 @@
 import "./app.stories.css";
 
-import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { WebSocketLink } from "@apollo/client/link/ws";
+import {
+  ApolloClient,
+  gql,
+  HttpLink,
+  InMemoryCache,
+  split,
+  useQuery,
+} from "@apollo/client";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import {
   Button,
@@ -16,6 +23,7 @@ import {
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 import classnames from "classnames";
+import { createClient } from "graphql-ws";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
@@ -24,7 +32,6 @@ import { Chart } from "../components/chart";
 import { formatter } from "../helpers";
 import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
-import data from "./app.stories.json";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
@@ -35,15 +42,14 @@ export default {
 } as Meta;
 
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: "https://api.n08.testnet.vega.xyz/graphql",
 });
 
-const wsLink = new WebSocketLink({
-  uri: "wss://lb.testnet.vega.xyz/query",
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: "wss://api.n08.testnet.vega.xyz/graphql",
+  })
+);
 
 const splitLink = split(
   ({ query }) => {
@@ -64,7 +70,8 @@ const client = new ApolloClient({
 
 type Market = {
   id: string;
-  tradableInstrument: { instrument: { name: string } };
+  name: string;
+  state: string;
 };
 
 const MarketSelect = Select.ofType<Market>();
@@ -79,21 +86,62 @@ const renderMarket: ItemRenderer<Market> = (
   return (
     <MenuItem
       active={modifiers.active}
+      disabled={market.state !== MarketState.STATE_ACTIVE}
       key={market.id}
-      label={market.tradableInstrument.instrument.name}
+      label={market.name}
       onClick={handleClick}
-      text={market.tradableInstrument.instrument.name}
+      text={market.name}
     />
   );
 };
 
+const GET_MARKETS = gql`
+  query GetMarkets {
+    markets {
+      id
+      name
+      state
+    }
+  }
+`;
+
+/** The current state of a market */
+export enum MarketState {
+  /** Enactment date reached and usual auction exit checks pass */
+  STATE_ACTIVE = "STATE_ACTIVE",
+  /**
+   * Market triggers cancellation condition or governance
+   * votes to close before market becomes Active
+   */
+  STATE_CANCELLED = "STATE_CANCELLED",
+  /** Governance vote (to close) */
+  STATE_CLOSED = "STATE_CLOSED",
+  /** Governance vote passes/wins */
+  STATE_PENDING = "STATE_PENDING",
+  /** The governance proposal valid and accepted */
+  STATE_PROPOSED = "STATE_PROPOSED",
+  /** Outcome of governance votes is to reject the market */
+  STATE_REJECTED = "STATE_REJECTED",
+  /** Settlement triggered and completed as defined by product */
+  STATE_SETTLED = "STATE_SETTLED",
+  /** Price monitoring or liquidity monitoring trigger */
+  STATE_SUSPENDED = "STATE_SUSPENDED",
+  /**
+   * Defined by the product (i.e. from a product parameter,
+   * specified in market definition, giving close date/time)
+   */
+  STATE_TRADING_TERMINATED = "STATE_TRADING_TERMINATED",
+}
+
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
-  const [market, setMarket] = useState(data.markets[1].id);
+  const [market, setMarket] = useState("");
   const [chartType, setChartType] = useState<ChartType>("ohlc");
   const [studies, setStudies] = useState<Study[]>([]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [interval, setInterval] = useState<Interval>(Interval.I1M);
+
+  const { loading, error, data } = useQuery(GET_MARKETS);
 
   const dataSource = useMemo(
     () =>
@@ -108,8 +156,22 @@ export const VegaProtocol: Story = () => {
 
   const darkmode = useDarkMode();
 
+  const marketId =
+    data?.markets?.find(
+      (market: Market) => market.state === MarketState.STATE_ACTIVE
+    )?.id ?? data?.markets?.[0]?.id;
+
+  useEffect(() => {
+    if (marketId) {
+      setMarket(marketId);
+    }
+  }, [marketId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>`Error! ${error.message}`</p>;
+
   return (
-    <div className={classnames("container", { ["bp3-dark"]: darkmode })}>
+    <div className="container">
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
@@ -123,8 +185,8 @@ export const VegaProtocol: Story = () => {
         >
           <Button
             text={
-              data.markets.find((s) => s.id === market)?.tradableInstrument
-                .instrument.name ?? "No market selected"
+              data.markets.find((s: any) => s.id === market)?.name ??
+              "No market selected"
             }
             disabled={false}
           />
@@ -170,6 +232,7 @@ export const VegaProtocol: Story = () => {
             overlays: overlays,
           }}
           interval={interval}
+          theme={darkmode ? "dark" : "light"}
           onOptionsChanged={(options) => {
             setOverlays(options.overlays ?? []);
             setStudies(options.studies ?? []);
@@ -178,6 +241,10 @@ export const VegaProtocol: Story = () => {
       </div>
     </div>
   );
+};
+
+VegaProtocol.parameters = {
+  controls: { hideNoControlsWarning: true },
 };
 
 export const CryptoCompare: Story = () => {
@@ -282,7 +349,7 @@ export const CryptoCompare: Story = () => {
     <HotkeysProvider>
       <div
         tabIndex={0}
-        className={classnames("container", { ["bp3-dark"]: darkmode })}
+        className="container"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
       >
@@ -405,4 +472,8 @@ export const CryptoCompare: Story = () => {
       </div>
     </HotkeysProvider>
   );
+};
+
+CryptoCompare.parameters = {
+  controls: { hideNoControlsWarning: true },
 };
