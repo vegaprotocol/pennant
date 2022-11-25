@@ -150,7 +150,7 @@
     "subscriptions-transport-ws": "0.11.0",
     "ts-jest": "27.1.5",
     "ts-node": "10.9.1",
-    "tslib": "2.4.0",
+    "tslib": "2.4.1",
     "webpack": "5.74.0"
   },
   "peerDependencies": {
