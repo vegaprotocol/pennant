@@ -100,7 +100,7 @@
     "@blueprintjs/popover2": "1.10.1",
     "@blueprintjs/select": "4.8.11",
     "@popperjs/core": "2.11.6",
-    "@rollup/plugin-babel": "5.3.1",
+    "@rollup/plugin-babel": "6.0.3",
     "@rollup/plugin-commonjs": "22.0.2",
     "@rollup/plugin-node-resolve": "14.1.0",
     "@rollup/plugin-typescript": "8.5.0",
