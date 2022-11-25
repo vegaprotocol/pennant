@@ -1,0 +1,19 @@
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.canvasContainer {
+  cursor: crosshair;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  background-color: var(--pennant-background-surface-color);
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
