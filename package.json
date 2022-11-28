@@ -103,7 +103,7 @@
     "@rollup/plugin-babel": "5.3.1",
     "@rollup/plugin-commonjs": "22.0.2",
     "@rollup/plugin-node-resolve": "14.1.0",
-    "@rollup/plugin-typescript": "8.5.0",
+    "@rollup/plugin-typescript": "10.0.1",
     "@storybook/addon-actions": "6.5.13",
     "@storybook/addon-essentials": "6.5.13",
     "@storybook/addon-links": "6.5.13",
