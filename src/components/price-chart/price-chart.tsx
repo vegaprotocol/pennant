@@ -80,6 +80,12 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     devicePixelContentBoxSizeBlockSize,
   ]);
 
+  useEffect(() => {
+    requestAnimationFrame(
+      () => (chartRef.current.colors = getColors(styleRef?.current))
+    );
+  }, [theme]);
+
   if (data.length === 0) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>

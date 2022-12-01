@@ -1,4 +1,4 @@
-export * from "./depth-curve";
+export * from "./price-curve";
 export * from "./horizontal-axis";
 export * from "./horizontal-line";
 export * from "./indicator";

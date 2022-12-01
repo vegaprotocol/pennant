@@ -7,7 +7,7 @@ import { JsonDataSource } from "../../stories/data-source/json-data-source";
 import { Chart, ChartProps } from "./chart";
 
 export default {
-  title: "Components/Chart",
+  title: "Charts/Chart",
   component: Chart,
 } as Meta;
 

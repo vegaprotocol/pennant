@@ -1,5 +1,6 @@
 import { Renderer } from "../core";
 import { RenderableObject } from "../core/renderable-object";
+import { Graphics } from "../graphics";
 import { Rectangle } from "../math";
 import { removeItems } from "../utils";
 import { DisplayObject } from "./display-object";
@@ -127,10 +128,18 @@ export class Container extends DisplayObject implements RenderableObject {
       return;
     }
 
+    if (this._mask) {
+      renderer.mask?.pushMask(this._mask as Graphics);
+    }
+
     this._render(renderer);
 
     for (let i = 0, j = this.children.length; i < j; ++i) {
       this.children[i].render(renderer);
+    }
+
+    if (this._mask) {
+      renderer.mask?.popMask(renderer);
     }
   }
 

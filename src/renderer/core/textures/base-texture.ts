@@ -31,7 +31,7 @@ export class BaseTexture<R extends Resource = Resource> {
 
   constructor(
     resource: R | ImageSource | string | any = null,
-    options: Partial<BaseTextureOptions>
+    options: Partial<BaseTextureOptions> = {}
   ) {
     this.height = options.height ?? 0;
     this.resolution = options.resolution ?? settings.RESOLUTION;

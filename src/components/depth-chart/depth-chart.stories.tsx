@@ -13,7 +13,7 @@ import {
 } from "./depth-chart";
 
 export default {
-  title: "Components/DepthChart",
+  title: "Charts/DepthChart",
   DepthChart,
 } as Meta;
 
