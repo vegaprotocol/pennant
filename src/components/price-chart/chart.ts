@@ -8,6 +8,7 @@ import { Data } from "../../vega-lite/data";
 import { Colors } from "../depth-chart/helpers";
 import { Contents } from "./contents";
 import { UI } from "./ui";
+import { ZoomTransform } from "./zoom/transform";
 
 /**
  * Standard font size in CSS pixels
@@ -76,8 +77,8 @@ export class Chart extends EventEmitter {
         this.emit("zoomstart");
       })
       .on("zoom", (t: any) => {
-        console.log("zoom", t.transform.y);
-        this._priceSpan = this.initialSpan / (1 - t.transform.y / 1000);
+        console.log(t.transform.k);
+        //this._priceSpan = this.initialSpan / (1 - t.transform.y / 1000);
         this.update();
         this.render();
         this.emit("zoom");
@@ -86,14 +87,14 @@ export class Chart extends EventEmitter {
         this.emit("zoomend");
       });
 
-    this.ui.on("zoom.horizontalAxis", (k: number) => {
-      this._timeSpan = this.initialSpan * k;
+    this.ui.on("zoom.horizontalAxis", (t: ZoomTransform) => {
+      this._timeSpan = this.initialSpan * t.k;
       this.update();
       this.render();
     });
 
-    this.ui.on("zoom.verticalAxis", (k: number) => {
-      this._priceSpan = this.initialSpan * k;
+    this.ui.on("zoom.verticalAxis", (t: ZoomTransform) => {
+      this._priceSpan = this.initialSpan * t.k;
       this.update();
       this.render();
     });

@@ -13,7 +13,7 @@ export function calculateScales(
 
   if (yEncodingFields) {
     const mappedData = yEncodingFields.flatMap(
-      (field: any) => (data.map((d: any) => d[field]) as unknown) as number
+      (field: any) => data.map((d: any) => d[field]) as unknown as number
     );
 
     const domain = extent(mappedData) as [number, number];

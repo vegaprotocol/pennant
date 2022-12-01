@@ -119,7 +119,7 @@ export class Zoom {
     this.scaleTo(k, point);
   }
 
-  private scale(transform: ZoomTransform, k: number) {
+  public scale(transform: ZoomTransform, k: number) {
     const constrainedK = Math.max(
       this.scaleExtent[0],
       Math.min(this.scaleExtent[1], k)

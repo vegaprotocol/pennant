@@ -6,7 +6,7 @@ import {
   positions_party_positions,
   Side,
 } from "../api/vega-graphql";
-import { formatNumber,parseVegaDecimal } from "../helpers";
+import { formatNumber, parseVegaDecimal } from "../helpers";
 import * as i18n from "../i18n";
 import { OrderBlockChainState } from "./vega-protocol-data-source";
 

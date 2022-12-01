@@ -1,5 +1,5 @@
-export default function(x) {
-  return function() {
+export default function (x) {
+  return function () {
     return x;
   };
 }

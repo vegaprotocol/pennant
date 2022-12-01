@@ -1,9 +1,14 @@
 import { ScaleTime } from "d3-scale";
 
+import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
+import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
 import { Colors } from "../../depth-chart/helpers";
 import { AXIS_HEIGHT, FONT_SIZE } from "../chart";
+import { Gesture } from "../zoom/gesture";
+import { Zoom } from "../zoom/zoom";
+import { pointer } from "./vertical-axis";
 
 const MAX_TICKS = 20;
 
@@ -19,10 +24,22 @@ const range = (start: number, stop: number, step = 1) =>
  * Draws a horizontal axis at the bottom of the chart
  */
 export class HorizontalAxis extends Container {
+  public renderer: Renderer;
+  public zoom: Zoom = new Zoom();
+  private gesture = new Gesture(this);
+  private firstPoint: [number, number] = [0, 0];
+
   private tickNodes: Text[] = [];
 
-  constructor() {
+  constructor(renderer: Renderer) {
     super();
+
+    this.renderer = renderer;
+
+    this.on("wheel", this.onWheel)
+      .on("pointerdown", this.onPointerDown)
+      .on("pointermove", this.onPointerMove)
+      .on("pointerout", this.onPointerOut);
 
     // TODO: Dynamically scale (double etc)
     this.tickNodes = range(0, MAX_TICKS).map(
@@ -70,4 +87,104 @@ export class HorizontalAxis extends Container {
       text.updateText(); // TODO: Should not need to call this
     }
   }
+
+  private onWheel = (event: InteractionEvent) => {
+    const tempEvent = event.data?.originalEvent as WheelEvent;
+    const resolution = this.renderer.resolution;
+    const p = pointer(tempEvent, resolution);
+
+    if (this.gesture.wheel) {
+      window.clearTimeout(this.gesture.wheel);
+    } else {
+      this.gesture.mouse = [p, p];
+      this.gesture.start();
+    }
+
+    this.gesture.wheel = window.setTimeout(() => {
+      this.gesture.wheel = null;
+      this.gesture.end();
+    }, 150);
+
+    this.zoom.wheeled(
+      -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
+      this.gesture.mouse[0] ?? [0, 0],
+      [
+        [0, 0],
+        [100, 100],
+      ]
+    );
+
+    this.emit("zoom", { transform: this.zoom.__zoom, point: p });
+  };
+
+  private onPointerDown = (event: InteractionEvent) => {
+    const resolution = this.renderer.resolution;
+    const p = pointer(event.data?.originalEvent, resolution);
+
+    this.firstPoint = p ?? [0, 0];
+
+    if (event.data?.identifier) {
+      this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
+    }
+
+    this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
+    this.gesture.start();
+
+    const handleMouseMove = (event: any) => {
+      event.preventDefault();
+
+      this.gesture.mouse[0] = pointer(event, resolution);
+
+      if (this.gesture.mouse[1]) {
+        this.gesture.zoom(
+          this.zoom.constrain(
+            this.zoom.translate(
+              this.zoom.__zoom,
+              this.gesture.mouse[0],
+              this.gesture.mouse[1]
+            ),
+            [
+              [0, 0],
+              [100, 100],
+            ],
+            this.zoom.translateExtent
+          ),
+          this.firstPoint!
+        );
+      }
+    };
+
+    const handleMouseUp = (event: any) => {
+      event.preventDefault();
+
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+
+      if (event.data?.identifier) {
+        this.renderer.context.canvas.releasePointerCapture(
+          event.data?.identifier
+        );
+      }
+
+      this.gesture.end();
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  private onPointerMove = (event: InteractionEvent) => {
+    const tempEvent = event.data?.originalEvent as WheelEvent;
+    const resolution = this.renderer.resolution;
+    const p = pointer(tempEvent, resolution);
+
+    // Do not respond to evensts triggered by elements 'above' the canvas
+    if (tempEvent.target === this.renderer.context.canvas) {
+      this.emit("mousemove", p);
+    }
+  };
+
+  private onPointerOut = (event: InteractionEvent) => {
+    this.emit("mouseout");
+  };
 }

@@ -2,16 +2,23 @@ import ascending from "./ascending.js";
 
 // Based on https://github.com/mourner/quickselect
 // ISC license, Copyright 2018 Vladimir Agafonkin.
-export default function quickselect(array, k, left = 0, right = array.length - 1, compare = ascending) {
+export default function quickselect(
+  array,
+  k,
+  left = 0,
+  right = array.length - 1,
+  compare = ascending
+) {
   while (right > left) {
     if (right - left > 600) {
       const n = right - left + 1;
       const m = k - left + 1;
       const z = Math.log(n);
-      const s = 0.5 * Math.exp(2 * z / 3);
-      const sd = 0.5 * Math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
-      const newLeft = Math.max(left, Math.floor(k - m * s / n + sd));
-      const newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
+      const s = 0.5 * Math.exp((2 * z) / 3);
+      const sd =
+        0.5 * Math.sqrt((z * s * (n - s)) / n) * (m - n / 2 < 0 ? -1 : 1);
+      const newLeft = Math.max(left, Math.floor(k - (m * s) / n + sd));
+      const newRight = Math.min(right, Math.floor(k + ((n - m) * s) / n + sd));
       quickselect(array, k, newLeft, newRight, compare);
     }
 
