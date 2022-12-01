@@ -45,7 +45,7 @@ export class Label extends Container {
     const anchorX = anchor.x;
     const anchorY = anchor.y;
 
-    const padding = resolution * 1.5;
+    const padding = resolution * 1.2;
 
     this.background.clear();
     this.background.beginFill(colors.backgroundSurface, 1);

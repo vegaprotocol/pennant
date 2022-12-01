@@ -1,10 +1,13 @@
-import { curveCardinal, curveStepAfter } from "d3-shape";
+import { curveLinear } from "d3-shape";
 
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
+import { ScaleLinear, ScaleTime } from "../../types";
+import { AXIS_HEIGHT } from "../depth-chart";
 import { Colors } from "../depth-chart/helpers";
-import { PriceCurve } from "./display-objects";
+import { AXIS_WIDTH } from "./chart";
+import { HorizontalGrid, PriceCurve, VerticalGrid } from "./display-objects";
 
 type ContentsColors = Pick<
   Colors,
@@ -17,6 +20,9 @@ type ContentsColors = Pick<
 export class Contents {
   public stage: Container = new Container();
   public renderer: Renderer;
+
+  public horizontalGrid: HorizontalGrid;
+  public verticalgrid: VerticalGrid;
 
   public priceCurvePositive: PriceCurve;
   public maskPositive: Graphics;
@@ -42,11 +48,14 @@ export class Contents {
 
     this.colors = options.colors;
 
+    this.horizontalGrid = new HorizontalGrid();
+    this.verticalgrid = new VerticalGrid();
+
     this.priceCurvePositive = new PriceCurve(
       options.colors.buyStroke,
       options.colors.buyFill,
       options.colors.backgroundSurface,
-      curveCardinal
+      curveLinear
     );
 
     this.maskPositive = new Graphics();
@@ -58,7 +67,7 @@ export class Contents {
       options.colors.sellStroke,
       options.colors.sellFill,
       options.colors.backgroundSurface,
-      curveCardinal
+      curveLinear
     );
 
     this.maskNegative = new Graphics();
@@ -68,6 +77,9 @@ export class Contents {
 
     this.priceCurvePositive.mask = this.maskPositive;
     this.priceCurveNegative.mask = this.maskNegative;
+
+    this.stage.addChild(this.horizontalGrid);
+    this.stage.addChild(this.verticalgrid);
 
     this.stage.addChild(this.priceCurveNegative);
     this.priceCurveNegative.addChild(this.maskNegative);
@@ -81,11 +93,27 @@ export class Contents {
   }
 
   public update(
+    priceScale: ScaleLinear,
+    timeScale: ScaleTime,
     data: [number, number][],
     startPrice: number,
     height: number
   ): void {
     const resolution = this.renderer.resolution;
+
+    this.horizontalGrid.update(
+      timeScale,
+      this.renderer.width,
+      this.renderer.height - resolution * AXIS_HEIGHT,
+      resolution
+    );
+    this.verticalgrid.update(
+      priceScale,
+      this.renderer.width - resolution * AXIS_WIDTH,
+      this.renderer.height,
+      resolution
+    );
+
     this.maskPositive.y = startPrice;
     this.maskNegative.y = startPrice;
 

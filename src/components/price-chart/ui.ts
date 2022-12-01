@@ -1,6 +1,8 @@
 import { ScaleLinear, scaleLinear, ScaleTime, scaleTime } from "d3-scale";
+import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
 
+import { bisectCenter } from "../../math/array";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
@@ -9,7 +11,13 @@ import { Rectangle } from "../../renderer/math";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { Colors } from "../depth-chart/helpers";
 import { AXIS_WIDTH } from "./chart";
-import { HorizontalAxis, VerticalAxis } from "./display-objects";
+import {
+  Crosshair,
+  HorizontalAxis,
+  Indicator,
+  Label,
+  VerticalAxis,
+} from "./display-objects";
 import { Gesture } from "./zoom/gesture";
 import { zoomIdentity, ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
@@ -54,11 +62,19 @@ export class UI extends EventEmitter {
    */
   private transform: number = 1;
 
+  private startPrice: number = 0;
+
   private horizontalAxis: HorizontalAxis;
   private verticalAxis: VerticalAxis;
   private startPriceLine: Graphics = new Graphics();
   private verticalAxisSeparator: Graphics = new Graphics();
   private horizontalAxisSeparator: Graphics = new Graphics();
+  private crosshair: Crosshair = new Crosshair(1, 0x888888, [3, 3]);
+  private indicator: Indicator = new Indicator(0xff0000);
+  private priceLabel: Label = new Label();
+  private timeLabel: Label = new Label();
+  private startPriceLabel: Label = new Label();
+  private hitBox: Container = new Container();
 
   private lastEvent: InteractionEvent | null = null;
 
@@ -94,13 +110,26 @@ export class UI extends EventEmitter {
     this.stage.addChild(this.startPriceLine);
     this.stage.addChild(this.verticalAxisSeparator);
     this.stage.addChild(this.horizontalAxisSeparator);
+    this.stage.addChild(this.crosshair);
+    this.stage.addChild(this.indicator);
+    this.stage.addChild(this.startPriceLabel);
+    this.stage.addChild(this.priceLabel);
+    this.stage.addChild(this.timeLabel);
+    this.stage.addChild(this.hitBox);
+
+    this.hitBox.interactive = true;
+    this.hitBox.cursor = "default";
+    this.hitBox.hitArea = new Rectangle(0, 0, 300, 300);
+    this.hitBox
+      .on("pointermove", this.onPointerMove)
+      .on("pointerout", this.onPointerOut);
 
     this.horizontalAxis.interactive = true;
     this.horizontalAxis.cursor = "ew-resize";
     this.horizontalAxis.hitArea = new Rectangle(
-      options.width - 100,
+      options.width - AXIS_WIDTH,
       0,
-      100,
+      AXIS_WIDTH,
       options.height
     );
 
@@ -116,14 +145,14 @@ export class UI extends EventEmitter {
               (this.timeScale.range()[1] - this.timeScale.range()[0])
           ),
           [
-            0,
             Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+            0,
           ]
         );
       } else {
         this.timeZoom.scaleBy(k, [
-          0,
           (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+          0,
         ]);
       }
 
@@ -185,10 +214,18 @@ export class UI extends EventEmitter {
     this.data = data;
     this.timeScale = timeScale;
     this.priceScale = priceScale;
+    this.startPrice = startPrice;
 
     const width = this.renderer.view.width;
     const height = this.renderer.view.height;
     const resolution = this.renderer.resolution;
+
+    this.hitBox.hitArea = new Rectangle(
+      0,
+      0,
+      this.renderer.screen.width - AXIS_WIDTH,
+      this.renderer.screen.height - AXIS_HEIGHT
+    );
 
     this.horizontalAxis.hitArea = new Rectangle(
       0,
@@ -229,11 +266,28 @@ export class UI extends EventEmitter {
     });
 
     this.startPriceLine.moveTo(0, priceScale(startPrice));
+
     this.startPriceLine.lineTo(
       resolution * this.renderer.screen.width,
       priceScale(startPrice)
     );
+
     this.startPriceLine.endFill();
+
+    const numTicks = height / resolution / 50;
+    const tickFormat = this.priceScale.tickFormat(numTicks);
+
+    this.startPriceLabel.update(
+      tickFormat(startPrice),
+      resolution * this.renderer.screen.width - resolution * 7,
+      priceScale(startPrice),
+      { x: 1, y: 0.5 },
+      resolution,
+      {
+        backgroundSurface: 0x222222,
+        textPrimary: 0xffffff,
+      }
+    );
 
     this.verticalAxisSeparator.clear();
 
@@ -275,4 +329,92 @@ export class UI extends EventEmitter {
 
     this.renderer.destroy();
   }
+
+  private onPointerMove = (event: InteractionEvent) => {
+    this.crosshair.visible = true;
+    this.indicator.visible = true;
+    this.priceLabel.visible = true;
+    this.timeLabel.visible = true;
+
+    if ("ontouchstart" in self) return;
+
+    this.lastEvent = event;
+
+    let x = event.data?.global.x;
+    let y = event.data?.global.y;
+
+    if (x && y && this.data.length > 1) {
+      const resolution = this.renderer.resolution;
+      x *= resolution;
+
+      const width = this.renderer.view.width;
+      const height = this.renderer.view.height;
+
+      const index = bisectCenter(
+        this.data.map((d) => this.timeScale(d.date)),
+        x
+      );
+      const nearestX = this.data[index];
+
+      this.crosshair.update(
+        this.timeScale(nearestX.date),
+        resolution * y,
+        width,
+        height,
+        resolution
+      );
+
+      this.indicator.update(
+        this.timeScale(nearestX.date),
+        this.priceScale(nearestX.price),
+        nearestX.price > this.startPrice
+          ? this.colors.buyStroke
+          : this.colors.sellStroke
+      );
+
+      const numTicks = height / resolution / 50;
+      const tickFormat = this.priceScale.tickFormat(numTicks);
+
+      this.priceLabel.update(
+        tickFormat(this.priceScale.invert(resolution * y)),
+        width - resolution * 7,
+        resolution * y,
+        { x: 1, y: 0.5 },
+        resolution,
+        this.colors
+      );
+
+      this.timeLabel.update(
+        format(nearestX.date, "HH:mm dd MMM yyyy"),
+        this.timeScale(nearestX.date),
+        height - (resolution * AXIS_HEIGHT) / 2,
+        { x: 0.5, y: 0.5 },
+        resolution,
+        this.colors
+      );
+
+      this.render();
+
+      this.emit("mousemove", {
+        point: [this.timeScale(nearestX.date) / resolution, y],
+        content: {
+          date: nearestX.date,
+          price: nearestX.price,
+        },
+      });
+    }
+  };
+
+  private onPointerOut = () => {
+    this.crosshair.visible = false;
+    this.indicator.visible = false;
+    this.priceLabel.visible = false;
+    this.timeLabel.visible = false;
+
+    this.emit("mouseout");
+
+    this.lastEvent = null;
+
+    this.render();
+  };
 }

@@ -5,4 +5,5 @@ export type {
   DepthChartProps,
 } from "./components/depth-chart";
 export { DepthChart } from "./components/depth-chart";
+export { PriceChart } from "./components/price-chart";
 export * from "./types";

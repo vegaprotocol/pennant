@@ -232,7 +232,8 @@ export class GraphicsRenderer {
           context.fill();
         }
 
-        context.stroke();
+        // FIXME: Disables because even when linestyle had width 0 we were seeing the outline drawn
+        //context.stroke();
       } else if (data.type === SHAPES.RECT) {
         const tempShape = shape as Rectangle;
 

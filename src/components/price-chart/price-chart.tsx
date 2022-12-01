@@ -1,3 +1,5 @@
+import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
+import { format } from "date-fns";
 import { useEffect, useRef } from "react";
 
 import { useThrottledResizeObserver } from "../../hooks";
@@ -27,6 +29,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   const uiRef = useRef<HTMLCanvasElement>(null!);
   const chartRef = useRef<Chart>(null!);
   const styleRef = useRef<HTMLDivElement>(null!);
+  const tooltipRef = useRef<HTMLDivElement>(null!);
 
   const {
     ref: resizeOberverRef,
@@ -52,6 +55,47 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
       volumeFormat: defaultPriceFormat,
       colors,
     });
+
+    chartRef.current
+      .on("mousemove", (d) => {
+        const point = d.point;
+
+        const virtualEl = {
+          getBoundingClientRect() {
+            return {
+              width: 0,
+              height: 0,
+              x: point[0],
+              y: point[1],
+              top: point[1],
+              left: point[0],
+              right: point[0],
+              bottom: point[1],
+            };
+          },
+        };
+
+        computePosition(virtualEl, tooltipRef.current, {
+          placement: "right",
+          middleware: [offset(16), flip()],
+        }).then(({ x, y }) => {
+          Object.assign(tooltipRef.current.style, {
+            left: `${x + 10}px`,
+            top: `${point[1] + 10}px`,
+            visibility: "visible",
+          });
+
+          tooltipRef.current.firstElementChild!.textContent = `${format(
+            d.content.date,
+            "HH:mm dd MMM yyyy"
+          )} - ${d.content.price.toFixed(0)}`;
+        });
+      })
+      .on("mouseout", () => {
+        Object.assign(tooltipRef.current.style, {
+          visibility: "hidden",
+        });
+      });
 
     return () => {
       chartRef.current.destroy();
@@ -86,6 +130,10 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     );
   }, [theme]);
 
+  useEffect(() => {
+    chartRef.current.reset();
+  }, [data]);
+
   if (data.length === 0) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>
@@ -95,11 +143,26 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   }
 
   return (
-    <div ref={styleRef} className={styles.container} data-theme={theme}>
-      <div ref={resizeOberverRef} className={styles.canvasContainer}>
-        <canvas ref={contentsRef} className={styles.canvas} />
-        <canvas ref={uiRef} className={styles.canvas} />
+    <>
+      <div ref={styleRef} className={styles.container} data-theme={theme}>
+        <div ref={resizeOberverRef} className={styles.canvasContainer}>
+          <canvas ref={contentsRef} className={styles.canvas} />
+          <canvas ref={uiRef} className={styles.canvas} />
+        </div>
+        <div
+          ref={tooltipRef}
+          className={styles.tooltip}
+          style={{
+            position: "absolute",
+            width: "maxContent",
+            top: 0,
+            left: 0,
+            visibility: "hidden",
+          }}
+        >
+          <span style={{ whiteSpace: "nowrap" }}></span>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

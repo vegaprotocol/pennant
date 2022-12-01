@@ -1,11 +1,13 @@
 .container {
   height: 100%;
   width: 100%;
+  top: 0;
+  left: 0;
   position: relative;
+  overflow: hidden;
 }
 
 .canvasContainer {
-  cursor: crosshair;
   height: 100%;
   position: relative;
   width: 100%;
@@ -17,4 +19,15 @@
   top: 0;
   left: 0;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.tooltip {
+  background-color: var(--pennant-color-emphasis-900);
+  color: var(--pennant-color-emphasis-100);
+  padding: 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  font-family: var(--pennant-font-family-base);
+  font-size: var(--pennant-font-size-base);
+  font-weight: var(--pennant-font-weight-normal);
 }

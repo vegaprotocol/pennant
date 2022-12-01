@@ -5,8 +5,8 @@ import { Graphics } from "../../../renderer/graphics";
  * Draw an indicator at a given price and volume
  */
 export class Indicator extends Container {
-  private circle: Graphics = new Graphics();
-  private line: Graphics = new Graphics();
+  private innerCircle: Graphics = new Graphics();
+  private outerCircle: Graphics = new Graphics();
   private color: number;
 
   constructor(color = 0xffffff) {
@@ -14,31 +14,34 @@ export class Indicator extends Container {
 
     this.color = color;
 
-    this.circle.beginFill(color);
-    this.circle.drawCircle(0, 0, 4);
-    this.circle.endFill();
+    this.outerCircle.beginFill(0xffffff);
+    this.outerCircle.drawCircle(0, 0, 12);
+    this.outerCircle.endFill();
 
-    this.addChild(this.line);
-    this.addChild(this.circle);
+    this.innerCircle.beginFill(color);
+    this.innerCircle.drawCircle(0, 0, 8);
+    this.innerCircle.endFill();
+
+    this.addChild(this.outerCircle);
+    this.addChild(this.innerCircle);
 
     this.visible = false;
   }
 
-  public update(x: number, y: number, width: number) {
-    this.circle.x = x;
-    this.circle.y = y;
+  public update(x: number, y: number, color: number) {
+    this.outerCircle.x = x;
+    this.outerCircle.y = y;
 
-    this.line.clear();
+    this.innerCircle.x = x;
+    this.innerCircle.y = y;
 
-    this.line.lineStyle({
-      width: 1,
-      color: this.color,
-      lineDash: [3, 3],
-    });
+    if (this.color !== color) {
+      this.color = color;
 
-    this.line.moveTo(x, 0);
-    this.line.lineTo(x, y);
-    this.line.lineTo(width / 2, y);
-    this.line.endFill();
+      this.innerCircle.clear();
+      this.innerCircle.beginFill(color);
+      this.innerCircle.drawCircle(0, 0, 8);
+      this.innerCircle.endFill();
+    }
   }
 }

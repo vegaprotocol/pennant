@@ -109,6 +109,7 @@ export class PriceCurve extends Container {
     this.backgroundSurface = backgroundSurface;
 
     this.area.clear();
+
     this.area.beginTextureFill({
       alpha: 0.5,
       texture: createTexture(

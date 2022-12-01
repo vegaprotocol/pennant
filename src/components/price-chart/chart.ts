@@ -1,14 +1,14 @@
 import { extent, max, mean, min } from "d3-array";
+import { orderBy, sortBy, times, zip } from "lodash";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { timeDay } from "d3-time";
-import EventEmitter from "eventemitter3";
-import { orderBy, sortBy, zip } from "lodash";
 
-import { Data } from "../../vega-lite/data";
 import { Colors } from "../depth-chart/helpers";
 import { Contents } from "./contents";
+import { Data } from "../../vega-lite/data";
+import EventEmitter from "eventemitter3";
 import { UI } from "./ui";
 import { ZoomTransform } from "./zoom/transform";
+import { timeDay } from "d3-time";
 
 /**
  * Standard font size in CSS pixels
@@ -85,7 +85,9 @@ export class Chart extends EventEmitter {
       })
       .on("zoomend", () => {
         this.emit("zoomend");
-      });
+      })
+      .on("mousemove", (d) => this.emit("mousemove", d))
+      .on("mouseout", () => this.emit("mouseout"));
 
     this.ui.on("zoom.horizontalAxis", (t: ZoomTransform) => {
       this._timeSpan = this.initialSpan * t.k;
@@ -108,6 +110,14 @@ export class Chart extends EventEmitter {
   public resize(width: number, height: number) {
     this.chart.renderer.resize(width, height);
     this.ui.renderer.resize(width, height);
+  }
+
+  public reset() {
+    this._priceSpan = 1;
+    this._timeSpan = 1;
+
+    this.update();
+    this.render();
   }
 
   public destroy() {
@@ -149,6 +159,8 @@ export class Chart extends EventEmitter {
     this.chart.colors = this._colors;
 
     this.chart.update(
+      priceScale,
+      timeScale,
       this._data.map((d) => [timeScale(d.date), priceScale(d.price)]),
       priceScale(this._data[0].price),
       this.height
