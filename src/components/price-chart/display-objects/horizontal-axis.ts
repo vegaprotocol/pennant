@@ -1,9 +1,8 @@
-import { ScaleTime } from "d3-scale";
-
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
+import { ScaleTime } from "../../../types";
 import { Colors } from "../../depth-chart/helpers";
 import { AXIS_HEIGHT, FONT_SIZE } from "../chart";
 import { Gesture } from "../zoom/gesture";
@@ -58,7 +57,7 @@ export class HorizontalAxis extends Container {
   }
 
   public update(
-    scale: ScaleTime<number, number>,
+    scale: ScaleTime,
     width: number,
     height: number,
     resolution: number = 1,

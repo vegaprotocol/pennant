@@ -10,6 +10,13 @@ import { Chart } from "./chart";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 
+/**
+ * TODO:
+ *
+ * 1. Sort out tooltip
+ * 1. Support mobile touch events
+ */
+
 function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
@@ -76,7 +83,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
         };
 
         computePosition(virtualEl, tooltipRef.current, {
-          placement: "right",
+          placement: "left",
           middleware: [offset(16), flip()],
         }).then(({ x, y }) => {
           Object.assign(tooltipRef.current.style, {

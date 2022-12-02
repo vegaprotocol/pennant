@@ -1,4 +1,4 @@
-import { ScaleLinear, scaleLinear, ScaleTime, scaleTime } from "d3-scale";
+import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
 
@@ -8,6 +8,7 @@ import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
 import {
@@ -53,7 +54,7 @@ export class UI extends EventEmitter {
   private priceZoom: Zoom = new Zoom();
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
 
-  private timeScale: ScaleTime<number, number> = scaleTime();
+  private timeScale: ScaleTime = scaleTime();
   private timeZoom: Zoom = new Zoom();
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
 
@@ -158,7 +159,7 @@ export class UI extends EventEmitter {
 
       this.lastTimeZoomTransform = transform;
 
-      this.emit("zoom.horizontalAxis", this.timeZoom.__zoom);
+      this.emit("zoom.horizontalAxis", this.timeZoom.__zoom, point);
     });
 
     this.verticalAxis.interactive = true;
@@ -207,7 +208,7 @@ export class UI extends EventEmitter {
 
   public update(
     data: { date: Date; price: number }[],
-    timeScale: ScaleTime<number, number>,
+    timeScale: ScaleTime,
     priceScale: ScaleLinear<number, number>,
     startPrice: number
   ): void {
