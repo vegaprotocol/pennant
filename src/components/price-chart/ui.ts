@@ -9,7 +9,6 @@ import { Graphics } from "../../renderer/graphics";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
 import { AXIS_HEIGHT } from "../depth-chart";
-import { Colors } from "../depth-chart/helpers";
 import { AXIS_WIDTH } from "./chart";
 import {
   Crosshair,
@@ -18,16 +17,17 @@ import {
   Label,
   VerticalAxis,
 } from "./display-objects";
+import { Colors } from "./helpers";
 import { Gesture } from "./zoom/gesture";
 import { zoomIdentity, ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
-
-const OVERLAY_OPACITY = 0.05;
 
 type UiColors = Pick<
   Colors,
   | "backgroundSurface"
   | "buyStroke"
+  | "emphasis100"
+  | "emphasis200"
   | "sellStroke"
   | "textPrimary"
   | "textSecondary"
@@ -284,8 +284,8 @@ export class UI extends EventEmitter {
       { x: 1, y: 0.5 },
       resolution,
       {
-        backgroundSurface: 0x222222,
-        textPrimary: 0xffffff,
+        backgroundSurface: this.colors.emphasis200,
+        textPrimary: this.colors.textPrimary,
       }
     );
 
@@ -381,7 +381,7 @@ export class UI extends EventEmitter {
         resolution * y,
         { x: 1, y: 0.5 },
         resolution,
-        this.colors
+        { ...this.colors, backgroundSurface: this.colors.emphasis100 }
       );
 
       this.timeLabel.update(
@@ -390,7 +390,7 @@ export class UI extends EventEmitter {
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
         resolution,
-        this.colors
+        { ...this.colors, backgroundSurface: this.colors.emphasis100 }
       );
 
       this.render();

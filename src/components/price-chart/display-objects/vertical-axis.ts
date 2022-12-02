@@ -2,10 +2,11 @@ import { ScaleLinear } from "d3-scale";
 
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
+import { Graphics } from "../../../renderer/graphics";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
 import { Colors } from "../../depth-chart/helpers";
-import { FONT_SIZE } from "../chart";
+import { AXIS_WIDTH, FONT_SIZE } from "../chart";
 import { Gesture } from "../zoom/gesture";
 import { Zoom } from "../zoom/zoom";
 
@@ -32,6 +33,7 @@ export class VerticalAxis extends Container {
   public zoom: Zoom = new Zoom();
   private gesture = new Gesture(this);
   private firstPoint: [number, number] = [0, 0];
+  private overlay: Graphics = new Graphics();
 
   /**
    * Cache ticks
@@ -42,6 +44,8 @@ export class VerticalAxis extends Container {
     super();
 
     this.renderer = renderer;
+
+    this.addChild(this.overlay);
 
     this.on("wheel", this.onWheel)
       .on("pointerdown", this.onPointerDown)
@@ -56,6 +60,16 @@ export class VerticalAxis extends Container {
     resolution: number = 1,
     colors: VerticalAxisColors
   ) {
+    this.overlay.clear();
+    this.overlay.beginFill(colors.backgroundSurface, 0.7);
+    this.overlay.drawRect(
+      width - resolution * AXIS_WIDTH,
+      0,
+      resolution * AXIS_WIDTH,
+      height
+    );
+    this.overlay.endFill();
+
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
     const tickFormat = scale.tickFormat(numTicks);

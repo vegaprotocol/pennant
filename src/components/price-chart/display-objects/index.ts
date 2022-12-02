@@ -4,7 +4,6 @@ export * from "./horizontal-grid";
 export * from "./horizontal-line";
 export * from "./indicator";
 export * from "./label";
-export * from "./mid-market-label";
 export * from "./price-curve";
 export * from "./rect";
 export * from "./vertical-axis";

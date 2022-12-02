@@ -1,14 +1,11 @@
-import { extent, max, mean, min } from "d3-array";
-import { orderBy, sortBy, times, zip } from "lodash";
+import { extent } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
-
-import { Colors } from "../depth-chart/helpers";
-import { Contents } from "./contents";
-import { Data } from "../../vega-lite/data";
 import EventEmitter from "eventemitter3";
+
+import { Contents } from "./contents";
+import { Colors } from "./helpers";
 import { UI } from "./ui";
 import { ZoomTransform } from "./zoom/transform";
-import { timeDay } from "d3-time";
 
 /**
  * Standard font size in CSS pixels

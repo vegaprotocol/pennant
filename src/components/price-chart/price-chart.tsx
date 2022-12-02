@@ -5,9 +5,9 @@ import { useEffect, useRef } from "react";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { numberFormatter } from "../depth-chart";
-import { getColors } from "../depth-chart/helpers";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
+import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 
 function defaultPriceFormat(price: number) {

@@ -5,9 +5,9 @@ import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
-import { Colors } from "../depth-chart/helpers";
 import { AXIS_WIDTH } from "./chart";
 import { HorizontalGrid, PriceCurve, VerticalGrid } from "./display-objects";
+import { Colors } from "./helpers";
 
 type ContentsColors = Pick<
   Colors,
