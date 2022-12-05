@@ -1,3 +1,4 @@
+import { range } from "../../../helpers";
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
@@ -15,9 +16,6 @@ type HorizontalAxisColors = Pick<
   Colors,
   "backgroundSurface" | "textPrimary" | "textSecondary"
 >;
-
-const range = (start: number, stop: number, step = 1) =>
-  Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 
 /**
  * Draws a horizontal axis at the bottom of the chart

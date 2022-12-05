@@ -1,6 +1,7 @@
 import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
+import { range } from "lodash";
 
 import { bisectCenter } from "../../math/array";
 import { Renderer } from "../../renderer";
@@ -8,6 +9,7 @@ import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { hex2string, string2hex } from "../../renderer/utils";
 import { ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
@@ -19,12 +21,17 @@ import {
   VerticalAxis,
 } from "./display-objects";
 import { Colors } from "./helpers";
-import { Gesture } from "./zoom/gesture";
 import { zoomIdentity, ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
 
 type UiColors = Pick<
   Colors,
+  | "accent1"
+  | "accent2"
+  | "accent3"
+  | "accent4"
+  | "accent5"
+  | "accent6"
   | "backgroundSurface"
   | "buyStroke"
   | "emphasis100"
@@ -48,8 +55,12 @@ export class UI extends EventEmitter {
   public scaleExtent = [0, Infinity];
 
   public colors: UiColors;
+  public zoom: Zoom = new Zoom();
 
-  private data: { date: Date; price: number }[] = [];
+  private data: {
+    cols: ReadonlyArray<string>;
+    rows: ReadonlyArray<[Date, ...number[]]>;
+  } = { cols: [], rows: [] };
   private priceScale: ScaleLinear<number, number> = scaleLinear();
   private priceZoom: Zoom = new Zoom();
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
@@ -57,31 +68,20 @@ export class UI extends EventEmitter {
   private timeScale: ScaleTime = scaleTime();
   private timeZoom: Zoom = new Zoom();
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
-
-  /**
-   * The current scale.
-   */
-  private transform: number = 1;
-
   private startPrice: number = 0;
-
   private horizontalAxis: HorizontalAxis;
   private verticalAxis: VerticalAxis;
   private startPriceLine: Graphics = new Graphics();
   private verticalAxisSeparator: Graphics = new Graphics();
   private horizontalAxisSeparator: Graphics = new Graphics();
   private crosshair: Crosshair = new Crosshair(1, 0x888888, [3, 3]);
-  private indicator: Indicator = new Indicator(0xff0000);
+  private indicator: Indicator[] = range(0, 6).map(
+    (index) => new Indicator(0xff0000)
+  );
   private priceLabel: Label = new Label();
   private timeLabel: Label = new Label();
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
-
-  private lastEvent: InteractionEvent | null = null;
-
-  public zoom: Zoom = new Zoom();
-
-  private gesture = new Gesture(this);
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -112,7 +112,7 @@ export class UI extends EventEmitter {
     this.stage.addChild(this.verticalAxisSeparator);
     this.stage.addChild(this.horizontalAxisSeparator);
     this.stage.addChild(this.crosshair);
-    this.stage.addChild(this.indicator);
+    this.stage.addChild(...this.indicator);
     this.stage.addChild(this.startPriceLabel);
     this.stage.addChild(this.priceLabel);
     this.stage.addChild(this.timeLabel);
@@ -207,7 +207,10 @@ export class UI extends EventEmitter {
   }
 
   public update(
-    data: { date: Date; price: number }[],
+    data: {
+      cols: ReadonlyArray<string>;
+      rows: ReadonlyArray<[Date, ...number[]]>;
+    },
     timeScale: ScaleTime,
     priceScale: ScaleLinear<number, number>,
     startPrice: number
@@ -261,9 +264,9 @@ export class UI extends EventEmitter {
     this.startPriceLine.clear();
 
     this.startPriceLine.lineStyle({
-      width: 1,
-      color: 0x898989,
-      lineDash: [3, 6],
+      width: 2,
+      color: this.colors.textPrimary,
+      lineDash: [6, 3],
     });
 
     this.startPriceLine.moveTo(0, priceScale(startPrice));
@@ -332,19 +335,20 @@ export class UI extends EventEmitter {
   }
 
   private onPointerMove = (event: InteractionEvent) => {
+    if ("ontouchstart" in self) return;
+
     this.crosshair.visible = true;
-    this.indicator.visible = true;
     this.priceLabel.visible = true;
     this.timeLabel.visible = true;
 
-    if ("ontouchstart" in self) return;
-
-    this.lastEvent = event;
+    for (let index = 0; index < this.indicator.length; index++) {
+      this.indicator[index].visible = true;
+    }
 
     let x = event.data?.global.x;
     let y = event.data?.global.y;
 
-    if (x && y && this.data.length > 1) {
+    if (x && y && this.data.rows.length > 1) {
       const resolution = this.renderer.resolution;
       x *= resolution;
 
@@ -352,26 +356,34 @@ export class UI extends EventEmitter {
       const height = this.renderer.view.height;
 
       const index = bisectCenter(
-        this.data.map((d) => this.timeScale(d.date)),
+        this.data.rows.map((d) => this.timeScale(d[0])),
         x
       );
-      const nearestX = this.data[index];
+      const nearestX = this.data.rows[index];
 
       this.crosshair.update(
-        this.timeScale(nearestX.date),
+        this.timeScale(nearestX[0]),
         resolution * y,
         width,
         height,
         resolution
       );
 
-      this.indicator.update(
-        this.timeScale(nearestX.date),
-        this.priceScale(nearestX.price),
-        nearestX.price > this.startPrice
-          ? this.colors.buyStroke
-          : this.colors.sellStroke
-      );
+      for (let i = 0; i < this.indicator.length; i++) {
+        if (i + 1 < this.data.cols.length) {
+          this.indicator[i].update(
+            this.timeScale(nearestX[0]),
+            this.priceScale(nearestX[i + 1]),
+            this.data.cols.length === 2
+              ? nearestX[i + 1] > this.startPrice
+                ? this.colors.buyStroke
+                : this.colors.sellStroke
+              : string2hex((this.colors as any)[`accent${i + 1}`])
+          );
+        } else {
+          this.indicator[i].visible = false;
+        }
+      }
 
       const numTicks = height / resolution / 50;
       const tickFormat = this.priceScale.tickFormat(numTicks);
@@ -386,8 +398,8 @@ export class UI extends EventEmitter {
       );
 
       this.timeLabel.update(
-        format(nearestX.date, "HH:mm dd MMM yyyy"),
-        this.timeScale(nearestX.date),
+        format(nearestX[0], "HH:mm dd MMM yyyy"),
+        this.timeScale(nearestX[0]),
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
         resolution,
@@ -397,24 +409,31 @@ export class UI extends EventEmitter {
       this.render();
 
       this.emit("mousemove", {
-        point: [this.timeScale(nearestX.date) / resolution, y],
-        content: {
-          date: nearestX.date,
-          price: nearestX.price,
-        },
+        point: [this.timeScale(nearestX[0]) / resolution, y],
+        date: nearestX[0],
+        series: range(0, this.data.cols.length - 1).map((i) => ({
+          color:
+            this.data.cols.length === 2
+              ? nearestX[i + 1] > this.startPrice
+                ? hex2string(this.colors.buyStroke)
+                : hex2string(this.colors.sellStroke)
+              : (this.colors as any)[`accent${i + 1}`],
+          name: this.data.cols[i + 1],
+          value: nearestX[i + 1],
+        })),
       });
     }
   };
 
   private onPointerOut = () => {
     this.crosshair.visible = false;
-    this.indicator.visible = false;
     this.priceLabel.visible = false;
     this.timeLabel.visible = false;
 
-    this.emit("mouseout");
+    this.indicator[0].visible = false;
+    this.indicator[1].visible = false;
 
-    this.lastEvent = null;
+    this.emit("mouseout");
 
     this.render();
   };

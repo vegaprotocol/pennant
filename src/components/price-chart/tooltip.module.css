@@ -1,0 +1,42 @@
+.date {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.indicator {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  content: "";
+  border-radius: 100%;
+  margin-right: 8px;
+  border: 2px solid rgb(255, 255, 255);
+  box-shadow: rgb(88 102 126 / 8%) 0px 1px 1px,
+    rgb(88 102 126 / 10%) 0px 8px 16px;
+  transform: translateY(2px);
+}
+
+.tooltip {
+  min-width: 280px;
+  padding: 8px;
+  pointer-events: none;
+  background-color: var(--pennant-color-emphasis-100);
+  color: var(--pennant-color-emphasis-900);
+  border-radius: 4px;
+  pointer-events: none;
+  font-family: var(--pennant-font-family-base);
+  font-size: var(--pennant-font-size-base);
+  font-weight: var(--pennant-font-weight-normal);
+}
+
+.tooltip .name {
+  color: var(--pennant-font-color-secondary);
+  padding-right: 8px;
+}
+
+.tooltip .value {
+  color: var(--pennant-font-color-base);
+  font-weight: 600;
+}

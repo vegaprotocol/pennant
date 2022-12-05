@@ -26,17 +26,19 @@ export const AXIS_HEIGHT = FONT_SIZE + 5;
 export const AXIS_WIDTH = FONT_SIZE + 60;
 
 export class Chart extends EventEmitter {
-  private chart: Contents;
+  private contents: Contents;
   private ui: UI;
 
   private timeScale: ScaleTime = scaleTime();
   private timeZoom: Zoom = new Zoom();
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
-  private _timeSpan: number = 1;
   private _priceSpan: number = 1;
   private initialSpan: number = 1;
 
-  private _data: { date: Date; price: number }[] = [];
+  private _data: {
+    cols: ReadonlyArray<string>;
+    rows: ReadonlyArray<[Date, ...number[]]>;
+  } = { cols: [], rows: [] };
 
   private priceFormat: (price: number) => string;
   private volumeFormat: (volume: number) => string;
@@ -59,7 +61,7 @@ export class Chart extends EventEmitter {
     this.volumeFormat = options.volumeFormat;
     this._colors = options.colors;
 
-    this.chart = new Contents({
+    this.contents = new Contents({
       view: options.chartView,
       resolution: options.resolution,
       width: options.width,
@@ -94,7 +96,10 @@ export class Chart extends EventEmitter {
     this.ui.on("zoom.horizontalAxis", (t: ZoomTransform, point) => {
       const k = t.k / this.lastTimeZoomTransform.k;
 
-      this.timeZoom.scaleBy(k, point);
+      this.timeZoom.scaleBy(k, [
+        this.width - this.ui.renderer.resolution * AXIS_WIDTH,
+        0,
+      ]);
 
       this.lastTimeZoomTransform = t;
 
@@ -110,18 +115,17 @@ export class Chart extends EventEmitter {
   }
 
   public render() {
-    this.chart.render();
+    this.contents.render();
     this.ui.render();
   }
 
   public resize(width: number, height: number) {
-    this.chart.renderer.resize(width, height);
+    this.contents.renderer.resize(width, height);
     this.ui.renderer.resize(width, height);
   }
 
   public reset() {
     this._priceSpan = 1;
-    this._timeSpan = 1;
 
     this.update();
     this.render();
@@ -138,7 +142,7 @@ export class Chart extends EventEmitter {
 
     const xr = this.timeZoom.__zoom.rescaleX(this.timeScale) as ScaleTime;
 
-    const priceExtent = extent(this._data.map((d) => d.price)) as [
+    const priceExtent = extent(this._data.rows.flatMap((d) => d.slice(1))) as [
       number,
       number
     ];
@@ -153,19 +157,22 @@ export class Chart extends EventEmitter {
       ])
       .range([this.height - resolution * AXIS_HEIGHT, 0]);
 
-    this.chart.colors = this._colors;
+    this.contents.colors = this._colors;
 
-    this.chart.update(
+    this.contents.update(
       priceScale,
       this.timeScale,
-      this._data.map((d) => [xr(d.date), priceScale(d.price)]),
-      priceScale(this._data[0].price),
+      this._data.rows.map((d) => [
+        xr(d[0]),
+        ...d.slice(1).map((series) => priceScale(series)),
+      ]),
+      priceScale(this._data.rows[0][1]),
       this.height
     );
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, priceScale, this._data[0].price);
+    this.ui.update(this._data, xr, priceScale, this._data.rows[0][1]);
   }
 
   set colors(colors: Colors) {
@@ -179,34 +186,28 @@ export class Chart extends EventEmitter {
     return this._data;
   }
 
-  set data(data: { date: Date; price: number }[]) {
+  set data(data: {
+    cols: ReadonlyArray<string>;
+    rows: ReadonlyArray<[Date, ...number[]]>;
+  }) {
     this._data = data;
 
-    this.timeScale = this.timeScale.domain([
-      data[0].date,
-      data[data.length - 1].date,
-    ]);
+    if (data.rows.length > 0) {
+      this.timeScale = this.timeScale.domain([
+        data.rows[0][0],
+        data.rows[data.rows.length - 1][0],
+      ]);
+    }
 
     this.update();
     this.render();
   }
 
   get height(): number {
-    return this.chart.renderer.view.height;
+    return this.contents.renderer.view.height;
   }
 
   get width(): number {
-    return this.chart.renderer.view.width;
-  }
-
-  get span() {
-    return this._timeSpan;
-  }
-
-  set span(span: number) {
-    this._timeSpan = span;
-
-    this.update();
-    this.render();
+    return this.contents.renderer.view.width;
   }
 }

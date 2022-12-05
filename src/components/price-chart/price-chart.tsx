@@ -1,6 +1,6 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { format } from "date-fns";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
@@ -9,6 +9,7 @@ import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
+import { Tooltip } from "./tooltip";
 
 /**
  * TODO:
@@ -21,12 +22,11 @@ function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
 
-function defaultVolumeFormat(volume: number) {
-  return numberFormatter(0).format(volume);
-}
-
 export type PriceChartProps = {
-  data: { date: Date; price: number }[];
+  data: {
+    cols: ReadonlyArray<string>;
+    rows: [Date, ...number[]][];
+  };
   /** Light or dark theme */
   theme?: ThemeVariant;
 };
@@ -37,6 +37,12 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   const chartRef = useRef<Chart>(null!);
   const styleRef = useRef<HTMLDivElement>(null!);
   const tooltipRef = useRef<HTMLDivElement>(null!);
+
+  const [date, setDate] = useState<Date>(new Date());
+
+  const [series, setSeries] = useState<
+    { color: string; name: string; value: string }[]
+  >([]);
 
   const {
     ref: resizeOberverRef,
@@ -84,18 +90,17 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
 
         computePosition(virtualEl, tooltipRef.current, {
           placement: "left",
-          middleware: [offset(16), flip()],
+          middleware: [offset(16), flip(), shift()],
         }).then(({ x, y }) => {
+          // TODO: transform would perform better
           Object.assign(tooltipRef.current.style, {
             left: `${x + 10}px`,
             top: `${point[1] + 10}px`,
             visibility: "visible",
           });
 
-          tooltipRef.current.firstElementChild!.textContent = `${format(
-            d.content.date,
-            "HH:mm dd MMM yyyy"
-          )} - ${d.content.price.toFixed(0)}`;
+          setDate(d.date);
+          setSeries(d.series);
         });
       })
       .on("mouseout", () => {
@@ -141,7 +146,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     chartRef.current.reset();
   }, [data]);
 
-  if (data.length === 0) {
+  if (data.rows.length === 0) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>
         <NonIdealState title="No data" />
@@ -158,7 +163,6 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
         </div>
         <div
           ref={tooltipRef}
-          className={styles.tooltip}
           style={{
             position: "absolute",
             width: "maxContent",
@@ -167,7 +171,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
             visibility: "hidden",
           }}
         >
-          <span style={{ whiteSpace: "nowrap" }}></span>
+          <Tooltip date={date} series={series} />
         </div>
       </div>
     </>

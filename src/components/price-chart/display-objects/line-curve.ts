@@ -63,14 +63,12 @@ const createTexture = memoize(
 );
 
 /**
- * Draws an area curve
+ * Draws a line curve
  */
-export class PriceCurve extends Container {
-  private area: Graphics = new Graphics();
+export class LineCurve extends Container {
   private line: Graphics = new Graphics();
 
   private stroke: number;
-  private fill: number;
   private backgroundSurface: number;
   private curve: CurveFactory;
 
@@ -83,14 +81,11 @@ export class PriceCurve extends Container {
     super();
 
     this.stroke = stroke;
-    this.fill = fill;
     this.backgroundSurface = backgroundSurface;
     this.curve = curve;
 
-    this.area.lineStyle({ width: 0 });
     this.line.lineStyle({ width: 4, color: stroke, alpha: 0.5 });
 
-    this.addChild(this.area);
     this.addChild(this.line);
   }
 
@@ -104,25 +99,8 @@ export class PriceCurve extends Container {
     invert: boolean,
     startPrice: number
   ): void {
-    this.fill = fill;
     this.stroke = stroke;
     this.backgroundSurface = backgroundSurface;
-
-    this.area.clear();
-
-    this.area.beginTextureFill({
-      alpha: 0.5,
-      texture: createTexture(
-        this.stroke,
-        this.backgroundSurface,
-        height,
-        startPrice,
-        invert
-      ),
-    });
-
-    this.area.drawArea(points, this.curve, startPrice);
-    this.area.endFill();
 
     this.line.clear();
     this.line.lineStyle({ width: 4, color: this.stroke });

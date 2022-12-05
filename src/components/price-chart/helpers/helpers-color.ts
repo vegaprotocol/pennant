@@ -1,3 +1,4 @@
+import { COLORS } from "../../../helpers";
 import { string2hex } from "../../../renderer/utils";
 
 export interface Colors {
@@ -10,6 +11,12 @@ export interface Colors {
   sellStroke: number;
   textPrimary: number;
   textSecondary: number;
+  accent1: string;
+  accent2: string;
+  accent3: string;
+  accent4: string;
+  accent5: string;
+  accent6: string;
 }
 
 export function getColors(element: HTMLElement | null): Colors {
@@ -61,5 +68,23 @@ export function getColors(element: HTMLElement | null): Colors {
         ?.getPropertyValue("--pennant-font-color-secondary")
         .trim() || "#fafafa"
     ),
+    accent1:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent1").trim() ||
+      COLORS.VEGA_ORANGE,
+    accent2:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent2").trim() ||
+      COLORS.VEGA_YELLOW,
+    accent3:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent3").trim() ||
+      COLORS.VEGA_RED,
+    accent4:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent4").trim() ||
+      COLORS.VEGA_YELLOW,
+    accent5:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent5").trim() ||
+      COLORS.VEGA_ORANGE,
+    accent6:
+      cssStyleDeclaration?.getPropertyValue("--pennant-accent6").trim() ||
+      COLORS.VEGA_RED,
   };
 }

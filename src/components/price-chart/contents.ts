@@ -1,12 +1,10 @@
-import { curveLinear } from "d3-shape";
-
+import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
-import { HorizontalGrid, PriceCurve, VerticalGrid } from "./display-objects";
+import { Area, HorizontalGrid, VerticalGrid } from "./display-objects";
 import { Colors } from "./helpers";
 
 type ContentsColors = Pick<
@@ -24,11 +22,7 @@ export class Contents {
   public horizontalGrid: HorizontalGrid;
   public verticalgrid: VerticalGrid;
 
-  public priceCurvePositive: PriceCurve;
-  public maskPositive: Graphics;
-
-  public priceCurveNegative: PriceCurve;
-  public maskNegative: Graphics;
+  public series: Area[];
 
   public colors: ContentsColors;
 
@@ -50,42 +44,11 @@ export class Contents {
 
     this.horizontalGrid = new HorizontalGrid();
     this.verticalgrid = new VerticalGrid();
-
-    this.priceCurvePositive = new PriceCurve(
-      options.colors.buyStroke,
-      options.colors.buyFill,
-      options.colors.backgroundSurface,
-      curveLinear
-    );
-
-    this.maskPositive = new Graphics();
-    this.maskPositive.beginFill();
-    this.maskPositive.drawRect(0, -1000, 3200, 1000);
-    this.maskPositive.endFill();
-
-    this.priceCurveNegative = new PriceCurve(
-      options.colors.sellStroke,
-      options.colors.sellFill,
-      options.colors.backgroundSurface,
-      curveLinear
-    );
-
-    this.maskNegative = new Graphics();
-    this.maskNegative.beginFill(0xffffff);
-    this.maskNegative.drawRect(0, 0, 3200, 1000);
-    this.maskNegative.endFill();
-
-    this.priceCurvePositive.mask = this.maskPositive;
-    this.priceCurveNegative.mask = this.maskNegative;
+    this.series = range(0, 6).map((index) => new Area(options.colors));
 
     this.stage.addChild(this.horizontalGrid);
     this.stage.addChild(this.verticalgrid);
-
-    this.stage.addChild(this.priceCurveNegative);
-    this.priceCurveNegative.addChild(this.maskNegative);
-
-    this.stage.addChild(this.priceCurvePositive);
-    this.priceCurvePositive.addChild(this.maskPositive);
+    this.stage.addChild(...this.series);
   }
 
   public render(): void {
@@ -95,7 +58,7 @@ export class Contents {
   public update(
     priceScale: ScaleLinear,
     timeScale: ScaleTime,
-    data: [number, number][],
+    data: [number, ...number[]][],
     startPrice: number,
     height: number
   ): void {
@@ -107,6 +70,7 @@ export class Contents {
       this.renderer.height - resolution * AXIS_HEIGHT,
       resolution
     );
+
     this.verticalgrid.update(
       priceScale,
       this.renderer.width - resolution * AXIS_WIDTH,
@@ -114,29 +78,20 @@ export class Contents {
       resolution
     );
 
-    this.maskPositive.y = startPrice;
-    this.maskNegative.y = startPrice;
-
-    this.priceCurvePositive.update(
-      data,
-      startPrice,
-      resolution,
-      this.colors.buyFill,
-      this.colors.buyStroke,
-      this.colors.backgroundSurface,
-      false,
-      startPrice
-    );
-
-    this.priceCurveNegative.update(
-      data,
-      height - startPrice,
-      resolution,
-      this.colors.sellFill,
-      this.colors.sellStroke,
-      this.colors.backgroundSurface,
-      true,
-      startPrice
-    );
+    for (let i = 0; i < this.series.length; i++) {
+      if (i + 1 < data.length) {
+        this.series[i].visible = true;
+        this.series[i].update(
+          priceScale,
+          timeScale,
+          data.map((d) => [d[0], d[i + 1]]),
+          startPrice,
+          height,
+          resolution
+        );
+      } else {
+        this.series[i].visible = false;
+      }
+    }
   }
 }
