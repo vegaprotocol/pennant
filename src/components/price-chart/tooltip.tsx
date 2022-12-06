@@ -16,11 +16,13 @@ export const Tooltip = ({ date, series }: TooltipProps) => {
       </div>
       {series.map((s) => (
         <div key={s.name} className={styles.series}>
-          <div
-            className={styles.indicator}
-            style={{ backgroundColor: s.color }}
-          />
-          <span className={styles.name}>{s.name}</span>
+          <div>
+            <div
+              className={styles.indicator}
+              style={{ backgroundColor: s.color }}
+            />
+            <span className={styles.name}>{s.name}</span>
+          </div>
           <span className={styles.value}>{s.value}</span>
         </div>
       ))}

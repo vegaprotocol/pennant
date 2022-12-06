@@ -342,7 +342,9 @@ export class UI extends EventEmitter {
     this.timeLabel.visible = true;
 
     for (let index = 0; index < this.indicator.length; index++) {
-      this.indicator[index].visible = true;
+      if (index + 1 < this.data.cols.length) {
+        this.indicator[index].visible = true;
+      }
     }
 
     let x = event.data?.global.x;
@@ -419,7 +421,7 @@ export class UI extends EventEmitter {
                 : hex2string(this.colors.sellStroke)
               : (this.colors as any)[`accent${i + 1}`],
           name: this.data.cols[i + 1],
-          value: nearestX[i + 1],
+          value: (nearestX[i + 1] as number).toFixed(2),
         })),
       });
     }

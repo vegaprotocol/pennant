@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@blueprintjs/core";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { intersectionBy, zipWith } from "lodash";
+import { zipWith } from "lodash";
 import React, { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
@@ -8,7 +8,7 @@ import { PriceChart } from "./price-chart";
 import series from "./price-chart.stories.json";
 
 type Range = "1D" | "7D" | "1M" | "3M" | "1Y" | "ALL";
-type Asset = "BTC" | "ETH";
+type Asset = "BTC" | "ETH" | "TETHER";
 
 export default {
   title: "Charts/PriceChart",
@@ -22,7 +22,10 @@ export const Primary: ComponentStory<typeof PriceChart> = () => {
 
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
     cols: ["Date", asset],
-    rows: series[asset][range].map((d) => [new Date(1000 * d.time), d.price]),
+    rows: (series as any)[asset][range].map((d: any) => [
+      new Date(1000 * d.time),
+      d.price,
+    ]),
   };
 
   return (
@@ -59,6 +62,13 @@ export const Primary: ComponentStory<typeof PriceChart> = () => {
               active={asset === "ETH"}
               onClick={() => {
                 setAsset("ETH");
+              }}
+            />
+            <Button
+              text="TETHER"
+              active={asset === "TETHER"}
+              onClick={() => {
+                setAsset("TETHER");
               }}
             />
           </ButtonGroup>
@@ -124,13 +134,17 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
   const [asset, setAsset] = useState<Set<Asset>>(new Set(["BTC", "ETH"]));
   const [range, setRange] = useState<Range>("1D");
 
+  const cols = ["Date", ...Array.from(asset).sort()];
+
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
-    cols: ["Date", "BTC", "ETH", "ETH2"],
+    cols: cols,
     rows: zipWith(
       series["BTC"][range].map((d) => new Date(1000 * d.time)),
       series["BTC"][range].map((d) => d.price),
-      series["ETH"][range].map((d) => 13 * d.price),
-      series["ETH"][range].map((d) => 12.5 * d.price),
+      series["ETH"][range].map((d) => d.price),
+      (series as any)["TETHER"][range].map(
+        (d: any) => d.price as number
+      ) as number[],
       function (a, b, c, d) {
         const res: [Date, ...number[]] = [a];
 
@@ -142,13 +156,13 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
           res.push(c);
         }
 
-        if (asset.has("ETH")) {
+        if (asset.has("TETHER")) {
           res.push(d);
         }
 
         return res;
       }
-    ),
+    ).slice(0, series["BTC"][range].length),
   };
 
   return (
@@ -213,6 +227,29 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
                     const newAsset = new Set(asset);
 
                     newAsset.add("ETH");
+
+                    return newAsset;
+                  });
+                }
+              }}
+            />
+            <Button
+              text="TETHER"
+              active={asset.has("TETHER")}
+              onClick={() => {
+                if (asset.has("TETHER")) {
+                  setAsset((asset) => {
+                    const newAsset = new Set(asset);
+
+                    newAsset.delete("TETHER");
+
+                    return newAsset;
+                  });
+                } else {
+                  setAsset((asset) => {
+                    const newAsset = new Set(asset);
+
+                    newAsset.add("TETHER");
 
                     return newAsset;
                   });

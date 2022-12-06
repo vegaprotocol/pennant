@@ -1,8 +1,36 @@
-.date {
+.tooltip {
+  min-width: 180px;
+  padding: 12px;
+  pointer-events: none;
+  background-color: var(--pennant-color-emphasis-50);
+  color: var(--pennant-color-emphasis-900);
+  border-radius: 4px;
+  pointer-events: none;
+  font-family: var(--pennant-font-family-base);
+  font-size: var(--pennant-font-size-base);
+  font-weight: var(--pennant-font-weight-normal);
+}
+
+.tooltip .date {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+
+.tooltip .date .primary {
+  color: var(--pennant-font-color-base);
+}
+
+.tooltip .date .sub {
+  color: var(--pennant-font-color-secondary);
+}
+
+.tooltip .series {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 4px;
 }
 
 .indicator {
@@ -18,25 +46,13 @@
   transform: translateY(2px);
 }
 
-.tooltip {
-  min-width: 280px;
-  padding: 8px;
-  pointer-events: none;
-  background-color: var(--pennant-color-emphasis-100);
-  color: var(--pennant-color-emphasis-900);
-  border-radius: 4px;
-  pointer-events: none;
-  font-family: var(--pennant-font-family-base);
-  font-size: var(--pennant-font-size-base);
-  font-weight: var(--pennant-font-weight-normal);
-}
-
-.tooltip .name {
+.tooltip .series .name {
   color: var(--pennant-font-color-secondary);
   padding-right: 8px;
 }
 
-.tooltip .value {
+.tooltip .series .value {
   color: var(--pennant-font-color-base);
+  font-family: var(--pennant-font-family-monospace);
   font-weight: 600;
 }

@@ -1,15 +1,31 @@
 import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
+import { string2hex } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
-import { Area, HorizontalGrid, VerticalGrid } from "./display-objects";
+import {
+  Area,
+  HorizontalGrid,
+  LineCurve,
+  VerticalGrid,
+} from "./display-objects";
 import { Colors } from "./helpers";
 
 type ContentsColors = Pick<
   Colors,
-  "backgroundSurface" | "buyFill" | "buyStroke" | "sellFill" | "sellStroke"
+  | "accent1"
+  | "accent2"
+  | "accent3"
+  | "accent4"
+  | "accent5"
+  | "accent6"
+  | "backgroundSurface"
+  | "buyFill"
+  | "buyStroke"
+  | "sellFill"
+  | "sellStroke"
 >;
 
 /**
@@ -22,7 +38,7 @@ export class Contents {
   public horizontalGrid: HorizontalGrid;
   public verticalgrid: VerticalGrid;
 
-  public series: Area[];
+  public series: LineCurve[];
 
   public colors: ContentsColors;
 
@@ -44,7 +60,7 @@ export class Contents {
 
     this.horizontalGrid = new HorizontalGrid();
     this.verticalgrid = new VerticalGrid();
-    this.series = range(0, 6).map((index) => new Area(options.colors));
+    this.series = range(0, 5).map((index) => new LineCurve());
 
     this.stage.addChild(this.horizontalGrid);
     this.stage.addChild(this.verticalgrid);
@@ -82,12 +98,14 @@ export class Contents {
       if (i + 1 < data.length) {
         this.series[i].visible = true;
         this.series[i].update(
-          priceScale,
-          timeScale,
           data.map((d) => [d[0], d[i + 1]]),
-          startPrice,
           height,
-          resolution
+          resolution,
+          undefined,
+          string2hex((this.colors as any)[`accent${i + 1}`]),
+          this.colors.backgroundSurface,
+          false,
+          startPrice
         );
       } else {
         this.series[i].visible = false;

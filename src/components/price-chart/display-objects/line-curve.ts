@@ -1,4 +1,4 @@
-import { CurveFactory, curveStepBefore } from "d3-shape";
+import { CurveFactory, curveLinear } from "d3-shape";
 import { memoize, values } from "lodash";
 
 import { Texture } from "../../../renderer";
@@ -76,7 +76,7 @@ export class LineCurve extends Container {
     stroke: number = 0,
     fill: number = 0xffffff,
     backgroundSurface: number = 0xffffff,
-    curve: CurveFactory = curveStepBefore
+    curve: CurveFactory = curveLinear
   ) {
     super();
 
