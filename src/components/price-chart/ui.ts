@@ -438,8 +438,9 @@ export class UI extends EventEmitter {
     this.priceLabel.visible = false;
     this.timeLabel.visible = false;
 
-    this.indicator[0].visible = false;
-    this.indicator[1].visible = false;
+    for (let i = 0; i < this.indicator.length; i++) {
+      this.indicator[i].visible = false;
+    }
 
     this.emit("mouseout");
 

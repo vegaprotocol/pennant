@@ -305,7 +305,10 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
       </div>
       <div
         style={{
-          flex: 1,
+          flex: "1 1 0",
+          position: "relative",
+          left: 0,
+          top: 0,
         }}
       >
         <PriceChart data={data} theme={theme} />

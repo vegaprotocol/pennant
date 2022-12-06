@@ -89,13 +89,14 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
         };
 
         computePosition(virtualEl, tooltipRef.current, {
-          placement: "left",
-          middleware: [offset(16), flip(), shift()],
+          placement: "right",
+          middleware: [offset(8), flip(), shift()],
         }).then(({ x, y }) => {
-          // TODO: transform would perform better
+          // TODO: Check window.devicePixelRatio to round by DPR
           Object.assign(tooltipRef.current.style, {
-            left: `${x + 10}px`,
-            top: `${point[1] + 10}px`,
+            left: 0,
+            top: 0,
+            transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
             visibility: "visible",
           });
 
@@ -155,25 +156,26 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   }
 
   return (
-    <>
-      <div ref={styleRef} className={styles.container} data-theme={theme}>
-        <div ref={resizeOberverRef} className={styles.canvasContainer}>
-          <canvas ref={contentsRef} className={styles.canvas} />
-          <canvas ref={uiRef} className={styles.canvas} />
-        </div>
-        <div
-          ref={tooltipRef}
-          style={{
-            position: "absolute",
-            width: "maxContent",
-            top: 0,
-            left: 0,
-            visibility: "hidden",
-          }}
-        >
-          <Tooltip date={date} series={series} />
-        </div>
+    <div ref={styleRef} className={styles.container} data-theme={theme}>
+      <div ref={resizeOberverRef} className={styles.canvasContainer}>
+        <canvas ref={contentsRef} className={styles.canvas} />
+        <canvas ref={uiRef} className={styles.canvas} />
       </div>
-    </>
+      <div
+        ref={tooltipRef}
+        style={{
+          position: "absolute",
+          width: "maxContent",
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+          visibility: "hidden",
+          boxShadow:
+            "rgb(88 102 126 / 8%) 0px 1px 1px, rgb(88 102 126 / 10%) 0px 8px 16px",
+        }}
+      >
+        <Tooltip date={date} series={series} />
+      </div>
+    </div>
   );
 };
