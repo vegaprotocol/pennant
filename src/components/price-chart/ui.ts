@@ -278,6 +278,12 @@ export class UI extends EventEmitter {
 
     this.startPriceLine.endFill();
 
+    if (this.data.cols.length > 2) {
+      this.startPriceLine.visible = false;
+    } else {
+      this.startPriceLine.visible = true;
+    }
+
     const numTicks = height / resolution / 50;
     const tickFormat = this.priceScale.tickFormat(numTicks);
 
@@ -400,7 +406,7 @@ export class UI extends EventEmitter {
       );
 
       this.timeLabel.update(
-        format(nearestX[0], "HH:mm dd MMM yyyy"),
+        format(nearestX[0], "dd/MM/yyyy HH:mm a"),
         this.timeScale(nearestX[0]),
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
