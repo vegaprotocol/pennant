@@ -123,7 +123,7 @@
     "@types/resize-observer-browser": "0.1.7",
     "@typescript-eslint/parser": "5.44.0",
     "babel-jest": "27.5.1",
-    "bignumber.js": "9.1.0",
+    "bignumber.js": "9.1.1",
     "eslint": "8.28.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-react-hooks": "4.6.0",
