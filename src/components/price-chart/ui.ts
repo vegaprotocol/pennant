@@ -90,6 +90,10 @@ export class UI extends EventEmitter {
   private gesture = new Gesture(this);
   private originalTransform: ZoomTransform = zoomIdentity;
 
+  private isZooming = false;
+
+  private lastEvent: InteractionEvent | null = null;
+
   constructor(options: {
     view: HTMLCanvasElement;
     resolution: number;
@@ -354,6 +358,10 @@ export class UI extends EventEmitter {
     const resolution = this.renderer.resolution;
     const p = pointer(tempEvent, resolution);
 
+    this.isZooming = true;
+    this.hideTooltips();
+    this.emit("mouseout");
+
     if (this.gesture.wheel) {
       window.clearTimeout(this.gesture.wheel);
     } else {
@@ -362,6 +370,12 @@ export class UI extends EventEmitter {
     }
 
     this.gesture.wheel = window.setTimeout(() => {
+      this.isZooming = false;
+
+      if (this.lastEvent) {
+        this.onPointerMove(this.lastEvent);
+      }
+
       this.gesture.wheel = null;
       this.gesture.end();
     }, 150);
@@ -414,10 +428,15 @@ export class UI extends EventEmitter {
     this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
     this.gesture.start();
 
+    this.isZooming = true;
+    this.hideTooltips();
+    this.emit("mouseout");
+    this.hitBox.cursor = "grabbing";
+
+    this.render();
+
     const handleMouseMove = (event: any) => {
       event.preventDefault();
-
-      this.hitBox.cursor = "grabbing";
 
       this.gesture.mouse[0] = pointer(event, resolution);
 
@@ -455,6 +474,12 @@ export class UI extends EventEmitter {
       }
 
       this.gesture.end();
+
+      this.isZooming = false;
+
+      if (this.lastEvent) {
+        this.onPointerMove(this.lastEvent);
+      }
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -538,7 +563,7 @@ export class UI extends EventEmitter {
       this.render();
 
       // TODO: This is just a hack to see what this looks like
-      if (this.hitBox.cursor !== "grabbing") {
+      if (!this.isZooming) {
         this.emit("mousemove", {
           point: [this.timeScale(nearestX[0]) / resolution, y],
           date: nearestX[0],
@@ -556,10 +581,12 @@ export class UI extends EventEmitter {
       } else {
         this.onPointerOut();
       }
+
+      this.lastEvent = event;
     }
   };
 
-  private onPointerOut = () => {
+  private hideTooltips = () => {
     this.crosshair.visible = false;
     this.priceLabel.visible = false;
     this.timeLabel.visible = false;
@@ -567,8 +594,14 @@ export class UI extends EventEmitter {
     for (let i = 0; i < this.indicator.length; i++) {
       this.indicator[i].visible = false;
     }
+  };
+
+  private onPointerOut = () => {
+    this.hideTooltips();
 
     this.emit("mouseout");
+
+    this.lastEvent = null;
 
     this.render();
   };
