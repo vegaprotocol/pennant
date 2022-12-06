@@ -18,9 +18,11 @@ import {
   HorizontalAxis,
   Indicator,
   Label,
+  pointer,
   VerticalAxis,
 } from "./display-objects";
 import { Colors } from "./helpers";
+import { Gesture } from "./zoom/gesture";
 import { zoomIdentity, ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
 
@@ -83,6 +85,11 @@ export class UI extends EventEmitter {
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
 
+  private firstPoint: [number, number] | null = null;
+
+  private gesture = new Gesture(this);
+  private originalTransform: ZoomTransform = zoomIdentity;
+
   constructor(options: {
     view: HTMLCanvasElement;
     resolution: number;
@@ -122,6 +129,8 @@ export class UI extends EventEmitter {
     this.hitBox.cursor = "default";
     this.hitBox.hitArea = new Rectangle(0, 0, 300, 300);
     this.hitBox
+      .on("wheel", this.onWheel)
+      .on("pointerdown", this.onPointerDown)
       .on("pointermove", this.onPointerMove)
       .on("pointerout", this.onPointerOut);
 
@@ -340,6 +349,118 @@ export class UI extends EventEmitter {
     this.renderer.destroy();
   }
 
+  private onWheel = (event: InteractionEvent) => {
+    const tempEvent = event.data?.originalEvent as WheelEvent;
+    const resolution = this.renderer.resolution;
+    const p = pointer(tempEvent, resolution);
+
+    if (this.gesture.wheel) {
+      window.clearTimeout(this.gesture.wheel);
+    } else {
+      this.gesture.mouse = [p, p];
+      this.gesture.start();
+    }
+
+    this.gesture.wheel = window.setTimeout(() => {
+      this.gesture.wheel = null;
+      this.gesture.end();
+    }, 150);
+
+    this.zoom.wheeled(
+      -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
+      this.gesture.mouse[0] ?? [0, 0],
+      [
+        [0, 0],
+        [100, 100],
+      ]
+    );
+
+    const transform = this.zoom.__zoom;
+
+    const k = transform.k / this.lastTimeZoomTransform.k;
+
+    if (k === 1) {
+      this.timeZoom.scaleBy(
+        Math.pow(
+          2,
+          -(transform.x - this.lastTimeZoomTransform.x) /
+            1 /
+            (this.timeScale.range()[1] - this.timeScale.range()[0])
+        ),
+        [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
+      );
+    } else {
+      this.timeZoom.scaleBy(k, [
+        (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+        0,
+      ]);
+    }
+
+    this.lastTimeZoomTransform = transform;
+
+    this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
+  };
+
+  private onPointerDown = (event: InteractionEvent) => {
+    const resolution = this.renderer.resolution;
+    const p = pointer(event.data?.originalEvent, resolution);
+
+    this.firstPoint = p ?? [0, 0];
+
+    if (event.data?.identifier) {
+      this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
+    }
+
+    this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
+    this.gesture.start();
+
+    const handleMouseMove = (event: any) => {
+      event.preventDefault();
+
+      this.hitBox.cursor = "grabbing";
+
+      this.gesture.mouse[0] = pointer(event, resolution);
+
+      if (this.gesture.mouse[1]) {
+        this.gesture.zoom(
+          this.zoom.constrain(
+            this.zoom.translate(
+              this.zoom.__zoom,
+              this.gesture.mouse[0],
+              this.gesture.mouse[1]
+            ),
+            [
+              [0, 0],
+              [100, 100],
+            ],
+            this.zoom.translateExtent
+          ),
+          this.firstPoint!
+        );
+      }
+    };
+
+    const handleMouseUp = (event: any) => {
+      event.preventDefault();
+
+      this.hitBox.cursor = "default";
+
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+
+      if (event.data?.identifier) {
+        this.renderer.context.canvas.releasePointerCapture(
+          event.data?.identifier
+        );
+      }
+
+      this.gesture.end();
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
   private onPointerMove = (event: InteractionEvent) => {
     if ("ontouchstart" in self) return;
 
@@ -416,20 +537,25 @@ export class UI extends EventEmitter {
 
       this.render();
 
-      this.emit("mousemove", {
-        point: [this.timeScale(nearestX[0]) / resolution, y],
-        date: nearestX[0],
-        series: range(0, this.data.cols.length - 1).map((i) => ({
-          color:
-            this.data.cols.length === 2
-              ? nearestX[i + 1] > this.startPrice
-                ? hex2string(this.colors.buyStroke)
-                : hex2string(this.colors.sellStroke)
-              : (this.colors as any)[`accent${i + 1}`],
-          name: this.data.cols[i + 1],
-          value: (nearestX[i + 1] as number).toFixed(2),
-        })),
-      });
+      // TODO: This is just a hack to see what this looks like
+      if (this.hitBox.cursor !== "grabbing") {
+        this.emit("mousemove", {
+          point: [this.timeScale(nearestX[0]) / resolution, y],
+          date: nearestX[0],
+          series: range(0, this.data.cols.length - 1).map((i) => ({
+            color:
+              this.data.cols.length === 2
+                ? nearestX[i + 1] > this.startPrice
+                  ? hex2string(this.colors.buyStroke)
+                  : hex2string(this.colors.sellStroke)
+                : (this.colors as any)[`accent${i + 1}`],
+            name: this.data.cols[i + 1],
+            value: (nearestX[i + 1] as number).toFixed(2),
+          })),
+        });
+      } else {
+        this.onPointerOut();
+      }
     }
   };
 

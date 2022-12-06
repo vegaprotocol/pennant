@@ -78,19 +78,21 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
             return {
               width: 0,
               height: 0,
-              x: point[0],
-              y: point[1],
-              top: point[1],
-              left: point[0],
-              right: point[0],
-              bottom: point[1],
+              x: point[0] + rect.x,
+              y: point[1] + rect.y,
+              top: point[1] + rect.y,
+              left: point[0] + rect.x,
+              right: point[0] + rect.x,
+              bottom: point[1] + rect.y,
             };
           },
         };
 
+        const rect = styleRef.current.getBoundingClientRect();
+
         computePosition(virtualEl, tooltipRef.current, {
           placement: "right",
-          middleware: [offset(8), flip(), shift()],
+          middleware: [offset(16), flip(), shift()],
         }).then(({ x, y }) => {
           // TODO: Check window.devicePixelRatio to round by DPR
           Object.assign(tooltipRef.current.style, {

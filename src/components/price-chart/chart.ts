@@ -81,8 +81,14 @@ export class Chart extends EventEmitter {
       .on("zoomstart", () => {
         this.emit("zoomstart");
       })
-      .on("zoom", (t: any) => {
-        //this._priceSpan = this.initialSpan / (1 - t.transform.y / 1000);
+      .on("zoom", ({ transform: t }: { transform: ZoomTransform }) => {
+        this.timeZoom.translateBy(
+          (t.x - this.lastTimeZoomTransform.x) / this.timeZoom.__zoom.k,
+          0
+        );
+
+        this.lastTimeZoomTransform = t;
+
         this.update();
         this.render();
         this.emit("zoom");
