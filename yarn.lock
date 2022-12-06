@@ -595,7 +595,7 @@
   dependencies:
     "@babel/types" "^7.18.9"
 
-"@babel/helper-module-imports@^7.10.4", "@babel/helper-module-imports@^7.12.13", "@babel/helper-module-imports@^7.14.5":
+"@babel/helper-module-imports@^7.12.13", "@babel/helper-module-imports@^7.14.5":
   version "7.14.5"
   resolved "https://registry.yarnpkg.com/@babel/helper-module-imports/-/helper-module-imports-7.14.5.tgz#6d1a44df6a38c957aa7c312da076429f11b422f3"
   integrity sha512-SwrNHu5QWS84XlHwGYPDtCxcA0hrSlL2yhWYLgeOc0w7ccOl2qv4s/nARI0aYZW+bSwAL5CukeXA47B/1NKcnQ==
@@ -3251,13 +3251,13 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
 
-"@rollup/plugin-babel@5.3.1":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.3.1.tgz#04bc0608f4aa4b2e4b1aebf284344d0f68fda283"
-  integrity sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==
+"@rollup/plugin-babel@6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-6.0.3.tgz#07ccde15de278c581673034ad6accdb4a153dfeb"
+  integrity sha512-fKImZKppa1A/gX73eg4JGo+8kQr/q1HBQaCGKECZ0v4YBBv3lFqi14+7xyApECzvkLTHCifx+7ntcrvtBIRcpg==
   dependencies:
-    "@babel/helper-module-imports" "^7.10.4"
-    "@rollup/pluginutils" "^3.1.0"
+    "@babel/helper-module-imports" "^7.18.6"
+    "@rollup/pluginutils" "^5.0.1"
 
 "@rollup/plugin-commonjs@22.0.2":
   version "22.0.2"
