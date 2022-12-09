@@ -1,6 +1,6 @@
 import { extent } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { zoomIdentity } from "d3-zoom";
+import { zoom, zoomIdentity } from "d3-zoom";
 import EventEmitter from "eventemitter3";
 
 import { ScaleTime } from "../../types";
@@ -132,6 +132,7 @@ export class Chart extends EventEmitter {
 
   public reset() {
     this._priceSpan = 1;
+    this.timeZoom.transform(zoomIdentity);
 
     this.update();
     this.render();
@@ -203,6 +204,25 @@ export class Chart extends EventEmitter {
         data.rows[0][0],
         data.rows[data.rows.length - 1][0],
       ]);
+
+      const resolution = this.ui.renderer.resolution;
+
+      this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
+
+      console.log(this.timeScale.range());
+
+      this.timeZoom.extent = [
+        [0, 0],
+        [this.width / resolution, this.height],
+      ];
+
+      this.timeZoom.translateExtent = [
+        [this.timeScale(data.rows[0][0]), -Infinity],
+        [this.timeScale(data.rows[data.rows.length - 1][0]), Infinity],
+      ];
+
+      console.log(this.width);
+      console.log(this.timeZoom);
     }
 
     this.update();

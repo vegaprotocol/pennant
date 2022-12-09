@@ -10,6 +10,14 @@ function defaultConstrain(
   const dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1];
   const dy1 = transform.invertY(extent[1][1]) - translateExtent[1][1];
 
+  console.log(transform);
+  console.log(extent);
+  console.log(translateExtent);
+  console.log(transform.invertX(extent[0][0]), transform.invertX(extent[1][0]));
+  console.log(dx0, dx1);
+  console.log(dx1 > dx0);
+  console.log((dx0 + dx1) / 2);
+
   return transform.translate(
     dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
     dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)
@@ -54,6 +62,15 @@ export class Zoom {
     [Infinity, Infinity],
   ];
 
+  /**
+   * Tthe viewport extent to the specified array of points [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner of the viewport
+   * and [x1, y1] is the bottom-right corner of the viewport, and returns this zoom behavior.
+   */
+  public extent: [[number, number], [number, number]] = [
+    [-Infinity, -Infinity],
+    [Infinity, Infinity],
+  ];
+
   public scaleBy(k: number, p: [number, number]) {
     this.scaleTo(this.__zoom.k * k, p);
   }
@@ -62,10 +79,7 @@ export class Zoom {
     this.transform(
       this.constrain(
         this.translate(this.scale(this.__zoom, k), p, this.__zoom.invert(p)),
-        [
-          [0, 100],
-          [0, 100],
-        ],
+        this.extent,
         this.translateExtent
       )
     );
@@ -75,10 +89,7 @@ export class Zoom {
     this.transform(
       this.constrain(
         this.__zoom.translate(x, y),
-        [
-          [0, 100],
-          [0, 100],
-        ],
+        this.extent,
         this.translateExtent
       )
     );
@@ -91,10 +102,7 @@ export class Zoom {
           .translate(p[0], p[1])
           .scale(this.__zoom.k)
           .translate(-x, -y),
-        [
-          [0, 0],
-          [100, 100],
-        ],
+        this.extent,
         this.translateExtent
       )
     );

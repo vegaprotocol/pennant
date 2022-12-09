@@ -132,7 +132,7 @@ export const Primary: ComponentStory<typeof PriceChart> = () => {
 export const Comparison: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Set<Asset>>(new Set(["BTC", "ETH"]));
-  const [range, setRange] = useState<Range>("1D");
+  const [range, setRange] = useState<Range>("1Y");
 
   const cols = ["Date", ...Array.from(asset).sort()];
 
