@@ -138,7 +138,9 @@ export class UI extends EventEmitter {
       options.height
     );
 
-    this.horizontalAxis.on("zoom", this.onZoomHorizontalAxis);
+    this.horizontalAxis
+      .on("zoom", this.onZoomHorizontalAxis)
+      .on("dblclick", () => this.emit("reset"));
 
     this.verticalAxis.interactive = true;
     this.verticalAxis.cursor = "ns-resize";
@@ -150,7 +152,9 @@ export class UI extends EventEmitter {
       options.height
     );
 
-    this.verticalAxis.on("zoom", this.onZoomVerticalAxis);
+    this.verticalAxis
+      .on("zoom", this.onZoomVerticalAxis)
+      .on("dblclick", () => this.emit("reset"));
   }
 
   public render(): void {
