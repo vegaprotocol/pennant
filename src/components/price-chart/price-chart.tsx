@@ -6,7 +6,7 @@ import { ThemeVariant } from "../../types";
 import { numberFormatter } from "../depth-chart";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
-import { Tooltip } from "./components";
+import { Series, Tooltip } from "./components";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 
@@ -14,17 +14,13 @@ function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
 
-interface Series {
-  color: string;
-  name: string;
-  value: string;
+export interface Data {
+  cols: ReadonlyArray<string>;
+  rows: [Date, ...number[]][];
 }
 
 export type PriceChartProps = {
-  data: {
-    cols: ReadonlyArray<string>;
-    rows: [Date, ...number[]][];
-  };
+  data: Data;
   /** Light or dark theme */
   theme?: ThemeVariant;
 };

@@ -2,8 +2,7 @@ import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";
-import { AXIS_HEIGHT } from "../depth-chart";
-import { AXIS_WIDTH } from "./chart";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import {
   Area,
   HorizontalGrid,

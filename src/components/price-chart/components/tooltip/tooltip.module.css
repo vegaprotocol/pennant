@@ -1,14 +1,13 @@
 .tooltip {
-  min-width: 180px;
-  padding: 12px;
-  pointer-events: none;
   background-color: var(--pennant-color-emphasis-50);
-  color: var(--pennant-color-emphasis-900);
   border-radius: 4px;
-  pointer-events: none;
+  color: var(--pennant-color-emphasis-900);
   font-family: var(--pennant-font-family-base);
   font-size: var(--pennant-font-size-base);
   font-weight: var(--pennant-font-weight-normal);
+  min-width: 180px;
+  padding: 12px;
+  pointer-events: none;
 }
 
 .tooltip .date {
@@ -37,16 +36,16 @@
 }
 
 .indicator {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  content: "";
-  border-radius: 100%;
-  margin-right: 8px;
   border: 2px solid rgb(255, 255, 255);
+  border-radius: 100%;
   box-shadow: rgb(88 102 126 / 8%) 0px 1px 1px,
     rgb(88 102 126 / 10%) 0px 8px 16px;
+  content: "";
+  display: inline-block;
+  height: 14px;
+  margin-right: 8px;
   transform: translateY(2px);
+  width: 14px;
 }
 
 .tooltip .series .name {

@@ -2,11 +2,20 @@ import { format } from "date-fns";
 
 import styles from "./tooltip.module.css";
 
+export interface Series {
+  color: string;
+  name: string;
+  value: string;
+}
+
 export type TooltipProps = {
   date: Date;
-  series: { color: string; name: string; value: string }[];
+  series: Series[];
 };
 
+/**
+ * Tooltip for price chart.
+ */
 export const Tooltip = ({ date, series }: TooltipProps) => {
   return (
     <div className={styles.tooltip}>

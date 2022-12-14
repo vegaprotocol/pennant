@@ -5,26 +5,13 @@ import { addHours } from "date-fns";
 import EventEmitter from "eventemitter3";
 
 import { ScaleTime } from "../../types";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import { Contents } from "./contents";
 import { Colors } from "./helpers";
+import { Data } from "./price-chart";
 import { UI } from "./ui";
 import { ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
-
-/**
- * Standard font size in CSS pixels
- */
-export const FONT_SIZE = 12;
-
-/**
- * Height of the bottom date axis
- */
-export const AXIS_HEIGHT = FONT_SIZE + 5;
-
-/**
- * Width of the vertical price axis
- */
-export const AXIS_WIDTH = FONT_SIZE + 60;
 
 /**
  * Price chart class. Its main roles are to manage interactivity, e.g. zooming and panning
@@ -40,10 +27,7 @@ export class Chart extends EventEmitter {
   private _priceSpan: number = 1;
   private initialSpan: number = 1;
 
-  private _data: {
-    cols: ReadonlyArray<string>;
-    rows: ReadonlyArray<[Date, ...number[]]>;
-  } = { cols: [], rows: [] };
+  private _data: Data = { cols: [], rows: [] };
 
   private _colors: Colors;
 
@@ -79,8 +63,8 @@ export class Chart extends EventEmitter {
       .on("zoomstart", this.onZoomStart)
       .on("zoom", this.onZoom)
       .on("zoomend", this.onZoomEnd)
-      .on("mousemove", (d) => this.emit("mousemove", d))
-      .on("mouseout", () => this.emit("mouseout"))
+      .on("mousemove", this.onMouseMove)
+      .on("mouseout", this.onMouseOut)
       .on("zoom.horizontalAxis", this.onZoomHorizontalAxis)
       .on("zoom.verticalAxis", this.onZoomVerticalAxis);
   }
@@ -109,11 +93,7 @@ export class Chart extends EventEmitter {
 
   private update() {
     const resolution = this.ui.renderer.resolution;
-
     this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
-
-    console.log(this.timeScale.domain());
-
     const xr = this.timeZoom.__zoom.rescaleX(this.timeScale) as ScaleTime;
 
     const priceExtent = extent(this._data.rows.flatMap((d) => d.slice(1))) as [
@@ -154,16 +134,16 @@ export class Chart extends EventEmitter {
     this.ui.update(this._data, xr, priceScale, this._data.rows[0][1]);
   }
 
-  private onZoomStart() {
+  private onZoomStart = () => {
     this.emit("zoomstart");
-  }
+  };
 
-  private onZoomEnd() {
+  private onZoomEnd = () => {
     this.emit("zoomend");
-  }
+  };
 
-  private onZoom({ transform: t }: { transform: ZoomTransform }) {
-    /*         this.timeZoom.translateBy(
+  private onZoom = ({ transform: t }: { transform: ZoomTransform }) => {
+    this.timeZoom.translateBy(
       (t.x - this.lastTimeZoomTransform.x) / this.timeZoom.__zoom.k,
       0
     );
@@ -172,13 +152,14 @@ export class Chart extends EventEmitter {
 
     this.update();
     this.render();
-    this.emit("zoom"); */
-  }
+    this.emit("zoom");
+  };
 
-  private onZoomHorizontalAxis(t: ZoomTransform /**point*/) {
+  private onMouseMove = (d: any) => this.emit("mousemove", d);
+  private onMouseOut = () => this.emit("mouseout");
+
+  private onZoomHorizontalAxis = (t: ZoomTransform /**point*/) => {
     const k = t.k / this.lastTimeZoomTransform.k;
-
-    console.log(this.ui);
 
     this.timeZoom.scaleBy(k, [
       this.width - this.ui.renderer.resolution * AXIS_WIDTH,
@@ -189,13 +170,13 @@ export class Chart extends EventEmitter {
 
     this.update();
     this.render();
-  }
+  };
 
-  private onZoomVerticalAxis(t: ZoomTransform) {
+  private onZoomVerticalAxis = (t: ZoomTransform) => {
     this._priceSpan = this.initialSpan * t.k;
     this.update();
     this.render();
-  }
+  };
 
   set colors(colors: Colors) {
     this._colors = colors;
@@ -208,10 +189,7 @@ export class Chart extends EventEmitter {
     return this._data;
   }
 
-  set data(data: {
-    cols: ReadonlyArray<string>;
-    rows: ReadonlyArray<[Date, ...number[]]>;
-  }) {
+  set data(data: Data) {
     if (data.rows.length === 1) {
       this._data = { cols: data.cols, rows: [data.rows[0], data.rows[0]] };
     } else {

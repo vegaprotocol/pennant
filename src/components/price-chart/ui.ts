@@ -11,8 +11,7 @@ import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
 import { hex2string } from "../../renderer/utils";
 import { ScaleTime } from "../../types";
-import { AXIS_HEIGHT } from "../depth-chart";
-import { AXIS_WIDTH } from "./chart";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import {
   Crosshair,
   HorizontalAxis,
@@ -22,6 +21,7 @@ import {
   VerticalAxis,
 } from "./display-objects";
 import { Colors } from "./helpers";
+import { Data } from "./price-chart";
 import { Gesture } from "./zoom/gesture";
 import { zoomIdentity, ZoomTransform } from "./zoom/transform";
 import { Zoom } from "./zoom/zoom";
@@ -145,33 +145,7 @@ export class UI extends EventEmitter {
       options.height
     );
 
-    this.horizontalAxis.on("zoom", ({ transform, point }) => {
-      const k = transform.k / this.lastTimeZoomTransform.k;
-
-      if (k === 1) {
-        this.timeZoom.scaleBy(
-          Math.pow(
-            2,
-            -(transform.x - this.lastTimeZoomTransform.x) /
-              1 /
-              (this.timeScale.range()[1] - this.timeScale.range()[0])
-          ),
-          [
-            Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
-            0,
-          ]
-        );
-      } else {
-        this.timeZoom.scaleBy(k, [
-          (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
-          0,
-        ]);
-      }
-
-      this.lastTimeZoomTransform = transform;
-
-      this.emit("zoom.horizontalAxis", this.timeZoom.__zoom, point);
-    });
+    this.horizontalAxis.on("zoom", this.onZoomHorizontalAxis);
 
     this.verticalAxis.interactive = true;
     this.verticalAxis.cursor = "ns-resize";
@@ -183,34 +157,7 @@ export class UI extends EventEmitter {
       options.height
     );
 
-    this.verticalAxis.on("zoom", ({ transform, point }) => {
-      const k = transform.k / this.lastPriceZoomTransform.k;
-
-      if (k === 1) {
-        this.priceZoom.scaleBy(
-          Math.pow(
-            2,
-            -(transform.y - this.lastPriceZoomTransform.y) /
-              1 /
-              (this.priceScale.range()[1] - this.priceScale.range()[0])
-          ),
-          [
-            0,
-            Math.abs(this.priceScale.range()[1] - this.priceScale.range()[0]) /
-              2,
-          ]
-        );
-      } else {
-        this.priceZoom.scaleBy(k, [
-          0,
-          (this.priceScale.range()[1] - this.priceScale.range()[0]) / 2,
-        ]);
-      }
-
-      this.lastPriceZoomTransform = transform;
-
-      this.emit("zoom.verticalAxis", this.priceZoom.__zoom);
-    });
+    this.verticalAxis.on("zoom", this.onZoomVerticalAxis);
   }
 
   public render(): void {
@@ -218,10 +165,7 @@ export class UI extends EventEmitter {
   }
 
   public update(
-    data: {
-      cols: ReadonlyArray<string>;
-      rows: ReadonlyArray<[Date, ...number[]]>;
-    },
+    data: Data,
     timeScale: ScaleTime,
     priceScale: ScaleLinear<number, number>,
     startPrice: number
@@ -584,6 +528,70 @@ export class UI extends EventEmitter {
 
       this.lastEvent = event;
     }
+  };
+
+  private onZoomHorizontalAxis = ({
+    transform,
+    point,
+  }: {
+    transform: ZoomTransform;
+    point: [number, number];
+  }) => {
+    const k = transform.k / this.lastTimeZoomTransform.k;
+
+    if (k === 1) {
+      this.timeZoom.scaleBy(
+        Math.pow(
+          2,
+          -(transform.x - this.lastTimeZoomTransform.x) /
+            1 /
+            (this.timeScale.range()[1] - this.timeScale.range()[0])
+        ),
+        [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
+      );
+    } else {
+      this.timeZoom.scaleBy(k, [
+        (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+        0,
+      ]);
+    }
+
+    this.lastTimeZoomTransform = transform;
+
+    this.emit("zoom.horizontalAxis", this.timeZoom.__zoom, point);
+  };
+
+  private onZoomVerticalAxis = ({
+    transform,
+    point,
+  }: {
+    transform: ZoomTransform;
+    point: [number, number];
+  }) => {
+    const k = transform.k / this.lastPriceZoomTransform.k;
+
+    if (k === 1) {
+      this.priceZoom.scaleBy(
+        Math.pow(
+          2,
+          -(transform.y - this.lastPriceZoomTransform.y) /
+            1 /
+            (this.priceScale.range()[1] - this.priceScale.range()[0])
+        ),
+        [
+          0,
+          Math.abs(this.priceScale.range()[1] - this.priceScale.range()[0]) / 2,
+        ]
+      );
+    } else {
+      this.priceZoom.scaleBy(k, [
+        0,
+        (this.priceScale.range()[1] - this.priceScale.range()[0]) / 2,
+      ]);
+    }
+
+    this.lastPriceZoomTransform = transform;
+    this.emit("zoom.verticalAxis", this.priceZoom.__zoom, point);
   };
 
   private hideTooltips = () => {

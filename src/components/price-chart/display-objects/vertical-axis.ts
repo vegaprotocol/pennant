@@ -6,7 +6,7 @@ import { Graphics } from "../../../renderer/graphics";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
 import { Colors } from "../../depth-chart/helpers";
-import { AXIS_WIDTH, FONT_SIZE } from "../chart";
+import { AXIS_WIDTH, FONT_SIZE } from "../constants";
 import { Gesture } from "../zoom/gesture";
 import { Zoom } from "../zoom/zoom";
 
