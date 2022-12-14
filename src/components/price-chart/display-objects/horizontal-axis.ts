@@ -1,6 +1,7 @@
 import { range } from "../../../helpers";
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
+import { Graphics } from "../../../renderer/graphics";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
 import { ScaleTime } from "../../../types";
@@ -25,6 +26,7 @@ export class HorizontalAxis extends Container {
   public zoom: Zoom = new Zoom();
   private gesture = new Gesture(this);
   private firstPoint: [number, number] = [0, 0];
+  private overlay: Graphics = new Graphics();
 
   private tickNodes: Text[] = [];
 
@@ -32,6 +34,8 @@ export class HorizontalAxis extends Container {
     super();
 
     this.renderer = renderer;
+
+    this.addChild(this.overlay);
 
     this.on("wheel", this.onWheel)
       .on("pointerdown", this.onPointerDown)
@@ -61,6 +65,18 @@ export class HorizontalAxis extends Container {
     resolution: number = 1,
     colors: HorizontalAxisColors
   ) {
+    this.overlay.clear();
+    this.overlay.beginFill(colors.backgroundSurface, 0.7);
+
+    this.overlay.drawRect(
+      0,
+      height - resolution * AXIS_HEIGHT,
+      width,
+      resolution * AXIS_HEIGHT
+    );
+
+    this.overlay.endFill();
+
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);

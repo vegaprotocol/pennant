@@ -5,7 +5,7 @@ import { InteractionEvent } from "../../../renderer/interaction/interaction-even
 import { Text } from "../../../renderer/text";
 import { ScaleLinear } from "../../../types";
 import { Colors } from "../../depth-chart/helpers";
-import { AXIS_WIDTH, FONT_SIZE } from "../constants";
+import { AXIS_HEIGHT, AXIS_WIDTH, FONT_SIZE } from "../constants";
 import { Gesture } from "../zoom/gesture";
 import { Zoom } from "../zoom/zoom";
 
