@@ -4,7 +4,7 @@ import { zoomIdentity } from "d3-zoom";
 import { addHours } from "date-fns";
 import EventEmitter from "eventemitter3";
 
-import { ScaleTime } from "../../types";
+import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import { Contents } from "./contents";
 import { Colors } from "./helpers";
@@ -21,14 +21,15 @@ export class Chart extends EventEmitter {
   private contents: Contents;
   private ui: UI;
 
+  private priceScale: ScaleLinear = scaleLinear();
+  private priceZoom: Zoom = new Zoom();
+  private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
+
   private timeScale: ScaleTime = scaleTime();
   private timeZoom: Zoom = new Zoom();
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
-  private _priceSpan: number = 1;
-  private initialSpan: number = 1;
 
   private _data: Data = { cols: [], rows: [] };
-
   private _colors: Colors;
 
   constructor(options: {
@@ -80,7 +81,7 @@ export class Chart extends EventEmitter {
   }
 
   public reset() {
-    this._priceSpan = 1;
+    this.priceZoom.transform(zoomIdentity);
     this.timeZoom.transform(zoomIdentity);
 
     this.update();
@@ -93,6 +94,8 @@ export class Chart extends EventEmitter {
 
   private update() {
     const resolution = this.ui.renderer.resolution;
+
+    this.priceScale.range([this.height - resolution * AXIS_HEIGHT, 0]);
     this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
     const xr = this.timeZoom.__zoom.rescaleX(this.timeScale) as ScaleTime;
 
@@ -106,32 +109,24 @@ export class Chart extends EventEmitter {
       priceExtent[1] = 1.1 * priceExtent[1];
     }
 
-    const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;
-    const midPrice = (priceExtent[1] + priceExtent[0]) / 2;
-
-    const priceScale = scaleLinear()
-      .domain([
-        midPrice + this._priceSpan * (priceExtent[0] - midPrice - adjustment),
-        midPrice + this._priceSpan * (priceExtent[1] - midPrice + adjustment),
-      ])
-      .range([this.height - resolution * AXIS_HEIGHT, 0]);
+    const yr = this.priceZoom.__zoom.rescaleX(this.priceScale) as ScaleLinear;
 
     this.contents.colors = this._colors;
 
     this.contents.update(
-      priceScale,
-      this.timeScale,
+      yr,
+      xr,
       this._data.rows.map((d) => [
         xr(d[0]),
-        ...d.slice(1).map((series) => priceScale(series)),
+        ...d.slice(1).map((series) => yr(series)),
       ]),
-      priceScale(this._data.rows[0][1]),
+      yr(this._data.rows[0][1]),
       this.height
     );
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, priceScale, this._data.rows[0][1]);
+    this.ui.update(this._data, xr, yr, this._data.rows[0][1]);
   }
 
   private onZoomStart = () => {
@@ -173,7 +168,15 @@ export class Chart extends EventEmitter {
   };
 
   private onZoomVerticalAxis = (t: ZoomTransform) => {
-    this._priceSpan = this.initialSpan * t.k;
+    const k = t.k / this.lastPriceZoomTransform.k;
+
+    this.priceZoom.scaleBy(k, [
+      (this.height - this.ui.renderer.resolution * AXIS_HEIGHT) / 2,
+      0,
+    ]);
+
+    this.lastPriceZoomTransform = t;
+
     this.update();
     this.render();
   };
@@ -196,7 +199,15 @@ export class Chart extends EventEmitter {
       this._data = data;
     }
 
+    const resolution = this.ui.renderer.resolution;
+
     if (data.rows.length > 0) {
+      const priceExtent = extent(data.rows.flatMap((d) => d.slice(1))) as [
+        number,
+        number
+      ];
+
+      const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;
       const timeExtent = [data.rows[0][0], data.rows[data.rows.length - 1][0]];
 
       if (timeExtent[0] === timeExtent[1]) {
@@ -204,10 +215,13 @@ export class Chart extends EventEmitter {
         timeExtent[1] = addHours(timeExtent[1], 1);
       }
 
+      this.priceScale = this.priceScale.domain([
+        priceExtent[0] - adjustment,
+        priceExtent[1] + adjustment,
+      ]);
       this.timeScale = this.timeScale.domain(timeExtent);
 
-      const resolution = this.ui.renderer.resolution;
-
+      this.priceScale.range([0, this.height - resolution * AXIS_HEIGHT]);
       this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
 
       /*       this.timeZoom.extent = [

@@ -1,10 +1,9 @@
-import { ScaleLinear } from "d3-scale";
-
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
+import { ScaleLinear } from "../../../types";
 import { Colors } from "../../depth-chart/helpers";
 import { AXIS_WIDTH, FONT_SIZE } from "../constants";
 import { Gesture } from "../zoom/gesture";
@@ -54,7 +53,7 @@ export class VerticalAxis extends Container {
   }
 
   public update(
-    scale: ScaleLinear<number, number>,
+    scale: ScaleLinear,
     width: number,
     height: number,
     resolution: number = 1,

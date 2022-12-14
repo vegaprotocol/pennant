@@ -22,7 +22,7 @@ function createGradTexture(
 
   // adjust it if somehow you need better quality for very very big images
   canvas.width = 1;
-  canvas.height = size + offset;
+  canvas.height = Math.max(1, Math.abs(size + offset));
 
   const ctx = canvas.getContext("2d");
 
@@ -53,8 +53,18 @@ const createTexture = memoize(
       invert
     );
 
-    gradTexture.orig = new Rectangle(0, 0, 1, size + offset);
-    gradTexture._frame = new Rectangle(0, 0, 1, size + offset);
+    gradTexture.orig = new Rectangle(
+      0,
+      0,
+      1,
+      Math.max(1, Math.abs(size + offset))
+    );
+    gradTexture._frame = new Rectangle(
+      0,
+      0,
+      1,
+      Math.max(1, Math.abs(size + offset))
+    );
 
     return gradTexture;
   },
@@ -103,6 +113,7 @@ export class PriceCurve extends Container {
     invert: boolean,
     startPrice: number
   ): void {
+    console.log(startPrice);
     this.fill = fill;
     this.stroke = stroke;
     this.backgroundSurface = backgroundSurface;

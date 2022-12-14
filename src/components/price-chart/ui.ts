@@ -1,4 +1,4 @@
-import { ScaleLinear, scaleLinear, scaleTime } from "d3-scale";
+import { scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
 import { range } from "lodash";
@@ -10,7 +10,7 @@ import { Graphics } from "../../renderer/graphics";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
 import { hex2string } from "../../renderer/utils";
-import { ScaleTime } from "../../types";
+import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import {
   Crosshair,
@@ -64,7 +64,7 @@ export class UI extends EventEmitter {
     rows: ReadonlyArray<[Date, ...number[]]>;
   } = { cols: [], rows: [] };
 
-  private priceScale: ScaleLinear<number, number> = scaleLinear();
+  private priceScale: ScaleLinear = scaleLinear();
   private priceZoom: Zoom = new Zoom();
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
 
@@ -167,7 +167,7 @@ export class UI extends EventEmitter {
   public update(
     data: Data,
     timeScale: ScaleTime,
-    priceScale: ScaleLinear<number, number>,
+    priceScale: ScaleLinear,
     startPrice: number
   ): void {
     this.data = data;
