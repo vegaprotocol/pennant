@@ -21,8 +21,10 @@ export class Rect extends Graphics {
     height: number,
     color: number
   ) {
+    this.color = color;
+
     this.clear();
-    this.beginFill(color, this.alpha);
+    this.beginFill(this.color, this.alpha);
     this.drawRect(x, y, width, height);
     this.endFill();
   }

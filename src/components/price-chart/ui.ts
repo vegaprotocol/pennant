@@ -47,7 +47,7 @@ type UiColors = Pick<
  * Reponsible for drawing axes and handling interactivity for depth chart
  */
 export class UI extends EventEmitter {
-  public stage: Container = new Container();
+  public colors: UiColors;
   public renderer: Renderer;
 
   /**
@@ -55,23 +55,23 @@ export class UI extends EventEmitter {
    * and k1 is the maximum allowed scale factor.
    */
   public scaleExtent = [0, Infinity];
-
-  public colors: UiColors;
+  public stage: Container = new Container();
   public zoom: Zoom = new Zoom();
 
-  private data: {
-    cols: ReadonlyArray<string>;
-    rows: ReadonlyArray<[Date, ...number[]]>;
-  } = { cols: [], rows: [] };
-
+  private data: Data = { cols: [], rows: [] };
+  private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
+  private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
   private priceScale: ScaleLinear = scaleLinear();
   private priceZoom: Zoom = new Zoom();
-  private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
-
+  private startPrice: number = 0;
   private timeScale: ScaleTime = scaleTime();
   private timeZoom: Zoom = new Zoom();
-  private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
-  private startPrice: number = 0;
+  private firstPoint: [number, number] | null = null;
+  private gesture = new Gesture(this);
+  private isZooming = false;
+  private lastEvent: InteractionEvent | null = null;
+
+  // Display objects
   private horizontalAxis: HorizontalAxis;
   private verticalAxis: VerticalAxis;
   private startPriceLine: Graphics = new Graphics();
@@ -87,10 +87,6 @@ export class UI extends EventEmitter {
   private timeLabel: Label = new Label();
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
-  private firstPoint: [number, number] | null = null;
-  private gesture = new Gesture(this);
-  private isZooming = false;
-  private lastEvent: InteractionEvent | null = null;
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -109,9 +105,6 @@ export class UI extends EventEmitter {
     });
 
     this.colors = options.colors;
-
-    const resolution = this.renderer.resolution;
-
     this.horizontalAxis = new HorizontalAxis(this.renderer);
     this.verticalAxis = new VerticalAxis(this.renderer);
 
@@ -216,6 +209,7 @@ export class UI extends EventEmitter {
       this.colors
     );
 
+    // TODO: Abstract the start price line functionality
     this.startPriceLine.clear();
 
     this.startPriceLine.lineStyle({
@@ -256,6 +250,7 @@ export class UI extends EventEmitter {
       }
     );
 
+    // TODO: Abstract the vertical axis separator functionality
     this.verticalAxisSeparator.clear();
 
     this.verticalAxisSeparator.lineStyle({
@@ -267,12 +262,15 @@ export class UI extends EventEmitter {
       resolution * this.renderer.screen.width - resolution * AXIS_WIDTH,
       0
     );
+
     this.verticalAxisSeparator.lineTo(
       resolution * this.renderer.screen.width - resolution * AXIS_WIDTH,
       resolution * this.renderer.screen.height
     );
+
     this.verticalAxisSeparator.endFill();
 
+    // TODO: Abstract the horizontal axis separator functionality
     this.horizontalAxisSeparator.clear();
 
     this.horizontalAxisSeparator.lineStyle({
@@ -284,16 +282,17 @@ export class UI extends EventEmitter {
       0,
       resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT
     );
+
     this.horizontalAxisSeparator.lineTo(
       resolution * this.renderer.screen.width,
       resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT
     );
+
     this.horizontalAxisSeparator.endFill();
   }
 
   public destroy() {
     this.stage.destroy();
-
     this.renderer.destroy();
   }
 
@@ -334,7 +333,6 @@ export class UI extends EventEmitter {
     );
 
     const transform = this.zoom.__zoom;
-
     const k = transform.k / this.lastTimeZoomTransform.k;
 
     if (k === 1) {
@@ -355,7 +353,6 @@ export class UI extends EventEmitter {
     }
 
     this.lastTimeZoomTransform = transform;
-
     this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
   };
 
@@ -371,12 +368,10 @@ export class UI extends EventEmitter {
 
     this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
     this.gesture.start();
-
     this.isZooming = true;
     this.hideTooltips();
     this.emit("mouseout");
     this.hitBox.cursor = "grabbing";
-
     this.render();
 
     const handleMouseMove = (event: any) => {
@@ -418,7 +413,6 @@ export class UI extends EventEmitter {
       }
 
       this.gesture.end();
-
       this.isZooming = false;
 
       if (this.lastEvent) {
@@ -457,6 +451,7 @@ export class UI extends EventEmitter {
         this.data.rows.map((d) => this.timeScale(d[0])),
         x
       );
+
       const nearestX = this.data.rows[index];
 
       this.crosshair.update(
@@ -557,7 +552,6 @@ export class UI extends EventEmitter {
     }
 
     this.lastTimeZoomTransform = transform;
-
     this.emit("zoom.horizontalAxis", this.timeZoom.__zoom, point);
   };
 

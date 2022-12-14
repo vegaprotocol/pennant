@@ -49,12 +49,14 @@ export class Label extends Container {
 
     this.background.clear();
     this.background.beginFill(colors.backgroundSurface, 1);
+
     this.background.drawRect(
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),
       width + 2 * padding,
       height + 2 * padding
     );
+
     this.background.endFill();
   }
 

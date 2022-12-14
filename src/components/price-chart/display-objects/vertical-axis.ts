@@ -61,12 +61,14 @@ export class VerticalAxis extends Container {
   ) {
     this.overlay.clear();
     this.overlay.beginFill(colors.backgroundSurface, 0.7);
+
     this.overlay.drawRect(
       width - resolution * AXIS_WIDTH,
       0,
       resolution * AXIS_WIDTH,
       height
     );
+
     this.overlay.endFill();
 
     const numTicks = height / resolution / 50;

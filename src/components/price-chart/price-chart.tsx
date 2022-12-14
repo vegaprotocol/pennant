@@ -14,14 +14,32 @@ function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
 
+/**
+ * A set of data points with the same x-axis location.
+ */
+export type Row = [Date, ...number[]];
+
 export interface Data {
+  /**
+   * Used for tooltips.
+   */
   cols: ReadonlyArray<string>;
-  rows: [Date, ...number[]][];
+
+  /**
+   * Each row represents a set of data points with the same x-axis location.
+   */
+  rows: Row[];
 }
 
 export type PriceChartProps = {
+  /**
+   * One or more data series.
+   */
   data: Data;
-  /** Light or dark theme */
+
+  /**
+   * Light or dark theme.
+   */
   theme?: ThemeVariant;
 };
 

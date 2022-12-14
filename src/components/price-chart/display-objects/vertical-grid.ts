@@ -59,11 +59,13 @@ export class VerticalGrid extends Container {
       const line = this.nodeByKeyValue.get(tickFormat(node))!;
 
       line.clear();
+
       line.lineStyle({
         width: 1,
         color: 0x3d3d3d,
         lineDash: [],
       });
+
       line.moveTo(0, 0.5);
       line.lineTo(width, 0.5);
       line.endFill();

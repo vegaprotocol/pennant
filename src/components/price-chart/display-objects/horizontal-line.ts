@@ -18,11 +18,13 @@ export class HorizontalLine extends Graphics {
 
   public update(y: number, width: number, resolution: number = 1) {
     this.clear();
+
     this.lineStyle({
       width: this.width,
       color: this.color,
       lineDash: this.lineDash,
     });
+
     this.moveTo(0, 0.5);
     this.lineTo(width, 0.5);
     this.endFill();
