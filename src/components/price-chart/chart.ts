@@ -26,6 +26,10 @@ export const AXIS_HEIGHT = FONT_SIZE + 5;
  */
 export const AXIS_WIDTH = FONT_SIZE + 60;
 
+/**
+ * Price chart class. Its main roles are to manage interactivity, e.g. zooming and panning
+ * as well as requesting contents and ui to update and render.
+ */
 export class Chart extends EventEmitter {
   private contents: Contents;
   private ui: UI;
@@ -49,8 +53,6 @@ export class Chart extends EventEmitter {
     resolution: number;
     width: number;
     height: number;
-    priceFormat: (price: number) => string;
-    volumeFormat: (volume: number) => string;
     colors: Colors;
   }) {
     super();
@@ -74,46 +76,13 @@ export class Chart extends EventEmitter {
     });
 
     this.ui
-      .on("zoomstart", () => {
-        this.emit("zoomstart");
-      })
-      .on("zoom", ({ transform: t }: { transform: ZoomTransform }) => {
-        this.timeZoom.translateBy(
-          (t.x - this.lastTimeZoomTransform.x) / this.timeZoom.__zoom.k,
-          0
-        );
-
-        this.lastTimeZoomTransform = t;
-
-        this.update();
-        this.render();
-        this.emit("zoom");
-      })
-      .on("zoomend", () => {
-        this.emit("zoomend");
-      })
+      .on("zoomstart", this.onZoomStart)
+      .on("zoom", this.onZoom)
+      .on("zoomend", this.onZoomEnd)
       .on("mousemove", (d) => this.emit("mousemove", d))
-      .on("mouseout", () => this.emit("mouseout"));
-
-    this.ui.on("zoom.horizontalAxis", (t: ZoomTransform, point) => {
-      const k = t.k / this.lastTimeZoomTransform.k;
-
-      this.timeZoom.scaleBy(k, [
-        this.width - this.ui.renderer.resolution * AXIS_WIDTH,
-        0,
-      ]);
-
-      this.lastTimeZoomTransform = t;
-
-      this.update();
-      this.render();
-    });
-
-    this.ui.on("zoom.verticalAxis", (t: ZoomTransform) => {
-      this._priceSpan = this.initialSpan * t.k;
-      this.update();
-      this.render();
-    });
+      .on("mouseout", () => this.emit("mouseout"))
+      .on("zoom.horizontalAxis", this.onZoomHorizontalAxis)
+      .on("zoom.verticalAxis", this.onZoomVerticalAxis);
   }
 
   public render() {
@@ -142,6 +111,8 @@ export class Chart extends EventEmitter {
     const resolution = this.ui.renderer.resolution;
 
     this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
+
+    console.log(this.timeScale.domain());
 
     const xr = this.timeZoom.__zoom.rescaleX(this.timeScale) as ScaleTime;
 
@@ -181,6 +152,49 @@ export class Chart extends EventEmitter {
     this.ui.colors = this._colors;
 
     this.ui.update(this._data, xr, priceScale, this._data.rows[0][1]);
+  }
+
+  private onZoomStart() {
+    this.emit("zoomstart");
+  }
+
+  private onZoomEnd() {
+    this.emit("zoomend");
+  }
+
+  private onZoom({ transform: t }: { transform: ZoomTransform }) {
+    /*         this.timeZoom.translateBy(
+      (t.x - this.lastTimeZoomTransform.x) / this.timeZoom.__zoom.k,
+      0
+    );
+
+    this.lastTimeZoomTransform = t;
+
+    this.update();
+    this.render();
+    this.emit("zoom"); */
+  }
+
+  private onZoomHorizontalAxis(t: ZoomTransform /**point*/) {
+    const k = t.k / this.lastTimeZoomTransform.k;
+
+    console.log(this.ui);
+
+    this.timeZoom.scaleBy(k, [
+      this.width - this.ui.renderer.resolution * AXIS_WIDTH,
+      0,
+    ]);
+
+    this.lastTimeZoomTransform = t;
+
+    this.update();
+    this.render();
+  }
+
+  private onZoomVerticalAxis(t: ZoomTransform) {
+    this._priceSpan = this.initialSpan * t.k;
+    this.update();
+    this.render();
   }
 
   set colors(colors: Colors) {

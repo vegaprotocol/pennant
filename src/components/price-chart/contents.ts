@@ -1,7 +1,6 @@
 import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
-import { string2hex } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
@@ -34,12 +33,10 @@ type ContentsColors = Pick<
 export class Contents {
   public stage: Container = new Container();
   public renderer: Renderer;
-
   public horizontalGrid: HorizontalGrid;
   public verticalgrid: VerticalGrid;
-
   public series: LineCurve[];
-
+  public priceCurve: Area;
   public colors: ContentsColors;
 
   constructor(options: {
@@ -60,11 +57,13 @@ export class Contents {
 
     this.horizontalGrid = new HorizontalGrid();
     this.verticalgrid = new VerticalGrid();
-    this.series = range(0, 5).map((index) => new LineCurve());
+    this.series = range(0, 5).map(() => new LineCurve());
+    this.priceCurve = new Area(options.colors);
 
     this.stage.addChild(this.horizontalGrid);
     this.stage.addChild(this.verticalgrid);
     this.stage.addChild(...this.series);
+    this.stage.addChild(this.priceCurve);
   }
 
   public render(): void {
@@ -94,21 +93,40 @@ export class Contents {
       resolution
     );
 
-    for (let i = 0; i < this.series.length; i++) {
-      if (i + 1 < data.length) {
-        this.series[i].visible = true;
-        this.series[i].update(
-          data.map((d) => [d[0], d[i + 1]]),
-          height,
-          resolution,
-          undefined,
-          string2hex((this.colors as any)[`accent${i + 1}`]),
-          this.colors.backgroundSurface,
-          false,
-          startPrice
-        );
-      } else {
+    if (data[0].length === 2) {
+      this.priceCurve.visible = true;
+
+      this.priceCurve.update(
+        priceScale,
+        timeScale,
+        data.map((d) => [d[0], d[1]]),
+        startPrice,
+        height,
+        resolution
+      );
+
+      for (let i = 0; i < this.series.length; i++) {
         this.series[i].visible = false;
+      }
+    } else {
+      for (let i = 0; i < this.series.length; i++) {
+        if (i + 1 < data.length) {
+          this.series[i].visible = true;
+          this.series[i].update(
+            data.map((d) => [d[0], d[i + 1]]),
+            height,
+            resolution,
+            undefined,
+            (this.colors as any)[`accent${i + 1}`],
+            this.colors.backgroundSurface,
+            false,
+            startPrice
+          );
+        } else {
+          this.series[i].visible = false;
+        }
+
+        this.priceCurve.visible = false;
       }
     }
   }

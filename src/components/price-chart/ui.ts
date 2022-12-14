@@ -9,7 +9,7 @@ import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
-import { hex2string, string2hex } from "../../renderer/utils";
+import { hex2string } from "../../renderer/utils";
 import { ScaleTime } from "../../types";
 import { AXIS_HEIGHT } from "../depth-chart";
 import { AXIS_WIDTH } from "./chart";
@@ -63,6 +63,7 @@ export class UI extends EventEmitter {
     cols: ReadonlyArray<string>;
     rows: ReadonlyArray<[Date, ...number[]]>;
   } = { cols: [], rows: [] };
+
   private priceScale: ScaleLinear<number, number> = scaleLinear();
   private priceZoom: Zoom = new Zoom();
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
@@ -77,21 +78,18 @@ export class UI extends EventEmitter {
   private verticalAxisSeparator: Graphics = new Graphics();
   private horizontalAxisSeparator: Graphics = new Graphics();
   private crosshair: Crosshair = new Crosshair(1, 0x888888, [3, 3]);
+
   private indicator: Indicator[] = range(0, 6).map(
-    (index) => new Indicator(0xff0000)
+    () => new Indicator(0xff0000)
   );
+
   private priceLabel: Label = new Label();
   private timeLabel: Label = new Label();
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
-
   private firstPoint: [number, number] | null = null;
-
   private gesture = new Gesture(this);
-  private originalTransform: ZoomTransform = zoomIdentity;
-
   private isZooming = false;
-
   private lastEvent: InteractionEvent | null = null;
 
   constructor(options: {
@@ -293,8 +291,10 @@ export class UI extends EventEmitter {
 
     if (this.data.cols.length > 2) {
       this.startPriceLine.visible = false;
+      this.startPriceLabel.visible = false;
     } else {
       this.startPriceLine.visible = true;
+      this.startPriceLabel.visible = true;
     }
 
     const numTicks = height / resolution / 50;
@@ -316,7 +316,7 @@ export class UI extends EventEmitter {
 
     this.verticalAxisSeparator.lineStyle({
       width: 1,
-      color: 0x898989,
+      color: this.colors.emphasis200,
     });
 
     this.verticalAxisSeparator.moveTo(
@@ -333,7 +333,7 @@ export class UI extends EventEmitter {
 
     this.horizontalAxisSeparator.lineStyle({
       width: 1,
-      color: 0x898989,
+      color: this.colors.emphasis200,
     });
 
     this.horizontalAxisSeparator.moveTo(
@@ -532,7 +532,7 @@ export class UI extends EventEmitter {
               ? nearestX[i + 1] > this.startPrice
                 ? this.colors.buyStroke
                 : this.colors.sellStroke
-              : string2hex((this.colors as any)[`accent${i + 1}`])
+              : (this.colors as any)[`accent${i + 1}`]
           );
         } else {
           this.indicator[i].visible = false;
@@ -573,7 +573,7 @@ export class UI extends EventEmitter {
                 ? nearestX[i + 1] > this.startPrice
                   ? hex2string(this.colors.buyStroke)
                   : hex2string(this.colors.sellStroke)
-                : (this.colors as any)[`accent${i + 1}`],
+                : hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data.cols[i + 1],
             value: (nearestX[i + 1] as number).toFixed(2),
           })),
@@ -598,11 +598,8 @@ export class UI extends EventEmitter {
 
   private onPointerOut = () => {
     this.hideTooltips();
-
     this.emit("mouseout");
-
     this.lastEvent = null;
-
     this.render();
   };
 }

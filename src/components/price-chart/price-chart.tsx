@@ -6,19 +6,18 @@ import { ThemeVariant } from "../../types";
 import { numberFormatter } from "../depth-chart";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
+import { Tooltip } from "./components";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
-import { Tooltip } from "./tooltip";
-
-/**
- * TODO:
- *
- * 1. Sort out tooltip
- * 1. Support mobile touch events
- */
 
 function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
+}
+
+interface Series {
+  color: string;
+  name: string;
+  value: string;
 }
 
 export type PriceChartProps = {
@@ -30,18 +29,39 @@ export type PriceChartProps = {
   theme?: ThemeVariant;
 };
 
+/**
+ * Draw a historical price chart. Supports multiple line series.
+ */
 export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
+  /**
+   * Where to render chart contents, e.g. line series.
+   */
   const contentsRef = useRef<HTMLCanvasElement>(null!);
+
+  /**
+   * Where to render chart ui, e.g. crosshairs.
+   */
   const uiRef = useRef<HTMLCanvasElement>(null!);
+
+  /**
+   * Reference to chart instance.
+   */
   const chartRef = useRef<Chart>(null!);
+
+  /**
+   * Reference to element from which we can extract CSS styles.
+   */
   const styleRef = useRef<HTMLDivElement>(null!);
+
+  /**
+   * Where to render tooltip.
+   */
   const tooltipRef = useRef<HTMLDivElement>(null!);
 
+  // Tooltip state
+  // TODO: Combine into single state
   const [date, setDate] = useState<Date>(new Date());
-
-  const [series, setSeries] = useState<
-    { color: string; name: string; value: string }[]
-  >([]);
+  const [series, setSeries] = useState<Series[]>([]);
 
   const {
     ref: resizeOberverRef,
@@ -51,9 +71,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     devicePixelContentBoxSizeBlockSize,
   } = useThrottledResizeObserver<HTMLDivElement>(50);
 
-  /**
-   * Create a new instance of the price chart
-   */
+  // Create a new instance of the price chart
   useEffect(() => {
     const colors = getColors(styleRef?.current);
 
@@ -63,8 +81,6 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
       resolution: window.devicePixelRatio,
       width: 300,
       height: 300,
-      priceFormat: defaultPriceFormat,
-      volumeFormat: defaultPriceFormat,
       colors,
     });
 
@@ -148,10 +164,11 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     chartRef.current.reset();
   }, [data]);
 
+  // There's nothing to render if we don't have at least two data points.
   if (data.rows.length < 2) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>
-        <NonIdealState title="Not enough data" />
+        <NonIdealState delay={0} title="Not enough data" />
       </div>
     );
   }
@@ -162,19 +179,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
         <canvas ref={contentsRef} className={styles.canvas} />
         <canvas ref={uiRef} className={styles.canvas} />
       </div>
-      <div
-        ref={tooltipRef}
-        style={{
-          position: "absolute",
-          width: "maxContent",
-          top: 0,
-          left: 0,
-          pointerEvents: "none",
-          visibility: "hidden",
-          boxShadow:
-            "rgb(88 102 126 / 8%) 0px 1px 1px, rgb(88 102 126 / 10%) 0px 8px 16px",
-        }}
-      >
+      <div ref={tooltipRef} className={styles.tooltipContainer}>
         <Tooltip date={date} series={series} />
       </div>
     </div>

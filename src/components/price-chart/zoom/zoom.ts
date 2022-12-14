@@ -5,6 +5,8 @@ function defaultConstrain(
   extent: [[number, number], [number, number]],
   translateExtent: [[number, number], [number, number]]
 ): ZoomTransform {
+  return transform;
+
   const dx0 = transform.invertX(extent[0][0]) - translateExtent[0][0];
   const dx1 = transform.invertX(extent[1][0]) - translateExtent[1][0];
   const dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1];
