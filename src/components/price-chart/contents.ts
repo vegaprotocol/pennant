@@ -94,6 +94,7 @@ export class Contents {
 
     if (data[0].length === 2) {
       this.priceCurve.visible = true;
+      this.priceCurve.colors = this.colors;
 
       this.priceCurve.update(
         priceScale,

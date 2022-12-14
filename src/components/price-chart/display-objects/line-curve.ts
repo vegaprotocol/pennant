@@ -6,7 +6,6 @@ import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { Rectangle } from "../../../renderer/math";
 import { hex2string } from "../../../renderer/utils";
-import { AXIS_HEIGHT } from "../chart";
 
 function createGradTexture(
   colorStop1: number,
