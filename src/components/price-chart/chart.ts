@@ -138,10 +138,10 @@ export class Chart extends EventEmitter {
   };
 
   private onZoom = ({ transform: t }: { transform: ZoomTransform }) => {
-    this.timeZoom.translateBy(
-      (t.x - this.lastTimeZoomTransform.x) / this.timeZoom.__zoom.k,
-      0
-    );
+    const k = t.k;
+    const x = t.x - this.lastTimeZoomTransform.x;
+
+    this.timeZoom.translateBy(x / k, 0);
 
     this.lastTimeZoomTransform = t;
 
@@ -153,13 +153,13 @@ export class Chart extends EventEmitter {
   private onMouseMove = (d: any) => this.emit("mousemove", d);
   private onMouseOut = () => this.emit("mouseout");
 
-  private onZoomHorizontalAxis = (t: ZoomTransform /**point*/) => {
+  private onZoomHorizontalAxis = (
+    t: ZoomTransform,
+    point: [number, number]
+  ) => {
     const k = t.k / this.lastTimeZoomTransform.k;
 
-    this.timeZoom.scaleBy(k, [
-      this.width - this.ui.renderer.resolution * AXIS_WIDTH,
-      0,
-    ]);
+    this.timeZoom.scaleBy(k, [point[0], 0]);
 
     this.lastTimeZoomTransform = t;
 
