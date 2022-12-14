@@ -113,7 +113,6 @@ export class PriceCurve extends Container {
     invert: boolean,
     startPrice: number
   ): void {
-    console.log(startPrice);
     this.fill = fill;
     this.stroke = stroke;
     this.backgroundSurface = backgroundSurface;

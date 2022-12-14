@@ -146,7 +146,6 @@ export class GraphicsRenderer {
       const lineColor = data?.lineStyle?.color ?? 0;
 
       if (data.matrix) {
-        console.log(data.matrix);
         renderer.setContextTransform(
           transform.copyTo(this._tempMatrix).append(data.matrix),
           true,
