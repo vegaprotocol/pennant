@@ -4,8 +4,9 @@ import { zipWith } from "lodash";
 import React, { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
+import coinmarketcap from "./data/coinmarketcap-data.json";
+import vega from "./data/vega-data.json";
 import { PriceChart } from "./price-chart";
-import series from "./price-chart.stories.json";
 
 type Range = "1D" | "7D" | "1M" | "3M" | "1Y" | "ALL";
 type Asset = "BTC" | "ETH" | "TETHER";
@@ -15,14 +16,14 @@ export default {
   component: PriceChart,
 } as ComponentMeta<typeof PriceChart>;
 
-export const Primary: ComponentStory<typeof PriceChart> = () => {
+export const SingleSeries: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Asset>("BTC");
   const [range, setRange] = useState<Range>("1D");
 
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
     cols: ["Date", asset],
-    rows: (series as any)[asset][range].map((d: any) => [
+    rows: (coinmarketcap as any)[asset][range].map((d: any) => [
       new Date(1000 * d.time),
       d.price,
     ]),
@@ -129,7 +130,7 @@ export const Primary: ComponentStory<typeof PriceChart> = () => {
   );
 };
 
-export const Comparison: ComponentStory<typeof PriceChart> = () => {
+export const MultipleSeries: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Set<Asset>>(new Set(["BTC", "ETH"]));
   const [range, setRange] = useState<Range>("1Y");
@@ -139,10 +140,10 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
     cols: cols,
     rows: zipWith(
-      series["BTC"][range].map((d) => new Date(1000 * d.time)),
-      series["BTC"][range].map((d) => d.price),
-      series["ETH"][range].map((d) => d.price),
-      (series as any)["TETHER"][range].map(
+      coinmarketcap["BTC"][range].map((d) => new Date(1000 * d.time)),
+      coinmarketcap["BTC"][range].map((d) => d.price),
+      coinmarketcap["ETH"][range].map((d) => d.price),
+      (coinmarketcap as any)["TETHER"][range].map(
         (d: any) => d.price as number
       ) as number[],
       function (a, b, c, d) {
@@ -162,7 +163,7 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
 
         return res;
       }
-    ).slice(0, series["BTC"][range].length),
+    ).slice(0, coinmarketcap["BTC"][range].length),
   };
 
   return (
@@ -313,6 +314,30 @@ export const Comparison: ComponentStory<typeof PriceChart> = () => {
       >
         <PriceChart data={data} theme={theme} />
       </div>
+    </div>
+  );
+};
+
+export const VegaSingleDataPoint: ComponentStory<typeof PriceChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  const data: { cols: string[]; rows: [Date, ...number[]][] } = {
+    cols: vega.cols,
+    rows: vega.rows.map((d) => [new Date(d[0]), d[1] as number]),
+  };
+
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "scroll",
+        width: "600px",
+        height: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <PriceChart data={data} theme={theme} />
     </div>
   );
 };

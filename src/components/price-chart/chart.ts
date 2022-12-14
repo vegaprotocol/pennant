@@ -1,6 +1,7 @@
 import { extent } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
-import { zoom, zoomIdentity } from "d3-zoom";
+import { zoomIdentity } from "d3-zoom";
+import { addHours } from "date-fns";
 import EventEmitter from "eventemitter3";
 
 import { ScaleTime } from "../../types";
@@ -16,7 +17,7 @@ import { Zoom } from "./zoom/zoom";
 export const FONT_SIZE = 12;
 
 /**
- * Height of the bottom price axis
+ * Height of the bottom date axis
  */
 export const AXIS_HEIGHT = FONT_SIZE + 5;
 
@@ -40,9 +41,6 @@ export class Chart extends EventEmitter {
     rows: ReadonlyArray<[Date, ...number[]]>;
   } = { cols: [], rows: [] };
 
-  private priceFormat: (price: number) => string;
-  private volumeFormat: (volume: number) => string;
-
   private _colors: Colors;
 
   constructor(options: {
@@ -57,8 +55,6 @@ export class Chart extends EventEmitter {
   }) {
     super();
 
-    this.priceFormat = options.priceFormat;
-    this.volumeFormat = options.volumeFormat;
     this._colors = options.colors;
 
     this.contents = new Contents({
@@ -154,6 +150,11 @@ export class Chart extends EventEmitter {
       number
     ];
 
+    if (priceExtent[0] === priceExtent[1]) {
+      priceExtent[0] = 0.9 * priceExtent[0];
+      priceExtent[1] = 1.1 * priceExtent[1];
+    }
+
     const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;
     const midPrice = (priceExtent[1] + priceExtent[0]) / 2;
 
@@ -197,32 +198,35 @@ export class Chart extends EventEmitter {
     cols: ReadonlyArray<string>;
     rows: ReadonlyArray<[Date, ...number[]]>;
   }) {
-    this._data = data;
+    if (data.rows.length === 1) {
+      this._data = { cols: data.cols, rows: [data.rows[0], data.rows[0]] };
+    } else {
+      this._data = data;
+    }
 
     if (data.rows.length > 0) {
-      this.timeScale = this.timeScale.domain([
-        data.rows[0][0],
-        data.rows[data.rows.length - 1][0],
-      ]);
+      const timeExtent = [data.rows[0][0], data.rows[data.rows.length - 1][0]];
+
+      if (timeExtent[0] === timeExtent[1]) {
+        timeExtent[0] = addHours(timeExtent[0], -1);
+        timeExtent[1] = addHours(timeExtent[1], 1);
+      }
+
+      this.timeScale = this.timeScale.domain(timeExtent);
 
       const resolution = this.ui.renderer.resolution;
 
       this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
 
-      console.log(this.timeScale.range());
-
-      this.timeZoom.extent = [
+      /*       this.timeZoom.extent = [
         [0, 0],
         [this.width / resolution, this.height],
-      ];
+      ]; */
 
-      this.timeZoom.translateExtent = [
+      /*       this.timeZoom.translateExtent = [
         [this.timeScale(data.rows[0][0]), -Infinity],
         [this.timeScale(data.rows[data.rows.length - 1][0]), Infinity],
-      ];
-
-      console.log(this.width);
-      console.log(this.timeZoom);
+      ]; */
     }
 
     this.update();

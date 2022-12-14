@@ -10,14 +10,6 @@ function defaultConstrain(
   const dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1];
   const dy1 = transform.invertY(extent[1][1]) - translateExtent[1][1];
 
-  console.log(transform);
-  console.log(extent);
-  console.log(translateExtent);
-  console.log(transform.invertX(extent[0][0]), transform.invertX(extent[1][0]));
-  console.log(dx0, dx1);
-  console.log(dx1 > dx0);
-  console.log((dx0 + dx1) / 2);
-
   return transform.translate(
     dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
     dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)

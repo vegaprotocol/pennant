@@ -1,5 +1,4 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
-import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 
 import { useThrottledResizeObserver } from "../../hooks";
@@ -53,7 +52,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   } = useThrottledResizeObserver<HTMLDivElement>(50);
 
   /**
-   * Create a new instance of the depth chart
+   * Create a new instance of the price chart
    */
   useEffect(() => {
     const colors = getColors(styleRef?.current);
@@ -149,10 +148,10 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
     chartRef.current.reset();
   }, [data]);
 
-  if (data.rows.length === 0) {
+  if (data.rows.length < 2) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>
-        <NonIdealState title="No data" />
+        <NonIdealState title="Not enough data" />
       </div>
     );
   }
