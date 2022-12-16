@@ -14,3 +14,7 @@ You should also check that the css has been imported/included, for example at th
 ```jsx
 import "pennant/dist/style.css";
 ```
+
+### Next.js
+
+If you get an error when importing pennant in a Next.js project consider [not including the module server-side](https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr). Pennant currently only works in a browser. It might be possible to produce sensible results server-side in the future so create an issue requesting this if interested.
