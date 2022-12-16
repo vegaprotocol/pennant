@@ -1,4 +1,4 @@
-import {InternMap} from "internmap";
+import { InternMap } from "internmap";
 
 import identity from "./identity.js";
 
@@ -12,7 +12,9 @@ export function groups(values, ...keys) {
 
 function flatten(groups, keys) {
   for (let i = 1, n = keys.length; i < n; ++i) {
-    groups = groups.flatMap(g => g.pop().map(([key, value]) => [...g, key, value]));
+    groups = groups.flatMap((g) =>
+      g.pop().map(([key, value]) => [...g, key, value])
+    );
   }
   return groups;
 }

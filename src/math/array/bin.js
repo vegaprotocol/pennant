@@ -1,38 +1,39 @@
-import {slice} from "./array.js";
+import { slice } from "./array.js";
 import bisect from "./bisect.js";
 import constant from "./constant.js";
 import extent from "./extent.js";
 import identity from "./identity.js";
 import nice from "./nice.js";
 import sturges from "./threshold/sturges.js";
-import ticks, {tickIncrement} from "./ticks.js";
+import ticks, { tickIncrement } from "./ticks.js";
 
-export default function() {
+export default function () {
   var value = identity,
-      domain = extent,
-      threshold = sturges;
+    domain = extent,
+    threshold = sturges;
 
   function histogram(data) {
     if (!Array.isArray(data)) data = Array.from(data);
 
     var i,
-        n = data.length,
-        x,
-        values = new Array(n);
+      n = data.length,
+      x,
+      values = new Array(n);
 
     for (i = 0; i < n; ++i) {
       values[i] = value(data[i], i, data);
     }
 
     var xz = domain(values),
-        x0 = xz[0],
-        x1 = xz[1],
-        tz = threshold(values, x0, x1);
+      x0 = xz[0],
+      x1 = xz[1],
+      tz = threshold(values, x0, x1);
 
     // Convert number of thresholds into uniform thresholds, and nice the
     // default domain accordingly.
     if (!Array.isArray(tz)) {
-      const max = x1, tn = +tz;
+      const max = x1,
+        tn = +tz;
       if (domain === extent) [x0, x1] = nice(x0, x1, tn);
       tz = ticks(x0, x1, tn);
 
@@ -65,7 +66,7 @@ export default function() {
     while (tz[m - 1] > x1) tz.pop(), --m;
 
     var bins = new Array(m + 1),
-        bin;
+      bin;
 
     // Initialize bins.
     for (i = 0; i <= m; ++i) {
@@ -85,16 +86,29 @@ export default function() {
     return bins;
   }
 
-  histogram.value = function(_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : constant(_), histogram) : value;
+  histogram.value = function (_) {
+    return arguments.length
+      ? ((value = typeof _ === "function" ? _ : constant(_)), histogram)
+      : value;
   };
 
-  histogram.domain = function(_) {
-    return arguments.length ? (domain = typeof _ === "function" ? _ : constant([_[0], _[1]]), histogram) : domain;
+  histogram.domain = function (_) {
+    return arguments.length
+      ? ((domain = typeof _ === "function" ? _ : constant([_[0], _[1]])),
+        histogram)
+      : domain;
   };
 
-  histogram.thresholds = function(_) {
-    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant(slice.call(_)) : constant(_), histogram) : threshold;
+  histogram.thresholds = function (_) {
+    return arguments.length
+      ? ((threshold =
+          typeof _ === "function"
+            ? _
+            : Array.isArray(_)
+            ? constant(slice.call(_))
+            : constant(_)),
+        histogram)
+      : threshold;
   };
 
   return histogram;

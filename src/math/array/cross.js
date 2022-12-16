@@ -7,15 +7,18 @@ function empty(length) {
 }
 
 function arrayify(values) {
-  return typeof values !== "object" || "length" in values ? values : Array.from(values);
+  return typeof values !== "object" || "length" in values
+    ? values
+    : Array.from(values);
 }
 
 function reducer(reduce) {
-  return values => reduce(...values);
+  return (values) => reduce(...values);
 }
 
 export default function cross(...values) {
-  const reduce = typeof values[values.length - 1] === "function" && reducer(values.pop());
+  const reduce =
+    typeof values[values.length - 1] === "function" && reducer(values.pop());
   values = values.map(arrayify);
   const lengths = values.map(length);
   const j = values.length - 1;

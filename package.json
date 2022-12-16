@@ -1,6 +1,6 @@
 {
   "name": "pennant",
-  "version": "0.4.18",
+  "version": "1.0.0-alpha.4",
   "description": "A React component library for visualising historical and streaming financial market data",
   "main": "./dist/legacy.js",
   "types": "./dist/types/index.d.ts",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@d3fc/d3fc-technical-indicator": "^8.0.1",
+    "@floating-ui/react-dom": "^1.0.1",
     "@types/d3-array": "^2.9.0",
     "@types/d3-dispatch": "^2.0.0",
     "@types/d3-drag": "^2.0.0",
@@ -45,7 +46,8 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "allotment": "1.17.0",
     "classnames": "^2.2.6",
-    "d3-array": "2.3.3",
+    "d3-array": "2.8.0",
+    "d3-axis": "^3.0.0",
     "d3-delaunay": "^6.0.2",
     "d3-dispatch": "^2.0.0",
     "d3-drag": "^2.0.0",
@@ -117,6 +119,7 @@
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "14.4.3",
+    "@types/d3-axis": "^3.0.1",
     "@types/d3-delaunay": "6.0.1",
     "@types/d3-format": "2.0.2",
     "@types/react-test-renderer": "18.0.0",

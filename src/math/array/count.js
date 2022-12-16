@@ -9,7 +9,10 @@ export default function count(values, valueof) {
   } else {
     let index = -1;
     for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+      if (
+        (value = valueof(value, ++index, values)) != null &&
+        (value = +value) >= value
+      ) {
         ++count;
       }
     }

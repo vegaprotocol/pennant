@@ -10,7 +10,7 @@
   width: 100%;
 }
 
-.non-ideal-state.hide {
+.non-ideal-state .content.hide {
   opacity: 0;
   visibility: hidden;
 }

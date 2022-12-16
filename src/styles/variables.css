@@ -4,7 +4,7 @@
   --pennant-color-black: #000000;
 
   --pennant-color-gray-0: var(--pennant-color-white);
-  --pennant-color-gray-50: #ffffff;
+  --pennant-color-gray-50: #fefefe;
   --pennant-color-gray-100: #ededed;
   --pennant-color-gray-200: #cdd0d5;
   --pennant-color-gray-300: #acb0ba;
@@ -14,6 +14,7 @@
   --pennant-color-gray-700: #4f545f;
   --pennant-color-gray-800: #41454e;
   --pennant-color-gray-900: #333333;
+  --pennant-color-gray-950: #222531;
   --pennant-color-gray-1000: var(--pennant-color-black);
 
   --pennant-color-vega-green-50: #b0ffd9;
@@ -77,6 +78,7 @@
   --pennant-color-danger: var(--vega-red-dark);
 
   --pennant-color-emphasis-0: var(--pennant-color-gray-0);
+  --pennant-color-emphasis-50: var(--pennant-color-gray-50);
   --pennant-color-emphasis-100: var(--pennant-color-gray-100);
   --pennant-color-emphasis-200: var(--pennant-color-gray-200);
   --pennant-color-emphasis-300: var(--pennant-color-gray-300);
@@ -86,6 +88,7 @@
   --pennant-color-emphasis-700: var(--pennant-color-gray-700);
   --pennant-color-emphasis-800: var(--pennant-color-gray-800);
   --pennant-color-emphasis-900: var(--pennant-color-gray-900);
+  --pennant-color-emphasis-950: var(--pennant-color-gray-950);
   --pennant-color-emphasis-1000: var(--pennant-color-gray-1000);
 
   /* Base. */
@@ -142,6 +145,7 @@
   --pennant-color-danger: var(--vega-red);
 
   --pennant-color-emphasis-0: var(--pennant-color-gray-1000);
+  --pennant-color-emphasis-50: var(--pennant-color-gray-950);
   --pennant-color-emphasis-100: var(--pennant-color-gray-900);
   --pennant-color-emphasis-200: var(--pennant-color-gray-800);
   --pennant-color-emphasis-300: var(--pennant-color-gray-700);
@@ -151,6 +155,7 @@
   --pennant-color-emphasis-700: var(--pennant-color-gray-300);
   --pennant-color-emphasis-800: var(--pennant-color-gray-200);
   --pennant-color-emphasis-900: var(--pennant-color-gray-100);
+  --pennant-color-emphasis-950: var(--pennant-color-gray-50);
   --pennant-color-emphasis-1000: var(--pennant-color-gray-0);
 
   --pennant-background-surface-color: var(--pennant-color-black);

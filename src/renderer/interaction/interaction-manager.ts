@@ -289,6 +289,12 @@ export class InteractionManager extends EventEmitter {
       this._eventListenerOptions
     );
 
+    this.interactionDOMElement.addEventListener(
+      "dblclick",
+      this.onDblClick,
+      this._eventListenerOptions
+    );
+
     // always look directly for touch events so that we can provide original data
     // In a future version we should change this to being just a fallback and rely solely on
     // PointerEvents whenever available
@@ -719,6 +725,41 @@ export class InteractionManager extends EventEmitter {
 
         this.releaseInteractionDataForPointerId(event.pointerId);
       }
+    }
+  };
+
+  private onDblClick = (originalEvent: InteractivePointerEvent): void => {
+    const events = this.normalizeToPointerData(originalEvent);
+
+    // Only mouse and pointer can call onDblClick, so events will always be length 1
+    const event = events[0];
+
+    const interactionData = this.getInteractionDataForPointerId(event);
+
+    const interactionEvent = this.configureInteractionEventForDOMEvent(
+      this.eventData,
+      event,
+      interactionData
+    );
+
+    interactionEvent.data!.originalEvent = originalEvent;
+
+    this.processInteractive(
+      interactionEvent,
+      this.lastObjectRendered,
+      this.processDblClick,
+      true
+    );
+  };
+
+  private processDblClick = (
+    interactionEvent: InteractionEvent,
+    displayObject: DisplayObject,
+    hit?: boolean
+  ): void => {
+    if (hit) {
+      interactionEvent.data?.originalEvent?.preventDefault();
+      this.dispatchEvent(displayObject, "dblclick", interactionEvent);
     }
   };
 

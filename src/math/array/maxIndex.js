@@ -5,16 +5,20 @@ export default function maxIndex(values, valueof) {
   if (valueof === undefined) {
     for (const value of values) {
       ++index;
-      if (value != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value, maxIndex = index;
+      if (
+        value != null &&
+        (max < value || (max === undefined && value >= value))
+      ) {
+        (max = value), (maxIndex = index);
       }
     }
   } else {
     for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value, maxIndex = index;
+      if (
+        (value = valueof(value, ++index, values)) != null &&
+        (max < value || (max === undefined && value >= value))
+      ) {
+        (max = value), (maxIndex = index);
       }
     }
   }

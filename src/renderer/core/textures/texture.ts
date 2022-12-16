@@ -87,5 +87,6 @@ export class Texture<R extends Resource = Resource> {
     return texture;
   }
 
-  static readonly EMPTY: Texture;
+  static readonly EMPTY: Texture = new Texture(new BaseTexture());
+  static readonly WHITE: Texture = new Texture(new BaseTexture());
 }
