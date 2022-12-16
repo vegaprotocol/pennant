@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.0.0) (2022-12-16)
+
+### Features
+
+- price chart ([#638](https://github.com/vegaprotocol/pennant/issues/638)) ([89b6497](https://github.com/vegaprotocol/pennant/commit/89b6497cf3cd02e7b52ce608c50013159970c6de))
+
+### Bug Fixes
+
+- add labels as variables ([3cea79a](https://github.com/vegaprotocol/pennant/commit/3cea79a108e4abd76b43bb920ec3b2b9a6123cc6))
+- adding more that one label ([a2c5c95](https://github.com/vegaprotocol/pennant/commit/a2c5c95ae9b4103bc551d83a683e6cfd95836c00))
+
 ### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.18) (2022-09-29)
 
 ### Features
