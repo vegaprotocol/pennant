@@ -318,12 +318,36 @@ export const MultipleSeries: ComponentStory<typeof PriceChart> = () => {
   );
 };
 
-export const VegaSingleDataPoint: ComponentStory<typeof PriceChart> = () => {
+export const Vega1: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
-    cols: vega.cols,
-    rows: vega.rows.map((d) => [new Date(d[0]), d[1] as number]),
+    cols: vega[0].cols,
+    rows: vega[0].rows.map((d) => [new Date(d[0]), d[1] as number]),
+  };
+
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "scroll",
+        width: "600px",
+        height: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <PriceChart data={data} theme={theme} />
+    </div>
+  );
+};
+
+export const Vega2: ComponentStory<typeof PriceChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  const data: { cols: string[]; rows: [Date, ...number[]][] } = {
+    cols: vega[1].cols,
+    rows: vega[1].rows.map((d) => [new Date(d[0]), d[1] as number]),
   };
 
   return (
