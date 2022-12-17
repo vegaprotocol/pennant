@@ -124,7 +124,7 @@
     "@types/d3-format": "2.0.2",
     "@types/react-test-renderer": "18.0.0",
     "@types/resize-observer-browser": "0.1.7",
-    "@typescript-eslint/parser": "5.44.0",
+    "@typescript-eslint/parser": "5.46.1",
     "babel-jest": "27.5.1",
     "bignumber.js": "9.1.1",
     "eslint": "8.28.0",
