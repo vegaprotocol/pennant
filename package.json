@@ -46,7 +46,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "allotment": "1.17.1",
     "classnames": "^2.2.6",
-    "d3-array": "2.8.0",
+    "d3-array": "2.12.1",
     "d3-axis": "^3.0.0",
     "d3-delaunay": "^6.0.2",
     "d3-dispatch": "^2.0.0",
@@ -161,6 +161,6 @@
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "resolutions": {
-    "d3-array": "2.3.3"
+    "d3-array": "2.12.1"
   }
 }
