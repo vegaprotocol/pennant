@@ -38,6 +38,11 @@ export type PriceChartProps = {
   data: Data;
 
   /**
+   * Override the default text to display when there is not enough data.
+   */
+  notEnoughDataText?: string;
+
+  /**
    * Light or dark theme.
    */
   theme?: ThemeVariant;
@@ -46,7 +51,11 @@ export type PriceChartProps = {
 /**
  * Draw a historical price chart. Supports multiple line series.
  */
-export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
+export const PriceChart = ({
+  data,
+  notEnoughDataText = "Not enough data",
+  theme = "dark",
+}: PriceChartProps) => {
   /**
    * Where to render chart contents, e.g. line series.
    */
@@ -182,7 +191,7 @@ export const PriceChart = ({ data, theme = "dark" }: PriceChartProps) => {
   if (data.rows.length < 2) {
     return (
       <div ref={styleRef} className={styles.container} data-theme={theme}>
-        <NonIdealState delay={0} title="Not enough data" />
+        <NonIdealState delay={0} title={notEnoughDataText} />
       </div>
     );
   }
