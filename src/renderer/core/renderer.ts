@@ -3,12 +3,16 @@ import { InteractionManager } from "../interaction/interaction-manager";
 import { Matrix } from "../math";
 import { SpriteRenderer } from "../sprite/sprite-renderer";
 import { AbstractRenderer, RendererOptions } from "./abstract-renderer";
+import { CanvasContextSystem } from "./canvas-context-system";
+import { CanvasMaskSystem } from "./canvas-mask-system";
 import { GeometrySystem } from "./geometry/geometry-system";
 import { RenderableObject } from "./renderable-object";
 
 const tempMatrix = new Matrix();
 
 export class Renderer extends AbstractRenderer {
+  public mask: CanvasMaskSystem | null = null;
+  public canvasContext: CanvasContextSystem | null = null;
   public context: CanvasRenderingContext2D;
   public geometry: GeometrySystem | null;
 
@@ -26,6 +30,9 @@ export class Renderer extends AbstractRenderer {
     this.plugins.interaction = new InteractionManager(this);
 
     this._projTransform = null;
+
+    this.mask = new CanvasMaskSystem(this);
+    this.canvasContext = new CanvasContextSystem(this);
 
     this.resize(options?.width ?? 800, options?.height ?? 600);
   }
@@ -45,7 +52,7 @@ export class Renderer extends AbstractRenderer {
 
     /*   context.fillStyle = this._backgroundColorString;
     context.fillRect(0, 0, this.width, this.height);
- */
+  */
     displayObject.render(this);
 
     context.restore();

@@ -20,7 +20,11 @@ export class Adder {
   }
   valueOf() {
     const p = this._partials;
-    let n = this._n, x, y, lo, hi = 0;
+    let n = this._n,
+      x,
+      y,
+      lo,
+      hi = 0;
     if (n > 0) {
       hi = p[--n];
       while (n > 0) {
@@ -44,14 +48,14 @@ export function fsum(values, valueof) {
   const adder = new Adder();
   if (valueof === undefined) {
     for (let value of values) {
-      if (value = +value) {
+      if ((value = +value)) {
         adder.add(value);
       }
     }
   } else {
     let index = -1;
     for (let value of values) {
-      if (value = +valueof(value, ++index, values)) {
+      if ((value = +valueof(value, ++index, values))) {
         adder.add(value);
       }
     }
@@ -62,8 +66,10 @@ export function fsum(values, valueof) {
 export function fcumsum(values, valueof) {
   const adder = new Adder();
   let index = -1;
-  return Float64Array.from(values, valueof === undefined
-      ? v => adder.add(+v || 0)
-      : v => adder.add(+valueof(v, ++index, values) || 0)
+  return Float64Array.from(
+    values,
+    valueof === undefined
+      ? (v) => adder.add(+v || 0)
+      : (v) => adder.add(+valueof(v, ++index, values) || 0)
   );
 }

@@ -40,9 +40,8 @@ export type ValueDefWithCondition<
   condition?: Conditional<ValueDef<V>> | Conditional<ValueDef<V>>[];
 };
 
-export type Conditional<
-  CD extends FieldDef<any> | ValueDef<any>
-> = ConditionalPredicate<CD>;
+export type Conditional<CD extends FieldDef<any> | ValueDef<any>> =
+  ConditionalPredicate<CD>;
 
 export type ConditionalPredicate<CD extends FieldDef<any> | ValueDef<any>> = {
   test: Predicate;

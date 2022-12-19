@@ -1,7 +1,4 @@
-export function calculateShiftedPositions(
-  positions: number[],
-  height: number
-) {
+export function calculateShiftedPositions(positions: number[], height: number) {
   let previousY = -Infinity;
   const sortedYPositions = [...positions].sort((a, b) => a - b);
 

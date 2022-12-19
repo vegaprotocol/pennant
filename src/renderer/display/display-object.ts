@@ -28,6 +28,9 @@ export abstract class DisplayObject extends EventEmitter {
   public visible: boolean;
 
   public _trackedPointers: { [x: number]: InteractionTrackingData } | undefined;
+
+  public isMask: boolean = false;
+  public _mask: Container | null = null;
   public _bounds: Bounds = new Bounds();
   public _localBounds: Bounds | null = null;
 
@@ -226,6 +229,20 @@ export abstract class DisplayObject extends EventEmitter {
 
   get worldTransform(): Matrix {
     return this.transform.worldTransform;
+  }
+
+  get mask(): Container | null {
+    return this._mask;
+  }
+
+  set mask(value: Container | null) {
+    if (this._mask === value) {
+      return;
+    }
+
+    this._mask = value;
+
+    this._mask!.isMask = true;
   }
 }
 

@@ -4,14 +4,17 @@ export default function mean(values, valueof) {
   if (valueof === undefined) {
     for (let value of values) {
       if (value != null && (value = +value) >= value) {
-        ++count, sum += value;
+        ++count, (sum += value);
       }
     }
   } else {
     let index = -1;
     for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-        ++count, sum += value;
+      if (
+        (value = valueof(value, ++index, values)) != null &&
+        (value = +value) >= value
+      ) {
+        ++count, (sum += value);
       }
     }
   }

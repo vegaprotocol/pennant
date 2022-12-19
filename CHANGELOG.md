@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.0.0) (2022-12-16)
+
+### Features
+
+- price chart ([#638](https://github.com/vegaprotocol/pennant/issues/638)) ([89b6497](https://github.com/vegaprotocol/pennant/commit/89b6497cf3cd02e7b52ce608c50013159970c6de))
+
+### Bug Fixes
+
+- add labels as variables ([3cea79a](https://github.com/vegaprotocol/pennant/commit/3cea79a108e4abd76b43bb920ec3b2b9a6123cc6))
+- adding more that one label ([a2c5c95](https://github.com/vegaprotocol/pennant/commit/a2c5c95ae9b4103bc551d83a683e6cfd95836c00))
+
+### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.18) (2022-09-29)
+
+### Features
+
+- sort depth chart data ([#600](https://github.com/vegaprotocol/pennant/issues/600)) ([1d98c3b](https://github.com/vegaprotocol/pennant/commit/1d98c3b142ce4b5bd4e6b71732edc44d84f5c24b))
+
+### Bug Fixes
+
+- show sell side tooltip correctly in depth chart ([#601](https://github.com/vegaprotocol/pennant/issues/601)) ([08c2a30](https://github.com/vegaprotocol/pennant/commit/08c2a30861b8ff2292a8c3ebcfb4a722b2a83b3a))
+
+### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.17) (2022-09-28)
+
+### Features
+
+- improve fill colors for depth chart ([18c28dd](https://github.com/vegaprotocol/pennant/commit/18c28dd2ddc9f4563107de9c1e49bd1119645449))
+
+### [0.4.16](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.16) (2022-09-20)
+
+### Features
+
+- better support for color customization ([#572](https://github.com/vegaprotocol/pennant/issues/572)) ([fdf041a](https://github.com/vegaprotocol/pennant/commit/fdf041adb6116e9e8d82e4e0540eda5cadc07fba))
+
 ### [0.4.15](https://github.com/vegaprotocol/pennant/compare/v0.4.14...v0.4.15) (2022-09-14)
 
 ### Features

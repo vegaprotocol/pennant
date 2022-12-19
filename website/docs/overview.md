@@ -5,7 +5,8 @@ title: Overview
 
 # API Overview
 
-Pennant exposes two main components:
+Pennant exposes three main components:
 
 - [Candlestick chart](chart.md)
 - [Depth chart](depth-chart.md)
+- [Price chart](price-chart.md)

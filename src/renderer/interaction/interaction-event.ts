@@ -18,17 +18,11 @@ export class InteractionEvent {
 
   constructor() {
     this.stopped = false;
-
     this.stopsPropagatingAt = null;
-
     this.stopPropagationHint = false;
-
     this.target = null;
-
     this.currentTarget = null;
-
     this.type = null;
-
     this.data = null;
   }
 

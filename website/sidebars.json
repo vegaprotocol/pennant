@@ -2,8 +2,13 @@
   "docs": [
     {
       "Getting Started": ["getting-started"],
-      "API reference": ["overview", "chart", "depth-chart"],
-      "Examples": [{ "Candlestick chart": ["candlestick-chart/basic"] }, { "Depth chart": ["depth-chart/basic"] }]
+      "Customization": ["colors", "typography"],
+      "API reference": ["overview", "chart", "depth-chart", "price-chart"],
+      "Examples": [
+        { "Candlestick chart": ["candlestick-chart/basic"] },
+        { "Depth chart": ["depth-chart/basic"] },
+        { "Price chart": ["price-chart/basic"] }
+      ]
     },
     { "type": "doc", "id": "faq" }
   ]

@@ -1,0 +1,45 @@
+{
+  "I1D": {
+    "id": "5A86B190C384997F",
+    "decimalPlaces": 5,
+    "candles": [
+      {
+        "datetime": "2021-02-21T00:00:00Z",
+        "high": "59598441",
+        "low": "59598441",
+        "open": "59598441",
+        "close": "59598441",
+        "volume": "10958008",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-22T00:00:00Z",
+        "high": "59598441",
+        "low": "59598441",
+        "open": "59598441",
+        "close": "59598441",
+        "volume": "10958008",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-23T00:00:00Z",
+        "high": "59598441",
+        "low": "59598441",
+        "open": "59598441",
+        "close": "59598441",
+        "volume": "10958008",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-24T00:00:00Z",
+        "high": "59853149",
+        "low": "59442433",
+        "open": "59759391",
+        "close": "59691323",
+        "volume": "4588841",
+        "__typename": "Candle"
+      }
+    ],
+    "__typename": "Market"
+  }
+}
