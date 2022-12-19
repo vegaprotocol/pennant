@@ -60,7 +60,7 @@
     "d3-transition": "^2.0.0",
     "d3-zoom": "^2.0.0",
     "date-fns": "^2.17.0",
-    "eventemitter3": "^4.0.7",
+    "eventemitter3": "^5.0.0",
     "internmap": "^2.0.1",
     "lodash": "^4.17.20",
     "react-virtualized-auto-sizer": "^1.0.4",
