@@ -7,26 +7,13 @@ import React, {
   useRef,
 } from "react";
 
+import { defaultPriceFormat, numberFormatter } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 import { getColors } from "./helpers";
-
-/**
- * Creates a number formatter
- * @param decimalPlaces Number of decimal places to display
- */
-export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
-  new Intl.NumberFormat("en-gb", {
-    maximumFractionDigits: decimalPlaces,
-    minimumFractionDigits: decimalPlaces,
-  });
-
-function defaultPriceFormat(price: number) {
-  return numberFormatter(2).format(price);
-}
 
 function defaultVolumeFormat(volume: number) {
   return numberFormatter(0).format(volume);

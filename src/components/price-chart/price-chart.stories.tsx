@@ -1,4 +1,5 @@
 import { Button, ButtonGroup } from "@blueprintjs/core";
+import { useCallback } from "@storybook/addons";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { zipWith } from "lodash";
 import React, { useState } from "react";
@@ -345,6 +346,8 @@ export const Vega1: ComponentStory<typeof PriceChart> = () => {
 export const Vega2: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
+  const priceFormat = useCallback((price: number) => price.toFixed(4), []);
+
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
     cols: vega[1].cols,
     rows: vega[1].rows.map((d) => [new Date(d[0]), d[1] as number]),
@@ -361,7 +364,7 @@ export const Vega2: ComponentStory<typeof PriceChart> = () => {
         flexDirection: "column",
       }}
     >
-      <PriceChart data={data} theme={theme} />
+      <PriceChart data={data} theme={theme} priceFormat={priceFormat} />
     </div>
   );
 };
