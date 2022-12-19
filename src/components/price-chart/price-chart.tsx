@@ -10,10 +10,6 @@ import { Series, Tooltip } from "./components";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 
-function defaultPriceFormat(price: number) {
-  return numberFormatter(2).format(price);
-}
-
 /**
  * A set of data points with the same x-axis location.
  */
