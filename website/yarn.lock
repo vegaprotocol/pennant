@@ -2564,6 +2564,25 @@
     url-loader "^4.1.1"
     webpack "^5.73.0"
 
+"@floating-ui/core@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.0.4.tgz#03066eaea8e9b2a2cd3f5aaa60f1e0f580ebe88e"
+  integrity sha512-FPFLbg2b06MIw1dqk2SOEMAMX3xlrreGjcui5OTxfBDtaKTmh0kioOVjT8gcfl58juawL/yF+S+gnq8aUYQx/Q==
+
+"@floating-ui/dom@^1.0.5":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.0.12.tgz#07c870a05d9b825a6d7657524f48fe6761722800"
+  integrity sha512-HeG/wHoa2laUHlDX3xkzqlUqliAfa+zqV04LaKIwNCmCNaW2p0fQi4/Kd0LB4GdFoJ2UllLFq5gWnXAd67lg7w==
+  dependencies:
+    "@floating-ui/core" "^1.0.4"
+
+"@floating-ui/react-dom@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react-dom/-/react-dom-1.0.1.tgz#ee3524eab740b9380a00f4c2629a758093414325"
+  integrity sha512-UW0t1Gi8ikbDRr8cQPVcqIDMBwUEENe5V4wlHWdrJ5egFnRQFBV9JirauTBFI6S8sM1qFUC1i+qa3g87E6CLTw==
+  dependencies:
+    "@floating-ui/dom" "^1.0.5"
+
 "@hapi/hoek@^9.0.0":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.2.1.tgz#9551142a1980503752536b5050fd99f4a7f13b17"
@@ -4477,10 +4496,15 @@ d3-array@2, d3-array@^2.3.0:
   dependencies:
     internmap "^1.0.0"
 
-d3-array@2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.3.3.tgz#e90c39fbaedccedf59fc30473092f99a0e14efa2"
-  integrity sha512-syv3wp0U5aB6toP2zb2OdBkhTy1MWDsCAaYk6OXJZv+G4u7bSWEmYgxLoFyc88RQUhZYGCebW9a9UD1gFi5+MQ==
+d3-array@2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.8.0.tgz#f76e10ad47f1f4f75f33db5fc322eb9ffde5ef23"
+  integrity sha512-6V272gsOeg7+9pTW1jSYOR1QE37g95I3my1hBmY+vOUNHRrk9yt4OTz/gK7PMkVAVDrYYq4mq3grTiZ8iJdNIw==
+
+d3-axis@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/d3-axis/-/d3-axis-3.0.0.tgz#c42a4a13e8131d637b745fc2973824cfeaf93322"
+  integrity sha512-IH5tgjV4jE/GhHkRV0HiVYPDtvfjHQlQfJHs0usq7M30XcSBvOotpmH1IgkcXsO/5gEQZD43B//fc7SRT5S+xw==
 
 "d3-color@1 - 2":
   version "2.0.0"
@@ -6889,13 +6913,14 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pennant@^0.4.16:
-  version "0.4.16"
-  resolved "https://registry.yarnpkg.com/pennant/-/pennant-0.4.16.tgz#2fa3e157669f4c7e0d3c3b577d4ff3d508e3ad34"
-  integrity sha512-QA4Q8on0C7DgaY7nBOLwZBp1k+xW40ZzRGJZZPsiRECLd794OJaGeVG8BSAh4Ua2WG8MHoqEuxFKCf4p9pK6mw==
+pennant@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/pennant/-/pennant-1.0.0.tgz#27ed6d628c2f9175c99b5bf787e138aff096fcb5"
+  integrity sha512-qvN2kRN2j6uG/Rs4QHYvsIKDis8GMs7G496F527k8RqLgGZmXUfn3wDGwQ9Kxnz+IMo0c3dFhs9VJymXCMdkWg==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@d3fc/d3fc-technical-indicator" "^8.0.1"
+    "@floating-ui/react-dom" "^1.0.1"
     "@types/d3-array" "^2.9.0"
     "@types/d3-dispatch" "^2.0.0"
     "@types/d3-drag" "^2.0.0"
@@ -6914,7 +6939,8 @@ pennant@^0.4.16:
     "@types/react-virtualized-auto-sizer" "^1.0.0"
     allotment "1.17.0"
     classnames "^2.2.6"
-    d3-array "2.3.3"
+    d3-array "2.8.0"
+    d3-axis "^3.0.0"
     d3-delaunay "^6.0.2"
     d3-dispatch "^2.0.0"
     d3-drag "^2.0.0"
