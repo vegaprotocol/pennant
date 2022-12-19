@@ -12,3 +12,4 @@ title: PriceChart
 | `data`              | `object`          |                   |                                                                     |
 | `notEnoughDataText` | `string`          | `Not enough data` | Override the default text to display when there is not enough data. |
 | `theme`             | `dark` \| `light` | `dark`            |                                                                     |
+| `tooltip`           | `JSX`             |                   |                                                                     |
