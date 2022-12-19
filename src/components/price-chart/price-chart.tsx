@@ -153,7 +153,6 @@ export const PriceChart = ({
     return () => {
       chartRef.current.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update chart when dimensions or data change
