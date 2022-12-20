@@ -45,6 +45,11 @@ export type PriceChartProps<A> = {
   annotations?: A[][];
 
   /**
+   * Whether to allow the user to pan and zoom.
+   */
+  interactive?: boolean;
+
+  /**
    * Override the default text to display when there is not enough data.
    */
   notEnoughDataText?: string;
@@ -75,6 +80,7 @@ export type PriceChartProps<A> = {
 export const PriceChart = <A,>({
   data,
   annotations,
+  interactive = true,
   notEnoughDataText = "Not enough data",
   priceFormat = defaultPriceFormat,
   theme = "dark",
@@ -214,6 +220,10 @@ export const PriceChart = <A,>({
   useEffect(() => {
     chartRef.current.reset();
   }, [data]);
+
+  useEffect(() => {
+    chartRef.current.interactive = interactive;
+  }, [interactive]);
 
   // There's nothing to render if we don't have at least two data points.
   if (data.rows.length < 2) {
