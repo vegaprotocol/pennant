@@ -346,7 +346,7 @@ export const Vega1: ComponentStory<typeof PriceChart> = () => {
 export const Vega2: ComponentStory<typeof PriceChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
-  const priceFormat = useCallback((price: number) => price.toFixed(4), []);
+  const priceFormat = useCallback((price: number) => price.toFixed(2), []);
 
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
     cols: vega[1].cols,
