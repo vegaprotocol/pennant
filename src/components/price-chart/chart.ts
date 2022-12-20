@@ -30,6 +30,7 @@ export class Chart extends EventEmitter {
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
 
   private _data: Data = { cols: [], rows: [] };
+  private priceFormat: (price: number) => string;
   private _colors: Colors;
 
   constructor(options: {
@@ -38,10 +39,12 @@ export class Chart extends EventEmitter {
     resolution: number;
     width: number;
     height: number;
+    priceFormat: (price: number) => string;
     colors: Colors;
   }) {
     super();
 
+    this.priceFormat = options.priceFormat;
     this._colors = options.colors;
 
     this.contents = new Contents({
@@ -58,6 +61,7 @@ export class Chart extends EventEmitter {
       width: options.width,
       height: options.height,
       colors: options.colors,
+      priceFormat: this.priceFormat,
     });
 
     this.ui
@@ -131,7 +135,7 @@ export class Chart extends EventEmitter {
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, yr, this._data.rows[0][1]);
+    this.ui.update(this._data, xr, yr, this._data.rows[0][1], this.priceFormat);
   }
 
   private onZoomStart = (t: ZoomTransform) => {
