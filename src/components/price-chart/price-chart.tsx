@@ -39,7 +39,7 @@ export type PriceChartProps = {
   notEnoughDataText?: string;
 
   /**
-   * Used to format values on price axis
+   * Used to format values on price axis.
    */
   priceFormat?: (price: number) => string;
 
