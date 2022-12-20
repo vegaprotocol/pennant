@@ -3,12 +3,12 @@ import { orderBy } from "lodash";
 import { useRef, useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
+import { numberFormatter } from "../../helpers";
 import { useInterval } from "../../hooks";
 import {
   DepthChart,
   DepthChartHandle,
   DepthChartProps,
-  numberFormatter,
   PriceLevel,
 } from "./depth-chart";
 
