@@ -70,6 +70,7 @@ export class Chart extends EventEmitter {
       .on("zoomend", this.onZoomEnd)
       .on("mousemove", this.onMouseMove)
       .on("mouseout", this.onMouseOut)
+      .on("zoomstart.horizontalAxis", this.onZoomStartHorizontalAxis)
       .on("zoom.horizontalAxis", this.onZoomHorizontalAxis)
       .on("zoom.verticalAxis", this.onZoomVerticalAxis)
       .on("reset", () => this.reset());
@@ -137,7 +138,8 @@ export class Chart extends EventEmitter {
     this.ui.update(this._data, xr, yr, this._data.rows[0][1], this.priceFormat);
   }
 
-  private onZoomStart = () => {
+  private onZoomStart = (t: ZoomTransform) => {
+    this.lastTimeZoomTransform = t;
     this.emit("zoomstart");
   };
 
@@ -146,7 +148,7 @@ export class Chart extends EventEmitter {
   };
 
   private onZoom = ({ transform: t }: { transform: ZoomTransform }) => {
-    const k = this.lastTimeZoomTransform.k;
+    const k = this.timeZoom.__zoom.k;
     const x = t.x - this.lastTimeZoomTransform.x;
 
     this.timeZoom.translateBy(x / k, 0);
@@ -159,6 +161,10 @@ export class Chart extends EventEmitter {
 
   private onMouseMove = (d: any) => this.emit("mousemove", d);
   private onMouseOut = () => this.emit("mouseout");
+
+  private onZoomStartHorizontalAxis = (t: ZoomTransform) => {
+    this.lastTimeZoomTransform = t;
+  };
 
   private onZoomHorizontalAxis = (
     t: ZoomTransform,

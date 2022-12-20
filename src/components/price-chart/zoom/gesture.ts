@@ -26,8 +26,8 @@ export class Gesture<T extends EventEmitter & { zoom: Zoom }> {
     this.that = that;
   }
 
-  public start() {
-    this.that.emit("zoomstart");
+  public start(transform?: ZoomTransform) {
+    this.that.emit("zoomstart", transform);
   }
 
   public zoom(transform: ZoomTransform, point: [number, number]) {

@@ -110,7 +110,7 @@ export class HorizontalAxis extends Container {
       window.clearTimeout(this.gesture.wheel);
     } else {
       this.gesture.mouse = [p, p];
-      this.gesture.start();
+      this.gesture.start(this.zoom.__zoom);
     }
 
     this.gesture.wheel = window.setTimeout(() => {
@@ -141,7 +141,20 @@ export class HorizontalAxis extends Container {
     }
 
     this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
-    this.gesture.start();
+    this.gesture.start(
+      this.zoom.constrain(
+        this.zoom.translate(
+          this.zoom.__zoom,
+          this.gesture.mouse[0],
+          this.gesture.mouse[1]
+        ),
+        [
+          [0, 0],
+          [100, 100],
+        ],
+        this.zoom.translateExtent
+      )
+    );
 
     const handleMouseMove = (event: any) => {
       event.preventDefault();
