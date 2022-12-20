@@ -332,7 +332,7 @@ export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
     ]),
   };
 
-  const metadata: Array<Array<{ volume: number; marketCap: number }>> = (
+  const annotations: Array<Array<{ volume: number; marketCap: number }>> = (
     coinmarketcap as any
   )[asset][range].map((d: any) => [
     {
@@ -438,7 +438,7 @@ export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
       >
         <PriceChart
           data={data}
-          metadata={metadata}
+          annotations={annotations}
           theme={theme}
           tooltip={Tooltip}
         />

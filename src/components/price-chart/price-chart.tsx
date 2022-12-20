@@ -12,7 +12,7 @@ import styles from "./price-chart.module.css";
 /**
  * Add custom annotations to tooltip props.
  */
-export type CustomTooltipProps<T> = TooltipProps & { annotations?: T[] };
+export type CustomTooltipProps<A> = TooltipProps & { annotations?: A[] };
 
 /**
  * A set of data points with the same x-axis location.
@@ -31,13 +31,17 @@ export interface Data {
   rows: Row[];
 }
 
-export type PriceChartProps<T> = {
+export type PriceChartProps<A> = {
   /**
    * One or more data series.
    */
   data: Data;
 
-  metadata?: T[][];
+  /**
+   * An array the same length as `data["rows"]` where each element is an array of length equal to the number of series.
+   * Currently only used by custom tooltips which expect annotations of type `A`.
+   */
+  annotations?: A[][];
 
   /**
    * Override the default text to display when there is not enough data.
@@ -56,19 +60,19 @@ export type PriceChartProps<T> = {
     date,
     series,
     annotations,
-  }: CustomTooltipProps<T>) => JSX.Element;
+  }: CustomTooltipProps<A>) => JSX.Element;
 };
 
 /**
  * Draw a historical price chart. Supports multiple line series.
  */
-export const PriceChart = <T,>({
+export const PriceChart = <A,>({
   data,
-  metadata,
+  annotations,
   notEnoughDataText = "Not enough data",
   theme = "dark",
   tooltip,
-}: PriceChartProps<T>) => {
+}: PriceChartProps<A>) => {
   /**
    * Where to render chart contents, e.g. line series.
    */
@@ -95,10 +99,8 @@ export const PriceChart = <T,>({
   const tooltipRef = useRef<HTMLDivElement>(null!);
 
   // Tooltip state
-  // TODO: Combine into single state
-  const [date, setDate] = useState<Date>(new Date());
-  const [series, setSeries] = useState<Series[]>([]);
-  const [annotations, setAnnotations] = useState<T[] | undefined>(undefined);
+  const [tooltipContent, setTooltipContent] =
+    useState<CustomTooltipProps<A> | null>(null);
 
   const {
     ref: resizeOberverRef,
@@ -125,6 +127,8 @@ export const PriceChart = <T,>({
       .on("mousemove", (d) => {
         const point = d.point;
 
+        const rect = styleRef.current.getBoundingClientRect();
+
         const virtualEl = {
           getBoundingClientRect() {
             return {
@@ -140,8 +144,6 @@ export const PriceChart = <T,>({
           },
         };
 
-        const rect = styleRef.current.getBoundingClientRect();
-
         computePosition(virtualEl, tooltipRef.current, {
           placement: "right",
           middleware: [offset(16), flip(), shift()],
@@ -154,21 +156,25 @@ export const PriceChart = <T,>({
             visibility: "visible",
           });
 
-          setDate(d.date);
-          setSeries(d.series);
-          setAnnotations(metadata?.[d.index]);
+          setTooltipContent({
+            date: d.date,
+            series: d.series,
+            annotations: annotations?.[d.index],
+          });
         });
       })
       .on("mouseout", () => {
         Object.assign(tooltipRef.current.style, {
           visibility: "hidden",
         });
+
+        setTooltipContent(null);
       });
 
     return () => {
       chartRef.current.destroy();
     };
-  }, [metadata]);
+  }, [annotations]);
 
   // Update chart when dimensions or data change
   useEffect(() => {
@@ -217,11 +223,15 @@ export const PriceChart = <T,>({
         <canvas ref={uiRef} className={styles.canvas} />
       </div>
       <div ref={tooltipRef} className={styles.tooltipContainer}>
-        {tooltip ? (
-          tooltip({ date, series, annotations })
-        ) : (
-          <Tooltip date={date} series={series} />
-        )}
+        {tooltipContent &&
+          (tooltip ? (
+            tooltip(tooltipContent)
+          ) : (
+            <Tooltip
+              date={tooltipContent.date}
+              series={tooltipContent.series}
+            />
+          ))}
       </div>
     </div>
   );
