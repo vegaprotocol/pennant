@@ -139,6 +139,7 @@ export class UI extends EventEmitter {
     );
 
     this.horizontalAxis
+      .on("zoomstart", this.onZoomStartHorizontalAxis)
       .on("zoom", this.onZoomHorizontalAxis)
       .on("dblclick", () => this.emit("reset"));
 
@@ -313,7 +314,7 @@ export class UI extends EventEmitter {
       window.clearTimeout(this.gesture.wheel);
     } else {
       this.gesture.mouse = [p, p];
-      this.gesture.start();
+      this.gesture.start(this.zoom.__zoom);
     }
 
     this.gesture.wheel = window.setTimeout(() => {
@@ -371,7 +372,20 @@ export class UI extends EventEmitter {
     }
 
     this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
-    this.gesture.start();
+    this.gesture.start(
+      this.zoom.constrain(
+        this.zoom.translate(
+          this.zoom.__zoom,
+          this.gesture.mouse[0],
+          this.gesture.mouse[1]
+        ),
+        [
+          [0, 0],
+          [100, 100],
+        ],
+        this.zoom.translateExtent
+      )
+    );
     this.isZooming = true;
     this.hideTooltips();
     this.emit("mouseout");
@@ -530,6 +544,10 @@ export class UI extends EventEmitter {
     }
   };
 
+  private onZoomStartHorizontalAxis = (transform: ZoomTransform) => {
+    this.emit("zoomstart.horizontalAxis", transform);
+  };
+
   private onZoomHorizontalAxis = ({
     transform,
     point,
@@ -544,7 +562,6 @@ export class UI extends EventEmitter {
         Math.pow(
           2,
           -(transform.x - this.lastTimeZoomTransform.x) /
-            1 /
             (this.timeScale.range()[1] - this.timeScale.range()[0])
         ),
         [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
