@@ -441,27 +441,6 @@ export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
           metadata={metadata}
           theme={theme}
           tooltip={Tooltip}
-          /*   tooltip={({
-            date,
-            series,
-            annotations,
-          }: CustomTooltipProps & {
-            annotations?: { volume: number; marketCap: number }[];
-          }) => {
-            return (
-              <div>
-                <span>{`${date.toISOString()}`}</span>
-                {series.map((s, i) => (
-                  <div key={s.name}>
-                    <div>{`${s.name}`}</div>
-                    <div>{`${s.value}`}</div>
-                    <div>volume: {annotations?.[i].volume}</div>
-                    <div>marketCap: {annotations?.[i].marketCap}</div>
-                  </div>
-                ))}
-              </div>
-            );
-          }} */
         />
       </div>
     </div>
