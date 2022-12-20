@@ -1,6 +1,7 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { useEffect, useRef, useState } from "react";
 
+import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { NonIdealState } from "../non-ideal-state";
@@ -49,6 +50,11 @@ export type PriceChartProps<A> = {
   notEnoughDataText?: string;
 
   /**
+   * Used to format values on price axis.
+   */
+  priceFormat?: (price: number) => string;
+
+  /**
    * Light or dark theme.
    */
   theme?: ThemeVariant;
@@ -70,6 +76,7 @@ export const PriceChart = <A,>({
   data,
   annotations,
   notEnoughDataText = "Not enough data",
+  priceFormat = defaultPriceFormat,
   theme = "dark",
   tooltip,
 }: PriceChartProps<A>) => {
@@ -120,6 +127,7 @@ export const PriceChart = <A,>({
       resolution: window.devicePixelRatio,
       width: 300,
       height: 300,
+      priceFormat,
       colors,
     });
 
@@ -174,7 +182,7 @@ export const PriceChart = <A,>({
     return () => {
       chartRef.current.destroy();
     };
-  }, [annotations]);
+  }, [annotations, priceFormat]);
 
   // Update chart when dimensions or data change
   useEffect(() => {

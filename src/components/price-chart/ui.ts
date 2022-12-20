@@ -88,12 +88,15 @@ export class UI extends EventEmitter {
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
 
+  private priceFormat: (price: number) => string;
+
   constructor(options: {
     view: HTMLCanvasElement;
     resolution: number;
     width: number;
     height: number;
     colors: UiColors;
+    priceFormat: (price: number) => string;
   }) {
     super();
 
@@ -103,6 +106,8 @@ export class UI extends EventEmitter {
       width: options.width,
       height: options.height,
     });
+
+    this.priceFormat = options.priceFormat;
 
     this.colors = options.colors;
     this.horizontalAxis = new HorizontalAxis(this.renderer);
@@ -166,12 +171,14 @@ export class UI extends EventEmitter {
     data: Data,
     timeScale: ScaleTime,
     priceScale: ScaleLinear,
-    startPrice: number
+    startPrice: number,
+    priceFormat: (price: number) => string
   ): void {
     this.data = data;
     this.timeScale = timeScale;
     this.priceScale = priceScale;
     this.startPrice = startPrice;
+    this.priceFormat = priceFormat;
 
     const width = this.renderer.view.width;
     const height = this.renderer.view.height;
@@ -244,7 +251,7 @@ export class UI extends EventEmitter {
     const tickFormat = this.priceScale.tickFormat(numTicks);
 
     this.startPriceLabel.update(
-      tickFormat(startPrice),
+      priceFormat(startPrice),
       resolution * this.renderer.screen.width - resolution * 7,
       priceScale(startPrice),
       { x: 1, y: 0.5 },
@@ -496,11 +503,8 @@ export class UI extends EventEmitter {
         }
       }
 
-      const numTicks = height / resolution / 50;
-      const tickFormat = this.priceScale.tickFormat(numTicks);
-
       this.priceLabel.update(
-        tickFormat(this.priceScale.invert(resolution * y)),
+        this.priceFormat(this.priceScale.invert(resolution * y)),
         width - resolution * 7,
         resolution * y,
         { x: 1, y: 0.5 },
@@ -533,7 +537,7 @@ export class UI extends EventEmitter {
                   : hex2string(this.colors.sellStroke)
                 : hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data.cols[i + 1],
-            value: (nearestX[i + 1] as number).toFixed(2),
+            value: this.priceFormat(nearestX[i + 1] as number),
           })),
         });
       } else {
