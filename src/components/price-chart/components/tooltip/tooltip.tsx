@@ -2,6 +2,9 @@ import { format } from "date-fns";
 
 import styles from "./tooltip.module.css";
 
+/**
+ * Information to support rendering a tooltip.
+ */
 export interface Series {
   color: string;
   name: string;

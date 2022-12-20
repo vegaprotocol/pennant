@@ -526,6 +526,7 @@ export class UI extends EventEmitter {
       // TODO: This is just a hack to see what this looks like
       if (!this.isZooming) {
         this.emit("mousemove", {
+          index,
           point: [this.timeScale(nearestX[0]) / resolution, y],
           date: nearestX[0],
           series: range(0, this.data.cols.length - 1).map((i) => ({
