@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.2.0) (2022-12-20)
+
+### Features
+
+- override default text when there is no data for depth chart ([a28cdf9](https://github.com/vegaprotocol/pennant/commit/a28cdf9a7992bcd5518704edc90384fcff377370))
+
 ## [1.1.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.1.0) (2022-12-20)
 
 ### Features
