@@ -36,15 +36,34 @@ export type PriceLevel = {
 
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
-  /** Used to format values on price axis */
+
+  /**
+   *  Used to format values on price axis.
+   */
   priceFormat?: (price: number) => string;
-  /** Used to format values volume axis */
+
+  /**
+   * Used to format values volume axis,
+   */
   volumeFormat?: (price: number) => string;
-  /** Indicative price if the auction ended now, 0 if not in auction mode */
+
+  /**
+   * Indicative price if the auction ended now, 0 if not in auction mode.
+   */
   indicativePrice?: number;
-  /** Arithmetic average of the best bid price and best offer price. */
+
+  /**
+   *  Arithmetic average of the best bid price and best offer price.
+   */
   midPrice?: number;
-  /** Light or dark theme */
+  /**
+   * Override the default text to display when there is not enough data.
+   */
+  notEnoughDataText?: string;
+
+  /**
+   * Light or dark theme
+   */
   theme?: ThemeVariant;
 };
 
@@ -68,6 +87,7 @@ export const DepthChart = forwardRef(
       volumeFormat = defaultVolumeFormat,
       indicativePrice = 0,
       midPrice = 0,
+      notEnoughDataText = "No data",
       theme = "dark",
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
@@ -155,7 +175,7 @@ export const DepthChart = forwardRef(
     if (data.buy.length === 0 && data.sell.length === 0) {
       return (
         <div ref={styleRef} className={styles.container} data-theme={theme}>
-          <NonIdealState title="No data" />
+          <NonIdealState title={notEnoughDataText} />
         </div>
       );
     }
