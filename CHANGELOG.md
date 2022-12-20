@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.1.0) (2022-12-20)
+
+### Features
+
+- add custom tooltip prop to price chart ([#663](https://github.com/vegaprotocol/pennant/issues/663)) ([6a81f45](https://github.com/vegaprotocol/pennant/commit/6a81f45aea2b962aa7324beec981515e658d081a))
+- allow customising price format for price chart ([#665](https://github.com/vegaprotocol/pennant/issues/665)) ([55c509a](https://github.com/vegaprotocol/pennant/commit/55c509aff1abe88ef31aaf8cfb2391823f9466d1))
+
 ## [1.0.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.0.0) (2022-12-16)
 
 ### Features
