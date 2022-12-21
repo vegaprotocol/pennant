@@ -58,6 +58,7 @@ export class UI extends EventEmitter {
   public stage: Container = new Container();
   public zoom: Zoom = new Zoom();
 
+  private _interactive = true;
   private data: Data = { cols: [], rows: [] };
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
@@ -309,144 +310,151 @@ export class UI extends EventEmitter {
   }
 
   private onWheel = (event: InteractionEvent) => {
-    const tempEvent = event.data?.originalEvent as WheelEvent;
-    const resolution = this.renderer.resolution;
-    const p = pointer(tempEvent, resolution);
+    if (this._interactive) {
+      const tempEvent = event.data?.originalEvent as WheelEvent;
+      const resolution = this.renderer.resolution;
+      const p = pointer(tempEvent, resolution);
 
-    this.isZooming = true;
-    this.hideTooltips();
-    this.emit("mouseout");
+      this.isZooming = true;
+      this.hideTooltips();
+      this.emit("mouseout");
 
-    if (this.gesture.wheel) {
-      window.clearTimeout(this.gesture.wheel);
-    } else {
-      this.gesture.mouse = [p, p];
-      this.gesture.start(this.zoom.__zoom);
-    }
-
-    this.gesture.wheel = window.setTimeout(() => {
-      this.isZooming = false;
-
-      if (this.lastEvent) {
-        this.onPointerMove(this.lastEvent);
+      if (this.gesture.wheel) {
+        window.clearTimeout(this.gesture.wheel);
+      } else {
+        this.gesture.mouse = [p, p];
+        this.gesture.start(this.zoom.__zoom);
       }
 
-      this.gesture.wheel = null;
-      this.gesture.end();
-    }, 150);
+      this.gesture.wheel = window.setTimeout(() => {
+        this.isZooming = false;
 
-    this.zoom.wheeled(
-      -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
-      this.gesture.mouse[0] ?? [0, 0],
-      [
-        [0, 0],
-        [100, 100],
-      ]
-    );
+        if (this.lastEvent) {
+          this.onPointerMove(this.lastEvent);
+        }
 
-    const transform = this.zoom.__zoom;
-    const k = transform.k / this.lastTimeZoomTransform.k;
+        this.gesture.wheel = null;
+        this.gesture.end();
+      }, 150);
 
-    if (k === 1) {
-      this.timeZoom.scaleBy(
-        Math.pow(
-          2,
-          -(transform.x - this.lastTimeZoomTransform.x) /
-            1 /
-            (this.timeScale.range()[1] - this.timeScale.range()[0])
-        ),
-        [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
-      );
-    } else {
-      this.timeZoom.scaleBy(k, [
-        (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
-        0,
-      ]);
-    }
-
-    this.lastTimeZoomTransform = transform;
-    this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
-  };
-
-  private onPointerDown = (event: InteractionEvent) => {
-    const resolution = this.renderer.resolution;
-    const p = pointer(event.data?.originalEvent, resolution);
-
-    this.firstPoint = p ?? [0, 0];
-
-    if (event.data?.identifier) {
-      this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
-    }
-
-    this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
-    this.gesture.start(
-      this.zoom.constrain(
-        this.zoom.translate(
-          this.zoom.__zoom,
-          this.gesture.mouse[0],
-          this.gesture.mouse[1]
-        ),
+      this.zoom.wheeled(
+        -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
+        this.gesture.mouse[0] ?? [0, 0],
         [
           [0, 0],
           [100, 100],
-        ],
-        this.zoom.translateExtent
-      )
-    );
-    this.isZooming = true;
-    this.hideTooltips();
-    this.emit("mouseout");
-    this.hitBox.cursor = "grabbing";
-    this.render();
+        ]
+      );
 
-    const handleMouseMove = (event: any) => {
-      event.preventDefault();
+      const transform = this.zoom.__zoom;
+      const k = transform.k / this.lastTimeZoomTransform.k;
 
-      this.gesture.mouse[0] = pointer(event, resolution);
-
-      if (this.gesture.mouse[1]) {
-        this.gesture.zoom(
-          this.zoom.constrain(
-            this.zoom.translate(
-              this.zoom.__zoom,
-              this.gesture.mouse[0],
-              this.gesture.mouse[1]
-            ),
-            [
-              [0, 0],
-              [100, 100],
-            ],
-            this.zoom.translateExtent
+      if (k === 1) {
+        this.timeZoom.scaleBy(
+          Math.pow(
+            2,
+            -(transform.x - this.lastTimeZoomTransform.x) /
+              1 /
+              (this.timeScale.range()[1] - this.timeScale.range()[0])
           ),
-          this.firstPoint!
+          [
+            Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+            0,
+          ]
         );
+      } else {
+        this.timeZoom.scaleBy(k, [
+          (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+          0,
+        ]);
       }
-    };
 
-    const handleMouseUp = (event: any) => {
-      event.preventDefault();
+      this.lastTimeZoomTransform = transform;
+      this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
+    }
+  };
 
-      this.hitBox.cursor = "default";
+  private onPointerDown = (event: InteractionEvent) => {
+    if (this._interactive) {
+      const resolution = this.renderer.resolution;
+      const p = pointer(event.data?.originalEvent, resolution);
 
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      this.firstPoint = p ?? [0, 0];
 
       if (event.data?.identifier) {
-        this.renderer.context.canvas.releasePointerCapture(
-          event.data?.identifier
-        );
+        this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
       }
 
-      this.gesture.end();
-      this.isZooming = false;
+      this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
+      this.gesture.start(
+        this.zoom.constrain(
+          this.zoom.translate(
+            this.zoom.__zoom,
+            this.gesture.mouse[0],
+            this.gesture.mouse[1]
+          ),
+          [
+            [0, 0],
+            [100, 100],
+          ],
+          this.zoom.translateExtent
+        )
+      );
+      this.isZooming = true;
+      this.hideTooltips();
+      this.emit("mouseout");
+      this.hitBox.cursor = "grabbing";
+      this.render();
 
-      if (this.lastEvent) {
-        this.onPointerMove(this.lastEvent);
-      }
-    };
+      const handleMouseMove = (event: any) => {
+        event.preventDefault();
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+        this.gesture.mouse[0] = pointer(event, resolution);
+
+        if (this.gesture.mouse[1]) {
+          this.gesture.zoom(
+            this.zoom.constrain(
+              this.zoom.translate(
+                this.zoom.__zoom,
+                this.gesture.mouse[0],
+                this.gesture.mouse[1]
+              ),
+              [
+                [0, 0],
+                [100, 100],
+              ],
+              this.zoom.translateExtent
+            ),
+            this.firstPoint!
+          );
+        }
+      };
+
+      const handleMouseUp = (event: any) => {
+        event.preventDefault();
+
+        this.hitBox.cursor = "default";
+
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+
+        if (event.data?.identifier) {
+          this.renderer.context.canvas.releasePointerCapture(
+            event.data?.identifier
+          );
+        }
+
+        this.gesture.end();
+        this.isZooming = false;
+
+        if (this.lastEvent) {
+          this.onPointerMove(this.lastEvent);
+        }
+      };
+
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
   };
 
   private onPointerMove = (event: InteractionEvent) => {
@@ -630,4 +638,10 @@ export class UI extends EventEmitter {
     this.lastEvent = null;
     this.render();
   };
+
+  set interactive(interactive: boolean) {
+    this._interactive = interactive;
+    this.horizontalAxis.interactive = interactive;
+    this.verticalAxis.interactive = interactive;
+  }
 }

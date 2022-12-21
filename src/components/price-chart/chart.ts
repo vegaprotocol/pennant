@@ -261,4 +261,8 @@ export class Chart extends EventEmitter {
   get width(): number {
     return this.contents.renderer.view.width;
   }
+
+  set interactive(interactive: boolean) {
+    this.ui.interactive = interactive;
+  }
 }

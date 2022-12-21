@@ -497,3 +497,34 @@ export const Vega2: ComponentStory<typeof PriceChart> = () => {
     </div>
   );
 };
+
+export const NonInteractive: ComponentStory<typeof PriceChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  const priceFormat = useCallback((price: number) => price.toFixed(2), []);
+
+  const data: { cols: string[]; rows: [Date, ...number[]][] } = {
+    cols: vega[1].cols,
+    rows: vega[1].rows.map((d) => [new Date(d[0]), d[1] as number]),
+  };
+
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "scroll",
+        width: "600px",
+        height: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <PriceChart
+        data={data}
+        theme={theme}
+        priceFormat={priceFormat}
+        interactive={false}
+      />
+    </div>
+  );
+};
