@@ -5,8 +5,6 @@ function defaultConstrain(
   extent: [[number, number], [number, number]],
   translateExtent: [[number, number], [number, number]]
 ): ZoomTransform {
-  return transform;
-
   const dx0 = transform.invertX(extent[0][0]) - translateExtent[0][0];
   const dx1 = transform.invertX(extent[1][0]) - translateExtent[1][0];
   const dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1];
@@ -57,12 +55,12 @@ export class Zoom {
   ];
 
   /**
-   * Tthe viewport extent to the specified array of points [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner of the viewport
+   * The viewport extent to the specified array of points [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner of the viewport
    * and [x1, y1] is the bottom-right corner of the viewport, and returns this zoom behavior.
    */
   public extent: [[number, number], [number, number]] = [
-    [-Infinity, -Infinity],
-    [Infinity, Infinity],
+    [0, 0],
+    [10_000, 10_000],
   ];
 
   public scaleBy(k: number, p: [number, number]) {

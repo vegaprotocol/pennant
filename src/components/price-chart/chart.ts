@@ -237,15 +237,17 @@ export class Chart extends EventEmitter {
       this.priceScale.range([0, this.height - resolution * AXIS_HEIGHT]);
       this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
 
-      /*       this.timeZoom.extent = [
+      this.timeZoom.extent = [
         [0, 0],
-        [this.width / resolution, this.height],
-      ]; */
+        [this.width - resolution * AXIS_WIDTH, this.height],
+      ];
 
-      /*       this.timeZoom.translateExtent = [
+      this.timeZoom.scaleExtent = [1, 10];
+
+      this.timeZoom.translateExtent = [
         [this.timeScale(data.rows[0][0]), -Infinity],
         [this.timeScale(data.rows[data.rows.length - 1][0]), Infinity],
-      ]; */
+      ];
     }
 
     this.update();
