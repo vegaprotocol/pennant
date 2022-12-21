@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.3.0) (2022-12-21)
+
+### Features
+
+- add custom tooltip prop to price chart ([#663](https://github.com/vegaprotocol/pennant/issues/663)) ([6a81f45](https://github.com/vegaprotocol/pennant/commit/6a81f45aea2b962aa7324beec981515e658d081a))
+- allow customising price format for price chart ([#665](https://github.com/vegaprotocol/pennant/issues/665)) ([55c509a](https://github.com/vegaprotocol/pennant/commit/55c509aff1abe88ef31aaf8cfb2391823f9466d1))
+- better support for color customization ([#572](https://github.com/vegaprotocol/pennant/issues/572)) ([fdf041a](https://github.com/vegaprotocol/pennant/commit/fdf041adb6116e9e8d82e4e0540eda5cadc07fba))
+- improve fill colors for depth chart ([18c28dd](https://github.com/vegaprotocol/pennant/commit/18c28dd2ddc9f4563107de9c1e49bd1119645449))
+- override default text when there is no data for depth chart ([a28cdf9](https://github.com/vegaprotocol/pennant/commit/a28cdf9a7992bcd5518704edc90384fcff377370))
+- override the default text to display when there is not enough data ([#658](https://github.com/vegaprotocol/pennant/issues/658)) ([83f773c](https://github.com/vegaprotocol/pennant/commit/83f773cfd6c40b7cca7f8b5ceb89b2577737fa18))
+- price chart ([#638](https://github.com/vegaprotocol/pennant/issues/638)) ([89b6497](https://github.com/vegaprotocol/pennant/commit/89b6497cf3cd02e7b52ce608c50013159970c6de))
+- restrict pan and zoom ([#676](https://github.com/vegaprotocol/pennant/issues/676)) ([91a8510](https://github.com/vegaprotocol/pennant/commit/91a8510c237d9590b1909be8714dd6584a57d231))
+- sort depth chart data ([#600](https://github.com/vegaprotocol/pennant/issues/600)) ([1d98c3b](https://github.com/vegaprotocol/pennant/commit/1d98c3b142ce4b5bd4e6b71732edc44d84f5c24b))
+- support disabling pand and zoom for price chart ([#673](https://github.com/vegaprotocol/pennant/issues/673)) ([3f2d697](https://github.com/vegaprotocol/pennant/commit/3f2d697c834f77874d37d8efbc5085cdbd578232))
+
+### Bug Fixes
+
+- **deps:** update dependency allotment to v1.17.0 ([#575](https://github.com/vegaprotocol/pennant/issues/575)) ([fbdba48](https://github.com/vegaprotocol/pennant/commit/fbdba48a3ea070809ba6f1da83f0d52db77bae8f))
+- **deps:** update dependency allotment to v1.17.1 ([#648](https://github.com/vegaprotocol/pennant/issues/648)) ([15f83a1](https://github.com/vegaprotocol/pennant/commit/15f83a17d615c74abd7ae66f786e46058c5e798b))
+- **deps:** update dependency eventemitter3 to v5 ([#662](https://github.com/vegaprotocol/pennant/issues/662)) ([8b9b91d](https://github.com/vegaprotocol/pennant/commit/8b9b91d6ff09f6a67be2039ff6df1d0661386990))
+- **deps:** update dependency pennant to v1 ([#666](https://github.com/vegaprotocol/pennant/issues/666)) ([beb26ee](https://github.com/vegaprotocol/pennant/commit/beb26eee858e8d6866e92e658e599efe02365f98))
+- **deps:** update docusaurus monorepo to v2.1.0 ([#576](https://github.com/vegaprotocol/pennant/issues/576)) ([6c0b25b](https://github.com/vegaprotocol/pennant/commit/6c0b25ba7ab8983ce1acb85fe098a43c96ee22d8))
+- **deps:** update docusaurus monorepo to v2.2.0 ([#629](https://github.com/vegaprotocol/pennant/issues/629)) ([af8bc8b](https://github.com/vegaprotocol/pennant/commit/af8bc8b6b0dbff988aa5eef7040f1c0428bcfd3b))
+- add labels as variables ([3cea79a](https://github.com/vegaprotocol/pennant/commit/3cea79a108e4abd76b43bb920ec3b2b9a6123cc6))
+- adding more that one label ([a2c5c95](https://github.com/vegaprotocol/pennant/commit/a2c5c95ae9b4103bc551d83a683e6cfd95836c00))
+- show sell side tooltip correctly in depth chart ([#601](https://github.com/vegaprotocol/pennant/issues/601)) ([08c2a30](https://github.com/vegaprotocol/pennant/commit/08c2a30861b8ff2292a8c3ebcfb4a722b2a83b3a))
+
 ## [1.2.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.2.0) (2022-12-20)
 
 ### Features
