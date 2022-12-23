@@ -35,10 +35,10 @@ type UiColors = Pick<
   | "accent5"
   | "accent6"
   | "backgroundSurface"
-  | "buyStroke"
+  | "positiveStroke"
   | "emphasis100"
   | "emphasis200"
-  | "sellStroke"
+  | "negativeStroke"
   | "textPrimary"
   | "textSecondary"
 >;
@@ -502,8 +502,8 @@ export class UI extends EventEmitter {
             this.priceScale(nearestX[i + 1]),
             this.data.cols.length === 2
               ? nearestX[i + 1] > this.startPrice
-                ? this.colors.buyStroke
-                : this.colors.sellStroke
+                ? this.colors.positiveStroke
+                : this.colors.negativeStroke
               : (this.colors as any)[`accent${i + 1}`]
           );
         } else {
@@ -541,8 +541,8 @@ export class UI extends EventEmitter {
             color:
               this.data.cols.length === 2
                 ? nearestX[i + 1] > this.startPrice
-                  ? hex2string(this.colors.buyStroke)
-                  : hex2string(this.colors.sellStroke)
+                  ? hex2string(this.colors.positiveStroke)
+                  : hex2string(this.colors.negativeStroke)
                 : hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data.cols[i + 1],
             value: this.priceFormat(nearestX[i + 1] as number),
