@@ -27,6 +27,45 @@ You can override Pennant CSS variables globally. For example, this will override
 }
 ```
 
+For an up-to-date list of CSS variables check out `pennant/dist/style.css`.
+
+You must remember to set the dark mode variables explicitly too, e.g.
+
+```css
+[data-theme="dark"] .container {
+  --pennant-color-buy-fill: #00ff00;
+}
+```
+
+The most important variables are highlighted below:
+
+### Candlestick chart
+
+| Chart element      | CSS Variable                  |
+| ------------------ | ----------------------------- |
+| Up candle fill     | `--pennant-color-buy-fill`    |
+| Up candle stroke   | `--pennant-color-buy-stroke`  |
+| Down candle fill   | `--pennant-color-sell-fill`   |
+| Down candle stroke | `--pennant-color-sell-stroke` |
+
+### Depth chart
+
+| Chart element    | CSS Variable                        |
+| ---------------- | ----------------------------------- |
+| Buy side fill    | `--pennant-color-depth-buy-fill`    |
+| Buy side stroke  | `--pennant-color-depth-buy-stroke`  |
+| Sell side fill   | `--pennant-color-depth-sell-fill`   |
+| Sell side stroke | `--pennant-color-depth-sell-stroke` |
+
+### Price chart
+
+| Chart element              | CSS Variable                            |
+| -------------------------- | --------------------------------------- |
+| Positive difference fill   | `--pennant-color-price-positive-fill`   |
+| Positive difference stroke | `--pennant-color-price-positive-stroke` |
+| Negative difference fill   | `--pennant-color-price-negative-fill`   |
+| Negative difference stroke | `--pennant-color-price-negative-stroke` |
+
 ## Which colors are used where?
 
 It is not always obvious which colors are used by particular chart elements. The following gives some of the more important examples:

@@ -119,6 +119,12 @@
   --pennant-color-depth-sell-fill: var(--vega-red-light);
   --pennant-color-depth-sell-stroke: var(--vega-red);
 
+  /* Price chart. */
+  --pennant-color-price-positive-fill: var(--pennant-color-vega-green-50);
+  --pennant-color-price-positive-stroke: var(--vega-green);
+  --pennant-color-price-negative-fill: var(--vega-red-light);
+  --pennant-color-price-negative-stroke: var(--vega-red);
+
   /* Typography. */
   --pennant-font-color-base: var(--pennant-color-content);
   --pennant-font-color-secondary: var(--pennant-color-content-secondary);
@@ -174,6 +180,12 @@
   --pennant-color-depth-buy-stroke: var(--vega-green);
   --pennant-color-depth-sell-fill: var(--pennant-color-vega-red-900);
   --pennant-color-depth-sell-stroke: var(--vega-red);
+
+  /* Price chart. */
+  --pennant-color-price-positive-fill: var(--pennant-color-vega-green-50);
+  --pennant-color-price-positive-stroke: var(--vega-green);
+  --pennant-color-price-negative-fill: var(--vega-red-light);
+  --pennant-color-price-negative-stroke: var(--vega-red);
 
   /* Typography. */
   --pennant-font-color-base: var(--pennant-color-content);

@@ -8,7 +8,11 @@ import { PriceCurve } from "./price-curve";
 
 type ContentsColors = Pick<
   Colors,
-  "backgroundSurface" | "buyFill" | "buyStroke" | "sellFill" | "sellStroke"
+  | "backgroundSurface"
+  | "positiveFill"
+  | "positiveStroke"
+  | "negativeFill"
+  | "negativeStroke"
 >;
 
 /**
@@ -29,8 +33,8 @@ export class Area extends Container {
     this.colors = colors;
 
     this.priceCurvePositive = new PriceCurve(
-      colors.buyStroke,
-      colors.buyFill,
+      colors.positiveStroke,
+      colors.positiveFill,
       colors.backgroundSurface,
       curveLinear
     );
@@ -41,8 +45,8 @@ export class Area extends Container {
     this.maskPositive.endFill();
 
     this.priceCurveNegative = new PriceCurve(
-      colors.sellStroke,
-      colors.sellFill,
+      colors.negativeStroke,
+      colors.negativeFill,
       colors.backgroundSurface,
       curveLinear
     );
@@ -77,8 +81,8 @@ export class Area extends Container {
       data,
       startPrice,
       resolution,
-      this.colors.buyFill,
-      this.colors.buyStroke,
+      this.colors.positiveFill,
+      this.colors.positiveStroke,
       this.colors.backgroundSurface,
       false,
       startPrice
@@ -88,8 +92,8 @@ export class Area extends Container {
       data,
       height - startPrice,
       resolution,
-      this.colors.sellFill,
-      this.colors.sellStroke,
+      this.colors.negativeFill,
+      this.colors.negativeStroke,
       this.colors.backgroundSurface,
       true,
       startPrice
