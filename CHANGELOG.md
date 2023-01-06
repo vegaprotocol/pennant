@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.4.0) (2023-01-06)
+
+### Features
+
+- added studies appear at half height of main pane ([#683](https://github.com/vegaprotocol/pennant/issues/683)) ([450ff3f](https://github.com/vegaprotocol/pennant/commit/450ff3f1172ca0c061bf17e24c4256e46869cf74))
+
 ## [1.3.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.3.0) (2022-12-21)
 
 ### Features
