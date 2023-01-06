@@ -1,7 +1,7 @@
 import "./plot-container.css";
 import "../../lib/d3fc-element";
 
-import { Allotment } from "allotment";
+import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
 import React, {
   createRef,
@@ -27,6 +27,14 @@ import { FcElement, Interval } from "../../types";
 import { Colors } from "../chart/helpers";
 import { PaneView } from "../pane-view";
 import { XAxisView } from "../x-axis-view";
+
+function calculatePreferredSize(n: number, main: boolean) {
+  if (main) {
+    return `${100 * (2 / (1 + n))}%`;
+  } else {
+    return `${100 * ((1 - 2 / (1 + n)) / Math.max(n - 1, 1))}%`;
+  }
+}
 
 export type PlotContainerProps = {
   width: number;
@@ -101,6 +109,7 @@ export const PlotContainer = forwardRef<
     const [dataIndex, setDataIndex] = useState<number | null>(null);
     const chartRef = useRef<FcElement>(null!);
     const xAxisRef = useRef<HTMLDivElement>(null!);
+    const allotmentRef = useRef<AllotmentHandle>(null!);
 
     const handleBoundsChanged = useMemo(
       () => throttle(setBounds, THROTTLE_INTERVAL),
@@ -238,9 +247,16 @@ export const PlotContainer = forwardRef<
       }
     }, [colors]);
 
+    const numPanes = scenegraph.panes.length;
+
+    useEffect(() => {
+      allotmentRef.current.reset();
+    }, [numPanes]);
+
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
         <Allotment
+          ref={allotmentRef}
           minSize={20}
           vertical
           onChange={(_sizes) => {
@@ -249,8 +265,11 @@ export const PlotContainer = forwardRef<
             }
           }}
         >
-          {scenegraph.panes.map((pane) => (
-            <Allotment.Pane key={pane.id}>
+          {scenegraph.panes.map((pane, index) => (
+            <Allotment.Pane
+              key={pane.id}
+              preferredSize={calculatePreferredSize(numPanes, index === 0)}
+            >
               <PaneView
                 ref={refs[pane.id]}
                 bounds={bounds}
