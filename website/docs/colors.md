@@ -5,7 +5,7 @@ title: Customizing Colors
 
 import { ColorPalette } from '../src/components/color-palette';
 
-## Default color palettte
+## Default color palette
 
 Pennant includes a default color palette out-of-the-box that is a great starting point if you don’t have your own specific branding in mind.
 
