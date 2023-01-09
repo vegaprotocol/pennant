@@ -197,7 +197,7 @@ describe("constructTopLevelSpec", () => {
             {
               encoding: {
                 fill: {
-                  value: "#494949",
+                  value: "#d9822b",
                 },
                 y: { field: "volume", type: "quantitative" },
               },
