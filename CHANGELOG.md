@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.5.0) (2023-01-10)
+
+### Features
+
+- **candlestick:** support study color customization ([#689](https://github.com/vegaprotocol/pennant/issues/689)) ([771b13f](https://github.com/vegaprotocol/pennant/commit/771b13f67ff847106459389091700df2fb1933cc))
+
 ## [1.4.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.4.0) (2023-01-06)
 
 ### Features
