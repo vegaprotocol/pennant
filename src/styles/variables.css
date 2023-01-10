@@ -108,10 +108,28 @@
   --pennant-accent5: #ff6d01;
   --pennant-accent6: #46bdc6;
 
+  /* Candles. */
+
   --pennant-color-buy-fill: var(--vega-green-light);
   --pennant-color-buy-stroke: var(--vega-green);
   --pennant-color-sell-fill: var(--vega-red-light);
   --pennant-color-sell-stroke: var(--vega-red);
+
+  /* Studies. */
+
+  --pennant-color-eldar-ray-bear-power: var(--vega-red);
+  --pennant-color-eldar-ray-bull-power: var(--vega-green);
+
+  --pennant-color-force-index: var(--pennant-accent1);
+
+  --pennant-color-macd-divergence-buy: var(--vega-green);
+  --pennant-color-macd-divergence-sell: var(--vega-red);
+  --pennant-color-macd-signal: var(--pennant-color-vega-orange-500);
+  --pennant-color-macd-macd: var(--pennant-color-vega-blue-500);
+
+  --pennant-color-relative-strength-index: var(--pennant-accent1);
+
+  --pennant-color-volume: var(--pennant-color-emphasis-400);
 
   /* Depth chart. */
   --pennant-color-depth-buy-fill: var(--pennant-color-vega-green-50);

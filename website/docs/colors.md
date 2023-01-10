@@ -41,12 +41,28 @@ The most important variables are highlighted below:
 
 ### Candlestick chart
 
+#### Candles
+
 | Chart element      | CSS Variable                  |
 | ------------------ | ----------------------------- |
 | Up candle fill     | `--pennant-color-buy-fill`    |
 | Up candle stroke   | `--pennant-color-buy-stroke`  |
 | Down candle fill   | `--pennant-color-sell-fill`   |
 | Down candle stroke | `--pennant-color-sell-stroke` |
+
+#### Studies
+
+| Chart element                 | CSS Variable                              |
+| ----------------------------- | ----------------------------------------- |
+| Eldar Ray Bear Power          | `--pennant-color-eldar-ray-bear-power`    |
+| Eldar Ray Bull Power          | `--pennant-color-eldar-ray-bull-power`    |
+| Force Index                   | `--pennant-color-force-index`             |
+| MACD Divergence Buy           | `--pennant-color-macd-divergence-buy`     |
+| MACD Divergence Sell          | `--pennant-color-macd-divergence-sell`    |
+| MACD Signal                   | `--pennant-color-macd-signal`             |
+| MACD                          | `--pennant-color-macd-macd`               |
+| Relative Strength Index (RSI) | `--pennant-color-relative-strength-index` |
+| Volume                        | `--pennant-color-volume`                  |
 
 ### Depth chart
 
@@ -66,7 +82,7 @@ The most important variables are highlighted below:
 | Negative difference fill   | `--pennant-color-price-negative-fill`   |
 | Negative difference stroke | `--pennant-color-price-negative-stroke` |
 
-## Which colors are used where?
+## Default colors
 
 It is not always obvious which colors are used by particular chart elements. The following gives some of the more important examples:
 

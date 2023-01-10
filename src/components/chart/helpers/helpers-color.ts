@@ -22,6 +22,17 @@ export interface Colors {
   accent4: string;
   accent5: string;
   accent6: string;
+
+  // Studies
+  eldarRayBearPower: string;
+  eldarRayBullPower: string;
+  forceIndex: string;
+  macdDivergenceBuy: string;
+  macdDivergenceSell: string;
+  macdSignal: string;
+  macdMacd: string;
+  relativeStrengthIndex: string;
+  volume: string;
 }
 
 export function getColors(element: HTMLElement | null): Colors {
@@ -103,6 +114,41 @@ export function getColors(element: HTMLElement | null): Colors {
     accent6:
       cssStyleDeclaration?.getPropertyValue("--pennant-accent6").trim() ||
       COLORS.VEGA_RED,
+    eldarRayBearPower:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-eldar-ray-bear-power")
+        .trim() || COLORS.VEGA_RED,
+    eldarRayBullPower:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-eldar-ray-bull-power")
+        .trim() || COLORS.VEGA_GREEN,
+    forceIndex:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-force-index")
+        .trim() || COLORS.VEGA_ORANGE,
+    macdDivergenceBuy:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-macd-divergence-buy")
+        .trim() || COLORS.VEGA_GREEN,
+    macdDivergenceSell:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-macd-divergence-sell")
+        .trim() || COLORS.VEGA_RED,
+    macdSignal:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-macd-signal")
+        .trim() || COLORS.VEGA_ORANGE,
+    macdMacd:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-macd-macd")
+        .trim() || COLORS.VEGA_YELLOW,
+    relativeStrengthIndex:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-relative-strength-index")
+        .trim() || COLORS.GRAY,
+    volume:
+      cssStyleDeclaration?.getPropertyValue("--pennant-color-volume").trim() ||
+      COLORS.VEGA_ORANGE,
   };
 }
 
