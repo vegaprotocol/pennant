@@ -51,6 +51,7 @@ export type Options = {
   simple?: boolean;
   initialNumCandlesToDisplay?: number;
   initialNumCandlesToFetch?: number;
+  notEnoughDataText?: React.ReactNode | string;
 };
 
 export type ChartProps = {
@@ -92,8 +93,9 @@ export const Chart = forwardRef(
         initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY,
       initialNumCandlesToFetch:
         initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
+      notEnoughDataText,
     } = options;
-
+    console.log("notEnoughDataText", notEnoughDataText);
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartRef.current.panBy(n);
@@ -303,7 +305,7 @@ export const Chart = forwardRef(
     if (!scenegraph) {
       return (
         <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
-          <NonIdealState title="No data found" />
+          <NonIdealState title={notEnoughDataText || "No data found"} />
         </div>
       );
     }
