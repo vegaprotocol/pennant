@@ -95,7 +95,6 @@ export const Chart = forwardRef(
         initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
       notEnoughDataText,
     } = options;
-    console.log("notEnoughDataText", notEnoughDataText);
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartRef.current.panBy(n);
