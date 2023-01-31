@@ -162,6 +162,9 @@
   /* Transitions. */
   --pennant-transition-fast: 100ms;
   --pennant-transition-slow: 300ms;
+
+  /* Dimensions. */
+  --pennant-depth-stroke-width: 2px;
 }
 
 [data-theme="dark"] {
