@@ -164,6 +164,7 @@
   --pennant-transition-slow: 300ms;
 
   /* Dimensions. */
+  --pennant-candlestick-stroke-width: 1px;
   --pennant-depth-stroke-width: 2px;
 }
 

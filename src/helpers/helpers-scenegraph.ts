@@ -62,7 +62,8 @@ export function getBarConfig(
   y2: string,
   width: number,
   fill: string | null,
-  stroke: string | null
+  stroke: string | null,
+  lineWidth: number | null
 ) {
   let base = 0;
 
@@ -77,6 +78,7 @@ export function getBarConfig(
     width: width * (1 - PADDING_INNER),
     fill: fill,
     stroke: stroke,
+    lineWidth: lineWidth ?? 1,
   };
 }
 
