@@ -2,39 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.5.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.5.0) (2023-01-10)
+## [1.6.0](https://github.com/vegaprotocol/pennant/compare/v1.5.0...v1.6.0) (2023-01-31)
+
+### Features
+
+- make notEnoughDataText more flexible ([#707](https://github.com/vegaprotocol/pennant/issues/707)) ([536b31d](https://github.com/vegaprotocol/pennant/commit/536b31d6b175f416e4f5e0a0ff1339238887df1f))
+
+## [1.5.0](https://github.com/vegaprotocol/pennant/compare/v1.4.0...v1.5.0) (2023-01-10)
 
 ### Features
 
 - **candlestick:** support study color customization ([#689](https://github.com/vegaprotocol/pennant/issues/689)) ([771b13f](https://github.com/vegaprotocol/pennant/commit/771b13f67ff847106459389091700df2fb1933cc))
 
-## [1.4.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.4.0) (2023-01-06)
+## [1.4.0](https://github.com/vegaprotocol/pennant/compare/v1.3.0...v1.4.0) (2023-01-06)
 
 ### Features
 
 - added studies appear at half height of main pane ([#683](https://github.com/vegaprotocol/pennant/issues/683)) ([450ff3f](https://github.com/vegaprotocol/pennant/commit/450ff3f1172ca0c061bf17e24c4256e46869cf74))
 
-## [1.3.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.3.0) (2022-12-21)
+## [1.3.0](https://github.com/vegaprotocol/pennant/compare/v1.2.0...v1.3.0) (2022-12-21)
 
 ### Features
 
 - restrict pan and zoom ([#676](https://github.com/vegaprotocol/pennant/issues/676)) ([91a8510](https://github.com/vegaprotocol/pennant/commit/91a8510c237d9590b1909be8714dd6584a57d231))
 - support disabling pan and zoom for price chart ([#673](https://github.com/vegaprotocol/pennant/issues/673)) ([3f2d697](https://github.com/vegaprotocol/pennant/commit/3f2d697c834f77874d37d8efbc5085cdbd578232))
 
-## [1.2.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.2.0) (2022-12-20)
+## [1.2.0](https://github.com/vegaprotocol/pennant/compare/v1.1.0...v1.2.0) (2022-12-20)
 
 ### Features
 
 - override default text when there is no data for depth chart ([a28cdf9](https://github.com/vegaprotocol/pennant/commit/a28cdf9a7992bcd5518704edc90384fcff377370))
 
-## [1.1.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.1.0) (2022-12-20)
+## [1.1.0](https://github.com/vegaprotocol/pennant/compare/v1.0.0...v1.1.0) (2022-12-20)
 
 ### Features
 
 - add custom tooltip prop to price chart ([#663](https://github.com/vegaprotocol/pennant/issues/663)) ([6a81f45](https://github.com/vegaprotocol/pennant/commit/6a81f45aea2b962aa7324beec981515e658d081a))
 - allow customising price format for price chart ([#665](https://github.com/vegaprotocol/pennant/issues/665)) ([55c509a](https://github.com/vegaprotocol/pennant/commit/55c509aff1abe88ef31aaf8cfb2391823f9466d1))
 
-## [1.0.0](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v1.0.0) (2022-12-16)
+## [1.0.0](https://github.com/vegaprotocol/pennant/compare/v0.4.18...v1.0.0) (2022-12-16)
 
 ### Features
 
@@ -45,7 +51,7 @@ All notable changes to this project will be documented in this file. See [standa
 - add labels as variables ([3cea79a](https://github.com/vegaprotocol/pennant/commit/3cea79a108e4abd76b43bb920ec3b2b9a6123cc6))
 - adding more that one label ([a2c5c95](https://github.com/vegaprotocol/pennant/commit/a2c5c95ae9b4103bc551d83a683e6cfd95836c00))
 
-### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.18) (2022-09-29)
+### [0.4.18](https://github.com/vegaprotocol/pennant/compare/v0.4.17...v0.4.18) (2022-09-29)
 
 ### Features
 
@@ -55,7 +61,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 - show sell side tooltip correctly in depth chart ([#601](https://github.com/vegaprotocol/pennant/issues/601)) ([08c2a30](https://github.com/vegaprotocol/pennant/commit/08c2a30861b8ff2292a8c3ebcfb4a722b2a83b3a))
 
-### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.15...v0.4.17) (2022-09-28)
+### [0.4.17](https://github.com/vegaprotocol/pennant/compare/v0.4.16...v0.4.17) (2022-09-28)
 
 ### Features
 
