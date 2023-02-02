@@ -13,7 +13,7 @@ import { ThemeVariant } from "../../types";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
-import { getColors } from "./helpers";
+import { getColors, getDimensions } from "./helpers";
 
 function defaultVolumeFormat(volume: number) {
   return numberFormatter(0).format(volume);
@@ -110,6 +110,7 @@ export const DepthChart = forwardRef(
      */
     useEffect(() => {
       const colors = getColors(styleRef?.current);
+      const dimensions = getDimensions(styleRef?.current);
 
       chartRef.current = new Chart({
         chartView: contentsRef.current,
@@ -120,6 +121,7 @@ export const DepthChart = forwardRef(
         priceFormat,
         volumeFormat,
         colors,
+        dimensions,
       });
 
       return () => {
@@ -158,9 +160,10 @@ export const DepthChart = forwardRef(
     }, [midPrice]);
 
     useEffect(() => {
-      requestAnimationFrame(
-        () => (chartRef.current.colors = getColors(styleRef?.current))
-      );
+      requestAnimationFrame(() => {
+        chartRef.current.colors = getColors(styleRef?.current);
+        chartRef.current.dimensions = getDimensions(styleRef?.current);
+      });
     }, [theme]);
 
     useImperativeHandle(ref, () => ({

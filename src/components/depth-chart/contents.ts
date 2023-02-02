@@ -3,12 +3,14 @@ import { curveStepAfter } from "d3-shape";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { DepthCurve } from "./display-objects";
-import { Colors } from "./helpers";
+import { Colors, Dimensions } from "./helpers";
 
 type ContentsColors = Pick<
   Colors,
   "buyFill" | "buyStroke" | "sellFill" | "sellStroke"
 >;
+
+type ContentsDimensions = Pick<Dimensions, "strokeWidth">;
 
 /**
  * Responsible for drawing area curves for depth chart.
@@ -21,6 +23,7 @@ export class Contents {
   public sellCurve: DepthCurve;
 
   public colors: ContentsColors;
+  public dimensions: ContentsDimensions;
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -28,6 +31,7 @@ export class Contents {
     width: number;
     height: number;
     colors: ContentsColors;
+    dimensions: ContentsDimensions;
   }) {
     this.renderer = new Renderer({
       view: options.view,
@@ -37,16 +41,19 @@ export class Contents {
     });
 
     this.colors = options.colors;
+    this.dimensions = options.dimensions;
 
     this.buyCurve = new DepthCurve(
-      options.colors.buyStroke,
       options.colors.buyFill,
+      options.colors.buyStroke,
+      options.dimensions.strokeWidth,
       curveStepAfter
     );
 
     this.sellCurve = new DepthCurve(
-      options.colors.sellStroke,
       options.colors.sellFill,
+      options.colors.sellStroke,
+      options.dimensions.strokeWidth,
       curveStepAfter
     );
 
@@ -69,7 +76,8 @@ export class Contents {
       this.renderer.view.height,
       resolution,
       this.colors.buyFill,
-      this.colors.buyStroke
+      this.colors.buyStroke,
+      this.dimensions.strokeWidth
     );
 
     this.sellCurve.update(
@@ -77,7 +85,8 @@ export class Contents {
       this.renderer.view.height,
       resolution,
       this.colors.sellFill,
-      this.colors.sellStroke
+      this.colors.sellStroke,
+      this.dimensions.strokeWidth
     );
   }
 }

@@ -39,7 +39,7 @@ import {
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { Colors, getColors } from "./helpers";
+import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 
 const noop = () => {};
@@ -123,6 +123,11 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
+
+    const [dimensions, setDimensions] = useState<Dimensions>(
+      getDimensions(null)
+    );
+
     const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
@@ -170,10 +175,17 @@ export const Chart = forwardRef(
         parse(
           specification,
           getCandleWidth(internalInterval),
+          dimensions.strokeWidth,
           dataSource.decimalPlaces,
           annotations
         ),
-      [annotations, dataSource.decimalPlaces, internalInterval, specification]
+      [
+        annotations,
+        dataSource.decimalPlaces,
+        dimensions.strokeWidth,
+        internalInterval,
+        specification,
+      ]
     );
 
     // Initial data fetch and subscriptions
@@ -245,7 +257,10 @@ export const Chart = forwardRef(
 
     useEffect(() => {
       // Hack to ensure we pick up the changed css
-      requestAnimationFrame(() => setColors(getColors(styleRef?.current)));
+      requestAnimationFrame(() => {
+        setColors(getColors(styleRef?.current));
+        setDimensions(getDimensions(styleRef?.current));
+      });
     }, [theme]);
 
     const handleViewportChanged = useCallback(
