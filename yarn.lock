@@ -5573,13 +5573,13 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.2, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-allotment@1.17.1:
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.17.1.tgz#1a87fe911e520e6028df3740d9ba397c48f8e8d7"
-  integrity sha512-3/blHxKZfP441IZRwoOJaaNfDOx9XtvQQaeRYYrn7xjQWF7ZhYZCfR7oNxudwx2ga21tIskvfytbZF2P/ydE3A==
+allotment@1.18.0:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/allotment/-/allotment-1.18.0.tgz#0f5e3fc538281bbc4fd6c5a58fd383fa3e0c0b5f"
+  integrity sha512-MV6vbDB0+SZUGRBUgysGwRyg5ccRwywMlnBI7jLz4FlhmE8pnr4vnqtZbBt3d+qv5RM15ZwMv6mHsVyXrxzxrQ==
   dependencies:
     classnames "^2.3.0"
-    eventemitter3 "^4.0.0"
+    eventemitter3 "^5.0.0"
     lodash.clamp "^4.0.0"
     lodash.debounce "^4.0.0"
     lodash.isequal "^4.5.0"
@@ -8543,7 +8543,7 @@ eventemitter3@^3.1.0:
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
   integrity sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==
 
-eventemitter3@^4.0.0, eventemitter3@^4.0.4:
+eventemitter3@^4.0.4:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
