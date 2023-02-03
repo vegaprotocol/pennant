@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/vegaprotocol/pennant/compare/v1.6.0...v1.7.0) (2023-02-03)
+
+### Features
+
+- customise stroke width ([#711](https://github.com/vegaprotocol/pennant/issues/711)) ([29c69f9](https://github.com/vegaprotocol/pennant/commit/29c69f973e6ade5ff49a17642db23407a3ce783d))
+
 ## [1.6.0](https://github.com/vegaprotocol/pennant/compare/v1.5.0...v1.6.0) (2023-01-31)
 
 ### Features
