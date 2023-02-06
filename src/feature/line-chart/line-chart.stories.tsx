@@ -5,20 +5,21 @@ import { zipWith } from "lodash";
 import React, { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
+import coinmarketcap from "../../data/coinmarketcap-data.json";
+import lineData from "../../data/line-chart.json";
+import vega from "../../data/vega-data.json";
 import { CustomTooltip as Tooltip } from "./components";
-import coinmarketcap from "./data/coinmarketcap-data.json";
-import vega from "./data/vega-data.json";
-import { PriceChart } from "./price-chart";
+import { LineChart, Row } from "./line-chart";
 
 type Range = "1D" | "7D" | "1M" | "3M" | "1Y" | "ALL";
 type Asset = "BTC" | "ETH" | "TETHER";
 
 export default {
-  title: "Charts/PriceChart",
-  component: PriceChart,
-} as ComponentMeta<typeof PriceChart>;
+  title: "Charts/LineChart",
+  component: LineChart,
+} as ComponentMeta<typeof LineChart>;
 
-export const SingleSeries: ComponentStory<typeof PriceChart> = () => {
+export const SingleSeries: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Asset>("BTC");
   const [range, setRange] = useState<Range>("1D");
@@ -126,13 +127,13 @@ export const SingleSeries: ComponentStory<typeof PriceChart> = () => {
           flex: 1,
         }}
       >
-        <PriceChart data={data} theme={theme} />
+        <LineChart data={data} theme={theme} />
       </div>
     </div>
   );
 };
 
-export const MultipleSeries: ComponentStory<typeof PriceChart> = () => {
+export const MultipleSeries: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Set<Asset>>(new Set(["BTC", "ETH"]));
   const [range, setRange] = useState<Range>("1Y");
@@ -314,13 +315,62 @@ export const MultipleSeries: ComponentStory<typeof PriceChart> = () => {
           top: 0,
         }}
       >
-        <PriceChart data={data} theme={theme} />
+        <LineChart data={data} theme={theme} />
       </div>
     </div>
   );
 };
 
-export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
+export const MortalityRates: ComponentStory<typeof LineChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  const cols = ["Age", "UK", "UK-Scotland", "Scotland"] as const;
+
+  const rows = lineData.mortality_rates.map(
+    (d) => [d["Age"], ...cols.slice(1).map((col) => d[col])] as Row
+  );
+
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "scroll",
+        width: "600px",
+        height: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <LineChart data={{ cols, rows }} theme={theme} />
+    </div>
+  );
+};
+
+export const FTSE: ComponentStory<typeof LineChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+
+  const cols = ["Date", "FTSE All Share (p)"];
+  const rows = lineData.ftse.map(
+    (d) => [new Date(d["Date"]), d["FTSE All Share (p)"]] as const
+  );
+
+  return (
+    <div
+      style={{
+        resize: "both",
+        overflow: "scroll",
+        width: "600px",
+        height: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <LineChart data={{ cols, rows }} theme={theme} />
+    </div>
+  );
+};
+
+export const CustomTooltip: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
   const [asset, setAsset] = useState<Asset>("BTC");
   const [range, setRange] = useState<Range>("1D");
@@ -437,7 +487,7 @@ export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
           flex: 1,
         }}
       >
-        <PriceChart
+        <LineChart
           data={data}
           annotations={annotations}
           theme={theme}
@@ -448,7 +498,7 @@ export const CustomTooltip: ComponentStory<typeof PriceChart> = () => {
   );
 };
 
-export const Vega1: ComponentStory<typeof PriceChart> = () => {
+export const Vega1: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
   const data: { cols: string[]; rows: [Date, ...number[]][] } = {
@@ -467,12 +517,12 @@ export const Vega1: ComponentStory<typeof PriceChart> = () => {
         flexDirection: "column",
       }}
     >
-      <PriceChart data={data} theme={theme} />
+      <LineChart data={data} theme={theme} />
     </div>
   );
 };
 
-export const Vega2: ComponentStory<typeof PriceChart> = () => {
+export const Vega2: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
   const priceFormat = useCallback((price: number) => price.toFixed(2), []);
@@ -493,12 +543,12 @@ export const Vega2: ComponentStory<typeof PriceChart> = () => {
         flexDirection: "column",
       }}
     >
-      <PriceChart data={data} theme={theme} priceFormat={priceFormat} />
+      <LineChart data={data} theme={theme} priceFormat={priceFormat} />
     </div>
   );
 };
 
-export const NonInteractive: ComponentStory<typeof PriceChart> = () => {
+export const NonInteractive: ComponentStory<typeof LineChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 
   const priceFormat = useCallback((price: number) => price.toFixed(2), []);
@@ -519,7 +569,7 @@ export const NonInteractive: ComponentStory<typeof PriceChart> = () => {
         flexDirection: "column",
       }}
     >
-      <PriceChart
+      <LineChart
         data={data}
         theme={theme}
         priceFormat={priceFormat}

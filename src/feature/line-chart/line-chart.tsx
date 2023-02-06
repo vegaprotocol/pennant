@@ -1,14 +1,14 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { useEffect, useRef, useState } from "react";
 
+import { NonIdealState } from "../../components/non-ideal-state";
 import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
-import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import { Series, Tooltip, TooltipProps } from "./components";
 import { getColors } from "./helpers";
-import styles from "./price-chart.module.css";
+import styles from "./line-chart.module.css";
 
 /**
  * Add custom annotations to tooltip props.
@@ -18,7 +18,7 @@ export type CustomTooltipProps<A> = TooltipProps & { annotations?: A[] };
 /**
  * A set of data points with the same x-axis location.
  */
-export type Row = [Date, ...number[]];
+export type Row = readonly [Date | number, ...number[]];
 
 export interface Data {
   /**
@@ -29,10 +29,10 @@ export interface Data {
   /**
    * Each row represents a set of data points with the same x-axis location.
    */
-  rows: Row[];
+  rows: ReadonlyArray<Row>;
 }
 
-export type PriceChartProps<A> = {
+export type LineChartProps<A> = {
   /**
    * One or more data series.
    */
@@ -75,9 +75,9 @@ export type PriceChartProps<A> = {
 };
 
 /**
- * Draw a historical price chart. Supports multiple line series.
+ * Draw a line chart. Supports multiple line series.
  */
-export const PriceChart = <A,>({
+export const LineChart = <A,>({
   data,
   annotations,
   interactive = true,
@@ -85,7 +85,7 @@ export const PriceChart = <A,>({
   priceFormat = defaultPriceFormat,
   theme = "dark",
   tooltip,
-}: PriceChartProps<A>) => {
+}: LineChartProps<A>) => {
   /**
    * Where to render chart contents, e.g. line series.
    */

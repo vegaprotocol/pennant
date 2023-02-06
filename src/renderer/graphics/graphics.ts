@@ -155,7 +155,7 @@ export class Graphics extends Container {
    * An area is defined by two bounding lines.
    */
   public drawArea(
-    data: [number, number][],
+    data: [number, number, number][],
     curve: CurveFactory = curveLinear,
     y0: number = 0
   ): this {

@@ -1,34 +1,43 @@
-import { range } from "../../../helpers";
 import { Renderer } from "../../../renderer";
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
 import { Text } from "../../../renderer/text";
-import { ScaleTime } from "../../../types";
-import { Colors } from "../../depth-chart/helpers";
-import { AXIS_HEIGHT, FONT_SIZE } from "../constants";
+import { ScaleLinear } from "../../../types";
+import { Colors } from "../../../components/depth-chart/helpers";
+import { AXIS_HEIGHT, AXIS_WIDTH, FONT_SIZE } from "../constants";
 import { Gesture } from "../zoom/gesture";
 import { Zoom } from "../zoom/zoom";
-import { pointer } from "./vertical-axis";
 
-const MAX_TICKS = 20;
+export function pointer(event: any, resolution: number = 1): [number, number] {
+  const node = event.target as HTMLElement;
+  const rect = node.getBoundingClientRect();
 
-type HorizontalAxisColors = Pick<
+  return [
+    resolution * (event.clientX - rect.left - node.clientLeft),
+    resolution * (event.clientY - rect.top - node.clientTop),
+  ];
+}
+
+type VerticalAxisColors = Pick<
   Colors,
   "backgroundSurface" | "textPrimary" | "textSecondary"
 >;
 
 /**
- * Draws a horizontal axis at the bottom of the chart
+ * Draws a vertical axis at the right of the chart
  */
-export class HorizontalAxis extends Container {
+export class VerticalAxis extends Container {
   public renderer: Renderer;
   public zoom: Zoom = new Zoom();
   private gesture = new Gesture(this);
   private firstPoint: [number, number] = [0, 0];
   private overlay: Graphics = new Graphics();
 
-  private tickNodes: Text[] = [];
+  /**
+   * Cache ticks
+   */
+  private nodeByKeyValue = new Map<string, Text>();
 
   constructor(renderer: Renderer) {
     super();
@@ -41,63 +50,73 @@ export class HorizontalAxis extends Container {
       .on("pointerdown", this.onPointerDown)
       .on("pointermove", this.onPointerMove)
       .on("pointerout", this.onPointerOut);
-
-    // TODO: Dynamically scale (double etc)
-    this.tickNodes = range(0, MAX_TICKS).map(
-      () =>
-        new Text("", {
-          fill: 0xffffff,
-          fontFamily: "monospace",
-          fontSize: FONT_SIZE,
-        })
-    );
-
-    for (let i = 0; i < this.tickNodes.length; i++) {
-      this.tickNodes[i].visible = false;
-      this.addChild(this.tickNodes[i]);
-    }
   }
 
   public update(
-    scale: ScaleTime,
+    scale: ScaleLinear,
     width: number,
     height: number,
     resolution: number = 1,
-    colors: HorizontalAxisColors
+    colors: VerticalAxisColors
   ) {
     this.overlay.clear();
     this.overlay.beginFill(colors.backgroundSurface, 0.7);
 
     this.overlay.drawRect(
+      width - resolution * AXIS_WIDTH,
       0,
-      height - resolution * AXIS_HEIGHT,
-      width,
-      resolution * AXIS_HEIGHT
+      resolution * AXIS_WIDTH,
+      height
     );
 
     this.overlay.endFill();
 
-    const numTicks = width / resolution / 200;
-    const ticks = scale.ticks(numTicks);
+    const numTicks = height / resolution / 50;
+    const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
     const tickFormat = scale.tickFormat(numTicks);
 
-    for (let i = 0; i < this.tickNodes.length; i++) {
-      this.tickNodes[i].visible = false;
-    }
+    const enter = ticks.filter(
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+    );
 
-    for (let i = 0; i < Math.min(ticks.length, this.tickNodes.length); i++) {
-      const text = this.tickNodes[i];
+    const update = ticks.filter((tick) =>
+      this.nodeByKeyValue.has(tickFormat(tick))
+    );
 
-      text.visible = true;
+    const exit = [...this.nodeByKeyValue.keys()].filter(
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+    );
 
-      text.text = tickFormat(ticks[i]);
+    for (const node of enter) {
+      const text = new Text(tickFormat(node), {
+        fill: colors.textSecondary,
+        fontFamily: "monospace",
+        fontSize: FONT_SIZE,
+      });
 
-      text.x = scale(ticks[i]);
-      text.y = height - (resolution * AXIS_HEIGHT) / 2;
-      text.anchor.set(0.5, 0.5);
-      text.style.fill = colors.textSecondary;
+      text.x = width - resolution * 7;
+      text.y = scale(node);
+      text.anchor.set(1, 0.5);
 
       text.updateText(); // TODO: Should not need to call this
+
+      this.nodeByKeyValue.set(tickFormat(node), text);
+      this.addChild(text);
+    }
+
+    for (const node of update) {
+      const text = this.nodeByKeyValue.get(tickFormat(node))!;
+
+      text.style.fill = colors.textSecondary;
+      text.x = width - resolution * 7;
+      text.y = scale(node);
+    }
+
+    for (const node of exit) {
+      const text = this.nodeByKeyValue.get(node)!;
+
+      this.nodeByKeyValue.delete(node);
+      this.removeChild(text);
     }
   }
 
@@ -110,7 +129,7 @@ export class HorizontalAxis extends Container {
       window.clearTimeout(this.gesture.wheel);
     } else {
       this.gesture.mouse = [p, p];
-      this.gesture.start(this.zoom.__zoom);
+      this.gesture.start();
     }
 
     this.gesture.wheel = window.setTimeout(() => {
@@ -141,20 +160,7 @@ export class HorizontalAxis extends Container {
     }
 
     this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
-    this.gesture.start(
-      this.zoom.constrain(
-        this.zoom.translate(
-          this.zoom.__zoom,
-          this.gesture.mouse[0],
-          this.gesture.mouse[1]
-        ),
-        [
-          [0, 0],
-          [100, 100],
-        ],
-        this.zoom.translateExtent
-      )
-    );
+    this.gesture.start();
 
     const handleMouseMove = (event: any) => {
       event.preventDefault();
@@ -204,7 +210,7 @@ export class HorizontalAxis extends Container {
     const resolution = this.renderer.resolution;
     const p = pointer(tempEvent, resolution);
 
-    // Do not respond to evensts triggered by elements 'above' the canvas
+    // Do not respond to events triggered by elements 'above' the canvas
     if (tempEvent.target === this.renderer.context.canvas) {
       this.emit("mousemove", p);
     }

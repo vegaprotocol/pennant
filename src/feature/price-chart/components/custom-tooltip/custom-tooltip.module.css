@@ -1,0 +1,60 @@
+.tooltip {
+  background-color: var(--pennant-color-emphasis-50);
+  border-radius: 4px;
+  color: var(--pennant-color-emphasis-900);
+  font-family: var(--pennant-font-family-base);
+  font-size: var(--pennant-font-size-base);
+  font-weight: var(--pennant-font-weight-normal);
+  min-width: 180px;
+  padding: 12px;
+  pointer-events: none;
+}
+
+.tooltip .date {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.tooltip .date .primary {
+  color: var(--pennant-font-color-base);
+}
+
+.tooltip .date .sub {
+  color: var(--pennant-font-color-secondary);
+}
+
+.tooltip .series {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tooltip .series:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.indicator {
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 100%;
+  box-shadow: rgb(88 102 126 / 8%) 0px 1px 1px,
+    rgb(88 102 126 / 10%) 0px 8px 16px;
+  content: "";
+  display: inline-block;
+  height: 14px;
+  margin-right: 8px;
+  transform: translateY(2px);
+  width: 14px;
+}
+
+.tooltip .series .name {
+  color: var(--pennant-font-color-secondary);
+  padding-right: 8px;
+}
+
+.tooltip .series .value {
+  color: var(--pennant-font-color-base);
+  font-family: var(--pennant-font-family-monospace);
+  font-weight: 600;
+}

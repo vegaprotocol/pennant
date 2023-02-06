@@ -3,13 +3,13 @@ import { CurveFactory, curveLinear } from "d3-shape";
 import { SHAPES } from "../const";
 
 export class Area {
-  public data: [number, number][] = [];
+  public data: [number, number, number][] = [];
   public curve: CurveFactory;
   public y0: number = 0;
   public readonly type: SHAPES.AREA;
 
   constructor(
-    data: [number, number][] = [],
+    data: [number, number, number][] = [],
     curve: CurveFactory = curveLinear,
     y0: number = 0
   ) {
