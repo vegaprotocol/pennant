@@ -7,8 +7,8 @@ import { Text } from "../../../renderer/text";
 import { ScaleTime } from "../../../types";
 import { Colors } from "../../../components/depth-chart/helpers";
 import { AXIS_HEIGHT, FONT_SIZE } from "../constants";
-import { Gesture } from "../zoom/gesture";
-import { Zoom } from "../zoom/zoom";
+import { Gesture } from "../../../util/zoom/gesture";
+import { Zoom } from "../../../util/zoom/zoom";
 import { pointer } from "./vertical-axis";
 
 const MAX_TICKS = 20;

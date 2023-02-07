@@ -5,13 +5,12 @@ import { addHours } from "date-fns";
 import EventEmitter from "eventemitter3";
 
 import { ScaleLinear, ScaleTime } from "../../types";
+import { Zoom, ZoomTransform } from "../../util/zoom";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import { Contents } from "./contents";
 import { Colors } from "./helpers";
 import { Data } from "./price-chart";
 import { UI } from "./ui";
-import { ZoomTransform } from "./zoom/transform";
-import { Zoom } from "./zoom/zoom";
 
 /**
  * Price chart class. Its main roles are to manage interactivity, e.g. zooming and panning

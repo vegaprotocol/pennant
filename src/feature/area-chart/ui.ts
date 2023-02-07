@@ -12,6 +12,7 @@ import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
 import { hex2string } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
+import { Gesture, Zoom, zoomIdentity, ZoomTransform } from "../../util/zoom";
 import { Data } from "./area-chart";
 import { SeriesData } from "./chart";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
@@ -24,9 +25,6 @@ import {
   VerticalAxis,
 } from "./display-objects";
 import { Colors } from "./helpers";
-import { Gesture } from "./zoom/gesture";
-import { zoomIdentity, ZoomTransform } from "./zoom/transform";
-import { Zoom } from "./zoom/zoom";
 
 type UiColors = Pick<
   Colors,
