@@ -5,8 +5,8 @@ import { NonIdealState } from "../../components/non-ideal-state";
 import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
+import { Tooltip, TooltipProps } from "../../ui/components";
 import { Chart } from "./chart";
-import { Series, Tooltip, TooltipProps } from "./components";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 

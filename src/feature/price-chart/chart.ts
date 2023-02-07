@@ -124,10 +124,7 @@ export class Chart extends EventEmitter {
     this.contents.update(
       yr,
       xr,
-      this._data.rows.map((d) => [
-        xr(d[0]),
-        ...d.slice(1).map((series) => yr(series)),
-      ]),
+      this._data.rows.map((d) => [xr(d[0]), yr(d[1])]),
       yr(this._data.rows[0][1]),
       this.height
     );
