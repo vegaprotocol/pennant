@@ -89,10 +89,7 @@ export class AreaCurve extends Container {
       texture: createTexture(this.stroke, this.backgroundSurface, height),
     });
 
-    this.area.drawArea(
-      points.map((d) => [d[0], height, d[1]]),
-      this.curve
-    );
+    this.area.drawArea(points, this.curve);
     this.area.endFill();
 
     this.line.clear();
