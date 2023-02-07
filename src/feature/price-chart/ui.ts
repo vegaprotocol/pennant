@@ -11,8 +11,8 @@ import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
 import { hex2string } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { Gesture, Zoom, zoomIdentity, ZoomTransform } from "../../util/zoom";
-import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
 import {
   Crosshair,
   HorizontalAxis,

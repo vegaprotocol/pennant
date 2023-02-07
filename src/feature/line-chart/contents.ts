@@ -2,7 +2,7 @@ import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";
-import { AXIS_HEIGHT, AXIS_WIDTH } from "./constants";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/contants/constants";
 import { HorizontalGrid, LineCurve, VerticalGrid } from "./display-objects";
 import { Colors } from "./helpers";
 

@@ -6,7 +6,7 @@ import { InteractionEvent } from "../../../renderer/interaction/interaction-even
 import { Text } from "../../../renderer/text";
 import { ScaleTime } from "../../../types";
 import { Colors } from "../../../components/depth-chart/helpers";
-import { AXIS_HEIGHT, FONT_SIZE } from "../constants";
+import { AXIS_HEIGHT, FONT_SIZE } from "../../../util/contants/constants";
 import { Gesture } from "../zoom/gesture";
 import { Zoom } from "../zoom/zoom";
 import { pointer } from "./vertical-axis";
