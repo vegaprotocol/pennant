@@ -1,5 +1,5 @@
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
 
 /**
  * Draw an indicator at a given price and volume

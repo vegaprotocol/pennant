@@ -1,7 +1,7 @@
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
-import { Text } from "../../../renderer/text";
-import { Colors } from "../helpers";
+import { Colors } from "../../feature/line-chart/helpers";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
+import { Text } from "../../renderer/text";
 
 type LabelColors = Pick<Colors, "backgroundSurface" | "textPrimary">;
 

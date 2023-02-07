@@ -1,6 +1,6 @@
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
-import { ScaleLinear } from "../../../types";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
+import { ScaleLinear } from "../../types";
 
 /**
  * Draws vertical grid lines

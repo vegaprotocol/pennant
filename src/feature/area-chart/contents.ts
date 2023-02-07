@@ -5,9 +5,9 @@ import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";
+import { HorizontalGrid, VerticalGrid } from "../../ui/display-objects";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { SeriesData } from "./chart";
-import { HorizontalGrid, LineCurve, VerticalGrid } from "./display-objects";
 import { AreaCurve } from "./display-objects/area-curve";
 import { Colors } from "./helpers";
 

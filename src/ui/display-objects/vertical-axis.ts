@@ -1,13 +1,12 @@
-import { Renderer } from "../../../renderer";
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
-import { InteractionEvent } from "../../../renderer/interaction/interaction-event";
-import { Text } from "../../../renderer/text";
-import { ScaleLinear } from "../../../types";
-import { Colors } from "../../../components/depth-chart/helpers";
-import { AXIS_HEIGHT, AXIS_WIDTH, FONT_SIZE } from "../constants";
-import { Gesture } from "../../../util/zoom/gesture";
-import { Zoom } from "../../../util/zoom/zoom";
+import { Colors } from "../../components/depth-chart/helpers";
+import { Renderer } from "../../renderer";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
+import { InteractionEvent } from "../../renderer/interaction/interaction-event";
+import { Text } from "../../renderer/text";
+import { ScaleLinear } from "../../types";
+import { AXIS_WIDTH, FONT_SIZE } from "../../util/constants";
+import { Gesture, Zoom } from "../../util/zoom";
 
 export function pointer(event: any, resolution: number = 1): [number, number] {
   const node = event.target as HTMLElement;

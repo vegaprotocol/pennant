@@ -1,4 +1,4 @@
-import { Graphics } from "../../../renderer/graphics";
+import { Graphics } from "../../renderer/graphics";
 
 /**
  * Draws a horizontal line

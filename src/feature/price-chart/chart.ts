@@ -28,7 +28,7 @@ export class Chart extends EventEmitter {
   private timeZoom: Zoom = new Zoom();
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
 
-  private _data: Data = { cols: [], rows: [] };
+  private _data: Data = { cols: ["col1", "col2"], rows: [] };
   private priceFormat: (price: number) => string;
   private _colors: Colors;
 

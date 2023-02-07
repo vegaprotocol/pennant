@@ -20,7 +20,7 @@ import {
   Label,
   pointer,
   VerticalAxis,
-} from "./display-objects";
+} from "../../ui/display-objects";
 import { Colors } from "./helpers";
 import { Data } from "./line-chart";
 

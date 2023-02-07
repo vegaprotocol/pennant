@@ -1,9 +1,10 @@
-import { Graphics } from "../../../renderer/graphics";
+import { AXIS_HEIGHT } from "../../components/depth-chart";
+import { Graphics } from "../../renderer/graphics";
 
 /**
- * Draws a horizontal line
+ * Draw a vertical line
  */
-export class HorizontalLine extends Graphics {
+export class VerticalLine extends Graphics {
   private width: number;
   private color: number;
   private lineDash: number[];
@@ -16,7 +17,7 @@ export class HorizontalLine extends Graphics {
     this.lineDash = lineDash;
   }
 
-  public update(y: number, width: number, resolution: number = 1) {
+  public update(x: number, height: number, resolution: number = 1) {
     this.clear();
 
     this.lineStyle({
@@ -25,9 +26,9 @@ export class HorizontalLine extends Graphics {
       lineDash: this.lineDash,
     });
 
-    this.moveTo(0, 0.5);
-    this.lineTo(width, 0.5);
+    this.moveTo(0.5, 0);
+    this.lineTo(0.5, height - resolution * AXIS_HEIGHT);
     this.endFill();
-    this.y = y;
+    this.x = x;
   }
 }

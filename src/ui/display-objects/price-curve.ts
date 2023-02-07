@@ -1,11 +1,11 @@
-import { CurveFactory, curveLinear } from "d3-shape";
+import { CurveFactory, curveStepBefore } from "d3-shape";
 import { memoize, values } from "lodash";
 
-import { Texture } from "../../../renderer";
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
-import { Rectangle } from "../../../renderer/math";
-import { hex2string } from "../../../renderer/utils";
+import { Texture } from "../../renderer";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
+import { Rectangle } from "../../renderer/math";
+import { hex2string } from "../../renderer/utils";
 
 function createGradTexture(
   colorStop1: number,
@@ -22,7 +22,7 @@ function createGradTexture(
 
   // adjust it if somehow you need better quality for very very big images
   canvas.width = 1;
-  canvas.height = size + offset;
+  canvas.height = Math.max(1, Math.abs(size + offset));
 
   const ctx = canvas.getContext("2d");
 
@@ -53,8 +53,18 @@ const createTexture = memoize(
       invert
     );
 
-    gradTexture.orig = new Rectangle(0, 0, 1, size + offset);
-    gradTexture._frame = new Rectangle(0, 0, 1, size + offset);
+    gradTexture.orig = new Rectangle(
+      0,
+      0,
+      1,
+      Math.max(1, Math.abs(size + offset))
+    );
+    gradTexture._frame = new Rectangle(
+      0,
+      0,
+      1,
+      Math.max(1, Math.abs(size + offset))
+    );
 
     return gradTexture;
   },
@@ -62,12 +72,14 @@ const createTexture = memoize(
 );
 
 /**
- * Draws a line curve
+ * Draws an area curve
  */
-export class LineCurve extends Container {
+export class PriceCurve extends Container {
+  private area: Graphics = new Graphics();
   private line: Graphics = new Graphics();
 
   private stroke: number;
+  private fill: number;
   private backgroundSurface: number;
   private curve: CurveFactory;
 
@@ -75,16 +87,19 @@ export class LineCurve extends Container {
     stroke: number = 0,
     fill: number = 0xffffff,
     backgroundSurface: number = 0xffffff,
-    curve: CurveFactory = curveLinear
+    curve: CurveFactory = curveStepBefore
   ) {
     super();
 
     this.stroke = stroke;
+    this.fill = fill;
     this.backgroundSurface = backgroundSurface;
     this.curve = curve;
 
+    this.area.lineStyle({ width: 0 });
     this.line.lineStyle({ width: 4, color: stroke, alpha: 0.5 });
 
+    this.addChild(this.area);
     this.addChild(this.line);
   }
 
@@ -98,8 +113,24 @@ export class LineCurve extends Container {
     invert: boolean,
     startPrice: number
   ): void {
+    this.fill = fill;
     this.stroke = stroke;
     this.backgroundSurface = backgroundSurface;
+    this.area.clear();
+
+    this.area.beginTextureFill({
+      alpha: 0.5,
+      texture: createTexture(
+        this.stroke,
+        this.backgroundSurface,
+        height,
+        startPrice,
+        invert
+      ),
+    });
+
+    this.area.drawArea(points, this.curve, startPrice);
+    this.area.endFill();
 
     this.line.clear();
     this.line.lineStyle({ width: 4, color: this.stroke });

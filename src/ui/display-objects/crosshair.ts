@@ -1,4 +1,4 @@
-import { Container } from "../../../renderer/display";
+import { Container } from "../../renderer/display";
 import { HorizontalLine } from "./horizontal-line";
 import { VerticalLine } from "./vertical-line";
 

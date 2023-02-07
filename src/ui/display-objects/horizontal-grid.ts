@@ -1,40 +1,39 @@
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
-import { ScaleLinear } from "../../../types";
+import { Container } from "../../renderer/display";
+import { Graphics } from "../../renderer/graphics";
+import { ScaleTime } from "../../types";
 
 /**
  * Draws vertical grid lines
  */
-export class VerticalGrid extends Container {
+export class HorizontalGrid extends Container {
   /**
    * Cache ticks
    */
-  private nodeByKeyValue = new Map<string, Graphics>();
+  private nodeByKeyValue = new Map<number, Graphics>();
 
   constructor() {
     super();
   }
 
   public update(
-    scale: ScaleLinear,
+    scale: ScaleTime,
     width: number,
     height: number,
     resolution: number = 1
   ) {
-    const numTicks = height / resolution / 50;
+    const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
-    const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tick.getTime())
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tick.getTime())
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
     );
 
     for (const node of enter) {
@@ -46,30 +45,30 @@ export class VerticalGrid extends Container {
         color: 0x3d3d3d,
         lineDash: [],
       });
-      line.moveTo(0, 0.5);
-      line.lineTo(width, 0.5);
+      line.moveTo(0.5, 0);
+      line.lineTo(0.5, height);
       line.endFill();
-      line.y = scale(node);
+      line.x = scale(node);
 
-      this.nodeByKeyValue.set(tickFormat(node), line);
+      this.nodeByKeyValue.set(node.getTime(), line);
       this.addChild(line);
     }
 
     for (const node of update) {
-      const line = this.nodeByKeyValue.get(tickFormat(node))!;
+      const line = this.nodeByKeyValue.get(node.getTime())!;
 
       line.clear();
-
       line.lineStyle({
         width: 1,
         color: 0x3d3d3d,
         lineDash: [],
       });
-
-      line.moveTo(0, 0.5);
-      line.lineTo(width, 0.5);
+      line.moveTo(0.5, 0);
+      line.lineTo(0.5, height);
       line.endFill();
-      line.y = scale(node);
+      line.x = scale(node);
+
+      line.x = Math.round(scale(node));
     }
 
     for (const node of exit) {

@@ -2,8 +2,12 @@ import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";
-import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/contants/constants";
-import { HorizontalGrid, LineCurve, VerticalGrid } from "./display-objects";
+import {
+  HorizontalGrid,
+  LineCurve,
+  VerticalGrid,
+} from "../../ui/display-objects";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { Colors } from "./helpers";
 
 type ContentsColors = Pick<
