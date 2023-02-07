@@ -5,7 +5,7 @@ import React, { forwardRef, useState } from "react";
 import { Y_AXIS_WIDTH } from "../../constants";
 import { formatter } from "../../helpers";
 import { Bounds, Pane } from "../../types";
-import { Colors, getAccentColor } from "../chart/helpers";
+import { Colors, getAccentColor } from "../candlestick-chart/helpers";
 import { CloseButton } from "../close-button";
 import { IndicatorInfo } from "../indicator-info";
 import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";

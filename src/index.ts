@@ -1,5 +1,5 @@
-export type { ChartProps } from "./components/chart";
-export { Chart } from "./components/chart";
+export type { CandlestickChartProps } from "./components/candlestick-chart";
+export { CandlestickChart } from "./components/candlestick-chart";
 export type {
   DepthChartHandle,
   DepthChartProps,

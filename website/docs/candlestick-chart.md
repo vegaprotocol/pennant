@@ -1,9 +1,9 @@
 ---
-id: chart
-title: Chart
+id: candlestick-chart
+title: CandlestickChart
 ---
 
-# Chart API
+# CandlestickChart API
 
 ## Props
 

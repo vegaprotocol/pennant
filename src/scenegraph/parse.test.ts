@@ -1,4 +1,4 @@
-import { getColors } from "../components/chart/helpers";
+import { getColors } from "../components/candlestick-chart/helpers";
 import { TopLevelSpec } from "../vega-lite/spec";
 import { parse, parseLayer } from "./parse";
 

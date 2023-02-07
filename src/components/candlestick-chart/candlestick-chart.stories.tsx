@@ -4,19 +4,19 @@ import { useDarkMode } from "storybook-dark-mode";
 import { Interval } from "../../stories/api/vega-graphql";
 import { EmptyDataSource } from "../../stories/data-source/empty-data-source";
 import { JsonDataSource } from "../../stories/data-source/json-data-source";
-import { Chart, ChartProps } from "./chart";
+import { CandlestickChart, CandlestickChartProps } from "./candlestick-chart";
 
 export default {
-  title: "Charts/Chart",
-  component: Chart,
+  title: "Charts/CandlestickChart",
+  component: CandlestickChart,
 } as Meta;
 
-const Template: Story<ChartProps> = (args) => {
+const Template: Story<CandlestickChartProps> = (args) => {
   const theme = useDarkMode() ? "dark" : "light";
 
   return (
     <div style={{ height: "400px" }}>
-      <Chart {...args} theme={theme} />
+      <CandlestickChart {...args} theme={theme} />
     </div>
   );
 };

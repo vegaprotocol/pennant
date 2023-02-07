@@ -12,7 +12,7 @@ import { compareAsc } from "date-fns";
 import { difference, intersection, omit, union } from "lodash";
 import { MutableRefObject } from "react";
 
-import { Colors } from "../components/chart/helpers";
+import { Colors } from "../components/candlestick-chart/helpers";
 import {
   DEFAULT_INTERVAL_WIDTH,
   INITIAL_NUM_CANDLES_TO_DISPLAY,

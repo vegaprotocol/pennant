@@ -8,7 +8,7 @@ import { createClient } from "graphql-ws";
 import { useMemo } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { Chart } from "../../../components/chart";
+import { CandlestickChart } from "../../../components/candlestick-chart";
 import { Interval } from "../../../types";
 import { markets_markets } from "../../api/vega-graphql";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
@@ -94,7 +94,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
             {market.tradableInstrument.instrument.code}
           </div>
           <div style={{ flex: "1 1 0" }}>
-            <Chart
+            <CandlestickChart
               key={market.id}
               dataSource={dataSources[i]}
               interval={Interval.I1M}

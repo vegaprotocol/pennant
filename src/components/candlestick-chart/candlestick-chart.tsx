@@ -1,6 +1,6 @@
 import "allotment/dist/style.css";
 import "../../styles/variables.css";
-import "./chart.css";
+import "./candlestick-chart.css";
 
 import { dispatch } from "d3-dispatch";
 import React, {
@@ -54,7 +54,7 @@ export type Options = {
   notEnoughDataText?: React.ReactNode | string;
 };
 
-export type ChartProps = {
+export type CandlestickChartProps = {
   /** Responsible for fetching data */
   dataSource: DataSource;
   initialViewport?: Viewport;
@@ -65,7 +65,7 @@ export type ChartProps = {
   onViewportChanged?: (viewport: Viewport) => void;
 };
 
-export const Chart = forwardRef(
+export const CandlestickChart = forwardRef(
   (
     {
       dataSource,
@@ -81,7 +81,7 @@ export const Chart = forwardRef(
       theme = "dark",
       onOptionsChanged = noop,
       onViewportChanged = noop,
-    }: ChartProps,
+    }: CandlestickChartProps,
     ref: React.Ref<ChartElement>
   ) => {
     const {

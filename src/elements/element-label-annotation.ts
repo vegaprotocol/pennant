@@ -1,6 +1,6 @@
 import { sum } from "d3-array";
 
-import { Colors } from "../components/chart/helpers";
+import { Colors } from "../components/candlestick-chart/helpers";
 import { LABEL_ANNOTATION_HEIGHT } from "../constants";
 import { calculateShiftedPositions } from "../helpers";
 import {

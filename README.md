@@ -77,7 +77,7 @@ yarn add pennant
 
 ```jsx
 import React from "react";
-import { Chart } from "pennant";
+import { CandlestickChart } from "pennant";
 
 const dataSource = new DataSource();
 const options = {
@@ -87,7 +87,7 @@ const options = {
 };
 
 export const App = () => (
-  <Chart dataSource={dataSource} options={options} interval="I1M" />
+  <CandlestickChart dataSource={dataSource} options={options} interval="I1M" />
 );
 ```
 
@@ -114,7 +114,7 @@ You may customize the styling of pennant components by overriding the default CS
 
 ## Data
 
-Pennant displays financial data using a DataSource object you pass as a prop to the React Chart component. This object must implement the DataSource interface, and typically takes the form of a class.
+Pennant displays financial data using a DataSource object you pass as a prop to the React CandlestickChart component. This object must implement the DataSource interface, and typically takes the form of a class.
 
 It provides a set of methods such as `query` and `subscribe` which will be called by the chart to get historical and streaming data respectively.
 
