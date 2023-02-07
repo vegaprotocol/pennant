@@ -10,16 +10,14 @@ import { Container } from "../../renderer/display";
 import { InteractionData } from "../../renderer/interaction/interaction-data";
 import { InteractionEvent } from "../../renderer/interaction/interaction-event";
 import { Rectangle } from "../../renderer/math";
+import { HorizontalLine, Rect, VerticalLine } from "../../ui/display-objects";
 import { AXIS_HEIGHT } from "./depth-chart";
 import {
   HorizontalAxis,
-  HorizontalLine,
   Indicator,
   Label,
   MidMarketPriceLabel,
-  Rect,
   VerticalAxis,
-  VerticalLine,
 } from "./display-objects";
 import { Colors } from "./helpers";
 
