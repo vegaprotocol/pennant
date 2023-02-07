@@ -221,9 +221,11 @@ export class GraphicsRenderer {
 
         context.beginPath();
 
-        area().curve(tempShape.curve).y0(tempShape.y0).context(context)(
-          tempShape.data
-        );
+        area<[number, number, number]>()
+          .curve(tempShape.curve)
+          .y0((d) => d[1])
+          .y1((d) => d[2])
+          .context(context)(tempShape.data);
 
         if (fillStyle.visible) {
           context.globalAlpha = fillStyle.alpha;

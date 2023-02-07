@@ -414,14 +414,14 @@ export class UI extends EventEmitter {
   private onPointerMove = (event: InteractionEvent) => {
     if ("ontouchstart" in self) return;
 
-    return;
+    console.log(this.data);
 
     this.crosshair.visible = true;
     this.priceLabel.visible = true;
     this.timeLabel.visible = true;
 
     for (let index = 0; index < this.indicator.length; index++) {
-      if (index + 1 < this.data.cols.length) {
+      if (index < this.data.length) {
         this.indicator[index].visible = true;
       }
     }
@@ -429,7 +429,7 @@ export class UI extends EventEmitter {
     let x = event.data?.global.x;
     let y = event.data?.global.y;
 
-    if (x && y && this.data.rows.length > 1) {
+    if (x && y && this.data[0].length > 1) {
       const resolution = this.renderer.resolution;
       x *= resolution;
 
@@ -437,14 +437,14 @@ export class UI extends EventEmitter {
       const height = this.renderer.view.height;
 
       const index = bisectCenter(
-        this.data.rows.map((d) => this.timeScale(d[0])),
+        this.data[0].i.map((d) => this.timeScale(d)),
         x
       );
 
-      const nearestX = this.data.rows[index];
+      const nearestX = this.data[0].i[index];
 
       this.crosshair.update(
-        this.timeScale(nearestX[0]),
+        this.timeScale(nearestX),
         resolution * y,
         width,
         height,
@@ -452,10 +452,10 @@ export class UI extends EventEmitter {
       );
 
       for (let i = 0; i < this.indicator.length; i++) {
-        if (i + 1 < this.data.cols.length) {
+        if (i < this.data.length) {
           this.indicator[i].update(
-            this.timeScale(nearestX[0]),
-            this.priceScale(nearestX[i + 1]),
+            this.timeScale(nearestX),
+            this.priceScale(this.data[i][index][1]),
             (this.colors as any)[`accent${i + 1}`]
           );
         } else {
@@ -473,8 +473,8 @@ export class UI extends EventEmitter {
       );
 
       this.timeLabel.update(
-        format(nearestX[0], "dd/MM/yyyy HH:mm a"),
-        this.timeScale(nearestX[0]),
+        format(nearestX, "dd/MM/yyyy HH:mm a"),
+        this.timeScale(nearestX),
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
         resolution,
@@ -487,12 +487,14 @@ export class UI extends EventEmitter {
       if (!this.isZooming) {
         this.emit("mousemove", {
           index,
-          point: [this.timeScale(nearestX[0]) / resolution, y],
-          date: nearestX[0],
-          series: range(0, this.data.cols.length - 1).map((i) => ({
+          point: [this.timeScale(nearestX) / resolution, y],
+          date: nearestX,
+          series: range(0, this.data.length).map((i) => ({
             color: hex2string((this.colors as any)[`accent${i + 1}`]),
-            name: this.data.cols[i + 1],
-            value: this.priceFormat(nearestX[i + 1] as number),
+            name: this.data[i].key,
+            value: this.priceFormat(
+              this.data[i][index].data[this.data[i].key] as number
+            ),
           })),
         });
       } else {

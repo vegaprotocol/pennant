@@ -221,16 +221,12 @@ export class Chart extends EventEmitter {
       this.series = stack(
         _data.rows.map((row) =>
           Object.fromEntries(
-            _data.cols.map((col, i) => [col, row[i + 1] as number])
+            _data.cols.map((col, i) => [col, row[i] as number])
           )
         )
       ).map((s) => Object.assign(s, { i: _data.rows.map((row) => row[0]) }));
 
-      console.log(this.series);
-
       const priceExtent = extent(this.series.flat(2)) as [number, number];
-
-      console.log(priceExtent);
 
       const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;
       const timeExtent = [data.rows[0][0], data.rows[data.rows.length - 1][0]];

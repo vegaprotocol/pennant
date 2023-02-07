@@ -99,6 +99,9 @@ export class AreaCurve extends Container {
 
     this.line.clear();
     this.line.lineStyle({ width: 4, color: this.stroke });
-    this.line.drawLine(points, this.curve);
+    this.line.drawLine(
+      points.map((d) => [d[0], d[2]]),
+      this.curve
+    );
   }
 }

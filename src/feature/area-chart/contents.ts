@@ -88,19 +88,23 @@ export class Contents {
       resolution
     );
 
-    console.log(data);
-
     for (let i = 0; i < this.series.length; i++) {
-      if (i + 1 < data.length) {
+      if (i < data.length) {
         this.series[i].visible = true;
         this.series[i].update(
-          data[i].map((d, j) => [data[i].i[j] as number, d[0], d[1]]),
+          data[i].map((d, j) => [
+            timeScale(data[i].i[j]) as number,
+            priceScale(d[0]),
+            priceScale(d[1]),
+          ]),
           height,
           resolution,
           undefined,
           (this.colors as any)[`accent${i + 1}`],
           this.colors.backgroundSurface
         );
+
+        this.series[i].visible = true;
       } else {
         this.series[i].visible = false;
       }
