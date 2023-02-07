@@ -8,7 +8,7 @@ import { useDarkMode } from "storybook-dark-mode";
 import coinmarketcap from "../../data/coinmarketcap-data.json";
 import lineData from "../../data/line-chart.json";
 import vega from "../../data/vega-data.json";
-import { CustomTooltip as Tooltip } from "./components";
+import { CustomTooltip as Tooltip } from "../../ui/components";
 import { LineChart, Row } from "./line-chart";
 
 type Range = "1D" | "7D" | "1M" | "3M" | "1Y" | "ALL";

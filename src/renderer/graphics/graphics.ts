@@ -156,10 +156,9 @@ export class Graphics extends Container {
    */
   public drawArea(
     data: [number, number, number][],
-    curve: CurveFactory = curveLinear,
-    y0: number = 0
+    curve: CurveFactory = curveLinear
   ): this {
-    return this.drawShape(new Area(data, curve, y0));
+    return this.drawShape(new Area(data, curve));
   }
 
   /**

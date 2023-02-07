@@ -129,7 +129,10 @@ export class PriceCurve extends Container {
       ),
     });
 
-    this.area.drawArea(points, this.curve, startPrice);
+    this.area.drawArea(
+      points.map((d) => [d[0], startPrice, d[1]]),
+      this.curve
+    );
     this.area.endFill();
 
     this.line.clear();

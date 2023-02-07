@@ -1,9 +1,4 @@
-import {
-  curveBasis,
-  CurveFactory,
-  curveLinear,
-  curveStepBefore,
-} from "d3-shape";
+import { CurveFactory, curveLinear } from "d3-shape";
 import { memoize, values } from "lodash";
 
 import { Texture } from "../../../renderer";
@@ -94,7 +89,10 @@ export class AreaCurve extends Container {
       texture: createTexture(this.stroke, this.backgroundSurface, height),
     });
 
-    this.area.drawArea(points, this.curve, height);
+    this.area.drawArea(
+      points.map((d) => [d[0], height, d[1]]),
+      this.curve
+    );
     this.area.endFill();
 
     this.line.clear();

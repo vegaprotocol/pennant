@@ -3,8 +3,8 @@ import { curveLinear } from "d3-shape";
 import { Container } from "../../../renderer/display";
 import { Graphics } from "../../../renderer/graphics";
 import { ScaleLinear, ScaleTime } from "../../../types";
+import { PriceCurve } from "../../../ui/display-objects";
 import { Colors } from "../helpers";
-import { PriceCurve } from "./price-curve";
 
 type ContentsColors = Pick<
   Colors,
