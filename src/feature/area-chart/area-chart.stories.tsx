@@ -345,30 +345,6 @@ export const MortalityRates: ComponentStory<typeof AreaChart> = () => {
   );
 };
 
-export const MortalityRatesStacked: ComponentStory<typeof AreaChart> = () => {
-  const theme = useDarkMode() ? "dark" : "light";
-
-  const cols = ["Age", "UK", "UK-Scotland", "Scotland"] as const;
-  const rows = lineData.mortality_rates.map(
-    (d) => [d["Age"], ...cols.slice(1).map((col) => d[col])] as Row
-  );
-
-  return (
-    <div
-      style={{
-        resize: "both",
-        overflow: "scroll",
-        width: "600px",
-        height: "400px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <AreaChart data={{ cols, rows }} theme={theme} stacked />
-    </div>
-  );
-};
-
 export const FTSE: ComponentStory<typeof AreaChart> = () => {
   const theme = useDarkMode() ? "dark" : "light";
 

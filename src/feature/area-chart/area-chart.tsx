@@ -60,11 +60,6 @@ export type AreaChartProps<A> = {
   priceFormat?: (price: number) => string;
 
   /**
-   * If set to true, stacks the elements for all series at each domain value.
-   */
-  stacked?: boolean;
-
-  /**
    * Light or dark theme.
    */
   theme?: ThemeVariant;
@@ -88,7 +83,6 @@ export const AreaChart = <A,>({
   interactive = true,
   notEnoughDataText = "Not enough data",
   priceFormat = defaultPriceFormat,
-  stacked = false,
   theme = "dark",
   tooltip,
 }: AreaChartProps<A>) => {
