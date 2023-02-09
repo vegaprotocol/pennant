@@ -1,12 +1,15 @@
+import { ZeroVolumeCandles } from "../../components/chart/chart.stories";
 import { Annotation, DataSource, LabelAnnotation } from "../../types";
 import { Interval } from "../api/vega-graphql";
 import { parseVegaDecimal } from "../helpers";
 import json from "./data.json";
 import noChangeJson from "./no-change-data.json";
+import zeroVolumeCandlesJson from "./zero-volume-candles-data.json";
 
 const files = new Map([
   ["data.json", json],
   ["no-change-data.json", noChangeJson],
+  ["zero-volume-candles-data.json", zeroVolumeCandlesJson],
 ]);
 
 const initialAverageEntryPrice = 595 + Math.random();
@@ -107,6 +110,8 @@ export class JsonDataSource implements DataSource {
 
   async query(interval: Interval, _from: string, _to: string) {
     const data: any = files.get(this.filename);
+
+    console.log(data);
 
     const candles = data[interval].candles.map((d: any) =>
       extendCandle(d, this.decimalPlaces)

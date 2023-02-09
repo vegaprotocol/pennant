@@ -84,3 +84,12 @@ NoChange.args = {
   dataSource: new JsonDataSource("", 5, "no-change-data.json", false),
   interval: Interval.I1D,
 };
+
+export const ZeroVolumeCandles = Template.bind({});
+ZeroVolumeCandles.args = {
+  dataSource: new JsonDataSource("", 5, "zero-volume-candles-data.json", false),
+  interval: Interval.I5M,
+  options: {
+    studies: ["volume"],
+  },
+};
