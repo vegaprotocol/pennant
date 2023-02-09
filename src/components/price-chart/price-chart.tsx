@@ -1,18 +1,19 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { useEffect, useRef, useState } from "react";
 
+import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
-import { numberFormatter } from "../depth-chart";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
-import { Series, Tooltip } from "./components";
+import { Series, Tooltip, TooltipProps } from "./components";
 import { getColors } from "./helpers";
 import styles from "./price-chart.module.css";
 
-function defaultPriceFormat(price: number) {
-  return numberFormatter(2).format(price);
-}
+/**
+ * Add custom annotations to tooltip props.
+ */
+export type CustomTooltipProps<A> = TooltipProps & { annotations?: A[] };
 
 /**
  * A set of data points with the same x-axis location.
@@ -31,11 +32,22 @@ export interface Data {
   rows: Row[];
 }
 
-export type PriceChartProps = {
+export type PriceChartProps<A> = {
   /**
    * One or more data series.
    */
   data: Data;
+
+  /**
+   * An array the same length as `data["rows"]` where each element is an array of length equal to the number of series.
+   * Currently only used by custom tooltips which expect annotations of type `A`.
+   */
+  annotations?: A[][];
+
+  /**
+   * Whether to allow the user to pan and zoom.
+   */
+  interactive?: boolean;
 
   /**
    * Override the default text to display when there is not enough data.
@@ -43,19 +55,37 @@ export type PriceChartProps = {
   notEnoughDataText?: string;
 
   /**
+   * Used to format values on price axis.
+   */
+  priceFormat?: (price: number) => string;
+
+  /**
    * Light or dark theme.
    */
   theme?: ThemeVariant;
+
+  /**
+   * Override the default tooltip.
+   */
+  tooltip?: ({
+    date,
+    series,
+    annotations,
+  }: CustomTooltipProps<A>) => JSX.Element;
 };
 
 /**
  * Draw a historical price chart. Supports multiple line series.
  */
-export const PriceChart = ({
+export const PriceChart = <A,>({
   data,
+  annotations,
+  interactive = true,
   notEnoughDataText = "Not enough data",
+  priceFormat = defaultPriceFormat,
   theme = "dark",
-}: PriceChartProps) => {
+  tooltip,
+}: PriceChartProps<A>) => {
   /**
    * Where to render chart contents, e.g. line series.
    */
@@ -82,9 +112,8 @@ export const PriceChart = ({
   const tooltipRef = useRef<HTMLDivElement>(null!);
 
   // Tooltip state
-  // TODO: Combine into single state
-  const [date, setDate] = useState<Date>(new Date());
-  const [series, setSeries] = useState<Series[]>([]);
+  const [tooltipContent, setTooltipContent] =
+    useState<CustomTooltipProps<A> | null>(null);
 
   const {
     ref: resizeOberverRef,
@@ -104,12 +133,15 @@ export const PriceChart = ({
       resolution: window.devicePixelRatio,
       width: 300,
       height: 300,
+      priceFormat,
       colors,
     });
 
     chartRef.current
       .on("mousemove", (d) => {
         const point = d.point;
+
+        const rect = styleRef.current.getBoundingClientRect();
 
         const virtualEl = {
           getBoundingClientRect() {
@@ -126,8 +158,6 @@ export const PriceChart = ({
           },
         };
 
-        const rect = styleRef.current.getBoundingClientRect();
-
         computePosition(virtualEl, tooltipRef.current, {
           placement: "right",
           middleware: [offset(16), flip(), shift()],
@@ -140,21 +170,25 @@ export const PriceChart = ({
             visibility: "visible",
           });
 
-          setDate(d.date);
-          setSeries(d.series);
+          setTooltipContent({
+            date: d.date,
+            series: d.series,
+            annotations: annotations?.[d.index],
+          });
         });
       })
       .on("mouseout", () => {
         Object.assign(tooltipRef.current.style, {
           visibility: "hidden",
         });
+
+        setTooltipContent(null);
       });
 
     return () => {
       chartRef.current.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [annotations, priceFormat]);
 
   // Update chart when dimensions or data change
   useEffect(() => {
@@ -187,6 +221,10 @@ export const PriceChart = ({
     chartRef.current.reset();
   }, [data]);
 
+  useEffect(() => {
+    chartRef.current.interactive = interactive;
+  }, [interactive]);
+
   // There's nothing to render if we don't have at least two data points.
   if (data.rows.length < 2) {
     return (
@@ -203,7 +241,15 @@ export const PriceChart = ({
         <canvas ref={uiRef} className={styles.canvas} />
       </div>
       <div ref={tooltipRef} className={styles.tooltipContainer}>
-        <Tooltip date={date} series={series} />
+        {tooltipContent &&
+          (tooltip ? (
+            tooltip(tooltipContent)
+          ) : (
+            <Tooltip
+              date={tooltipContent.date}
+              series={tooltipContent.series}
+            />
+          ))}
       </div>
     </div>
   );

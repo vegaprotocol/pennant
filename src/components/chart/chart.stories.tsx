@@ -52,7 +52,26 @@ Positions.args = {
 };
 
 export const NoData = Template.bind({});
-NoData.args = { dataSource: new EmptyDataSource(), interval: Interval.I5M };
+NoData.args = {
+  dataSource: new EmptyDataSource(),
+  interval: Interval.I5M,
+  options: {
+    notEnoughDataText: (
+      <div style={{ height: "5rem" }}>
+        <span style={{ display: "block", fontSize: "2rem", color: "salmon" }}>
+          No
+        </span>{" "}
+        <span
+          style={{ fontSize: "1rem", color: "chocolate", marginTop: "-2rem" }}
+        >
+          any
+        </span>{" "}
+        <span style={{ fontSize: "2.5rem", color: "darkorange" }}>data</span>{" "}
+        <span style={{ fontSize: "3rem", color: "indianred" }}>☹</span>
+      </div>
+    ),
+  },
+};
 
 export const SimpleMode = Template.bind({});
 SimpleMode.args = {

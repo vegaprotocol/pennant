@@ -11,23 +11,26 @@ export class DepthCurve extends Container {
   private area: Graphics = new Graphics();
   private line: Graphics = new Graphics();
 
-  private stroke: number;
   private fill: number;
+  private stroke: number;
+  private width: number;
   private curve: CurveFactory;
 
   constructor(
-    stroke: number = 0,
     fill: number = 0xffffff,
+    stroke: number = 0,
+    width: number = 1,
     curve: CurveFactory = curveStepBefore
   ) {
     super();
 
-    this.stroke = stroke;
     this.fill = fill;
+    this.stroke = stroke;
+    this.width = width;
     this.curve = curve;
 
     this.area.lineStyle({ width: 0 });
-    this.line.lineStyle({ width: 1, color: stroke, alpha: 0.5 });
+    this.line.lineStyle({ width: width, color: stroke, alpha: 0.5 });
 
     this.addChild(this.area);
     this.addChild(this.line);
@@ -38,10 +41,12 @@ export class DepthCurve extends Container {
     height: number,
     resolution: number = 1,
     fill: number = 0xffffff,
-    stroke: number = 0
+    stroke: number = 0,
+    width: number = 1
   ): void {
     this.fill = fill;
     this.stroke = stroke;
+    this.width = width;
 
     this.area.clear();
     this.area.beginFill(this.fill, 1);
@@ -49,7 +54,7 @@ export class DepthCurve extends Container {
     this.area.endFill();
 
     this.line.clear();
-    this.line.lineStyle({ width: 1, color: this.stroke });
+    this.line.lineStyle({ width: this.width, color: this.stroke });
     this.line.drawLine(points, this.curve);
   }
 }

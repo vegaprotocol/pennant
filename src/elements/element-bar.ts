@@ -8,6 +8,7 @@ export type Bar = {
   height: number;
   fill: string;
   stroke: string;
+  lineWidth: number;
 };
 
 export class BarElement implements PositionalElement {
@@ -17,9 +18,10 @@ export class BarElement implements PositionalElement {
   readonly height: number;
   readonly fill: string;
   readonly stroke: string;
+  readonly lineWidth: number;
 
   constructor(cfg: any) {
-    const { x, y, width, height, fill, stroke } = cfg;
+    const { x, y, width, height, fill, stroke, lineWidth } = cfg;
 
     this.x = x;
     this.y = y;
@@ -27,6 +29,7 @@ export class BarElement implements PositionalElement {
     this.height = height;
     this.fill = fill;
     this.stroke = stroke;
+    this.lineWidth = lineWidth;
   }
 
   draw(
@@ -50,7 +53,7 @@ export class BarElement implements PositionalElement {
     ctx.fill();
 
     if (this.stroke) {
-      ctx.lineWidth = 1 / pixelRatio;
+      ctx.lineWidth = this.lineWidth / pixelRatio;
       ctx.strokeStyle = this.stroke;
       ctx.stroke();
     }

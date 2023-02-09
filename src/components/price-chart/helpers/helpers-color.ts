@@ -3,12 +3,12 @@ import { string2hex } from "../../../renderer/utils";
 
 export interface Colors {
   backgroundSurface: number;
-  buyFill: number;
-  buyStroke: number;
+  positiveFill: number;
+  positiveStroke: number;
   emphasis100: number;
   emphasis200: number;
-  sellFill: number;
-  sellStroke: number;
+  negativeFill: number;
+  negativeStroke: number;
   textPrimary: number;
   textSecondary: number;
   accent1: number;
@@ -28,14 +28,14 @@ export function getColors(element: HTMLElement | null): Colors {
         ?.getPropertyValue("--pennant-background-surface-color")
         .trim() || "#0a0a0a"
     ),
-    buyFill: string2hex(
+    positiveFill: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-depth-buy-fill")
+        ?.getPropertyValue("--pennant-color-price-positive-fill")
         .trim() || "#16452d"
     ),
-    buyStroke: string2hex(
+    positiveStroke: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-depth-buy-stroke")
+        ?.getPropertyValue("--pennant-color-price-positive-stroke")
         .trim() || "#26ff8a"
     ),
     emphasis100: string2hex(
@@ -48,14 +48,14 @@ export function getColors(element: HTMLElement | null): Colors {
         ?.getPropertyValue("--pennant-color-emphasis-200")
         .trim() || "ff268a"
     ),
-    sellFill: string2hex(
+    negativeFill: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-depth-sell-fill")
+        ?.getPropertyValue("--pennant-color-price-negative-fill")
         .trim() || "#800700"
     ),
-    sellStroke: string2hex(
+    negativeStroke: string2hex(
       cssStyleDeclaration
-        ?.getPropertyValue("--pennant-color-depth-sell-stroke")
+        ?.getPropertyValue("--pennant-color-price-negative-stroke")
         .trim() || "#ff261a"
     ),
     textPrimary: string2hex(

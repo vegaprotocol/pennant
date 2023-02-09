@@ -20,10 +20,10 @@ type ContentsColors = Pick<
   | "accent5"
   | "accent6"
   | "backgroundSurface"
-  | "buyFill"
-  | "buyStroke"
-  | "sellFill"
-  | "sellStroke"
+  | "positiveFill"
+  | "positiveStroke"
+  | "negativeFill"
+  | "negativeStroke"
 >;
 
 /**

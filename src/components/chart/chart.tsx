@@ -39,7 +39,7 @@ import {
 import { ErrorBoundary } from "../error-boundary";
 import { NonIdealState } from "../non-ideal-state";
 import { PlotContainer } from "../plot-container";
-import { Colors, getColors } from "./helpers";
+import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 
 const noop = () => {};
@@ -51,6 +51,7 @@ export type Options = {
   simple?: boolean;
   initialNumCandlesToDisplay?: number;
   initialNumCandlesToFetch?: number;
+  notEnoughDataText?: React.ReactNode | string;
 };
 
 export type ChartProps = {
@@ -92,8 +93,8 @@ export const Chart = forwardRef(
         initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY,
       initialNumCandlesToFetch:
         initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
+      notEnoughDataText,
     } = options;
-
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
         chartRef.current.panBy(n);
@@ -122,6 +123,11 @@ export const Chart = forwardRef(
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
+
+    const [dimensions, setDimensions] = useState<Dimensions>(
+      getDimensions(null)
+    );
+
     const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
@@ -169,10 +175,17 @@ export const Chart = forwardRef(
         parse(
           specification,
           getCandleWidth(internalInterval),
+          dimensions.strokeWidth,
           dataSource.decimalPlaces,
           annotations
         ),
-      [annotations, dataSource.decimalPlaces, internalInterval, specification]
+      [
+        annotations,
+        dataSource.decimalPlaces,
+        dimensions.strokeWidth,
+        internalInterval,
+        specification,
+      ]
     );
 
     // Initial data fetch and subscriptions
@@ -244,7 +257,10 @@ export const Chart = forwardRef(
 
     useEffect(() => {
       // Hack to ensure we pick up the changed css
-      requestAnimationFrame(() => setColors(getColors(styleRef?.current)));
+      requestAnimationFrame(() => {
+        setColors(getColors(styleRef?.current));
+        setDimensions(getDimensions(styleRef?.current));
+      });
     }, [theme]);
 
     const handleViewportChanged = useCallback(
@@ -303,7 +319,7 @@ export const Chart = forwardRef(
     if (!scenegraph) {
       return (
         <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
-          <NonIdealState title="No data found" />
+          <NonIdealState title={notEnoughDataText || "No data found"} />
         </div>
       );
     }

@@ -46,7 +46,8 @@ export function compileLayer(
   data: Data,
   encoding: Encoding<Field>,
   mark: Mark | MarkDef,
-  candleWidth: number
+  candleWidth: number,
+  lineWidth: number
 ) {
   let markType: string;
   let cfg = {};
@@ -91,7 +92,8 @@ export function compileLayer(
           encoding.y2?.field!,
           candleWidth,
           getConditionalColor(encoding.fill)(d),
-          getConditionalColor(encoding.stroke)(d)
+          getConditionalColor(encoding.stroke)(d),
+          lineWidth
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(
@@ -122,7 +124,8 @@ export function parseLayer(
   layer: BaseSpec,
   data: Data,
   encoding: Encoding<Field>,
-  candleWidth: number
+  candleWidth: number,
+  lineWidth: number
 ) {
   const series: any[] = [];
   let layerData = data;
@@ -138,14 +141,20 @@ export function parseLayer(
 
   if (layer?.mark) {
     series.push(
-      compileLayer(layerData, layerEncoding, layer.mark, candleWidth)
+      compileLayer(layerData, layerEncoding, layer.mark, candleWidth, lineWidth)
     );
   }
 
   if (layer?.layer) {
     for (const subLayer of layer.layer) {
       series.push(
-        ...parseLayer(subLayer, layerData, layerEncoding, candleWidth)
+        ...parseLayer(
+          subLayer,
+          layerData,
+          layerEncoding,
+          candleWidth,
+          lineWidth
+        )
       );
     }
   }
@@ -199,6 +208,7 @@ function extractYEncodingFields(layer: BaseSpec) {
 export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
+  lineWidth: number,
   decimalPlaces: number,
   annotations: Annotation[]
 ): Scenegraph | null {
@@ -337,7 +347,8 @@ export function parse(
               pane,
               { values: newData },
               specification.encoding ?? {},
-              candleWidth
+              candleWidth,
+              lineWidth
             ),
             bounds: calculateScales(
               pane,

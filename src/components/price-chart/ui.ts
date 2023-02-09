@@ -35,10 +35,10 @@ type UiColors = Pick<
   | "accent5"
   | "accent6"
   | "backgroundSurface"
-  | "buyStroke"
+  | "positiveStroke"
   | "emphasis100"
   | "emphasis200"
-  | "sellStroke"
+  | "negativeStroke"
   | "textPrimary"
   | "textSecondary"
 >;
@@ -58,6 +58,7 @@ export class UI extends EventEmitter {
   public stage: Container = new Container();
   public zoom: Zoom = new Zoom();
 
+  private _interactive = true;
   private data: Data = { cols: [], rows: [] };
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
@@ -88,12 +89,15 @@ export class UI extends EventEmitter {
   private startPriceLabel: Label = new Label();
   private hitBox: Container = new Container();
 
+  private priceFormat: (price: number) => string;
+
   constructor(options: {
     view: HTMLCanvasElement;
     resolution: number;
     width: number;
     height: number;
     colors: UiColors;
+    priceFormat: (price: number) => string;
   }) {
     super();
 
@@ -103,6 +107,8 @@ export class UI extends EventEmitter {
       width: options.width,
       height: options.height,
     });
+
+    this.priceFormat = options.priceFormat;
 
     this.colors = options.colors;
     this.horizontalAxis = new HorizontalAxis(this.renderer);
@@ -139,6 +145,7 @@ export class UI extends EventEmitter {
     );
 
     this.horizontalAxis
+      .on("zoomstart", this.onZoomStartHorizontalAxis)
       .on("zoom", this.onZoomHorizontalAxis)
       .on("dblclick", () => this.emit("reset"));
 
@@ -165,12 +172,14 @@ export class UI extends EventEmitter {
     data: Data,
     timeScale: ScaleTime,
     priceScale: ScaleLinear,
-    startPrice: number
+    startPrice: number,
+    priceFormat: (price: number) => string
   ): void {
     this.data = data;
     this.timeScale = timeScale;
     this.priceScale = priceScale;
     this.startPrice = startPrice;
+    this.priceFormat = priceFormat;
 
     const width = this.renderer.view.width;
     const height = this.renderer.view.height;
@@ -243,7 +252,7 @@ export class UI extends EventEmitter {
     const tickFormat = this.priceScale.tickFormat(numTicks);
 
     this.startPriceLabel.update(
-      tickFormat(startPrice),
+      priceFormat(startPrice),
       resolution * this.renderer.screen.width - resolution * 7,
       priceScale(startPrice),
       { x: 1, y: 0.5 },
@@ -301,131 +310,151 @@ export class UI extends EventEmitter {
   }
 
   private onWheel = (event: InteractionEvent) => {
-    const tempEvent = event.data?.originalEvent as WheelEvent;
-    const resolution = this.renderer.resolution;
-    const p = pointer(tempEvent, resolution);
+    if (this._interactive) {
+      const tempEvent = event.data?.originalEvent as WheelEvent;
+      const resolution = this.renderer.resolution;
+      const p = pointer(tempEvent, resolution);
 
-    this.isZooming = true;
-    this.hideTooltips();
-    this.emit("mouseout");
+      this.isZooming = true;
+      this.hideTooltips();
+      this.emit("mouseout");
 
-    if (this.gesture.wheel) {
-      window.clearTimeout(this.gesture.wheel);
-    } else {
-      this.gesture.mouse = [p, p];
-      this.gesture.start();
-    }
-
-    this.gesture.wheel = window.setTimeout(() => {
-      this.isZooming = false;
-
-      if (this.lastEvent) {
-        this.onPointerMove(this.lastEvent);
+      if (this.gesture.wheel) {
+        window.clearTimeout(this.gesture.wheel);
+      } else {
+        this.gesture.mouse = [p, p];
+        this.gesture.start(this.zoom.__zoom);
       }
 
-      this.gesture.wheel = null;
-      this.gesture.end();
-    }, 150);
+      this.gesture.wheel = window.setTimeout(() => {
+        this.isZooming = false;
 
-    this.zoom.wheeled(
-      -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
-      this.gesture.mouse[0] ?? [0, 0],
-      [
-        [0, 0],
-        [100, 100],
-      ]
-    );
+        if (this.lastEvent) {
+          this.onPointerMove(this.lastEvent);
+        }
 
-    const transform = this.zoom.__zoom;
-    const k = transform.k / this.lastTimeZoomTransform.k;
+        this.gesture.wheel = null;
+        this.gesture.end();
+      }, 150);
 
-    if (k === 1) {
-      this.timeZoom.scaleBy(
-        Math.pow(
-          2,
-          -(transform.x - this.lastTimeZoomTransform.x) /
-            1 /
-            (this.timeScale.range()[1] - this.timeScale.range()[0])
-        ),
-        [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
+      this.zoom.wheeled(
+        -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
+        this.gesture.mouse[0] ?? [0, 0],
+        [
+          [0, 0],
+          [100, 100],
+        ]
       );
-    } else {
-      this.timeZoom.scaleBy(k, [
-        (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
-        0,
-      ]);
-    }
 
-    this.lastTimeZoomTransform = transform;
-    this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
+      const transform = this.zoom.__zoom;
+      const k = transform.k / this.lastTimeZoomTransform.k;
+
+      if (k === 1) {
+        this.timeZoom.scaleBy(
+          Math.pow(
+            2,
+            -(transform.x - this.lastTimeZoomTransform.x) /
+              1 /
+              (this.timeScale.range()[1] - this.timeScale.range()[0])
+          ),
+          [
+            Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+            0,
+          ]
+        );
+      } else {
+        this.timeZoom.scaleBy(k, [
+          (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+          0,
+        ]);
+      }
+
+      this.lastTimeZoomTransform = transform;
+      this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
+    }
   };
 
   private onPointerDown = (event: InteractionEvent) => {
-    const resolution = this.renderer.resolution;
-    const p = pointer(event.data?.originalEvent, resolution);
+    if (this._interactive) {
+      const resolution = this.renderer.resolution;
+      const p = pointer(event.data?.originalEvent, resolution);
 
-    this.firstPoint = p ?? [0, 0];
-
-    if (event.data?.identifier) {
-      this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
-    }
-
-    this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
-    this.gesture.start();
-    this.isZooming = true;
-    this.hideTooltips();
-    this.emit("mouseout");
-    this.hitBox.cursor = "grabbing";
-    this.render();
-
-    const handleMouseMove = (event: any) => {
-      event.preventDefault();
-
-      this.gesture.mouse[0] = pointer(event, resolution);
-
-      if (this.gesture.mouse[1]) {
-        this.gesture.zoom(
-          this.zoom.constrain(
-            this.zoom.translate(
-              this.zoom.__zoom,
-              this.gesture.mouse[0],
-              this.gesture.mouse[1]
-            ),
-            [
-              [0, 0],
-              [100, 100],
-            ],
-            this.zoom.translateExtent
-          ),
-          this.firstPoint!
-        );
-      }
-    };
-
-    const handleMouseUp = (event: any) => {
-      event.preventDefault();
-
-      this.hitBox.cursor = "default";
-
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      this.firstPoint = p ?? [0, 0];
 
       if (event.data?.identifier) {
-        this.renderer.context.canvas.releasePointerCapture(
-          event.data?.identifier
-        );
+        this.renderer.context.canvas.setPointerCapture(event.data?.identifier);
       }
 
-      this.gesture.end();
-      this.isZooming = false;
+      this.gesture.mouse = [p, this.zoom.__zoom.invert(p)];
+      this.gesture.start(
+        this.zoom.constrain(
+          this.zoom.translate(
+            this.zoom.__zoom,
+            this.gesture.mouse[0],
+            this.gesture.mouse[1]
+          ),
+          [
+            [0, 0],
+            [100, 100],
+          ],
+          this.zoom.translateExtent
+        )
+      );
+      this.isZooming = true;
+      this.hideTooltips();
+      this.emit("mouseout");
+      this.hitBox.cursor = "grabbing";
+      this.render();
 
-      if (this.lastEvent) {
-        this.onPointerMove(this.lastEvent);
-      }
-    };
+      const handleMouseMove = (event: any) => {
+        event.preventDefault();
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+        this.gesture.mouse[0] = pointer(event, resolution);
+
+        if (this.gesture.mouse[1]) {
+          this.gesture.zoom(
+            this.zoom.constrain(
+              this.zoom.translate(
+                this.zoom.__zoom,
+                this.gesture.mouse[0],
+                this.gesture.mouse[1]
+              ),
+              [
+                [0, 0],
+                [100, 100],
+              ],
+              this.zoom.translateExtent
+            ),
+            this.firstPoint!
+          );
+        }
+      };
+
+      const handleMouseUp = (event: any) => {
+        event.preventDefault();
+
+        this.hitBox.cursor = "default";
+
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+
+        if (event.data?.identifier) {
+          this.renderer.context.canvas.releasePointerCapture(
+            event.data?.identifier
+          );
+        }
+
+        this.gesture.end();
+        this.isZooming = false;
+
+        if (this.lastEvent) {
+          this.onPointerMove(this.lastEvent);
+        }
+      };
+
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
   };
 
   private onPointerMove = (event: InteractionEvent) => {
@@ -473,8 +502,8 @@ export class UI extends EventEmitter {
             this.priceScale(nearestX[i + 1]),
             this.data.cols.length === 2
               ? nearestX[i + 1] > this.startPrice
-                ? this.colors.buyStroke
-                : this.colors.sellStroke
+                ? this.colors.positiveStroke
+                : this.colors.negativeStroke
               : (this.colors as any)[`accent${i + 1}`]
           );
         } else {
@@ -482,11 +511,8 @@ export class UI extends EventEmitter {
         }
       }
 
-      const numTicks = height / resolution / 50;
-      const tickFormat = this.priceScale.tickFormat(numTicks);
-
       this.priceLabel.update(
-        tickFormat(this.priceScale.invert(resolution * y)),
+        this.priceFormat(this.priceScale.invert(resolution * y)),
         width - resolution * 7,
         resolution * y,
         { x: 1, y: 0.5 },
@@ -508,17 +534,18 @@ export class UI extends EventEmitter {
       // TODO: This is just a hack to see what this looks like
       if (!this.isZooming) {
         this.emit("mousemove", {
+          index,
           point: [this.timeScale(nearestX[0]) / resolution, y],
           date: nearestX[0],
           series: range(0, this.data.cols.length - 1).map((i) => ({
             color:
               this.data.cols.length === 2
                 ? nearestX[i + 1] > this.startPrice
-                  ? hex2string(this.colors.buyStroke)
-                  : hex2string(this.colors.sellStroke)
+                  ? hex2string(this.colors.positiveStroke)
+                  : hex2string(this.colors.negativeStroke)
                 : hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data.cols[i + 1],
-            value: (nearestX[i + 1] as number).toFixed(2),
+            value: this.priceFormat(nearestX[i + 1] as number),
           })),
         });
       } else {
@@ -527,6 +554,10 @@ export class UI extends EventEmitter {
 
       this.lastEvent = event;
     }
+  };
+
+  private onZoomStartHorizontalAxis = (transform: ZoomTransform) => {
+    this.emit("zoomstart.horizontalAxis", transform);
   };
 
   private onZoomHorizontalAxis = ({
@@ -543,7 +574,6 @@ export class UI extends EventEmitter {
         Math.pow(
           2,
           -(transform.x - this.lastTimeZoomTransform.x) /
-            1 /
             (this.timeScale.range()[1] - this.timeScale.range()[0])
         ),
         [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
@@ -608,4 +638,10 @@ export class UI extends EventEmitter {
     this.lastEvent = null;
     this.render();
   };
+
+  set interactive(interactive: boolean) {
+    this._interactive = interactive;
+    this.horizontalAxis.interactive = interactive;
+    this.verticalAxis.interactive = interactive;
+  }
 }

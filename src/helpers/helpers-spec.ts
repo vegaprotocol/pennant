@@ -154,7 +154,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
         {
           encoding: {
             y: { field: "bullPower", type: "quantitative" },
-            fill: { value: "green" },
+            fill: { value: colors.eldarRayBullPower },
           },
           mark: {
             type: "bar",
@@ -163,7 +163,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
         {
           encoding: {
             y: { field: "bearPower", type: "quantitative" },
-            fill: { value: "red" },
+            fill: { value: colors.eldarRayBearPower },
           },
           mark: {
             type: "bar",
@@ -178,7 +178,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: colors.accent1,
+            color: colors.forceIndex,
           },
         },
       ];
@@ -190,9 +190,9 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
             fill: {
               condition: {
                 test: { field: "divergence", gt: 0 },
-                value: colors.buyFill,
+                value: colors.macdDivergenceBuy,
               },
-              value: colors.sellFill,
+              value: colors.macdDivergenceSell,
             },
           },
           mark: {
@@ -205,7 +205,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: colors.vegaOrange,
+            color: colors.macdSignal,
           },
         },
         {
@@ -214,7 +214,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: "#009cff",
+            color: colors.macdMacd,
           },
         },
       ];
@@ -226,7 +226,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
           },
           mark: {
             type: "line",
-            color: colors.accent1,
+            color: colors.relativeStrengthIndex,
           },
         },
       ];
@@ -235,7 +235,7 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
         {
           encoding: {
             y: { field: "volume", type: "quantitative" },
-            fill: { value: colors.emphasis400 },
+            fill: { value: colors.volume },
           },
           mark: {
             type: "bar",

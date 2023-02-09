@@ -30,6 +30,7 @@ export class Chart extends EventEmitter {
   private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
 
   private _data: Data = { cols: [], rows: [] };
+  private priceFormat: (price: number) => string;
   private _colors: Colors;
 
   constructor(options: {
@@ -38,10 +39,12 @@ export class Chart extends EventEmitter {
     resolution: number;
     width: number;
     height: number;
+    priceFormat: (price: number) => string;
     colors: Colors;
   }) {
     super();
 
+    this.priceFormat = options.priceFormat;
     this._colors = options.colors;
 
     this.contents = new Contents({
@@ -58,6 +61,7 @@ export class Chart extends EventEmitter {
       width: options.width,
       height: options.height,
       colors: options.colors,
+      priceFormat: this.priceFormat,
     });
 
     this.ui
@@ -66,6 +70,7 @@ export class Chart extends EventEmitter {
       .on("zoomend", this.onZoomEnd)
       .on("mousemove", this.onMouseMove)
       .on("mouseout", this.onMouseOut)
+      .on("zoomstart.horizontalAxis", this.onZoomStartHorizontalAxis)
       .on("zoom.horizontalAxis", this.onZoomHorizontalAxis)
       .on("zoom.verticalAxis", this.onZoomVerticalAxis)
       .on("reset", () => this.reset());
@@ -130,10 +135,11 @@ export class Chart extends EventEmitter {
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, yr, this._data.rows[0][1]);
+    this.ui.update(this._data, xr, yr, this._data.rows[0][1], this.priceFormat);
   }
 
-  private onZoomStart = () => {
+  private onZoomStart = (t: ZoomTransform) => {
+    this.lastTimeZoomTransform = t;
     this.emit("zoomstart");
   };
 
@@ -142,7 +148,7 @@ export class Chart extends EventEmitter {
   };
 
   private onZoom = ({ transform: t }: { transform: ZoomTransform }) => {
-    const k = this.lastTimeZoomTransform.k;
+    const k = this.timeZoom.__zoom.k;
     const x = t.x - this.lastTimeZoomTransform.x;
 
     this.timeZoom.translateBy(x / k, 0);
@@ -155,6 +161,10 @@ export class Chart extends EventEmitter {
 
   private onMouseMove = (d: any) => this.emit("mousemove", d);
   private onMouseOut = () => this.emit("mouseout");
+
+  private onZoomStartHorizontalAxis = (t: ZoomTransform) => {
+    this.lastTimeZoomTransform = t;
+  };
 
   private onZoomHorizontalAxis = (
     t: ZoomTransform,
@@ -227,15 +237,17 @@ export class Chart extends EventEmitter {
       this.priceScale.range([0, this.height - resolution * AXIS_HEIGHT]);
       this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
 
-      /*       this.timeZoom.extent = [
+      this.timeZoom.extent = [
         [0, 0],
-        [this.width / resolution, this.height],
-      ]; */
+        [this.width - resolution * AXIS_WIDTH, this.height],
+      ];
 
-      /*       this.timeZoom.translateExtent = [
+      this.timeZoom.scaleExtent = [1, 10];
+
+      this.timeZoom.translateExtent = [
         [this.timeScale(data.rows[0][0]), -Infinity],
         [this.timeScale(data.rows[data.rows.length - 1][0]), Infinity],
-      ]; */
+      ];
     }
 
     this.update();
@@ -248,5 +260,9 @@ export class Chart extends EventEmitter {
 
   get width(): number {
     return this.contents.renderer.view.width;
+  }
+
+  set interactive(interactive: boolean) {
+    this.ui.interactive = interactive;
   }
 }

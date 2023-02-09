@@ -7,26 +7,13 @@ import React, {
   useRef,
 } from "react";
 
+import { defaultPriceFormat, numberFormatter } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { NonIdealState } from "../non-ideal-state";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
-import { getColors } from "./helpers";
-
-/**
- * Creates a number formatter
- * @param decimalPlaces Number of decimal places to display
- */
-export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
-  new Intl.NumberFormat("en-gb", {
-    maximumFractionDigits: decimalPlaces,
-    minimumFractionDigits: decimalPlaces,
-  });
-
-function defaultPriceFormat(price: number) {
-  return numberFormatter(2).format(price);
-}
+import { getColors, getDimensions } from "./helpers";
 
 function defaultVolumeFormat(volume: number) {
   return numberFormatter(0).format(volume);
@@ -49,15 +36,34 @@ export type PriceLevel = {
 
 export type DepthChartProps = {
   data: { buy: PriceLevel[]; sell: PriceLevel[] };
-  /** Used to format values on price axis */
+
+  /**
+   *  Used to format values on price axis.
+   */
   priceFormat?: (price: number) => string;
-  /** Used to format values volume axis */
+
+  /**
+   * Used to format values volume axis,
+   */
   volumeFormat?: (price: number) => string;
-  /** Indicative price if the auction ended now, 0 if not in auction mode */
+
+  /**
+   * Indicative price if the auction ended now, 0 if not in auction mode.
+   */
   indicativePrice?: number;
-  /** Arithmetic average of the best bid price and best offer price. */
+
+  /**
+   *  Arithmetic average of the best bid price and best offer price.
+   */
   midPrice?: number;
-  /** Light or dark theme */
+  /**
+   * Override the default text to display when there is not enough data.
+   */
+  notEnoughDataText?: React.ReactNode | string;
+
+  /**
+   * Light or dark theme
+   */
   theme?: ThemeVariant;
 };
 
@@ -81,6 +87,7 @@ export const DepthChart = forwardRef(
       volumeFormat = defaultVolumeFormat,
       indicativePrice = 0,
       midPrice = 0,
+      notEnoughDataText = "No data",
       theme = "dark",
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>
@@ -103,6 +110,7 @@ export const DepthChart = forwardRef(
      */
     useEffect(() => {
       const colors = getColors(styleRef?.current);
+      const dimensions = getDimensions(styleRef?.current);
 
       chartRef.current = new Chart({
         chartView: contentsRef.current,
@@ -113,6 +121,7 @@ export const DepthChart = forwardRef(
         priceFormat,
         volumeFormat,
         colors,
+        dimensions,
       });
 
       return () => {
@@ -151,9 +160,10 @@ export const DepthChart = forwardRef(
     }, [midPrice]);
 
     useEffect(() => {
-      requestAnimationFrame(
-        () => (chartRef.current.colors = getColors(styleRef?.current))
-      );
+      requestAnimationFrame(() => {
+        chartRef.current.colors = getColors(styleRef?.current);
+        chartRef.current.dimensions = getDimensions(styleRef?.current);
+      });
     }, [theme]);
 
     useImperativeHandle(ref, () => ({
@@ -168,7 +178,7 @@ export const DepthChart = forwardRef(
     if (data.buy.length === 0 && data.sell.length === 0) {
       return (
         <div ref={styleRef} className={styles.container} data-theme={theme}>
-          <NonIdealState title="No data" />
+          <NonIdealState title={notEnoughDataText} />
         </div>
       );
     }

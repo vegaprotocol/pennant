@@ -107,3 +107,17 @@ export function tickFormat(ticks: Date[], interval: Interval) {
     }
   }
 }
+
+/**
+ * Creates a number formatter
+ * @param decimalPlaces Number of decimal places to display
+ */
+export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
+  new Intl.NumberFormat("en-gb", {
+    maximumFractionDigits: decimalPlaces,
+    minimumFractionDigits: decimalPlaces,
+  });
+
+export function defaultPriceFormat(price: number) {
+  return numberFormatter(2).format(price);
+}

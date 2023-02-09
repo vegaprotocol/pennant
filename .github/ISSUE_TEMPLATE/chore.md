@@ -1,11 +1,11 @@
 ---
 name: Chore
-about: A template to capture non feature / enhancement work we need to do like work
+about:
+  A template to capture non feature / enhancement work we need to do like work
   to support other functions or housekeeping etc.
-title: ''
+title: ""
 labels: chore
-assignees: ''
-
+assignees: ""
 ---
 
 ## The Chore
