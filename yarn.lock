@@ -2767,6 +2767,11 @@
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.14.tgz#ae8360c8feb19935fdd5fef617bb8fadac99eae5"
   integrity sha512-MT++a/OSGui8tMpo5dEogrTV/PJCsHuhXTmdsGQtzivlLwBAp1XKe/Np4vaX6seJqRgR0oyXgS9kVvomCl463Q==
 
+"@blueprintjs/colors@^4.1.15":
+  version "4.1.15"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.15.tgz#745217581640a1f5fdb4c0d767fde608a7de2887"
+  integrity sha512-iOwfwE3tOXiM+dmwkdK7fY6dCGqg7yBLYAUHrmPUeYscrqZ8gJqUXAtDumuWMoLvm1SEz5SVIEfm16QnHd4efw==
+
 "@blueprintjs/core@4.15.1", "@blueprintjs/core@^4.15.1":
   version "4.15.1"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.15.1.tgz#eb7e20ee73b2d49f1d30d114bd2b2ee0ae2485f7"
@@ -2774,6 +2779,23 @@
   dependencies:
     "@blueprintjs/colors" "^4.1.14"
     "@blueprintjs/icons" "^4.13.1"
+    "@juggle/resize-observer" "^3.4.0"
+    "@types/dom4" "^2.0.2"
+    classnames "^2.3.1"
+    dom4 "^2.1.5"
+    normalize.css "^8.0.1"
+    popper.js "^1.16.1"
+    react-popper "^1.3.11"
+    react-transition-group "^4.4.5"
+    tslib "~2.3.1"
+
+"@blueprintjs/core@^4.16.0":
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.16.0.tgz#0d9bd9427c8300dc102a9fa7fa2ea12bbebd22b6"
+  integrity sha512-GGu27epYPmpUGhWeRGxOwwMQpc2JZ1WbzvpDykIYjKqUMZNONwV/EwOG+bbYwlyyp7OWTul9oMI4Qx5IOxBz8g==
+  dependencies:
+    "@blueprintjs/colors" "^4.1.15"
+    "@blueprintjs/icons" "^4.13.2"
     "@juggle/resize-observer" "^3.4.0"
     "@types/dom4" "^2.0.2"
     classnames "^2.3.1"
@@ -2793,7 +2815,16 @@
     classnames "^2.3.1"
     tslib "~2.3.1"
 
-"@blueprintjs/popover2@1.12.1", "@blueprintjs/popover2@^1.12.1":
+"@blueprintjs/icons@^4.13.2":
+  version "4.13.2"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.13.2.tgz#df748957984a4f22988136f89aaaf4c686c100bb"
+  integrity sha512-BxDSkpF2YCyGwcl2Ke4JX+UdQP++s/PKYeYt7SmllZaIXY/sEws3fgop9EfN0kfKGofv9k1VwU/F4uGNRJz/5A==
+  dependencies:
+    change-case "^4.1.2"
+    classnames "^2.3.1"
+    tslib "~2.3.1"
+
+"@blueprintjs/popover2@1.12.1":
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.12.1.tgz#1326184798f82c270af5bf4963744bc0b0bd846d"
   integrity sha512-N31OAB0JTzLqFBdmSD+AZMpXeVRoIi7MO1qOfUzCVfcoTJnIiJEMhnjpnU3r4IXk5T2csfjiuYE+wNQ4VsV7+w==
@@ -2806,13 +2837,26 @@
     react-popper "^2.3.0"
     tslib "~2.3.1"
 
-"@blueprintjs/select@4.8.18":
-  version "4.8.18"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-4.8.18.tgz#fbc769d0dbfb70268fbded1ddb1e2718ddcc07ce"
-  integrity sha512-ogFz7HRF7npUew7+A9ZQDzeVxxSa6P8+WtWHqtOZ9OQEqykDvlFz06XW6EwxTWbpiH5+5RWXTQuxhaaYNAWwTQ==
+"@blueprintjs/popover2@^1.13.0":
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.13.0.tgz#33e47350757aa5741c96eec1c30d12f7765b70c4"
+  integrity sha512-hXQppZCZ5SAu0ZEBA7BoB7WKBNtNGOwx+Bfkp2PdqKUzc2q9wYG7KQXnPKstx1dwhosov1FNuBTz6FsdYlr0pg==
   dependencies:
-    "@blueprintjs/core" "^4.15.1"
-    "@blueprintjs/popover2" "^1.12.1"
+    "@blueprintjs/core" "^4.16.0"
+    "@juggle/resize-observer" "^3.4.0"
+    "@popperjs/core" "^2.11.6"
+    classnames "^2.3.1"
+    dom4 "^2.1.5"
+    react-popper "^2.3.0"
+    tslib "~2.3.1"
+
+"@blueprintjs/select@4.9.0":
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-4.9.0.tgz#1834f41b4739f8221fd8d739ec3601c2c2efd0a7"
+  integrity sha512-UPByhVaqzpdDPFbQyjd445Yvyd7WK0WMv+9tosrQsVyxmkdoCKr1F3YZE0MNBz1Vb0OLxp9Au6yy6oyw64ok5A==
+  dependencies:
+    "@blueprintjs/core" "^4.16.0"
+    "@blueprintjs/popover2" "^1.13.0"
     classnames "^2.3.1"
     tslib "~2.3.1"
 
