@@ -197,7 +197,14 @@ describe("constructTopLevelSpec", () => {
             {
               encoding: {
                 fill: {
-                  value: "#d9822b",
+                  condition: {
+                    test: {
+                      field: "open",
+                      lt: "close",
+                    },
+                    value: "#26ff8a",
+                  },
+                  value: "#ff261a",
                 },
                 y: { field: "volume", type: "quantitative" },
               },
