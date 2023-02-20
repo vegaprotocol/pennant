@@ -1,11 +1,12 @@
 import { babel, getBabelOutputPlugin } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
+import { readFileSync } from "fs";
 import path from "path";
 import postcss from "rollup-plugin-postcss";
-import { terser } from "rollup-plugin-terser";
 
-import * as meta from "./package.json";
+const meta = JSON.parse(readFileSync("./package.json"));
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
@@ -21,6 +22,7 @@ const config = {
     {
       file: meta.main,
       format: "cjs",
+      globals,
       plugins: [
         getBabelOutputPlugin({
           presets: ["@babel/preset-env"],
@@ -39,17 +41,12 @@ const config = {
       extensions,
       plugins: ["@babel/plugin-transform-runtime"],
       presets: [
-        [
-          "@babel/preset-react",
-          {
-            runtime: "automatic",
-          },
-        ],
+        "@babel/preset-react",
         ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
       ],
       babelHelpers: "runtime",
     }),
-    terser(),
+    terser({ mangle: false }),
   ],
 };
 
