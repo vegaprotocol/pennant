@@ -84,6 +84,7 @@ const jestConfig = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "^.+\\.(css|less|scss)$": "babel-jest",
+    "^@ui/components$": "<rootDir>/src/ui/components",
     "^@ui/core$": "<rootDir>/src/ui/core",
     "^@ui/display-objects$": "<rootDir>/src/ui/display-objects",
     "^@ui/elements$": "<rootDir>/src/ui/elements",

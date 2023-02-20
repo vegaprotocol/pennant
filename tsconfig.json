@@ -20,6 +20,7 @@
     "declarationDir": "dist/types",
     "baseUrl": ".",
     "paths": {
+      "@ui/components": ["src/ui/components/index.ts"],
       "@ui/core": ["src/ui/core/index.ts"],
       "@ui/display-objects": ["src/ui/display-objects/index.ts"],
       "@ui/elements": ["src/ui/elements/index.ts"],

@@ -2,6 +2,7 @@ import "allotment/dist/style.css";
 import "../../styles/variables.css";
 import "./candlestick-chart.css";
 
+import { ErrorBoundary, NonIdealState, PlotContainer } from "@ui/components";
 import {
   constructTopLevelSpec,
   getCandleWidth,
@@ -31,11 +32,6 @@ import {
   ThemeVariant,
   Viewport,
 } from "../../types";
-import {
-  ErrorBoundary,
-  NonIdealState,
-  PlotContainer,
-} from "../../ui/components";
 import {
   INITIAL_NUM_CANDLES_TO_DISPLAY,
   INITIAL_NUM_CANDLES_TO_FETCH,
