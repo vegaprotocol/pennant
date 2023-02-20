@@ -13,6 +13,7 @@ import {
   getSubMinutes,
   mergeData,
 } from "@util/misc";
+import { parse } from "@util/scenegraph";
 import { dispatch } from "d3-dispatch";
 import React, {
   forwardRef,
@@ -36,7 +37,6 @@ import {
   ThemeVariant,
   Viewport,
 } from "../../types";
-import { parse } from "../../util/scenegraph/parse";
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 

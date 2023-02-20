@@ -92,6 +92,7 @@ const jestConfig = {
     "^@util/constants$": "<rootDir>/src/util/constants",
     "^@util/hooks$": "<rootDir>/src/util/hooks",
     "^@util/misc$": "<rootDir>/src/util/misc",
+    "^@util/scenegraph$": "<rootDir>/src/scenegraph/misc",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

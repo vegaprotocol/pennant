@@ -27,7 +27,8 @@
       "@ui/renderer": ["src/ui/renderer/index.ts"],
       "@util/constants": ["src/util/constants/index.ts"],
       "@util/hooks": ["src/util/hooks/index.ts"],
-      "@util/misc": ["src/util/misc/index.ts"]
+      "@util/misc": ["src/util/misc/index.ts"],
+      "@util/scenegraph": ["src/util/scenegraph/index.ts"]
     }
   },
   "include": ["src"]
