@@ -1,4 +1,5 @@
-import { align, alignSpan } from "../helpers";
+import { align, alignSpan } from "@util/misc";
+
 import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Rule = {

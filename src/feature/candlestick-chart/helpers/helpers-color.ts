@@ -1,4 +1,4 @@
-import { COLORS } from "../../../helpers";
+import { COLORS } from "@util/misc";
 
 export interface Colors {
   buyFill: string;

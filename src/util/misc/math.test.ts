@@ -1,4 +1,4 @@
-import { calculateShiftedPositions } from "./helpers-math";
+import { calculateShiftedPositions } from "./math";
 
 describe("calculateShiftedPositions", () => {
   test("simple examples", () => {

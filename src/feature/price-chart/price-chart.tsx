@@ -1,7 +1,7 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
+import { defaultPriceFormat } from "@util/misc";
 import { useEffect, useRef, useState } from "react";
 
-import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { NonIdealState, Tooltip, TooltipProps } from "../../ui/components";

@@ -1,11 +1,14 @@
-import { Colors, getAccentColor } from "../feature/candlestick-chart/helpers";
-import { Candle, ChartType, Overlay, Study } from "../types";
-import { BaseSpec, TopLevelSpec } from "../util/vega-lite/spec";
-import { Transform } from "../util/vega-lite/transform";
+import {
+  Colors,
+  getAccentColor,
+} from "../../feature/candlestick-chart/helpers";
+import { Candle, ChartType, Overlay, Study } from "../../types";
+import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
+import { Transform } from "../vega-lite/transform";
 import {
   indicatorAbsoluteChange,
   indicatorPercentageChange,
-} from "./helpers-technical-indicators";
+} from "./technical-indicators";
 
 function constructMainLayerSpec(
   chartType: ChartType,

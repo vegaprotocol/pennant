@@ -1,6 +1,4 @@
-import { constructTopLevelSpec } from "../../helpers";
 import { Renderer, Texture } from "../core";
-import { CanvasResource } from "../core/textures/resources/canvas-resource";
 import { Rectangle } from "../math";
 import { settings } from "../settings";
 import { Sprite } from "../sprite";

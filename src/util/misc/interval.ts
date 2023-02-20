@@ -1,6 +1,6 @@
 import { differenceInMinutes, format } from "date-fns";
 
-import { Interval } from "../types";
+import { Interval } from "../../types";
 
 export type GQLInterval = keyof typeof Interval;
 

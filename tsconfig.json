@@ -17,7 +17,11 @@
     "jsx": "react-jsx",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "dist/types"
+    "declarationDir": "dist/types",
+    "baseUrl": ".",
+    "paths": {
+      "@util/misc": ["src/util/misc/index.ts"]
+    }
   },
   "include": ["src"]
 }

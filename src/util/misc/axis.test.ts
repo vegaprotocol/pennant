@@ -1,4 +1,4 @@
-import { getNumXTicks, getNumYTicks } from ".";
+import { getNumXTicks, getNumYTicks } from "./axis";
 
 describe("getNumXTicks", () => {
   test("Expect minimum value", () => {

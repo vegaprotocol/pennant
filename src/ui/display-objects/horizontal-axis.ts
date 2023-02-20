@@ -1,5 +1,6 @@
+import { range } from "@util/misc";
+
 import { Colors } from "../../feature/depth-chart/helpers";
-import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { Graphics } from "../../renderer/graphics";

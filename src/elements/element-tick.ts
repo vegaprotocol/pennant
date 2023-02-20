@@ -1,4 +1,5 @@
-import { align } from "../helpers";
+import { align } from "@util/misc";
+
 import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export class TickElement implements PositionalElement {

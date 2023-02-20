@@ -1,4 +1,4 @@
-import { string2num } from "../../../helpers/helpers-string";
+import { string2num } from "@util/misc";
 
 export interface Dimensions {
   strokeWidth: number;

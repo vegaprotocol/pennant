@@ -1,11 +1,11 @@
-import { Interval } from "../types";
+import { Interval } from "../../types";
 import {
   getCandlesCount,
   getSubMinutes,
   getTimeFormat,
   GQLInterval,
   parseInterval,
-} from "./helpers-interval";
+} from "./interval";
 
 describe("interval", () => {
   describe("parseInterval", () => {

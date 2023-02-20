@@ -1,5 +1,5 @@
-import { tickFormat } from "../helpers";
-import { getNumXTicks } from "../helpers/helpers-axis";
+import { getNumXTicks, tickFormat } from "@util/misc";
+
 import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "../util/constants";
 

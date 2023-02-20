@@ -1,4 +1,5 @@
-import { COLORS } from "../../../helpers";
+import { COLORS } from "@util/misc";
+
 import { string2hex } from "../../../renderer/utils";
 
 export interface Colors {

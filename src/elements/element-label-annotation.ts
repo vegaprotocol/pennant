@@ -1,7 +1,7 @@
+import { calculateShiftedPositions } from "@util/misc";
 import { sum } from "d3-array";
 
 import { Colors } from "../feature/candlestick-chart/helpers";
-import { calculateShiftedPositions } from "../helpers";
 import {
   LabelAnnotation,
   RenderableElement,

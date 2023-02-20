@@ -1,7 +1,5 @@
-import { max, min } from "d3-array";
-import { Series } from "d3-shape";
+import { range } from "@util/misc";
 
-import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";

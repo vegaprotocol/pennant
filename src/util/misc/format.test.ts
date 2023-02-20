@@ -1,5 +1,5 @@
-import { Interval } from "../types";
-import { dateFormat, tickFormat } from "./helpers-format";
+import { Interval } from "../../types";
+import { dateFormat, tickFormat } from "./format";
 
 describe("dateFormat", () => {
   test("I1H", () => {

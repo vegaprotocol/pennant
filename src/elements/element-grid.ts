@@ -1,4 +1,5 @@
-import { align, getNumXTicks, getNumYTicks } from "../helpers";
+import { align, getNumXTicks, getNumYTicks } from "@util/misc";
+
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";
 

@@ -2,6 +2,12 @@ import "allotment/dist/style.css";
 import "../../styles/variables.css";
 import "./candlestick-chart.css";
 
+import {
+  constructTopLevelSpec,
+  getCandleWidth,
+  getSubMinutes,
+  mergeData,
+} from "@util/misc";
 import { dispatch } from "d3-dispatch";
 import React, {
   forwardRef,
@@ -13,12 +19,6 @@ import React, {
   useState,
 } from "react";
 
-import {
-  constructTopLevelSpec,
-  getCandleWidth,
-  getSubMinutes,
-} from "../../helpers";
-import { mergeData } from "../../helpers";
 import {
   Annotation,
   Candle,

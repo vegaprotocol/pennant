@@ -1,6 +1,6 @@
+import { align, alignSpan } from "@util/misc";
 import { curveLinear, line as d3Line } from "d3-shape";
 
-import { align, alignSpan } from "../helpers";
 import { PositionalElement, ScaleLinear, ScaleTime } from "../types";
 
 export type Line = {

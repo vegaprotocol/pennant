@@ -1,5 +1,6 @@
+import { align, getNumYTicks } from "@util/misc";
+
 import { Colors } from "../feature/candlestick-chart/helpers";
-import { align, getNumYTicks } from "../helpers";
 import { hex2rgb, string2hex } from "../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../types";
 import { RenderableElement } from "../types";

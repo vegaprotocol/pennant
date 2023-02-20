@@ -1,4 +1,4 @@
-import { getConditionalColor } from ".";
+import { getConditionalColor } from "./scenegraph";
 
 const RED = "#f00";
 const GREEN = "#0f0";

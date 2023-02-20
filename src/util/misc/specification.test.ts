@@ -1,5 +1,5 @@
-import { getColors } from "../feature/candlestick-chart/helpers";
-import { constructTopLevelSpec } from ".";
+import { getColors } from "../../feature/candlestick-chart/helpers";
+import { constructTopLevelSpec } from "./specification";
 
 const colors = getColors(null);
 

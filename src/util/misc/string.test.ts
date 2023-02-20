@@ -1,4 +1,4 @@
-import { endsWith, string2num } from "./helpers-string";
+import { endsWith, string2num } from "./string";
 
 describe("endsWith", () => {
   test("simple cases", () => {

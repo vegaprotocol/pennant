@@ -8,6 +8,16 @@ import {
   indicatorMovingAverage,
   indicatorRelativeStrengthIndex,
 } from "@d3fc/d3fc-technical-indicator";
+import {
+  calculateScales,
+  createElement,
+  getAreaConfig,
+  getBarConfig,
+  getConditionalColor,
+  getLineConfig,
+  getRuleConfig,
+  getTickConfig,
+} from "@util/misc";
 import { extent } from "d3-array";
 
 import {
@@ -22,16 +32,6 @@ import {
   YAxisElement,
   YAxisTooltipElement,
 } from "../../elements";
-import {
-  createElement,
-  getAreaConfig,
-  getBarConfig,
-  getConditionalColor,
-  getLineConfig,
-  getRuleConfig,
-  getTickConfig,
-} from "../../helpers";
-import { calculateScales } from "../../helpers";
 import { Annotation, Candle, Scenegraph } from "../../types";
 import { Field } from "../vega-lite/channeldef";
 import { compile } from "../vega-lite/compile/compile";

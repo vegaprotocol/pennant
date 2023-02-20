@@ -1,6 +1,6 @@
+import { numberFormatter } from "@util/misc";
 import { format } from "date-fns";
 
-import { numberFormatter } from "../../../helpers";
 import { Series } from "../tooltip/tooltip";
 import styles from "./custom-tooltip.module.css";
 

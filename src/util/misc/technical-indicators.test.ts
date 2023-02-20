@@ -1,7 +1,4 @@
-import {
-  identity,
-  indicatorAbsoluteChange,
-} from "./helpers-technical-indicators";
+import { identity, indicatorAbsoluteChange } from "./technical-indicators";
 
 const input = [1, 2, 1, 4];
 

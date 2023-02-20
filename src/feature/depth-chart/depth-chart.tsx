@@ -1,5 +1,6 @@
 import "../../styles/variables.css";
 
+import { defaultPriceFormat, numberFormatter } from "@util/misc";
 import React, {
   forwardRef,
   useEffect,
@@ -7,7 +8,6 @@ import React, {
   useRef,
 } from "react";
 
-import { defaultPriceFormat, numberFormatter } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
 import { NonIdealState } from "../../ui/components";
