@@ -2767,24 +2767,7 @@
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-4.1.15.tgz#745217581640a1f5fdb4c0d767fde608a7de2887"
   integrity sha512-iOwfwE3tOXiM+dmwkdK7fY6dCGqg7yBLYAUHrmPUeYscrqZ8gJqUXAtDumuWMoLvm1SEz5SVIEfm16QnHd4efw==
 
-"@blueprintjs/core@4.16.0":
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.16.0.tgz#0d9bd9427c8300dc102a9fa7fa2ea12bbebd22b6"
-  integrity sha512-GGu27epYPmpUGhWeRGxOwwMQpc2JZ1WbzvpDykIYjKqUMZNONwV/EwOG+bbYwlyyp7OWTul9oMI4Qx5IOxBz8g==
-  dependencies:
-    "@blueprintjs/colors" "^4.1.15"
-    "@blueprintjs/icons" "^4.13.2"
-    "@juggle/resize-observer" "^3.4.0"
-    "@types/dom4" "^2.0.2"
-    classnames "^2.3.1"
-    dom4 "^2.1.5"
-    normalize.css "^8.0.1"
-    popper.js "^1.16.1"
-    react-popper "^1.3.11"
-    react-transition-group "^4.4.5"
-    tslib "~2.3.1"
-
-"@blueprintjs/core@^4.16.3":
+"@blueprintjs/core@4.16.3", "@blueprintjs/core@^4.16.3":
   version "4.16.3"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.16.3.tgz#04b5f02589f3bfca30c28a08edc1ca5b43d99d8b"
   integrity sha512-XFqcuwG9QBP/6LxegzDBv7PlTY8LdPM53nfJ8nRcUMcHmHoZ8HyYA9f40lMbiUTg4yAFz50Yw8Fc8uAja267ag==
