@@ -1,6 +1,6 @@
 import renderer from "react-test-renderer";
 
-import { IndicatorInfo } from ".";
+import { IndicatorInfo } from "./indicator-info";
 
 test("IndicatorInfo renders correctly", () => {
   const component = renderer.create(
