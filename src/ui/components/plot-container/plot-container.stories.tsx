@@ -7,7 +7,7 @@ import { Interval } from "../../../stories/api/vega-graphql";
 import json from "../../../stories/data-source/data.json";
 import { extendCandle } from "../../../stories/data-source/json-data-source";
 import { Scenegraph } from "../../../types";
-import { TopLevelSpec } from "../../../vega-lite/spec";
+import { TopLevelSpec } from "../../../util/vega-lite/spec";
 import { PlotContainer, PlotContainerProps } from "./plot-container";
 
 export default {

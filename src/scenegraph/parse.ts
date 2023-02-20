@@ -33,14 +33,14 @@ import {
 } from "../helpers";
 import { calculateScales } from "../helpers";
 import { Annotation, Candle, Scenegraph } from "../types";
-import { Field } from "../vega-lite/channeldef";
-import { compile } from "../vega-lite/compile/compile";
-import { OutputNode } from "../vega-lite/compile/data/dataflow";
-import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
-import { Data } from "../vega-lite/data";
-import { Encoding } from "../vega-lite/encoding";
-import { Mark, MarkDef } from "../vega-lite/mark";
-import { BaseSpec, isVConcatSpec, TopLevelSpec } from "../vega-lite/spec";
+import { Field } from "../util/vega-lite/channeldef";
+import { compile } from "../util/vega-lite/compile/compile";
+import { OutputNode } from "../util/vega-lite/compile/data/dataflow";
+import { TechnicalIndicatorTransformNode } from "../util/vega-lite/compile/data/technical-indicator";
+import { Data } from "../util/vega-lite/data";
+import { Encoding } from "../util/vega-lite/encoding";
+import { Mark, MarkDef } from "../util/vega-lite/mark";
+import { BaseSpec, isVConcatSpec, TopLevelSpec } from "../util/vega-lite/spec";
 
 function compileLayer(
   data: Data,
