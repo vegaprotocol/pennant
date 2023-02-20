@@ -1,8 +1,8 @@
+import { HorizontalGrid, VerticalGrid } from "@ui/display-objects";
 import { Container, Renderer } from "@ui/renderer";
 import { range } from "@util/misc";
 
 import { ScaleLinear, ScaleTime } from "../../types";
-import { HorizontalGrid, VerticalGrid } from "../../ui/display-objects";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { SeriesData } from "./chart";
 import { AreaCurve } from "./display-objects/area-curve";

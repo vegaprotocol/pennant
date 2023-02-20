@@ -1,3 +1,4 @@
+import { HorizontalLine, Rect, VerticalLine } from "@ui/display-objects";
 import {
   Container,
   InteractionData,
@@ -12,7 +13,6 @@ import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
 
 import { bisectCenter } from "../../math/array";
-import { HorizontalLine, Rect, VerticalLine } from "../../ui/display-objects";
 import { AXIS_HEIGHT } from "./depth-chart";
 import {
   HorizontalAxis,

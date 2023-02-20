@@ -1,4 +1,12 @@
 import {
+  Crosshair,
+  HorizontalAxis,
+  Indicator,
+  Label,
+  pointer,
+  VerticalAxis,
+} from "@ui/display-objects";
+import {
   Container,
   Graphics,
   hex2string,
@@ -13,14 +21,6 @@ import { range } from "lodash";
 
 import { bisectCenter } from "../../math/array";
 import { ScaleLinear, ScaleTime } from "../../types";
-import {
-  Crosshair,
-  HorizontalAxis,
-  Indicator,
-  Label,
-  pointer,
-  VerticalAxis,
-} from "../../ui/display-objects";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { Gesture, Zoom, zoomIdentity, ZoomTransform } from "../../util/zoom";
 import { Colors } from "./helpers";

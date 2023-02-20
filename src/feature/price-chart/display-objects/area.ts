@@ -1,8 +1,8 @@
+import { PriceCurve } from "@ui/display-objects";
 import { Container, Graphics } from "@ui/renderer";
 import { curveLinear } from "d3-shape";
 
 import { ScaleLinear, ScaleTime } from "../../../types";
-import { PriceCurve } from "../../../ui/display-objects";
 import { Colors } from "../helpers";
 
 type ContentsColors = Pick<

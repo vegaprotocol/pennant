@@ -1,7 +1,7 @@
+import { Area, HorizontalGrid, VerticalGrid } from "@ui/display-objects";
 import { Container, Renderer } from "@ui/renderer";
 
 import { ScaleLinear, ScaleTime } from "../../types";
-import { Area, HorizontalGrid, VerticalGrid } from "../../ui/display-objects";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { Colors } from "./helpers";
 
