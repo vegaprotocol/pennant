@@ -52,7 +52,7 @@ export type AreaChartProps<A> = {
   /**
    * Override the default text to display when there is not enough data.
    */
-  notEnoughDataText?: string;
+  notEnoughDataText?: React.ReactNode;
 
   /**
    * Used to format values on price axis.

@@ -51,7 +51,7 @@ export type Options = {
   simple?: boolean;
   initialNumCandlesToDisplay?: number;
   initialNumCandlesToFetch?: number;
-  notEnoughDataText?: React.ReactNode | string;
+  notEnoughDataText?: React.ReactNode;
   /**
    * Preferred size of a study pane. The Chart will attempt to use this size when adding a study pane (including on initial mount) as well as when a user double clicks a sash, or the `reset` method is called on the Chart instance.
    * @remarks The size can either be a number or a string.
