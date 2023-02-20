@@ -5,6 +5,7 @@ import terser from "@rollup/plugin-terser";
 import { readFileSync } from "fs";
 import path from "path";
 import postcss from "rollup-plugin-postcss";
+import tsConfigPaths from "rollup-plugin-tsconfig-paths";
 
 const meta = JSON.parse(readFileSync("./package.json"));
 
@@ -31,6 +32,7 @@ const config = {
     },
   ],
   plugins: [
+    tsConfigPaths(),
     nodeResolve({ extensions }),
     commonjs(),
     postcss({
