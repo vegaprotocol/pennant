@@ -238,7 +238,13 @@ function constructStudyLayerSpec(study: Study, colors: Colors): BaseSpec[] {
         {
           encoding: {
             y: { field: "volume", type: "quantitative" },
-            fill: { value: colors.volume },
+            fill: {
+              condition: {
+                test: { field: "open", lt: "close" },
+                value: colors.volumeBuy,
+              },
+              value: colors.volumeSell,
+            },
           },
           mark: {
             type: "bar",

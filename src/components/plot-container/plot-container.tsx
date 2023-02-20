@@ -24,17 +24,10 @@ import {
   Viewport,
 } from "../../types";
 import { FcElement, Interval } from "../../types";
+import { calculatePreferredSize } from "../../util/misc";
 import { Colors } from "../candlestick-chart/helpers";
 import { PaneView } from "../pane-view";
 import { XAxisView } from "../x-axis-view";
-
-function calculatePreferredSize(n: number, main: boolean) {
-  if (main) {
-    return `${100 * (2 / (1 + n))}%`;
-  } else {
-    return `${100 * ((1 - 2 / (1 + n)) / Math.max(n - 1, 1))}%`;
-  }
-}
 
 export type PlotContainerProps = {
   width: number;
@@ -47,6 +40,7 @@ export type PlotContainerProps = {
   simple: boolean;
   initialNumCandles: number;
   colors: Colors;
+  studySize: number | string;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -68,6 +62,7 @@ export const PlotContainer = forwardRef<
       simple,
       initialNumCandles,
       colors,
+      studySize,
       onViewportChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
@@ -251,7 +246,7 @@ export const PlotContainer = forwardRef<
 
     useEffect(() => {
       allotmentRef.current.reset();
-    }, [numPanes]);
+    }, [numPanes, studySize]);
 
     return (
       <d3fc-group ref={chartRef} class="plot-container__chart">
@@ -268,7 +263,11 @@ export const PlotContainer = forwardRef<
           {scenegraph.panes.map((pane, index) => (
             <Allotment.Pane
               key={pane.id}
-              preferredSize={calculatePreferredSize(numPanes, index === 0)}
+              preferredSize={calculatePreferredSize(
+                studySize,
+                numPanes,
+                index === 0
+              )}
             >
               <PaneView
                 ref={refs[pane.id]}

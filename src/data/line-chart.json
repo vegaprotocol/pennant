@@ -1,0 +1,1818 @@
+{
+  "mortality_rates": [
+    {
+      "Age": 0,
+      "UK": 2.57,
+      "UK-Scotland": 2.57,
+      "Scotland": 2.57
+    },
+    {
+      "Age": 1,
+      "UK": 2.44,
+      "UK-Scotland": 2.44,
+      "Scotland": 2.44
+    },
+    {
+      "Age": 2,
+      "UK": 2.7,
+      "UK-Scotland": 2.7,
+      "Scotland": 2.7
+    },
+    {
+      "Age": 3,
+      "UK": 3.12,
+      "UK-Scotland": 3.12,
+      "Scotland": 3.12
+    },
+    {
+      "Age": 4,
+      "UK": 3.51,
+      "UK-Scotland": 3.51,
+      "Scotland": 3.51
+    },
+    {
+      "Age": 5,
+      "UK": 3.68,
+      "UK-Scotland": 3.68,
+      "Scotland": 3.68
+    },
+    {
+      "Age": 6,
+      "UK": 3.66,
+      "UK-Scotland": 3.66,
+      "Scotland": 3.66
+    },
+    {
+      "Age": 7,
+      "UK": 3.54,
+      "UK-Scotland": 3.54,
+      "Scotland": 3.54
+    },
+    {
+      "Age": 8,
+      "UK": 3.39,
+      "UK-Scotland": 3.39,
+      "Scotland": 3.39
+    },
+    {
+      "Age": 9,
+      "UK": 3.3,
+      "UK-Scotland": 3.3,
+      "Scotland": 3.3
+    },
+    {
+      "Age": 10,
+      "UK": 3.34,
+      "UK-Scotland": 3.34,
+      "Scotland": 3.34
+    },
+    {
+      "Age": 11,
+      "UK": 3.51,
+      "UK-Scotland": 3.51,
+      "Scotland": 3.51
+    },
+    {
+      "Age": 12,
+      "UK": 3.75,
+      "UK-Scotland": 3.75,
+      "Scotland": 3.75
+    },
+    {
+      "Age": 13,
+      "UK": 4.02,
+      "UK-Scotland": 4.02,
+      "Scotland": 4.02
+    },
+    {
+      "Age": 14,
+      "UK": 4.28,
+      "UK-Scotland": 4.28,
+      "Scotland": 4.28
+    },
+    {
+      "Age": 15,
+      "UK": 4.5,
+      "UK-Scotland": 4.5,
+      "Scotland": 4.5
+    },
+    {
+      "Age": 16,
+      "UK": 4.64,
+      "UK-Scotland": 4.64,
+      "Scotland": 4.64
+    },
+    {
+      "Age": 17,
+      "UK": 4.73,
+      "UK-Scotland": 4.73,
+      "Scotland": 4.73
+    },
+    {
+      "Age": 18,
+      "UK": 4.76,
+      "UK-Scotland": 4.76,
+      "Scotland": 4.76
+    },
+    {
+      "Age": 19,
+      "UK": 4.73,
+      "UK-Scotland": 4.73,
+      "Scotland": 4.73
+    },
+    {
+      "Age": 20,
+      "UK": 4.66,
+      "UK-Scotland": 4.66,
+      "Scotland": 4.66
+    },
+    {
+      "Age": 21,
+      "UK": 4.54,
+      "UK-Scotland": 4.54,
+      "Scotland": 4.54
+    },
+    {
+      "Age": 22,
+      "UK": 4.4,
+      "UK-Scotland": 4.4,
+      "Scotland": 4.4
+    },
+    {
+      "Age": 23,
+      "UK": 4.24,
+      "UK-Scotland": 4.24,
+      "Scotland": 4.24
+    },
+    {
+      "Age": 24,
+      "UK": 4.07,
+      "UK-Scotland": 4.07,
+      "Scotland": 4.07
+    },
+    {
+      "Age": 25,
+      "UK": 3.92,
+      "UK-Scotland": 3.92,
+      "Scotland": 3.92
+    },
+    {
+      "Age": 26,
+      "UK": 3.77,
+      "UK-Scotland": 3.77,
+      "Scotland": 3.77
+    },
+    {
+      "Age": 27,
+      "UK": 3.62,
+      "UK-Scotland": 3.62,
+      "Scotland": 3.62
+    },
+    {
+      "Age": 28,
+      "UK": 3.47,
+      "UK-Scotland": 3.47,
+      "Scotland": 3.47
+    },
+    {
+      "Age": 29,
+      "UK": 3.3,
+      "UK-Scotland": 3.31,
+      "Scotland": 3.21
+    },
+    {
+      "Age": 30,
+      "UK": 3.1,
+      "UK-Scotland": 3.13,
+      "Scotland": 2.86
+    },
+    {
+      "Age": 31,
+      "UK": 2.87,
+      "UK-Scotland": 2.92,
+      "Scotland": 2.51
+    },
+    {
+      "Age": 32,
+      "UK": 2.63,
+      "UK-Scotland": 2.69,
+      "Scotland": 2.16
+    },
+    {
+      "Age": 33,
+      "UK": 2.37,
+      "UK-Scotland": 2.44,
+      "Scotland": 1.86
+    },
+    {
+      "Age": 34,
+      "UK": 2.11,
+      "UK-Scotland": 2.18,
+      "Scotland": 1.56
+    },
+    {
+      "Age": 35,
+      "UK": 1.85,
+      "UK-Scotland": 1.93,
+      "Scotland": 1.26
+    },
+    {
+      "Age": 36,
+      "UK": 1.61,
+      "UK-Scotland": 1.68,
+      "Scotland": 1.06
+    },
+    {
+      "Age": 37,
+      "UK": 1.39,
+      "UK-Scotland": 1.45,
+      "Scotland": 0.96
+    },
+    {
+      "Age": 38,
+      "UK": 1.2,
+      "UK-Scotland": 1.24,
+      "Scotland": 0.91
+    },
+    {
+      "Age": 39,
+      "UK": 1.04,
+      "UK-Scotland": 1.06,
+      "Scotland": 0.86
+    },
+    {
+      "Age": 40,
+      "UK": 0.94,
+      "UK-Scotland": 0.96,
+      "Scotland": 0.76
+    },
+    {
+      "Age": 41,
+      "UK": 0.88,
+      "UK-Scotland": 0.91,
+      "Scotland": 0.65
+    },
+    {
+      "Age": 42,
+      "UK": 0.88,
+      "UK-Scotland": 0.94,
+      "Scotland": 0.45
+    },
+    {
+      "Age": 43,
+      "UK": 0.92,
+      "UK-Scotland": 1,
+      "Scotland": 0.3
+    },
+    {
+      "Age": 44,
+      "UK": 1,
+      "UK-Scotland": 1.09,
+      "Scotland": 0.3
+    },
+    {
+      "Age": 45,
+      "UK": 1.13,
+      "UK-Scotland": 1.2,
+      "Scotland": 0.6
+    },
+    {
+      "Age": 46,
+      "UK": 1.29,
+      "UK-Scotland": 1.34,
+      "Scotland": 0.9
+    },
+    {
+      "Age": 47,
+      "UK": 1.47,
+      "UK-Scotland": 1.51,
+      "Scotland": 1.15
+    },
+    {
+      "Age": 48,
+      "UK": 1.65,
+      "UK-Scotland": 1.69,
+      "Scotland": 1.33
+    },
+    {
+      "Age": 49,
+      "UK": 1.82,
+      "UK-Scotland": 1.86,
+      "Scotland": 1.5
+    },
+    {
+      "Age": 50,
+      "UK": 1.96,
+      "UK-Scotland": 1.99,
+      "Scotland": 1.7
+    },
+    {
+      "Age": 51,
+      "UK": 2.06,
+      "UK-Scotland": 2.08,
+      "Scotland": 1.9
+    },
+    {
+      "Age": 52,
+      "UK": 2.11,
+      "UK-Scotland": 2.11,
+      "Scotland": 2.08
+    },
+    {
+      "Age": 53,
+      "UK": 2.12,
+      "UK-Scotland": 2.12,
+      "Scotland": 2.14
+    },
+    {
+      "Age": 54,
+      "UK": 2.11,
+      "UK-Scotland": 2.09,
+      "Scotland": 2.24
+    },
+    {
+      "Age": 55,
+      "UK": 2.1,
+      "UK-Scotland": 2.07,
+      "Scotland": 2.35
+    },
+    {
+      "Age": 56,
+      "UK": 2.09,
+      "UK-Scotland": 2.05,
+      "Scotland": 2.4
+    },
+    {
+      "Age": 57,
+      "UK": 2.07,
+      "UK-Scotland": 2.02,
+      "Scotland": 2.45
+    },
+    {
+      "Age": 58,
+      "UK": 2.02,
+      "UK-Scotland": 1.96,
+      "Scotland": 2.5
+    },
+    {
+      "Age": 59,
+      "UK": 1.92,
+      "UK-Scotland": 1.84,
+      "Scotland": 2.55
+    },
+    {
+      "Age": 60,
+      "UK": 1.8,
+      "UK-Scotland": 1.7,
+      "Scotland": 2.6
+    },
+    {
+      "Age": 61,
+      "UK": 1.68,
+      "UK-Scotland": 1.56,
+      "Scotland": 2.65
+    },
+    {
+      "Age": 62,
+      "UK": 1.61,
+      "UK-Scotland": 1.49,
+      "Scotland": 2.65
+    },
+    {
+      "Age": 63,
+      "UK": 1.6,
+      "UK-Scotland": 1.48,
+      "Scotland": 2.58
+    },
+    {
+      "Age": 64,
+      "UK": 1.68,
+      "UK-Scotland": 1.58,
+      "Scotland": 2.49
+    },
+    {
+      "Age": 65,
+      "UK": 1.82,
+      "UK-Scotland": 1.75,
+      "Scotland": 2.41
+    },
+    {
+      "Age": 66,
+      "UK": 1.99,
+      "UK-Scotland": 1.94,
+      "Scotland": 2.36
+    },
+    {
+      "Age": 67,
+      "UK": 2.16,
+      "UK-Scotland": 2.15,
+      "Scotland": 2.28
+    },
+    {
+      "Age": 68,
+      "UK": 2.28,
+      "UK-Scotland": 2.28,
+      "Scotland": 2.24
+    },
+    {
+      "Age": 69,
+      "UK": 2.33,
+      "UK-Scotland": 2.35,
+      "Scotland": 2.2
+    },
+    {
+      "Age": 70,
+      "UK": 2.31,
+      "UK-Scotland": 2.33,
+      "Scotland": 2.1
+    },
+    {
+      "Age": 71,
+      "UK": 2.24,
+      "UK-Scotland": 2.27,
+      "Scotland": 1.95
+    },
+    {
+      "Age": 72,
+      "UK": 2.14,
+      "UK-Scotland": 2.17,
+      "Scotland": 1.9
+    },
+    {
+      "Age": 73,
+      "UK": 2.05,
+      "UK-Scotland": 2.08,
+      "Scotland": 1.82
+    },
+    {
+      "Age": 74,
+      "UK": 1.99,
+      "UK-Scotland": 2.02,
+      "Scotland": 1.76
+    },
+    {
+      "Age": 75,
+      "UK": 1.95,
+      "UK-Scotland": 1.98,
+      "Scotland": 1.72
+    },
+    {
+      "Age": 76,
+      "UK": 1.95,
+      "UK-Scotland": 1.98,
+      "Scotland": 1.72
+    },
+    {
+      "Age": 77,
+      "UK": 1.96,
+      "UK-Scotland": 1.99,
+      "Scotland": 1.72
+    },
+    {
+      "Age": 78,
+      "UK": 1.99,
+      "UK-Scotland": 2.01,
+      "Scotland": 1.78
+    },
+    {
+      "Age": 79,
+      "UK": 2.03,
+      "UK-Scotland": 2.05,
+      "Scotland": 1.8
+    },
+    {
+      "Age": 80,
+      "UK": 2.07,
+      "UK-Scotland": 2.09,
+      "Scotland": 1.84
+    },
+    {
+      "Age": 81,
+      "UK": 2.1,
+      "UK-Scotland": 2.12,
+      "Scotland": 1.87
+    },
+    {
+      "Age": 82,
+      "UK": 2.1,
+      "UK-Scotland": 2.13,
+      "Scotland": 1.81
+    },
+    {
+      "Age": 83,
+      "UK": 2.06,
+      "UK-Scotland": 2.1,
+      "Scotland": 1.61
+    },
+    {
+      "Age": 84,
+      "UK": 1.98,
+      "UK-Scotland": 2.02,
+      "Scotland": 1.53
+    },
+    {
+      "Age": 85,
+      "UK": 1.83,
+      "UK-Scotland": 1.88,
+      "Scotland": 1.31
+    },
+    {
+      "Age": 86,
+      "UK": 1.65,
+      "UK-Scotland": 1.69,
+      "Scotland": 1.21
+    },
+    {
+      "Age": 87,
+      "UK": 1.44,
+      "UK-Scotland": 1.47,
+      "Scotland": 1.11
+    },
+    {
+      "Age": 88,
+      "UK": 1.22,
+      "UK-Scotland": 1.23,
+      "Scotland": 1.06
+    },
+    {
+      "Age": 89,
+      "UK": 1.01,
+      "UK-Scotland": 1.01,
+      "Scotland": 1.01
+    },
+    {
+      "Age": 90,
+      "UK": 0.81,
+      "UK-Scotland": 0.81,
+      "Scotland": 0.81
+    },
+    {
+      "Age": 91,
+      "UK": 0.62,
+      "UK-Scotland": 0.62,
+      "Scotland": 0.62
+    },
+    {
+      "Age": 92,
+      "UK": 0.47,
+      "UK-Scotland": 0.47,
+      "Scotland": 0.47
+    },
+    {
+      "Age": 93,
+      "UK": 0.33,
+      "UK-Scotland": 0.33,
+      "Scotland": 0.33
+    },
+    {
+      "Age": 94,
+      "UK": 0.23,
+      "UK-Scotland": 0.23,
+      "Scotland": 0.23
+    },
+    {
+      "Age": 95,
+      "UK": 0.16,
+      "UK-Scotland": 0.16,
+      "Scotland": 0.16
+    },
+    {
+      "Age": 96,
+      "UK": 0.11,
+      "UK-Scotland": 0.11,
+      "Scotland": 0.11
+    },
+    {
+      "Age": 97,
+      "UK": 0.07,
+      "UK-Scotland": 0.07,
+      "Scotland": 0.07
+    },
+    {
+      "Age": 98,
+      "UK": 0.04,
+      "UK-Scotland": 0.04,
+      "Scotland": 0.04
+    },
+    {
+      "Age": 99,
+      "UK": 0.02,
+      "UK-Scotland": 0.02,
+      "Scotland": 0.02
+    },
+    {
+      "Age": 100,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 101,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 102,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 103,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 104,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 105,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 106,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 107,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 108,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 109,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 110,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 111,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 112,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 113,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 114,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 115,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 116,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 117,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 118,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 119,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 120,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 121,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 122,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 123,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 124,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    },
+    {
+      "Age": 125,
+      "UK": 0,
+      "UK-Scotland": 0,
+      "Scotland": 0
+    }
+  ],
+  "ftse": [
+    {
+      "Date": "1997 Jan",
+      "FTSE All Share (p)": 2087.61
+    },
+    {
+      "Date": "1997 Feb",
+      "FTSE All Share (p)": 2107.86
+    },
+    {
+      "Date": "1997 Mar",
+      "FTSE All Share (p)": 2099.7
+    },
+    {
+      "Date": "1997 Apr",
+      "FTSE All Share (p)": 2135.31
+    },
+    {
+      "Date": "1997 May",
+      "FTSE All Share (p)": 2199.83
+    },
+    {
+      "Date": "1997 Jun",
+      "FTSE All Share (p)": 2183.1
+    },
+    {
+      "Date": "1997 Jul",
+      "FTSE All Share (p)": 2295.18
+    },
+    {
+      "Date": "1997 Aug",
+      "FTSE All Share (p)": 2278.63
+    },
+    {
+      "Date": "1997 Sep",
+      "FTSE All Share (p)": 2455.02
+    },
+    {
+      "Date": "1997 Oct",
+      "FTSE All Share (p)": 2293.87
+    },
+    {
+      "Date": "1997 Nov",
+      "FTSE All Share (p)": 2288.64
+    },
+    {
+      "Date": "1997 Dec",
+      "FTSE All Share (p)": 2411
+    },
+    {
+      "Date": "1998 Jan",
+      "FTSE All Share (p)": 2536.68
+    },
+    {
+      "Date": "1998 Feb",
+      "FTSE All Share (p)": 2683.4
+    },
+    {
+      "Date": "1998 Mar",
+      "FTSE All Share (p)": 2781.66
+    },
+    {
+      "Date": "1998 Apr",
+      "FTSE All Share (p)": 2788.99
+    },
+    {
+      "Date": "1998 May",
+      "FTSE All Share (p)": 2802.18
+    },
+    {
+      "Date": "1998 Jun",
+      "FTSE All Share (p)": 2743.46
+    },
+    {
+      "Date": "1998 Jul",
+      "FTSE All Share (p)": 2734.72
+    },
+    {
+      "Date": "1998 Aug",
+      "FTSE All Share (p)": 2440.84
+    },
+    {
+      "Date": "1998 Sep",
+      "FTSE All Share (p)": 2344.82
+    },
+    {
+      "Date": "1998 Oct",
+      "FTSE All Share (p)": 2504.85
+    },
+    {
+      "Date": "1998 Nov",
+      "FTSE All Share (p)": 2626.86
+    },
+    {
+      "Date": "1998 Dec",
+      "FTSE All Share (p)": 2673.92
+    },
+    {
+      "Date": "1999 Jan",
+      "FTSE All Share (p)": 2695.94
+    },
+    {
+      "Date": "1999 Feb",
+      "FTSE All Share (p)": 2825.39
+    },
+    {
+      "Date": "1999 Mar",
+      "FTSE All Share (p)": 2894.79
+    },
+    {
+      "Date": "1999 Apr",
+      "FTSE All Share (p)": 3028.4
+    },
+    {
+      "Date": "1999 May",
+      "FTSE All Share (p)": 2889.65
+    },
+    {
+      "Date": "1999 Jun",
+      "FTSE All Share (p)": 2946.17
+    },
+    {
+      "Date": "1999 Jul",
+      "FTSE All Share (p)": 2925.14
+    },
+    {
+      "Date": "1999 Aug",
+      "FTSE All Share (p)": 2939.11
+    },
+    {
+      "Date": "1999 Sep",
+      "FTSE All Share (p)": 2826.11
+    },
+    {
+      "Date": "1999 Oct",
+      "FTSE All Share (p)": 2904.38
+    },
+    {
+      "Date": "1999 Nov",
+      "FTSE All Share (p)": 3086.9
+    },
+    {
+      "Date": "1999 Dec",
+      "FTSE All Share (p)": 3242.06
+    },
+    {
+      "Date": "2000 Jan",
+      "FTSE All Share (p)": 2975.87
+    },
+    {
+      "Date": "2000 Feb",
+      "FTSE All Share (p)": 2989.43
+    },
+    {
+      "Date": "2000 Mar",
+      "FTSE All Share (p)": 3110.56
+    },
+    {
+      "Date": "2000 Apr",
+      "FTSE All Share (p)": 3001.92
+    },
+    {
+      "Date": "2000 May",
+      "FTSE All Share (p)": 3017.23
+    },
+    {
+      "Date": "2000 Jun",
+      "FTSE All Share (p)": 3029.74
+    },
+    {
+      "Date": "2000 Jul",
+      "FTSE All Share (p)": 3062.41
+    },
+    {
+      "Date": "2000 Aug",
+      "FTSE All Share (p)": 3207.99
+    },
+    {
+      "Date": "2000 Sep",
+      "FTSE All Share (p)": 3029.36
+    },
+    {
+      "Date": "2000 Oct",
+      "FTSE All Share (p)": 3078.21
+    },
+    {
+      "Date": "2000 Nov",
+      "FTSE All Share (p)": 2945.06
+    },
+    {
+      "Date": "2000 Dec",
+      "FTSE All Share (p)": 2983.81
+    },
+    {
+      "Date": "2001 Jan",
+      "FTSE All Share (p)": 3030.05
+    },
+    {
+      "Date": "2001 Feb",
+      "FTSE All Share (p)": 2868
+    },
+    {
+      "Date": "2001 Mar",
+      "FTSE All Share (p)": 2711.4
+    },
+    {
+      "Date": "2001 Apr",
+      "FTSE All Share (p)": 2869.04
+    },
+    {
+      "Date": "2001 May",
+      "FTSE All Share (p)": 2811.22
+    },
+    {
+      "Date": "2001 Jun",
+      "FTSE All Share (p)": 2728.12
+    },
+    {
+      "Date": "2001 Jul",
+      "FTSE All Share (p)": 2663.92
+    },
+    {
+      "Date": "2001 Aug",
+      "FTSE All Share (p)": 2590.17
+    },
+    {
+      "Date": "2001 Sep",
+      "FTSE All Share (p)": 2340.48
+    },
+    {
+      "Date": "2001 Oct",
+      "FTSE All Share (p)": 2413.5
+    },
+    {
+      "Date": "2001 Nov",
+      "FTSE All Share (p)": 2514.07
+    },
+    {
+      "Date": "2001 Dec",
+      "FTSE All Share (p)": 2523.88
+    },
+    {
+      "Date": "2002 Jan",
+      "FTSE All Share (p)": 2496.02
+    },
+    {
+      "Date": "2002 Feb",
+      "FTSE All Share (p)": 2466.98
+    },
+    {
+      "Date": "2002 Mar",
+      "FTSE All Share (p)": 2557.4
+    },
+    {
+      "Date": "2002 Apr",
+      "FTSE All Share (p)": 2512.04
+    },
+    {
+      "Date": "2002 May",
+      "FTSE All Share (p)": 2475.57
+    },
+    {
+      "Date": "2002 Jun",
+      "FTSE All Share (p)": 2263.11
+    },
+    {
+      "Date": "2002 Jul",
+      "FTSE All Share (p)": 2050.81
+    },
+    {
+      "Date": "2002 Aug",
+      "FTSE All Share (p)": 2046.21
+    },
+    {
+      "Date": "2002 Sep",
+      "FTSE All Share (p)": 1801.48
+    },
+    {
+      "Date": "2002 Oct",
+      "FTSE All Share (p)": 1938.71
+    },
+    {
+      "Date": "2002 Nov",
+      "FTSE All Share (p)": 2002.97
+    },
+    {
+      "Date": "2002 Dec",
+      "FTSE All Share (p)": 1893.73
+    },
+    {
+      "Date": "2003 Jan",
+      "FTSE All Share (p)": 1722.28
+    },
+    {
+      "Date": "2003 Feb",
+      "FTSE All Share (p)": 1759.08
+    },
+    {
+      "Date": "2003 Mar",
+      "FTSE All Share (p)": 1735.72
+    },
+    {
+      "Date": "2003 Apr",
+      "FTSE All Share (p)": 1891.5
+    },
+    {
+      "Date": "2003 May",
+      "FTSE All Share (p)": 1981.57
+    },
+    {
+      "Date": "2003 Jun",
+      "FTSE All Share (p)": 1971.26
+    },
+    {
+      "Date": "2003 Jul",
+      "FTSE All Share (p)": 2045.82
+    },
+    {
+      "Date": "2003 Aug",
+      "FTSE All Share (p)": 2064.74
+    },
+    {
+      "Date": "2003 Sep",
+      "FTSE All Share (p)": 2027.72
+    },
+    {
+      "Date": "2003 Oct",
+      "FTSE All Share (p)": 2125.37
+    },
+    {
+      "Date": "2003 Nov",
+      "FTSE All Share (p)": 2146.72
+    },
+    {
+      "Date": "2003 Dec",
+      "FTSE All Share (p)": 2207.38
+    },
+    {
+      "Date": "2004 Jan",
+      "FTSE All Share (p)": 2187.1
+    },
+    {
+      "Date": "2004 Feb",
+      "FTSE All Share (p)": 2243.41
+    },
+    {
+      "Date": "2004 Mar",
+      "FTSE All Share (p)": 2196.97
+    },
+    {
+      "Date": "2004 Apr",
+      "FTSE All Share (p)": 2237.34
+    },
+    {
+      "Date": "2004 May",
+      "FTSE All Share (p)": 2201.81
+    },
+    {
+      "Date": "2004 Jun",
+      "FTSE All Share (p)": 2228.67
+    },
+    {
+      "Date": "2004 Jul",
+      "FTSE All Share (p)": 2192.22
+    },
+    {
+      "Date": "2004 Aug",
+      "FTSE All Share (p)": 2214.19
+    },
+    {
+      "Date": "2004 Sep",
+      "FTSE All Share (p)": 2271.67
+    },
+    {
+      "Date": "2004 Oct",
+      "FTSE All Share (p)": 2297.66
+    },
+    {
+      "Date": "2004 Nov",
+      "FTSE All Share (p)": 2345.21
+    },
+    {
+      "Date": "2004 Dec",
+      "FTSE All Share (p)": 2412.3
+    },
+    {
+      "Date": "2005 Jan",
+      "FTSE All Share (p)": 2441.22
+    },
+    {
+      "Date": "2005 Feb",
+      "FTSE All Share (p)": 2495.46
+    },
+    {
+      "Date": "2005 Mar",
+      "FTSE All Share (p)": 2457.73
+    },
+    {
+      "Date": "2005 Apr",
+      "FTSE All Share (p)": 2397.05
+    },
+    {
+      "Date": "2005 May",
+      "FTSE All Share (p)": 2483.35
+    },
+    {
+      "Date": "2005 Jun",
+      "FTSE All Share (p)": 2560.17
+    },
+    {
+      "Date": "2005 Jul",
+      "FTSE All Share (p)": 2644.75
+    },
+    {
+      "Date": "2005 Aug",
+      "FTSE All Share (p)": 2659.21
+    },
+    {
+      "Date": "2005 Sep",
+      "FTSE All Share (p)": 2745.79
+    },
+    {
+      "Date": "2005 Oct",
+      "FTSE All Share (p)": 2664.4
+    },
+    {
+      "Date": "2005 Nov",
+      "FTSE All Share (p)": 2741.05
+    },
+    {
+      "Date": "2005 Dec",
+      "FTSE All Share (p)": 2847.02
+    },
+    {
+      "Date": "2006 Jan",
+      "FTSE All Share (p)": 2928.56
+    },
+    {
+      "Date": "2006 Feb",
+      "FTSE All Share (p)": 2956.12
+    },
+    {
+      "Date": "2006 Mar",
+      "FTSE All Share (p)": 3047.96
+    },
+    {
+      "Date": "2006 Apr",
+      "FTSE All Share (p)": 3074.26
+    },
+    {
+      "Date": "2006 May",
+      "FTSE All Share (p)": 2916.85
+    },
+    {
+      "Date": "2006 Jun",
+      "FTSE All Share (p)": 2967.58
+    },
+    {
+      "Date": "2006 Jul",
+      "FTSE All Share (p)": 3004.28
+    },
+    {
+      "Date": "2006 Aug",
+      "FTSE All Share (p)": 3007.51
+    },
+    {
+      "Date": "2006 Sep",
+      "FTSE All Share (p)": 3050.44
+    },
+    {
+      "Date": "2006 Oct",
+      "FTSE All Share (p)": 3140.47
+    },
+    {
+      "Date": "2006 Nov",
+      "FTSE All Share (p)": 3119.85
+    },
+    {
+      "Date": "2006 Dec",
+      "FTSE All Share (p)": 3221.42
+    },
+    {
+      "Date": "2007 Jan",
+      "FTSE All Share (p)": 3211.84
+    },
+    {
+      "Date": "2007 Feb",
+      "FTSE All Share (p)": 3198.28
+    },
+    {
+      "Date": "2007 Mar",
+      "FTSE All Share (p)": 3283.21
+    },
+    {
+      "Date": "2007 Apr",
+      "FTSE All Share (p)": 3355.6
+    },
+    {
+      "Date": "2007 May",
+      "FTSE All Share (p)": 3438.7
+    },
+    {
+      "Date": "2007 Jun",
+      "FTSE All Share (p)": 3404.14
+    },
+    {
+      "Date": "2007 Jul",
+      "FTSE All Share (p)": 3289.12
+    },
+    {
+      "Date": "2007 Aug",
+      "FTSE All Share (p)": 3260.48
+    },
+    {
+      "Date": "2007 Sep",
+      "FTSE All Share (p)": 3316.89
+    },
+    {
+      "Date": "2007 Oct",
+      "FTSE All Share (p)": 3454.12
+    },
+    {
+      "Date": "2007 Nov",
+      "FTSE All Share (p)": 3280.87
+    },
+    {
+      "Date": "2007 Dec",
+      "FTSE All Share (p)": 3286.67
+    },
+    {
+      "Date": "2008 Jan",
+      "FTSE All Share (p)": 3000.1
+    },
+    {
+      "Date": "2008 Feb",
+      "FTSE All Share (p)": 3013.02
+    },
+    {
+      "Date": "2008 Mar",
+      "FTSE All Share (p)": 2927.05
+    },
+    {
+      "Date": "2008 Apr",
+      "FTSE All Share (p)": 3095.71
+    },
+    {
+      "Date": "2008 May",
+      "FTSE All Share (p)": 3082.26
+    },
+    {
+      "Date": "2008 Jun",
+      "FTSE All Share (p)": 2855.69
+    },
+    {
+      "Date": "2008 Jul",
+      "FTSE All Share (p)": 2749.21
+    },
+    {
+      "Date": "2008 Aug",
+      "FTSE All Share (p)": 2868.69
+    },
+    {
+      "Date": "2008 Sep",
+      "FTSE All Share (p)": 2483.67
+    },
+    {
+      "Date": "2008 Oct",
+      "FTSE All Share (p)": 2183.69
+    },
+    {
+      "Date": "2008 Nov",
+      "FTSE All Share (p)": 2133.99
+    },
+    {
+      "Date": "2008 Dec",
+      "FTSE All Share (p)": 2209.29
+    },
+    {
+      "Date": "2009 Jan",
+      "FTSE All Share (p)": 2078.92
+    },
+    {
+      "Date": "2009 Feb",
+      "FTSE All Share (p)": 1970.18
+    },
+    {
+      "Date": "2009 Mar",
+      "FTSE All Share (p)": 1984.2
+    },
+    {
+      "Date": "2009 Apr",
+      "FTSE All Share (p)": 2173.1
+    },
+    {
+      "Date": "2009 May",
+      "FTSE All Share (p)": 2252.6
+    },
+    {
+      "Date": "2009 Jun",
+      "FTSE All Share (p)": 2172.1
+    },
+    {
+      "Date": "2009 Jul",
+      "FTSE All Share (p)": 2353.5
+    },
+    {
+      "Date": "2009 Aug",
+      "FTSE All Share (p)": 2520.7
+    },
+    {
+      "Date": "2009 Sep",
+      "FTSE All Share (p)": 2634.8
+    },
+    {
+      "Date": "2009 Oct",
+      "FTSE All Share (p)": 2584.6
+    },
+    {
+      "Date": "2009 Nov",
+      "FTSE All Share (p)": 2648.4
+    },
+    {
+      "Date": "2009 Dec",
+      "FTSE All Share (p)": 2760.8
+    },
+    {
+      "Date": "2010 Jan",
+      "FTSE All Share (p)": 2660.5
+    },
+    {
+      "Date": "2010 Feb",
+      "FTSE All Share (p)": 2736.8
+    },
+    {
+      "Date": "2010 Mar",
+      "FTSE All Share (p)": 2910.2
+    },
+    {
+      "Date": "2010 Apr",
+      "FTSE All Share (p)": 2863.4
+    },
+    {
+      "Date": "2010 May",
+      "FTSE All Share (p)": 2673.2
+    },
+    {
+      "Date": "2010 Jun",
+      "FTSE All Share (p)": 2543.5
+    },
+    {
+      "Date": "2010 Jul",
+      "FTSE All Share (p)": 2715.4
+    },
+    {
+      "Date": "2010 Aug",
+      "FTSE All Share (p)": 2696.7
+    },
+    {
+      "Date": "2010 Sep",
+      "FTSE All Share (p)": 2867.6
+    },
+    {
+      "Date": "2010 Oct",
+      "FTSE All Share (p)": 2936.2
+    },
+    {
+      "Date": "2010 Nov",
+      "FTSE All Share (p)": 2861.6
+    },
+    {
+      "Date": "2010 Dec",
+      "FTSE All Share (p)": 3062.9
+    },
+    {
+      "Date": "2011 Jan",
+      "FTSE All Share (p)": 3044.3
+    },
+    {
+      "Date": "2011 Feb",
+      "FTSE All Share (p)": 3106.6
+    },
+    {
+      "Date": "2011 Mar",
+      "FTSE All Share (p)": 3067.7
+    },
+    {
+      "Date": "2011 Apr",
+      "FTSE All Share (p)": 3155
+    },
+    {
+      "Date": "2011 May",
+      "FTSE All Share (p)": 3121.1
+    },
+    {
+      "Date": "2011 Jun",
+      "FTSE All Share (p)": 3096.7
+    },
+    {
+      "Date": "2011 Jul",
+      "FTSE All Share (p)": 3026
+    },
+    {
+      "Date": "2011 Aug",
+      "FTSE All Share (p)": 2800.5
+    },
+    {
+      "Date": "2011 Sep",
+      "FTSE All Share (p)": 2654.4
+    },
+    {
+      "Date": "2011 Oct",
+      "FTSE All Share (p)": 2860.9
+    },
+    {
+      "Date": "2011 Nov",
+      "FTSE All Share (p)": 2835.8
+    },
+    {
+      "Date": "2011 Dec",
+      "FTSE All Share (p)": 2857.9
+    },
+    {
+      "Date": "2012 Jan",
+      "FTSE All Share (p)": 2932.9
+    },
+    {
+      "Date": "2012 Feb",
+      "FTSE All Share (p)": 3043.9
+    },
+    {
+      "Date": "2012 Mar",
+      "FTSE All Share (p)": 3002.8
+    },
+    {
+      "Date": "2012 Apr",
+      "FTSE All Share (p)": 2984.7
+    },
+    {
+      "Date": "2012 May",
+      "FTSE All Share (p)": 2767.1
+    },
+    {
+      "Date": "2012 Jun",
+      "FTSE All Share (p)": 2891.5
+    },
+    {
+      "Date": "2012 Jul",
+      "FTSE All Share (p)": 2927.3
+    },
+    {
+      "Date": "2012 Aug",
+      "FTSE All Share (p)": 2972.6
+    },
+    {
+      "Date": "2012 Sep",
+      "FTSE All Share (p)": 2998.9
+    },
+    {
+      "Date": "2012 Oct",
+      "FTSE All Share (p)": 3024.4
+    },
+    {
+      "Date": "2012 Nov",
+      "FTSE All Share (p)": 3065.3
+    },
+    {
+      "Date": "2012 Dec",
+      "FTSE All Share (p)": 3093.4
+    },
+    {
+      "Date": "2013 Jan",
+      "FTSE All Share (p)": 3287.4
+    },
+    {
+      "Date": "2013 Feb",
+      "FTSE All Share (p)": 3349.4
+    },
+    {
+      "Date": "2013 Mar",
+      "FTSE All Share (p)": 3380.6
+    },
+    {
+      "Date": "2013 Apr",
+      "FTSE All Share (p)": 3390.18
+    },
+    {
+      "Date": "2013 May",
+      "FTSE All Share (p)": 3473.82
+    },
+    {
+      "Date": "2013 Jun",
+      "FTSE All Share (p)": 3289.71
+    },
+    {
+      "Date": "2013 Jul",
+      "FTSE All Share (p)": 3509.94
+    },
+    {
+      "Date": "2013 Aug",
+      "FTSE All Share (p)": 3410.43
+    },
+    {
+      "Date": "2013 Sep",
+      "FTSE All Share (p)": 3443.85
+    },
+    {
+      "Date": "2013 Oct",
+      "FTSE All Share (p)": 3585.32
+    },
+    {
+      "Date": "2013 Nov",
+      "FTSE All Share (p)": 3548.5
+    },
+    {
+      "Date": "2013 Dec",
+      "FTSE All Share (p)": 3609.63
+    },
+    {
+      "Date": "2014 Jan",
+      "FTSE All Share (p)": 3496.51
+    },
+    {
+      "Date": "2014 Feb",
+      "FTSE All Share (p)": 3666.66
+    },
+    {
+      "Date": "2014 Mar",
+      "FTSE All Share (p)": 3555.6
+    },
+    {
+      "Date": "2014 Apr",
+      "FTSE All Share (p)": 3619.8
+    },
+    {
+      "Date": "2014 May",
+      "FTSE All Share (p)": 3655
+    },
+    {
+      "Date": "2014 Jun",
+      "FTSE All Share (p)": 3600.2
+    },
+    {
+      "Date": "2014 Jul",
+      "FTSE All Share (p)": 3585.6
+    },
+    {
+      "Date": "2014 Aug",
+      "FTSE All Share (p)": 3639.5
+    },
+    {
+      "Date": "2014 Sep",
+      "FTSE All Share (p)": 3533.93
+    },
+    {
+      "Date": "2014 Oct",
+      "FTSE All Share (p)": 3503.5
+    },
+    {
+      "Date": "2014 Nov",
+      "FTSE All Share (p)": 3593.3
+    },
+    {
+      "Date": "2014 Dec",
+      "FTSE All Share (p)": 3532.7
+    },
+    {
+      "Date": "2015 Jan",
+      "FTSE All Share (p)": 3621.8
+    },
+    {
+      "Date": "2015 Feb",
+      "FTSE All Share (p)": 3744.26
+    },
+    {
+      "Date": "2015 Mar",
+      "FTSE All Share (p)": 3663.58
+    },
+    {
+      "Date": "2015 Apr",
+      "FTSE All Share (p)": 3760.1
+    },
+    {
+      "Date": "2015 May",
+      "FTSE All Share (p)": 3797.12
+    },
+    {
+      "Date": "2015 Jun",
+      "FTSE All Share (p)": 3570.58
+    },
+    {
+      "Date": "2015 Jul",
+      "FTSE All Share (p)": 3652.8
+    },
+    {
+      "Date": "2015 Aug",
+      "FTSE All Share (p)": 3434.7
+    },
+    {
+      "Date": "2015 Sep",
+      "FTSE All Share (p)": 3335.92
+    },
+    {
+      "Date": "2015 Oct",
+      "FTSE All Share (p)": 3484.6
+    },
+    {
+      "Date": "2015 Nov",
+      "FTSE All Share (p)": 3492.13
+    },
+    {
+      "Date": "2015 Dec",
+      "FTSE All Share (p)": 3444.26
+    },
+    {
+      "Date": "2016 Jan",
+      "FTSE All Share (p)": 3335.9
+    },
+    {
+      "Date": "2016 Feb",
+      "FTSE All Share (p)": 3345.8
+    },
+    {
+      "Date": "2016 Mar",
+      "FTSE All Share (p)": 3395.19
+    },
+    {
+      "Date": "2016 Apr",
+      "FTSE All Share (p)": 3421.7
+    },
+    {
+      "Date": "2016 May",
+      "FTSE All Share (p)": 3429.8
+    },
+    {
+      "Date": "2016 Jun",
+      "FTSE All Share (p)": 3515.5
+    },
+    {
+      "Date": "2016 Jul",
+      "FTSE All Share (p)": 3653.8
+    },
+    {
+      "Date": "2016 Aug",
+      "FTSE All Share (p)": 3697.19
+    },
+    {
+      "Date": "2016 Sep",
+      "FTSE All Share (p)": 3755.34
+    },
+    {
+      "Date": "2016 Oct",
+      "FTSE All Share (p)": 3768.14
+    },
+    {
+      "Date": "2016 Nov",
+      "FTSE All Share (p)": 3692.4
+    },
+    {
+      "Date": "2016 Dec",
+      "FTSE All Share (p)": 3873.22
+    },
+    {
+      "Date": "2017 Jan",
+      "FTSE All Share (p)": 3858.3
+    },
+    {
+      "Date": "2017 Feb",
+      "FTSE All Share (p)": 3953.4
+    },
+    {
+      "Date": "2017 Mar",
+      "FTSE All Share (p)": 3990
+    },
+    {
+      "Date": "2017 Apr",
+      "FTSE All Share (p)": 3962.5
+    },
+    {
+      "Date": "2017 May",
+      "FTSE All Share (p)": 4116.1
+    },
+    {
+      "Date": "2017 Jun",
+      "FTSE All Share (p)": 4002.2
+    },
+    {
+      "Date": "2017 Jul",
+      "FTSE All Share (p)": 4046.2
+    },
+    {
+      "Date": "2017 Aug",
+      "FTSE All Share (p)": 4073
+    },
+    {
+      "Date": "2017 Sep",
+      "FTSE All Share (p)": 4049.9
+    },
+    {
+      "Date": "2017 Oct",
+      "FTSE All Share (p)": 4117.7
+    },
+    {
+      "Date": "2017 Nov",
+      "FTSE All Share (p)": 4033.8
+    },
+    {
+      "Date": "2017 Dec",
+      "FTSE All Share (p)": 4221.8
+    },
+    {
+      "Date": "2018 Jan",
+      "FTSE All Share (p)": 4137.66
+    },
+    {
+      "Date": "2018 Feb",
+      "FTSE All Share (p)": 3981.61
+    },
+    {
+      "Date": "2018 Mar",
+      "FTSE All Share (p)": 3894.2
+    },
+    {
+      "Date": "2018 Apr",
+      "FTSE All Share (p)": 4127.7
+    },
+    {
+      "Date": "2018 May",
+      "FTSE All Share (p)": 4222.2
+    },
+    {
+      "Date": "2018 Jun",
+      "FTSE All Share (p)": 4202.3
+    },
+    {
+      "Date": "2018 Jul",
+      "FTSE All Share (p)": 4253.31
+    },
+    {
+      "Date": "2018 Aug",
+      "FTSE All Share (p)": 4106.1
+    },
+    {
+      "Date": "2018 Sep",
+      "FTSE All Share (p)": 4127.9
+    },
+    {
+      "Date": "2018 Oct",
+      "FTSE All Share (p)": 3904.2
+    },
+    {
+      "Date": "2018 Nov",
+      "FTSE All Share (p)": 3823.34
+    },
+    {
+      "Date": "2018 Dec",
+      "FTSE All Share (p)": 3675.06
+    }
+  ]
+}

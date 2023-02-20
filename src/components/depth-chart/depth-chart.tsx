@@ -59,7 +59,7 @@ export type DepthChartProps = {
   /**
    * Override the default text to display when there is not enough data.
    */
-  notEnoughDataText?: React.ReactNode | string;
+  notEnoughDataText?: React.ReactNode;
 
   /**
    * Light or dark theme

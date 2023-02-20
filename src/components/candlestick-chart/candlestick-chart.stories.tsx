@@ -27,6 +27,16 @@ Default.args = {
   interval: Interval.I5M,
 };
 
+export const Volume = Template.bind({});
+Volume.args = {
+  ...Default.args,
+  options: {
+    chartType: "candle",
+    studies: ["volume"],
+    studySize: "33.333%",
+  },
+};
+
 export const Study = Template.bind({});
 Study.args = {
   ...Default.args,

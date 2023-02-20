@@ -1,85 +1,71 @@
-import { ApolloClient, ObservableSubscription } from "@apollo/client";
+import type { ApolloClient } from "@apollo/client";
+import type { Subscription } from "zen-observable-ts";
 
-import { Annotation, Candle, DataSource, LabelAnnotation } from "../..";
+import { Candle, DataSource, Interval as PennantInterval } from "../../types";
+import type {
+  CandleFieldsFragment,
+  CandlesEventsSubscription,
+  CandlesEventsSubscriptionVariables,
+  CandlesQuery,
+  CandlesQueryVariables,
+} from "./__generated__/Candles";
 import {
-  CandleDetails,
-  candleQuery,
-  candlesQuery,
-  candlesQueryVariables,
-  candleSubscriptionQuery,
-  Interval,
-  marketDetail,
-  marketDetailQuery,
-  marketDetailVariables,
-  order,
-  orderQuery,
-  orders_orders,
-  OrderStatus,
-  orderVariables,
-  positionQuery,
-  positions,
-  positions_party_positions,
-  positionsVariables,
-} from "../api/vega-graphql";
-import { intervalMap, parseVegaDecimal } from "../helpers";
-import {
-  createOrderLabelAnnotation,
-  createPositionLabelAnnotation,
-} from "./create-annotations";
+  CandlesDocument,
+  CandlesEventsDocument,
+} from "./__generated__/Candles";
+import type { ChartQuery, ChartQueryVariables } from "./__generated__/Chart";
+import { ChartDocument } from "./__generated__/Chart";
+import { addDecimal } from "./number";
 
-export enum OrderBlockChainState {
-  Optimistic = "Optimistic",
+/** The interval for trade candles when subscribing via Vega GraphQL, default is I15M */
+export enum Interval {
+  /** 1 day interval */
+  INTERVAL_I1D = "INTERVAL_I1D",
+  /** 1 hour interval */
+  INTERVAL_I1H = "INTERVAL_I1H",
+  /** 1 minute interval */
+  INTERVAL_I1M = "INTERVAL_I1M",
+  /** 5 minute interval */
+  INTERVAL_I5M = "INTERVAL_I5M",
+  /** 6 hour interval */
+  INTERVAL_I6H = "INTERVAL_I6H",
+  /** 15 minute interval (default) */
+  INTERVAL_I15M = "INTERVAL_I15M",
 }
+
+const INTERVAL_TO_PENNANT_MAP = {
+  [PennantInterval.I1M]: Interval.INTERVAL_I1M,
+  [PennantInterval.I5M]: Interval.INTERVAL_I5M,
+  [PennantInterval.I15M]: Interval.INTERVAL_I15M,
+  [PennantInterval.I1H]: Interval.INTERVAL_I1H,
+  [PennantInterval.I6H]: Interval.INTERVAL_I6H,
+  [PennantInterval.I1D]: Interval.INTERVAL_I1D,
+};
 
 const defaultConfig = {
   decimalPlaces: 5,
   supportedIntervals: [
-    Interval.I1D,
-    Interval.I6H,
-    Interval.I1H,
-    Interval.I15M,
-    Interval.I5M,
-    Interval.I1M,
+    PennantInterval.I1D,
+    PennantInterval.I6H,
+    PennantInterval.I1H,
+    PennantInterval.I15M,
+    PennantInterval.I5M,
+    PennantInterval.I1M,
   ],
   priceMonitoringBounds: [],
 };
-
-function isActiveOrPartiallyFilledAndNotOptimistic(order: orders_orders) {
-  return (
-    (order.status === OrderStatus.Active ||
-      order.status === OrderStatus.PartiallyFilled) &&
-    order.createdAt !== OrderBlockChainState.Optimistic
-  );
-}
-
-function parseCandle(candle: CandleDetails, decimalPlaces: number): Candle {
-  return {
-    date: new Date(candle.datetime),
-    high: parseVegaDecimal(candle.high, decimalPlaces),
-    low: parseVegaDecimal(candle.low, decimalPlaces),
-    open: parseVegaDecimal(candle.open, decimalPlaces),
-    close: parseVegaDecimal(candle.close, decimalPlaces),
-    volume: Number(candle.volume),
-  };
-}
 
 /**
  * A data access object that provides access to the Vega GraphQL API.
  */
 export class VegaDataSource implements DataSource {
-  client: ApolloClient<any>;
+  client: ApolloClient<object>;
   marketId: string;
-  partyId: string;
-  _decimalPlaces: number = 0;
+  partyId: null | string;
+  _decimalPlaces = 0;
+  _positionDecimalPlaces = 0;
 
-  candlesSub: ObservableSubscription | null = null;
-  marketDataSub: ObservableSubscription | null = null;
-  positionsSub: ObservableSubscription | null = null;
-  ordersSub: ObservableSubscription | null = null;
-  orderAnnotations: Annotation[] = [];
-  positionAnnotations: Annotation[] = [];
-
-  onOrderCancelled: (id: string) => void;
+  candlesSub: Subscription | null = null;
 
   /**
    * Indicates the number of decimal places that an integer must be shifted by in order to get a correct
@@ -90,22 +76,27 @@ export class VegaDataSource implements DataSource {
   }
 
   /**
+   * Indicates the number of position decimal places that an integer must be shifted by in order to get a correct
+   * number denominated in the unit size of the Market.
+   */
+  get positionDecimalPlaces(): number {
+    return this._positionDecimalPlaces;
+  }
+
+  /**
    *
    * @param client - An ApolloClient instance.
    * @param marketId - Market identifier.
    * @param partyId - Party identifier.
-   * @param onOrderClosed - Callback called when the user initiates closing an order
    */
   constructor(
-    client: ApolloClient<any>,
+    client: ApolloClient<object>,
     marketId: string,
-    partyId: string,
-    onOrderClosed: (id: string) => void
+    partyId: null | string = null
   ) {
     this.client = client;
     this.marketId = marketId;
     this.partyId = partyId;
-    this.onOrderCancelled = onOrderClosed;
   }
 
   /**
@@ -113,43 +104,41 @@ export class VegaDataSource implements DataSource {
    */
   async onReady() {
     try {
-      const { data } = await this.client.query<
-        marketDetail,
-        marketDetailVariables
-      >({
-        query: marketDetailQuery,
-        variables: {
-          id: this.marketId,
-        },
-        fetchPolicy: "no-cache",
-      });
+      const { data } = await this.client.query<ChartQuery, ChartQueryVariables>(
+        {
+          query: ChartDocument,
+          variables: {
+            marketId: this.marketId,
+          },
+          fetchPolicy: "no-cache",
+        }
+      );
 
       if (data && data.market && data.market.data) {
         this._decimalPlaces = data.market.decimalPlaces;
+        this._positionDecimalPlaces = data.market.positionDecimalPlaces;
 
         return {
           decimalPlaces: this._decimalPlaces,
+          positionDecimalPlaces: this._positionDecimalPlaces,
           supportedIntervals: [
-            Interval.I1D,
-            Interval.I6H,
-            Interval.I1H,
-            Interval.I15M,
-            Interval.I5M,
-            Interval.I1M,
+            PennantInterval.I1D,
+            PennantInterval.I6H,
+            PennantInterval.I1H,
+            PennantInterval.I15M,
+            PennantInterval.I5M,
+            PennantInterval.I1M,
           ],
           priceMonitoringBounds:
-            data.market.data.priceMonitoringBounds?.map((bounds: any) => ({
-              maxValidPrice: parseVegaDecimal(
-                bounds.maxValidPrice,
-                this._decimalPlaces
+            data.market.data.priceMonitoringBounds?.map((bounds) => ({
+              maxValidPrice: Number(
+                addDecimal(bounds.maxValidPrice, this._decimalPlaces)
               ),
-              minValidPrice: parseVegaDecimal(
-                bounds.minValidPrice,
-                this._decimalPlaces
+              minValidPrice: Number(
+                addDecimal(bounds.minValidPrice, this._decimalPlaces)
               ),
-              referencePrice: parseVegaDecimal(
-                bounds.referencePrice,
-                this._decimalPlaces
+              referencePrice: Number(
+                addDecimal(bounds.referencePrice, this._decimalPlaces)
               ),
             })) ?? [],
         };
@@ -164,27 +153,31 @@ export class VegaDataSource implements DataSource {
   /**
    * Used by the charting library to get historical data.
    */
-  async query(interval: Interval, from: string) {
+  async query(interval: PennantInterval, from: string) {
     try {
       const { data } = await this.client.query<
-        candlesQuery,
-        candlesQueryVariables
+        CandlesQuery,
+        CandlesQueryVariables
       >({
-        query: candleQuery,
+        query: CandlesDocument,
         variables: {
           marketId: this.marketId,
-          interval: intervalMap[interval],
+          interval: INTERVAL_TO_PENNANT_MAP[interval],
           since: from,
         },
         fetchPolicy: "no-cache",
       });
 
-      if (data && data.market && data.market.candles) {
+      if (data?.market?.candlesConnection?.edges) {
         const decimalPlaces = data.market.decimalPlaces;
+        const positionDecimalPlaces = data.market.positionDecimalPlaces;
 
-        const candles = data.market.candles
-          .filter((d): d is CandleDetails => d !== null)
-          .map((d) => parseCandle(d, decimalPlaces));
+        const candles = data.market.candlesConnection.edges
+          .map((edge) => edge?.node)
+          .filter((node): node is CandleFieldsFragment => !!node)
+          .map((node) =>
+            parseCandle(node, decimalPlaces, positionDecimalPlaces)
+          );
 
         return candles;
       } else {
@@ -198,16 +191,31 @@ export class VegaDataSource implements DataSource {
   /**
    * Used by the charting library to create a subscription to streaming data.
    */
-  subscribeData(interval: Interval, onSubscriptionData: (data: any) => void) {
-    const res = this.client.subscribe({
-      query: candleSubscriptionQuery,
-      variables: { marketId: this.marketId, interval: intervalMap[interval] },
+  subscribeData(
+    interval: PennantInterval,
+    onSubscriptionData: (data: Candle) => void
+  ) {
+    const res = this.client.subscribe<
+      CandlesEventsSubscription,
+      CandlesEventsSubscriptionVariables
+    >({
+      query: CandlesEventsDocument,
+      variables: {
+        marketId: this.marketId,
+        interval: INTERVAL_TO_PENNANT_MAP[interval],
+      },
     });
 
     this.candlesSub = res.subscribe(({ data }) => {
-      const candle = parseCandle(data.candles, this.decimalPlaces);
+      if (data) {
+        const candle = parseCandle(
+          data.candles,
+          this.decimalPlaces,
+          this.positionDecimalPlaces
+        );
 
-      onSubscriptionData(candle);
+        onSubscriptionData(candle);
+      }
     });
   }
 
@@ -217,100 +225,19 @@ export class VegaDataSource implements DataSource {
   unsubscribeData() {
     this.candlesSub && this.candlesSub.unsubscribe();
   }
+}
 
-  /**
-   * Used by the charting library to create a subscription to streaming annotation data.
-   */
-  subscribeAnnotations(
-    onSubscriptionAnnotation: (annotations: Annotation[]) => void
-  ) {
-    if (this.partyId !== "") {
-      this.ordersSub = this.client
-        .watchQuery<order, orderVariables>({
-          query: orderQuery,
-          variables: { partyId: this.partyId },
-          fetchPolicy: "cache-first",
-        })
-        .subscribe(({ data }) => {
-          if (data.party?.orders) {
-            this.updateOrders(data.party.orders, onSubscriptionAnnotation);
-          }
-        });
-
-      this.positionsSub = this.client
-        .watchQuery<positions, positionsVariables>({
-          query: positionQuery,
-          variables: { partyId: this.partyId },
-          fetchPolicy: "cache-first",
-        })
-        .subscribe(({ data }) => {
-          if (data.party?.positions) {
-            this.updatePositions(
-              data.party.positions,
-              onSubscriptionAnnotation
-            );
-          }
-        });
-    }
-  }
-
-  /**
-   * Used by the charting library to clean-up a subscription to streaming annotation data.
-   */
-  unsubscribeAnnotations() {
-    this.ordersSub && this.ordersSub.unsubscribe();
-    this.positionsSub && this.positionsSub.unsubscribe();
-  }
-
-  private updatePositions(
-    positions: positions_party_positions[],
-    onSubscriptionAnnotation: (annotations: Annotation[]) => void
-  ) {
-    const validPositions = positions.filter(
-      (position) => position.market.id === this.marketId
-    );
-
-    const positionAnnotations: LabelAnnotation[] = [];
-
-    for (const position of validPositions) {
-      positionAnnotations.push(
-        createPositionLabelAnnotation(position, this._decimalPlaces)
-      );
-    }
-
-    this.positionAnnotations = positionAnnotations;
-
-    onSubscriptionAnnotation([
-      ...this.positionAnnotations,
-      ...this.orderAnnotations,
-    ]);
-  }
-
-  private updateOrders(
-    orders: orders_orders[],
-    onSubscriptionAnnotation: (annotations: Annotation[]) => void
-  ) {
-    const validOrders = orders
-      .filter((order) => order.market?.id === this.marketId)
-      .filter(isActiveOrPartiallyFilledAndNotOptimistic);
-
-    const orderAnnotations: LabelAnnotation[] = [];
-
-    for (const order of validOrders) {
-      orderAnnotations.push(
-        createOrderLabelAnnotation(
-          order,
-          this._decimalPlaces,
-          this.onOrderCancelled
-        )
-      );
-    }
-
-    this.orderAnnotations = orderAnnotations;
-
-    onSubscriptionAnnotation([
-      ...this.positionAnnotations,
-      ...this.orderAnnotations,
-    ]);
-  }
+function parseCandle(
+  candle: CandleFieldsFragment,
+  decimalPlaces: number,
+  positionDecimalPlaces: number
+): Candle {
+  return {
+    date: new Date(candle.periodStart),
+    high: Number(addDecimal(candle.high, decimalPlaces)),
+    low: Number(addDecimal(candle.low, decimalPlaces)),
+    open: Number(addDecimal(candle.open, decimalPlaces)),
+    close: Number(addDecimal(candle.close, decimalPlaces)),
+    volume: Number(addDecimal(candle.volume, positionDecimalPlaces)),
+  };
 }

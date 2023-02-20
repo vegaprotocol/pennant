@@ -155,11 +155,10 @@ export class Graphics extends Container {
    * An area is defined by two bounding lines.
    */
   public drawArea(
-    data: [number, number][],
-    curve: CurveFactory = curveLinear,
-    y0: number = 0
+    data: [number, number, number][],
+    curve: CurveFactory = curveLinear
   ): this {
-    return this.drawShape(new Area(data, curve, y0));
+    return this.drawShape(new Area(data, curve));
   }
 
   /**

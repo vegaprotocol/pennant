@@ -7,7 +7,9 @@
         "overview",
         "candlestick-chart",
         "depth-chart",
-        "price-chart"
+        "price-chart",
+        "line-chart",
+        "area-chart"
       ],
       "Examples": [
         { "Candlestick chart": ["candlestick-chart/basic"] },

@@ -60,7 +60,7 @@ function getCandlePadding(isSimple: boolean, intervalWidth: number) {
 
 export type Panes<T> = { [id: string]: T };
 
-export type ChartPane = {
+type ChartPane = {
   id: string;
   ref: React.RefObject<HTMLDivElement>;
   data: any[];
