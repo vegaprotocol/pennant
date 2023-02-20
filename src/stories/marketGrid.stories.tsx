@@ -11,9 +11,12 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { Meta, Story } from "@storybook/react";
 import { createClient } from "graphql-ws";
 
-import { markets } from "./api/vega-graphql";
-import { marketsQuery } from "./api/vega-graphql/queries/markets";
 import { MarketGrid } from "./components/market-grid/market-grid";
+import {
+  MarketsDocument,
+  MarketsQuery,
+  MarketsQueryVariables,
+} from "./data-source/__generated__/markets";
 
 export default {
   title: "Overview/Use Cases",
@@ -48,13 +51,25 @@ const client = new ApolloClient({
 });
 
 const Grid: Story = () => {
-  const { data, loading } = useQuery<markets>(marketsQuery);
+  const { data, loading } = useQuery<MarketsQuery, MarketsQueryVariables>(
+    MarketsDocument,
+    { fetchPolicy: "no-cache" }
+  );
 
-  if (loading || typeof data === "undefined" || data.markets === null) {
+  if (
+    loading ||
+    typeof data === "undefined" ||
+    data.marketsConnection === undefined ||
+    data.marketsConnection === null
+  ) {
     return <div>Loading</div>;
   }
 
-  return <MarketGrid markets={data.markets} />;
+  return (
+    <MarketGrid
+      markets={data.marketsConnection.edges.map((edge) => edge.node)}
+    />
+  );
 };
 
 export const Simple = () => (
