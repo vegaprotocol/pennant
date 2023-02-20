@@ -150,7 +150,7 @@
     "react-test-renderer": "18.2.0",
     "rollup": "3.17.2",
     "rollup-plugin-postcss": "4.0.2",
-    "rollup-plugin-tsconfig-paths": "^1.4.0",
+    "rollup-plugin-tsconfig-paths": "1.4.0",
     "sass-loader": "13.2.0",
     "standard-version": "9.5.0",
     "storybook-dark-mode": "2.1.0",
