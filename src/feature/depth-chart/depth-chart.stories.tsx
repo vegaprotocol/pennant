@@ -1,10 +1,10 @@
 import { Meta, Story } from "@storybook/react";
+import { useInterval } from "@util/hooks";
 import { numberFormatter } from "@util/misc";
 import { orderBy } from "lodash";
 import { useRef, useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { useInterval } from "../../hooks";
 import {
   DepthChart,
   DepthChartHandle,
