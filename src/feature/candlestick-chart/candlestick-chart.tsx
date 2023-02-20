@@ -19,7 +19,6 @@ import {
   getSubMinutes,
 } from "../../helpers";
 import { mergeData } from "../../helpers";
-import { parse } from "../../scenegraph/parse";
 import {
   Annotation,
   Candle,
@@ -41,6 +40,7 @@ import {
   INITIAL_NUM_CANDLES_TO_DISPLAY,
   INITIAL_NUM_CANDLES_TO_FETCH,
 } from "../../util/constants";
+import { parse } from "../../util/scenegraph/parse";
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 
