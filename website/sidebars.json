@@ -3,7 +3,14 @@
     {
       "Getting Started": ["getting-started"],
       "Customization": ["colors", "typography"],
-      "API reference": ["overview", "chart", "depth-chart", "price-chart"],
+      "API reference": [
+        "overview",
+        "chart",
+        "depth-chart",
+        "price-chart",
+        "line-chart",
+        "area-chart"
+      ],
       "Examples": [
         { "Candlestick chart": ["candlestick-chart/basic"] },
         { "Depth chart": ["depth-chart/basic"] },

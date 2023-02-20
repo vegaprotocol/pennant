@@ -221,9 +221,11 @@ export class GraphicsRenderer {
 
         context.beginPath();
 
-        area().curve(tempShape.curve).y0(tempShape.y0).context(context)(
-          tempShape.data
-        );
+        area<[number, number, number]>()
+          .curve(tempShape.curve)
+          .y0((d) => d[1])
+          .y1((d) => d[2])
+          .context(context)(tempShape.data);
 
         if (fillStyle.visible) {
           context.globalAlpha = fillStyle.alpha;
@@ -231,7 +233,7 @@ export class GraphicsRenderer {
           context.fill();
         }
 
-        // FIXME: Disables because even when linestyle had width 0 we were seeing the outline drawn
+        // FIXME: Disabled because even when linestyle had width 0 we were seeing the outline drawn
         //context.stroke();
       } else if (data.type === SHAPES.RECT) {
         const tempShape = shape as Rectangle;

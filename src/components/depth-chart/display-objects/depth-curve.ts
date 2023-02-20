@@ -50,7 +50,14 @@ export class DepthCurve extends Container {
 
     this.area.clear();
     this.area.beginFill(this.fill, 1);
-    this.area.drawArea(points, this.curve, height - resolution * AXIS_HEIGHT);
+    this.area.drawArea(
+      points.map((point) => [
+        point[0],
+        height - resolution * AXIS_HEIGHT,
+        point[1],
+      ]),
+      this.curve
+    );
     this.area.endFill();
 
     this.line.clear();
