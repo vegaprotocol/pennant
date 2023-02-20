@@ -8,7 +8,7 @@ import { useDelayShow } from "../../hooks";
 export type NonIdealStateProps = {
   delay?: number;
   description?: string;
-  title: React.ReactNode | string;
+  title: React.ReactNode;
 };
 
 export const NonIdealState = ({

@@ -42,7 +42,7 @@ import { Encoding } from "../vega-lite/encoding";
 import { Mark, MarkDef } from "../vega-lite/mark";
 import { BaseSpec, isVConcatSpec, TopLevelSpec } from "../vega-lite/spec";
 
-export function compileLayer(
+function compileLayer(
   data: Data,
   encoding: Encoding<Field>,
   mark: Mark | MarkDef,

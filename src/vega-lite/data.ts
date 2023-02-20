@@ -4,6 +4,6 @@ export interface InlineData {
   values: InlineDataset;
 }
 
-export type DataSource = InlineData;
+type DataSource = InlineData;
 
 export type Data = DataSource;
