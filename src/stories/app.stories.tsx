@@ -22,7 +22,6 @@ import {
 } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
-import classnames from "classnames";
 import { createClient } from "graphql-ws";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
@@ -41,13 +40,15 @@ export default {
   title: "Overview/Application Examples",
 } as Meta;
 
+const VEGA_URL = "api.n11.testnet.vega.xyz/graphql";
+
 const httpLink = new HttpLink({
-  uri: "https://api.n08.testnet.vega.xyz/graphql",
+  uri: `https://${VEGA_URL}`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://api.n08.testnet.vega.xyz/graphql",
+    url: `wss://${VEGA_URL}`,
   })
 );
 
@@ -68,15 +69,9 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-type Market = {
-  id: string;
-  name: string;
-  state: string;
-};
+const MarketSelect = Select.ofType<MarketFieldsFragment>();
 
-const MarketSelect = Select.ofType<Market>();
-
-const renderMarket: ItemRenderer<Market> = (
+const renderMarket: ItemRenderer<MarketFieldsFragment> = (
   market,
   { handleClick, modifiers }
 ) => {
@@ -88,21 +83,69 @@ const renderMarket: ItemRenderer<Market> = (
       active={modifiers.active}
       disabled={market.state !== MarketState.STATE_ACTIVE}
       key={market.id}
-      label={market.name}
+      label={market.tradableInstrument.instrument.code}
       onClick={handleClick}
-      text={market.name}
+      text={market.tradableInstrument.instrument.name}
     />
   );
 };
 
-const GET_MARKETS = gql`
-  query GetMarkets {
-    markets {
-      id
-      name
-      state
+const MarketFieldsFragmentDoc = gql`
+  fragment MarketFields on Market {
+    id
+    decimalPlaces
+    positionDecimalPlaces
+    state
+    tradingMode
+    fees {
+      factors {
+        makerFee
+        infrastructureFee
+        liquidityFee
+      }
+    }
+    tradableInstrument {
+      instrument {
+        id
+        name
+        code
+        metadata {
+          tags
+        }
+        product {
+          ... on Future {
+            settlementAsset {
+              id
+              symbol
+              name
+              decimals
+            }
+            quoteName
+            dataSourceSpecForTradingTermination {
+              id
+            }
+          }
+        }
+      }
+    }
+    marketTimestamps {
+      open
+      close
     }
   }
+`;
+
+const MarketsDocument = gql`
+  query Markets {
+    marketsConnection {
+      edges {
+        node {
+          ...MarketFields
+        }
+      }
+    }
+  }
+  ${MarketFieldsFragmentDoc}
 `;
 
 /** The current state of a market */
@@ -133,23 +176,150 @@ export enum MarketState {
   STATE_TRADING_TERMINATED = "STATE_TRADING_TERMINATED",
 }
 
+/** What market trading mode is the market in */
+export enum MarketTradingMode {
+  /** Auction as normal trading mode for the market, where orders are uncrossed periodically */
+  TRADING_MODE_BATCH_AUCTION = "TRADING_MODE_BATCH_AUCTION",
+  /** Continuous trading where orders are processed and potentially matched on arrival */
+  TRADING_MODE_CONTINUOUS = "TRADING_MODE_CONTINUOUS",
+  /** Auction triggered by price/liquidity monitoring */
+  TRADING_MODE_MONITORING_AUCTION = "TRADING_MODE_MONITORING_AUCTION",
+  /** No trading allowed */
+  TRADING_MODE_NO_TRADING = "TRADING_MODE_NO_TRADING",
+  /** Auction trading where orders are uncrossed at the end of the opening auction period */
+  TRADING_MODE_OPENING_AUCTION = "TRADING_MODE_OPENING_AUCTION",
+}
+
+export type MarketFieldsFragment = {
+  __typename?: "Market";
+  id: string;
+  decimalPlaces: number;
+  positionDecimalPlaces: number;
+  state: MarketState;
+  tradingMode: MarketTradingMode;
+  fees: {
+    __typename?: "Fees";
+    factors: {
+      __typename?: "FeeFactors";
+      makerFee: string;
+      infrastructureFee: string;
+      liquidityFee: string;
+    };
+  };
+  tradableInstrument: {
+    __typename?: "TradableInstrument";
+    instrument: {
+      __typename?: "Instrument";
+      id: string;
+      name: string;
+      code: string;
+      metadata: {
+        __typename?: "InstrumentMetadata";
+        tags?: Array<string> | null;
+      };
+      product: {
+        __typename?: "Future";
+        quoteName: string;
+        settlementAsset: {
+          __typename?: "Asset";
+          id: string;
+          symbol: string;
+          name: string;
+          decimals: number;
+        };
+        dataSourceSpecForTradingTermination: {
+          __typename?: "DataSourceSpec";
+          id: string;
+        };
+      };
+    };
+  };
+  marketTimestamps: { __typename?: "MarketTimestamps"; open: any; close: any };
+};
+
+export type MarketsQueryVariables = { [key: string]: never };
+
+export type MarketsQuery = {
+  __typename?: "Query";
+  marketsConnection?: {
+    __typename?: "MarketConnection";
+    edges: Array<{
+      __typename?: "MarketEdge";
+      node: {
+        __typename?: "Market";
+        id: string;
+        decimalPlaces: number;
+        positionDecimalPlaces: number;
+        state: MarketState;
+        tradingMode: MarketTradingMode;
+        fees: {
+          __typename?: "Fees";
+          factors: {
+            __typename?: "FeeFactors";
+            makerFee: string;
+            infrastructureFee: string;
+            liquidityFee: string;
+          };
+        };
+        tradableInstrument: {
+          __typename?: "TradableInstrument";
+          instrument: {
+            __typename?: "Instrument";
+            id: string;
+            name: string;
+            code: string;
+            metadata: {
+              __typename?: "InstrumentMetadata";
+              tags?: Array<string> | null;
+            };
+            product: {
+              __typename?: "Future";
+              quoteName: string;
+              settlementAsset: {
+                __typename?: "Asset";
+                id: string;
+                symbol: string;
+                name: string;
+                decimals: number;
+              };
+              dataSourceSpecForTradingTermination: {
+                __typename?: "DataSourceSpec";
+                id: string;
+              };
+            };
+          };
+        };
+        marketTimestamps: {
+          __typename?: "MarketTimestamps";
+          open: any;
+          close: any;
+        };
+      };
+    }>;
+  } | null;
+};
+
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState("");
-  const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [studies, setStudies] = useState<Study[]>([]);
+  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [studies, setStudies] = useState<Study[]>(["volume"]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
-  const [interval, setInterval] = useState<Interval>(Interval.I1M);
+  const [interval, setInterval] = useState<Interval>(Interval.I15M);
 
-  const { loading, error, data } = useQuery(GET_MARKETS);
+  const { loading, error, data } = useQuery<
+    MarketsQuery,
+    MarketsQueryVariables
+  >(MarketsDocument, {
+    fetchPolicy: "no-cache",
+  });
 
   const dataSource = useMemo(
     () =>
       new VegaDataSource(
         client,
         market,
-        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
-        console.log
+        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
       ),
     [market]
   );
@@ -157,9 +327,9 @@ export const VegaProtocol: Story = () => {
   const darkmode = useDarkMode();
 
   const marketId =
-    data?.markets?.find(
-      (market: Market) => market.state === MarketState.STATE_ACTIVE
-    )?.id ?? data?.markets?.[0]?.id;
+    data?.marketsConnection?.edges.find(
+      (edge) => edge.node.state === MarketState.STATE_ACTIVE
+    )?.node.id ?? data?.marketsConnection?.edges[0]?.node.id;
 
   useEffect(() => {
     if (marketId) {
@@ -175,9 +345,9 @@ export const VegaProtocol: Story = () => {
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
-          items={data.markets}
+          items={data?.marketsConnection?.edges.map((edge) => edge.node) ?? []}
           itemRenderer={renderMarket}
-          onItemSelect={(item: Market) => {
+          onItemSelect={(item: MarketFieldsFragment) => {
             setMarket(item.id);
           }}
           noResults={<MenuItem disabled={true} text="No results." />}
@@ -185,8 +355,9 @@ export const VegaProtocol: Story = () => {
         >
           <Button
             text={
-              data.markets.find((s: any) => s.id === market)?.name ??
-              "No market selected"
+              data?.marketsConnection?.edges.find(
+                (s: any) => s.node.id === market
+              )?.node.tradableInstrument.instrument.name ?? "No market selected"
             }
             disabled={false}
           />

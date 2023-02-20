@@ -19,16 +19,17 @@ export default {
   title: "Overview/Use Cases",
 } as Meta;
 
+const VEGA_URL = "api.n11.testnet.vega.xyz/graphql";
+
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: `https://${VEGA_URL}`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://lb.testnet.vega.xyz/query",
+    url: `wss://${VEGA_URL}`,
   })
 );
-
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);

@@ -54,8 +54,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
           new VegaDataSource(
             client,
             market.id,
-            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
-            console.log
+            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
           )
       ),
     [markets]
