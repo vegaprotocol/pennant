@@ -8,7 +8,7 @@ import { createClient } from "graphql-ws";
 import { useMemo } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { CandlestickChart } from "../../../components/candlestick-chart";
+import { CandlestickChart } from "../../../feature/candlestick-chart";
 import { Interval } from "../../../types";
 import { MarketFieldsFragment } from "../../data-source/__generated__/markets";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";

@@ -1,4 +1,4 @@
-import { Colors } from "../components/candlestick-chart/helpers";
+import { Colors } from "../feature/candlestick-chart/helpers";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
 import { align, getNumYTicks } from "../helpers";
 import { hex2rgb, string2hex } from "../renderer/utils";

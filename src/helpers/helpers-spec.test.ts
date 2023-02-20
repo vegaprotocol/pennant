@@ -1,4 +1,4 @@
-import { getColors } from "../components/candlestick-chart/helpers";
+import { getColors } from "../feature/candlestick-chart/helpers";
 import { constructTopLevelSpec } from ".";
 
 const colors = getColors(null);

@@ -1,4 +1,4 @@
-import { AXIS_HEIGHT } from "../../components/depth-chart";
+import { AXIS_HEIGHT } from "../../feature/depth-chart";
 import { Graphics } from "../../renderer/graphics";
 
 /**

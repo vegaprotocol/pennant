@@ -26,7 +26,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { CandlestickChart } from "../components/candlestick-chart";
+import { CandlestickChart } from "../feature/candlestick-chart";
 import { formatter } from "../helpers";
 import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";

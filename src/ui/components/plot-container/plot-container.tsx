@@ -1,5 +1,5 @@
 import "./plot-container.css";
-import "../../lib/d3fc-element";
+import "../../../lib/d3fc-element";
 
 import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
@@ -14,20 +14,20 @@ import React, {
   useState,
 } from "react";
 
-import { THROTTLE_INTERVAL } from "../../constants";
-import { Core } from "../../core";
-import { asyncSnapshot } from "../../helpers";
+import { THROTTLE_INTERVAL } from "../../../constants";
+import { Core } from "../../../core";
+import { Colors } from "../../../feature/candlestick-chart/helpers";
+import { asyncSnapshot } from "../../../helpers";
 import {
   Bounds,
   PlotContainerElement,
   Scenegraph,
   Viewport,
-} from "../../types";
-import { FcElement, Interval } from "../../types";
-import { calculatePreferredSize } from "../../util/misc";
-import { Colors } from "../candlestick-chart/helpers";
+} from "../../../types";
+import { FcElement, Interval } from "../../../types";
+import { calculatePreferredSize } from "../../../util/misc";
+import { XAxisView } from "..";
 import { PaneView } from "../pane-view";
-import { XAxisView } from "../x-axis-view";
 
 export type PlotContainerProps = {
   width: number;

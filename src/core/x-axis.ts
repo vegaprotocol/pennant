@@ -1,4 +1,4 @@
-import { Colors } from "../components/candlestick-chart/helpers";
+import { Colors } from "../feature/candlestick-chart/helpers";
 import { XAxisElement, XAxisTooltipElement } from "../elements";
 import { clearCanvas } from "../helpers";
 import { Interval, ScaleTime } from "../types";

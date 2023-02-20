@@ -36,9 +36,11 @@ import {
   ThemeVariant,
   Viewport,
 } from "../../types";
-import { ErrorBoundary } from "../error-boundary";
-import { NonIdealState } from "../non-ideal-state";
-import { PlotContainer } from "../plot-container";
+import {
+  ErrorBoundary,
+  NonIdealState,
+  PlotContainer,
+} from "../../ui/components";
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 

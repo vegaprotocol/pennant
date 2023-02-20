@@ -10,7 +10,7 @@ import React, {
 import { defaultPriceFormat, numberFormatter } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
-import { NonIdealState } from "../non-ideal-state";
+import { NonIdealState } from "../../ui/components";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 import { getColors, getDimensions } from "./helpers";
