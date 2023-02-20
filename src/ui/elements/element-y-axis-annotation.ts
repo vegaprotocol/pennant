@@ -1,8 +1,8 @@
 import { align, formatter } from "@util/misc";
 
-import { Colors } from "../feature/candlestick-chart/helpers";
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
-import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../util/constants";
+import { Colors } from "../../feature/candlestick-chart/helpers";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
+import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../../util/constants";
 
 function addYAxisPath(
   ctx: CanvasRenderingContext2D,

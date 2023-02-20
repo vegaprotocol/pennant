@@ -1,6 +1,6 @@
+import { XAxisElement, XAxisTooltipElement } from "@ui/elements";
 import { clearCanvas } from "@util/misc";
 
-import { XAxisElement, XAxisTooltipElement } from "../../elements";
 import { Colors } from "../../feature/candlestick-chart/helpers";
 import { Interval, ScaleTime } from "../../types";
 

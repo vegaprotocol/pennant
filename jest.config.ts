@@ -85,6 +85,7 @@ const jestConfig = {
   moduleNameMapper: {
     "^.+\\.(css|less|scss)$": "babel-jest",
     "^@ui/core$": "<rootDir>/src/ui/core",
+    "^@ui/elements$": "<rootDir>/src/ui/elements",
     "^@util/hooks$": "<rootDir>/src/util/hooks",
     "^@util/misc$": "<rootDir>/src/util/misc",
   },

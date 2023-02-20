@@ -1,4 +1,4 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
 
 function addCrosshairPath(
   ctx: CanvasRenderingContext2D,

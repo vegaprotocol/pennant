@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/react";
+import { BarElement } from "@ui/elements";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { select } from "d3-selection";
 import { useEffect, useRef } from "react";
 
-import { BarElement } from "../elements";
 import { FcElement } from "../types";
 
 export default {

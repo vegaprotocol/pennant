@@ -21,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@ui/core": ["src/ui/core/index.ts"],
+      "@ui/elements": ["src/ui/elements/index.ts"],
       "@util/hooks": ["src/util/hooks/index.ts"],
       "@util/misc": ["src/util/misc/index.ts"]
     }

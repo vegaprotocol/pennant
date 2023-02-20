@@ -1,3 +1,4 @@
+import { RenderableHTMLElement } from "@ui/elements";
 import { getSubMinutes } from "@util/misc";
 import { dispatch } from "d3-dispatch";
 import { scaleLinear, scaleTime } from "d3-scale";
@@ -13,7 +14,6 @@ import { compareAsc } from "date-fns";
 import { difference, intersection, omit, union } from "lodash";
 import { MutableRefObject } from "react";
 
-import { RenderableHTMLElement } from "../../elements";
 import { Colors } from "../../feature/candlestick-chart/helpers";
 import {
   Interval,

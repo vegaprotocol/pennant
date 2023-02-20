@@ -9,6 +9,18 @@ import {
   indicatorRelativeStrengthIndex,
 } from "@d3fc/d3fc-technical-indicator";
 import {
+  CrosshairElement,
+  DummyElement,
+  GridElement,
+  LabelAnnotationElement,
+  LabelAnnotationHtmlElement,
+  XAxisElement,
+  XAxisTooltipElement,
+  YAxisAnnotationElement,
+  YAxisElement,
+  YAxisTooltipElement,
+} from "@ui/elements";
+import {
   calculateScales,
   createElement,
   getAreaConfig,
@@ -20,18 +32,6 @@ import {
 } from "@util/misc";
 import { extent } from "d3-array";
 
-import {
-  CrosshairElement,
-  DummyElement,
-  GridElement,
-  LabelAnnotationElement,
-  LabelAnnotationHtmlElement,
-  XAxisElement,
-  XAxisTooltipElement,
-  YAxisAnnotationElement,
-  YAxisElement,
-  YAxisTooltipElement,
-} from "../../elements";
 import { Annotation, Candle, Scenegraph } from "../../types";
 import { Field } from "../vega-lite/channeldef";
 import { compile } from "../vega-lite/compile/compile";

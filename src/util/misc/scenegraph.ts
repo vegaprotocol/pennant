@@ -4,7 +4,8 @@ import {
   LineElement,
   RuleElement,
   TickElement,
-} from "../../elements";
+} from "@ui/elements";
+
 import { PositionalElement } from "../../types";
 import { Color, Gradient, Mark } from "../vega-lite/mark";
 import {

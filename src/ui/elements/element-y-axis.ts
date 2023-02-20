@@ -1,10 +1,10 @@
 import { align, getNumYTicks } from "@util/misc";
 
-import { Colors } from "../feature/candlestick-chart/helpers";
-import { hex2rgb, string2hex } from "../renderer/utils";
-import { ScaleLinear, ScaleTime } from "../types";
-import { RenderableElement } from "../types";
-import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../util/constants";
+import { Colors } from "../../feature/candlestick-chart/helpers";
+import { hex2rgb, string2hex } from "../../renderer/utils";
+import { ScaleLinear, ScaleTime } from "../../types";
+import { RenderableElement } from "../../types";
+import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../../util/constants";
 
 const MARGIN = 6;
 const FADE_HEIGHT = 6;

@@ -1,4 +1,5 @@
-import { YAxisElement, YAxisTooltipElement } from "../../elements";
+import { YAxisElement, YAxisTooltipElement } from "@ui/elements";
+
 import { Colors } from "../../feature/candlestick-chart/helpers";
 import { ScaleLinear, ScaleTime } from "../../types";
 

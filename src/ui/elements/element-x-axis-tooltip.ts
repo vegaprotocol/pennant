@@ -1,7 +1,12 @@
 import { dateFormat } from "@util/misc";
 
-import { Colors } from "../feature/candlestick-chart/helpers";
-import { Interval, RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { Colors } from "../../feature/candlestick-chart/helpers";
+import {
+  Interval,
+  RenderableElement,
+  ScaleLinear,
+  ScaleTime,
+} from "../../types";
 
 function addXAxisTooltipPath(
   ctx: CanvasRenderingContext2D,

@@ -1,4 +1,5 @@
-import { RenderableHTMLElement } from "../elements";
+import { RenderableHTMLElement } from "@ui/elements";
+
 import { ScaleLinear, ScaleTime } from "../types";
 
 export interface RenderableElement {

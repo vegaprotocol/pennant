@@ -1,4 +1,4 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../types";
+import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
 
 export class DummyElement implements RenderableElement {
   readonly x: Date;
