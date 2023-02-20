@@ -1,7 +1,8 @@
-import * as Types from "@vegaprotocol/types";
-
 import { gql } from "@apollo/client";
 import * as Apollo from "@apollo/client";
+
+import * as Types from "./types";
+
 const defaultOptions = {} as const;
 export type CandleFieldsFragment = {
   __typename?: "Candle";
