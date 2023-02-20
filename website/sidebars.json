@@ -5,7 +5,7 @@
       "Customization": ["colors", "typography"],
       "API reference": [
         "overview",
-        "chart",
+        "candlestick-chart",
         "depth-chart",
         "price-chart",
         "line-chart",

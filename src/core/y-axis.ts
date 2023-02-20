@@ -1,4 +1,4 @@
-import { Colors } from "../components/chart/helpers";
+import { Colors } from "../components/candlestick-chart/helpers";
 import { YAxisElement, YAxisTooltipElement } from "../elements";
 import { ScaleLinear, ScaleTime } from "../types";
 

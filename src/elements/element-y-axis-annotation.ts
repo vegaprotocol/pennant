@@ -1,4 +1,4 @@
-import { Colors } from "../components/chart/helpers";
+import { Colors } from "../components/candlestick-chart/helpers";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../constants";
 import { align, formatter } from "../helpers";
 import { RenderableElement, ScaleLinear, ScaleTime } from "../types";

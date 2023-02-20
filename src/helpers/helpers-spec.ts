@@ -1,4 +1,7 @@
-import { Colors, getAccentColor } from "../components/chart/helpers";
+import {
+  Colors,
+  getAccentColor,
+} from "../components/candlestick-chart/helpers";
 import { Candle, ChartType, Overlay, Study } from "../types";
 import { BaseSpec, TopLevelSpec } from "../vega-lite/spec";
 import { Transform } from "../vega-lite/transform";

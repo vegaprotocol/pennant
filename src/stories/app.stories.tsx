@@ -26,7 +26,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { Chart } from "../components/chart";
+import { CandlestickChart } from "../components/candlestick-chart";
 import { formatter } from "../helpers";
 import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
@@ -194,7 +194,7 @@ export const VegaProtocol: Story = () => {
         />
       </div>
       <div style={{ height: "60vh" }}>
-        <Chart
+        <CandlestickChart
           ref={ref}
           dataSource={dataSource}
           options={{
@@ -367,7 +367,7 @@ export const CryptoCompare: Story = () => {
           }}
         />
         <div style={{ height: "70vh" }}>
-          <Chart
+          <CandlestickChart
             ref={ref}
             dataSource={dataSource}
             options={{

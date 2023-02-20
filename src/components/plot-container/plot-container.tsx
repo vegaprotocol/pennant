@@ -25,7 +25,7 @@ import {
 } from "../../types";
 import { FcElement, Interval } from "../../types";
 import { calculatePreferredSize } from "../../util/misc";
-import { Colors } from "../chart/helpers";
+import { Colors } from "../candlestick-chart/helpers";
 import { PaneView } from "../pane-view";
 import { XAxisView } from "../x-axis-view";
 
