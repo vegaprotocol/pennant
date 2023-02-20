@@ -11,7 +11,7 @@ export type Mark = keyof typeof Mark;
 
 export type Color = string;
 
-export type BaseValueRef<T> =
+type BaseValueRef<T> =
   | {
       value: T | null;
     }
@@ -19,11 +19,11 @@ export type BaseValueRef<T> =
       field: Field;
     };
 
-export interface BaseGradient {
+interface BaseGradient {
   gradient: "linear";
 }
 
-export interface GradientStop {
+interface GradientStop {
   offset: number;
   color: Color;
 }
@@ -35,7 +35,7 @@ export interface LinearGradient extends BaseGradient {
   stops: GradientStop[];
 }
 
-export type ColorValueRef =
+type ColorValueRef =
   | BaseValueRef<Color>
   | { value: LinearGradient }
   | {

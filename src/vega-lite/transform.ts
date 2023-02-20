@@ -1,6 +1,6 @@
-export type FieldName = string;
+type FieldName = string;
 
-export type Indicator =
+type Indicator =
   | "bollinger"
   | "eldarRay"
   | "envelope"
