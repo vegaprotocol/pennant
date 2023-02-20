@@ -1,11 +1,12 @@
+import {
+  Container,
+  Graphics,
+  hex2string,
+  Rectangle,
+  Texture,
+} from "@ui/renderer";
 import { CurveFactory, curveStepBefore } from "d3-shape";
 import { memoize, values } from "lodash";
-
-import { Texture } from "../../renderer";
-import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
-import { Rectangle } from "../../renderer/math";
-import { hex2string } from "../../renderer/utils";
 
 function createGradTexture(
   colorStop1: number,

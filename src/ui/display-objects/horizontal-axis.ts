@@ -1,11 +1,13 @@
+import {
+  Container,
+  Graphics,
+  InteractionEvent,
+  Renderer,
+  Text,
+} from "@ui/renderer";
 import { range } from "@util/misc";
 
 import { Colors } from "../../feature/depth-chart/helpers";
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
-import { InteractionEvent } from "../../renderer/interaction/interaction-event";
-import { Text } from "../../renderer/text";
 import { ScaleTime } from "../../types";
 import { AXIS_HEIGHT, FONT_SIZE } from "../../util/constants";
 import { Gesture, Zoom } from "../../util/zoom";

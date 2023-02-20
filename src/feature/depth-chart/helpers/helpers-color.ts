@@ -1,4 +1,4 @@
-import { string2hex } from "../../../renderer/utils";
+import { string2hex } from "@ui/renderer";
 
 export interface Colors {
   buyFill: number;

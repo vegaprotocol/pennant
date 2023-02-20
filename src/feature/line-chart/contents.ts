@@ -1,7 +1,6 @@
+import { Container, Renderer } from "@ui/renderer";
 import { range } from "@util/misc";
 
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
 import { ScaleLinear, ScaleTime } from "../../types";
 import {
   HorizontalGrid,

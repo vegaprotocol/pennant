@@ -86,6 +86,7 @@ const jestConfig = {
     "^.+\\.(css|less|scss)$": "babel-jest",
     "^@ui/core$": "<rootDir>/src/ui/core",
     "^@ui/elements$": "<rootDir>/src/ui/elements",
+    "^@ui/renderer$": "<rootDir>/src/ui/renderer",
     "^@util/hooks$": "<rootDir>/src/util/hooks",
     "^@util/misc$": "<rootDir>/src/util/misc",
   },

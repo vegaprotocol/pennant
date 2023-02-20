@@ -1,6 +1,5 @@
+import { string2hex } from "@ui/renderer";
 import { COLORS } from "@util/misc";
-
-import { string2hex } from "../../../renderer/utils";
 
 export interface Colors {
   backgroundSurface: number;

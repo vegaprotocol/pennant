@@ -1,5 +1,5 @@
-import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
+import { Container, Graphics } from "@ui/renderer";
+
 import { ScaleLinear } from "../../types";
 
 /**

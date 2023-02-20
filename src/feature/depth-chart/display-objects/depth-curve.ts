@@ -1,7 +1,6 @@
+import { Container, Graphics } from "@ui/renderer";
 import { CurveFactory, curveStepBefore } from "d3-shape";
 
-import { Container } from "../../../renderer/display";
-import { Graphics } from "../../../renderer/graphics";
 import { AXIS_HEIGHT } from "../depth-chart";
 
 /**

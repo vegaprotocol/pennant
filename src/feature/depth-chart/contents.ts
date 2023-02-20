@@ -1,7 +1,6 @@
+import { Container, Renderer } from "@ui/renderer";
 import { curveStepAfter } from "d3-shape";
 
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
 import { DepthCurve } from "./display-objects";
 import { Colors, Dimensions } from "./helpers";
 

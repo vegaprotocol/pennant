@@ -1,3 +1,10 @@
+import {
+  Container,
+  InteractionData,
+  InteractionEvent,
+  Rectangle,
+  Renderer,
+} from "@ui/renderer";
 import { bisectLeft, bisectRight, zip } from "d3-array";
 import { Delaunay } from "d3-delaunay";
 import { ScaleLinear, scaleLinear } from "d3-scale";
@@ -5,11 +12,6 @@ import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
 
 import { bisectCenter } from "../../math/array";
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
-import { InteractionData } from "../../renderer/interaction/interaction-data";
-import { InteractionEvent } from "../../renderer/interaction/interaction-event";
-import { Rectangle } from "../../renderer/math";
 import { HorizontalLine, Rect, VerticalLine } from "../../ui/display-objects";
 import { AXIS_HEIGHT } from "./depth-chart";
 import {

@@ -1,5 +1,6 @@
+import { Graphics } from "@ui/renderer";
+
 import { AXIS_HEIGHT } from "../../feature/depth-chart";
-import { Graphics } from "../../renderer/graphics";
 
 /**
  * Draw a vertical line

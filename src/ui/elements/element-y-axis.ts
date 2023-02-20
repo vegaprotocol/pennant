@@ -1,7 +1,7 @@
+import { hex2rgb, string2hex } from "@ui/renderer";
 import { align, getNumYTicks } from "@util/misc";
 
 import { Colors } from "../../feature/candlestick-chart/helpers";
-import { hex2rgb, string2hex } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
 import { RenderableElement } from "../../types";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "../../util/constants";

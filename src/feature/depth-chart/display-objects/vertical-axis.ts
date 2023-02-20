@@ -1,7 +1,6 @@
+import { Container, Text } from "@ui/renderer";
 import { ScaleLinear } from "d3-scale";
 
-import { Container } from "../../../renderer/display";
-import { Text } from "../../../renderer/text";
 import { FONT_SIZE } from "../depth-chart";
 import { Colors } from "../helpers";
 

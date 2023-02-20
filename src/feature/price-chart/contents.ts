@@ -1,5 +1,5 @@
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
+import { Container, Renderer } from "@ui/renderer";
+
 import { ScaleLinear, ScaleTime } from "../../types";
 import { Area, HorizontalGrid, VerticalGrid } from "../../ui/display-objects";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";

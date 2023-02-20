@@ -25,3 +25,9 @@
  */
 
 export * from "./core";
+export * from "./display";
+export * from "./graphics";
+export * from "./interaction";
+export * from "./math";
+export * from "./text";
+export * from "./utils";

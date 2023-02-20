@@ -22,6 +22,7 @@
     "paths": {
       "@ui/core": ["src/ui/core/index.ts"],
       "@ui/elements": ["src/ui/elements/index.ts"],
+      "@ui/renderer": ["src/ui/renderer/index.ts"],
       "@util/hooks": ["src/util/hooks/index.ts"],
       "@util/misc": ["src/util/misc/index.ts"]
     }

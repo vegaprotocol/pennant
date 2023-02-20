@@ -1,9 +1,9 @@
+import { Container } from "@ui/renderer";
 import { curveLinear } from "d3-shape";
 
 import { Colors } from "../../feature/line-chart/helpers";
-import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
 import { ScaleLinear, ScaleTime } from "../../types";
+import { Graphics } from "../renderer/graphics";
 import { PriceCurve } from "./price-curve";
 
 type ContentsColors = Pick<

@@ -1,4 +1,5 @@
-import { Container } from "../../renderer/display";
+import { Container } from "@ui/renderer";
+
 import { HorizontalLine } from "./horizontal-line";
 import { VerticalLine } from "./vertical-line";
 

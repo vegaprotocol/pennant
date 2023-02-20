@@ -1,15 +1,17 @@
+import {
+  Container,
+  Graphics,
+  hex2string,
+  InteractionEvent,
+  Rectangle,
+  Renderer,
+} from "@ui/renderer";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
 import { range } from "lodash";
 
 import { bisectCenter } from "../../math/array";
-import { Renderer } from "../../renderer";
-import { Container } from "../../renderer/display";
-import { Graphics } from "../../renderer/graphics";
-import { InteractionEvent } from "../../renderer/interaction/interaction-event";
-import { Rectangle } from "../../renderer/math";
-import { hex2string } from "../../renderer/utils";
 import { ScaleLinear, ScaleTime } from "../../types";
 import {
   Crosshair,
