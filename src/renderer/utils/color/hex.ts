@@ -1,3 +1,7 @@
+import chroma from "chroma-js";
+
+export const INVALID_COLOR = 0xffffff;
+
 export function hex2rgb(
   hex: number,
   out: Array<number> | Float32Array = []
@@ -17,23 +21,18 @@ export function hex2string(hex: number): string {
   return `#${hexString}`;
 }
 
-export function string2hex(string: string): number {
-  if (typeof string === "string") {
+export function string2hex(input: string): number {
+  try {
+    let string = chroma(input).hex("rgb");
+
     if (string[0] === "#") {
       string = string.substr(1);
     }
-  }
 
-  if (string.length === 3) {
-    string = string
-      .split("")
-      .map(function (hex) {
-        return hex + hex;
-      })
-      .join("");
+    return parseInt(string, 16);
+  } catch (e) {
+    return INVALID_COLOR;
   }
-
-  return parseInt(string, 16);
 }
 
 export function rgb2hex(rgb: number[] | Float32Array): number {

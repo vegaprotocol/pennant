@@ -32,7 +32,8 @@ export interface Colors {
   macdSignal: string;
   macdMacd: string;
   relativeStrengthIndex: string;
-  volume: string;
+  volumeBuy: string;
+  volumeSell: string;
 }
 
 export function getColors(element: HTMLElement | null): Colors {
@@ -146,9 +147,14 @@ export function getColors(element: HTMLElement | null): Colors {
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-relative-strength-index")
         .trim() || COLORS.GRAY,
-    volume:
-      cssStyleDeclaration?.getPropertyValue("--pennant-color-volume").trim() ||
-      COLORS.VEGA_ORANGE,
+    volumeBuy:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-volume-buy")
+        .trim() || COLORS.VEGA_GREEN,
+    volumeSell:
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-color-volume-sell")
+        .trim() || COLORS.VEGA_RED,
   };
 }
 

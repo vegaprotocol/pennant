@@ -52,6 +52,17 @@ export type Options = {
   initialNumCandlesToDisplay?: number;
   initialNumCandlesToFetch?: number;
   notEnoughDataText?: React.ReactNode | string;
+  /**
+   * Preferred size of a study pane. The Chart will attempt to use this size when adding a study pane (including on initial mount) as well as when a user double clicks a sash, or the `reset` method is called on the Chart instance.
+   * @remarks The size can either be a number or a string.
+   *
+   * If it is a number it will be interpreted as a number of pixels.
+   *
+   * If it is a string it should end in either "px" or "%". If it ends in "px" it will be interpreted as a number of pixels, e.g. "120px".
+   *
+   * If it ends in "%" it will be interpreted as a percentage of the size of the main pane, e.g. "50%".
+   */
+  studySize?: number | string;
 };
 
 export type ChartProps = {
@@ -76,6 +87,7 @@ export const Chart = forwardRef(
         overlays: [],
         initialNumCandlesToDisplay: INITIAL_NUM_CANDLES_TO_DISPLAY,
         initialNumCandlesToFetch: INITIAL_NUM_CANDLES_TO_FETCH,
+        studySize: "50%",
       },
       initialViewport,
       theme = "dark",
@@ -94,6 +106,7 @@ export const Chart = forwardRef(
       initialNumCandlesToFetch:
         initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
       notEnoughDataText,
+      studySize = "50%",
     } = options;
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -339,6 +352,7 @@ export const Chart = forwardRef(
             simple={simple}
             initialNumCandles={initialNumCandles}
             colors={colors}
+            studySize={studySize}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
