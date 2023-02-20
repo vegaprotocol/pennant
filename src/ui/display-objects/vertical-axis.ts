@@ -5,10 +5,10 @@ import {
   Renderer,
   Text,
 } from "@ui/renderer";
+import { AXIS_WIDTH, FONT_SIZE } from "@util/constants";
 
 import { Colors } from "../../feature/depth-chart/helpers";
 import { ScaleLinear } from "../../types";
-import { AXIS_WIDTH, FONT_SIZE } from "../../util/constants";
 import { Gesture, Zoom } from "../../util/zoom";
 
 export function pointer(event: any, resolution: number = 1): [number, number] {

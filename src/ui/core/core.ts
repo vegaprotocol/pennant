@@ -1,4 +1,11 @@
 import { RenderableHTMLElement } from "@ui/elements";
+import {
+  DEFAULT_INTERVAL_WIDTH,
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  Y_AXIS_WIDTH,
+} from "@util/constants";
 import { getSubMinutes } from "@util/misc";
 import { dispatch } from "d3-dispatch";
 import { scaleLinear, scaleTime } from "d3-scale";
@@ -22,13 +29,6 @@ import {
   ScaleTime,
   Viewport,
 } from "../../types";
-import {
-  DEFAULT_INTERVAL_WIDTH,
-  INITIAL_NUM_CANDLES_TO_DISPLAY,
-  MAX_ZOOM,
-  MIN_ZOOM,
-  Y_AXIS_WIDTH,
-} from "../../util/constants";
 import {
   drawPlotArea,
   drawPlotAreaInteraction,

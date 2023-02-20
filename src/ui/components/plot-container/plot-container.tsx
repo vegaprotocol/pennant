@@ -2,6 +2,7 @@ import "./plot-container.css";
 import "../../../lib/d3fc-element";
 
 import { Core } from "@ui/core";
+import { THROTTLE_INTERVAL } from "@util/constants";
 import { asyncSnapshot, calculatePreferredSize } from "@util/misc";
 import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
@@ -24,7 +25,6 @@ import {
   Viewport,
 } from "../../../types";
 import { FcElement, Interval } from "../../../types";
-import { THROTTLE_INTERVAL } from "../../../util/constants";
 import { XAxisView } from "..";
 import { PaneView } from "../pane-view";
 

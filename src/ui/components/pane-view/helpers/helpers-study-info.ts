@@ -1,7 +1,6 @@
+import { DATE_FORMAT } from "@util/constants";
 import { format as d3Format } from "d3-format";
 import { format } from "date-fns";
-
-import { DATE_FORMAT } from "../../../../util/constants";
 
 export function getStudyInfoFieldValue(
   data: any[],

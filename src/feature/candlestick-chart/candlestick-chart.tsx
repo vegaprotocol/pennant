@@ -4,6 +4,10 @@ import "./candlestick-chart.css";
 
 import { ErrorBoundary, NonIdealState, PlotContainer } from "@ui/components";
 import {
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
+  INITIAL_NUM_CANDLES_TO_FETCH,
+} from "@util/constants";
+import {
   constructTopLevelSpec,
   getCandleWidth,
   getSubMinutes,
@@ -32,10 +36,6 @@ import {
   ThemeVariant,
   Viewport,
 } from "../../types";
-import {
-  INITIAL_NUM_CANDLES_TO_DISPLAY,
-  INITIAL_NUM_CANDLES_TO_FETCH,
-} from "../../util/constants";
 import { parse } from "../../util/scenegraph/parse";
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";

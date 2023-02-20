@@ -1,3 +1,4 @@
+import { LABEL_ANNOTATION_HEIGHT } from "@util/constants";
 import { calculateShiftedPositions } from "@util/misc";
 import { sum } from "d3-array";
 
@@ -8,7 +9,6 @@ import {
   ScaleLinear,
   ScaleTime,
 } from "../../types";
-import { LABEL_ANNOTATION_HEIGHT } from "../../util/constants";
 
 const PADDING = 4;
 

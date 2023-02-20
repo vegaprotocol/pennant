@@ -14,6 +14,7 @@ import {
   Rectangle,
   Renderer,
 } from "@ui/renderer";
+import { AXIS_HEIGHT, AXIS_WIDTH } from "@util/constants";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
@@ -21,7 +22,6 @@ import { range } from "lodash";
 
 import { bisectCenter } from "../../math/array";
 import { ScaleLinear, ScaleTime } from "../../types";
-import { AXIS_HEIGHT, AXIS_WIDTH } from "../../util/constants";
 import { Gesture, Zoom, zoomIdentity, ZoomTransform } from "../../util/zoom";
 import { Colors } from "./helpers";
 import { Data } from "./price-chart";

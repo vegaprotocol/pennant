@@ -89,6 +89,7 @@ const jestConfig = {
     "^@ui/display-objects$": "<rootDir>/src/ui/display-objects",
     "^@ui/elements$": "<rootDir>/src/ui/elements",
     "^@ui/renderer$": "<rootDir>/src/ui/renderer",
+    "^@util/constants$": "<rootDir>/src/util/constants",
     "^@util/hooks$": "<rootDir>/src/util/hooks",
     "^@util/misc$": "<rootDir>/src/util/misc",
   },

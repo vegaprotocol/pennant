@@ -5,11 +5,11 @@ import {
   Renderer,
   Text,
 } from "@ui/renderer";
+import { AXIS_HEIGHT, FONT_SIZE } from "@util/constants";
 import { range } from "@util/misc";
 
 import { Colors } from "../../feature/depth-chart/helpers";
 import { ScaleTime } from "../../types";
-import { AXIS_HEIGHT, FONT_SIZE } from "../../util/constants";
 import { Gesture, Zoom } from "../../util/zoom";
 import { pointer } from "./vertical-axis";
 
