@@ -1,6 +1,6 @@
 import { scaleLinear, scaleTime } from "d3-scale";
 
-import { getColors } from "../components/candlestick-chart/helpers";
+import { getColors } from "../feature/candlestick-chart/helpers";
 import { PlotArea } from "./plot-area";
 
 const colors = getColors(null);

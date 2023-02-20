@@ -1,11 +1,10 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { useEffect, useRef, useState } from "react";
 
-import { NonIdealState } from "../../components/non-ideal-state";
 import { defaultPriceFormat } from "../../helpers";
 import { useThrottledResizeObserver } from "../../hooks";
 import { ThemeVariant } from "../../types";
-import { Tooltip, TooltipProps } from "../../ui/components";
+import { NonIdealState, Tooltip, TooltipProps } from "../../ui/components";
 import { Chart } from "./chart";
 import { getColors } from "./helpers";
 import styles from "./line-chart.module.css";

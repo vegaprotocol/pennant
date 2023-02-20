@@ -1,4 +1,4 @@
-import { Colors } from "../../components/depth-chart/helpers";
+import { Colors } from "../../feature/depth-chart/helpers";
 import { range } from "../../helpers";
 import { Renderer } from "../../renderer";
 import { Container } from "../../renderer/display";
