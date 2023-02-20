@@ -8,7 +8,7 @@ import {
   ZoomTransform,
 } from "d3-zoom";
 
-import { ScaleLinear, ScaleTime } from "../types";
+import { ScaleLinear, ScaleTime } from "../../types";
 
 export class PlotAreaInteraction {
   private listeners: Dispatch<object> = dispatch(

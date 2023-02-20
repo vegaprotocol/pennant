@@ -1,6 +1,7 @@
 import "./plot-container.css";
 import "../../../lib/d3fc-element";
 
+import { Core } from "@ui/core";
 import { asyncSnapshot, calculatePreferredSize } from "@util/misc";
 import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
@@ -15,7 +16,6 @@ import React, {
   useState,
 } from "react";
 
-import { Core } from "../../../core";
 import { Colors } from "../../../feature/candlestick-chart/helpers";
 import {
   Bounds,

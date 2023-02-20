@@ -1,8 +1,8 @@
 import { clearCanvas } from "@util/misc";
 
-import { XAxisElement, XAxisTooltipElement } from "../elements";
-import { Colors } from "../feature/candlestick-chart/helpers";
-import { Interval, ScaleTime } from "../types";
+import { XAxisElement, XAxisTooltipElement } from "../../elements";
+import { Colors } from "../../feature/candlestick-chart/helpers";
+import { Interval, ScaleTime } from "../../types";
 
 /**
  * The x-axis component renders human readable reference marks.

@@ -1,8 +1,8 @@
 import { select, Selection } from "d3-selection";
 import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 
-import { ScaleLinear, ScaleTime } from "../../types";
-import { DEFAULT_INTERVAL_WIDTH, Y_AXIS_WIDTH } from "../../util/constants";
+import { ScaleLinear, ScaleTime } from "../../../types";
+import { DEFAULT_INTERVAL_WIDTH, Y_AXIS_WIDTH } from "../../../util/constants";
 import { Panes } from "../core";
 import { PlotArea } from "../plot-area";
 import { PlotAreaAnnotations } from "../plot-area-annotations";
