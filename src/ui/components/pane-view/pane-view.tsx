@@ -2,13 +2,13 @@ import "./pane-view.css";
 
 import React, { forwardRef, useState } from "react";
 
-import { Y_AXIS_WIDTH } from "../../../constants";
 import {
   Colors,
   getAccentColor,
 } from "../../../feature/candlestick-chart/helpers";
 import { formatter } from "../../../helpers";
 import { Bounds, Pane } from "../../../types";
+import { Y_AXIS_WIDTH } from "../../../util/constants";
 import { CloseButton, IndicatorInfo } from "..";
 import { getIntent, getStudyInfoFieldValue, studyInfoFields } from "./helpers";
 

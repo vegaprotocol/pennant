@@ -12,15 +12,8 @@ import { compareAsc } from "date-fns";
 import { difference, intersection, omit, union } from "lodash";
 import { MutableRefObject } from "react";
 
-import { Colors } from "../feature/candlestick-chart/helpers";
-import {
-  DEFAULT_INTERVAL_WIDTH,
-  INITIAL_NUM_CANDLES_TO_DISPLAY,
-  MAX_ZOOM,
-  MIN_ZOOM,
-  Y_AXIS_WIDTH,
-} from "../constants";
 import { RenderableHTMLElement } from "../elements";
+import { Colors } from "../feature/candlestick-chart/helpers";
 import { getSubMinutes } from "../helpers";
 import {
   Interval,
@@ -29,6 +22,13 @@ import {
   ScaleTime,
   Viewport,
 } from "../types";
+import {
+  DEFAULT_INTERVAL_WIDTH,
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  Y_AXIS_WIDTH,
+} from "../util/constants";
 import {
   drawPlotArea,
   drawPlotAreaInteraction,

@@ -14,7 +14,6 @@ import React, {
   useState,
 } from "react";
 
-import { THROTTLE_INTERVAL } from "../../../constants";
 import { Core } from "../../../core";
 import { Colors } from "../../../feature/candlestick-chart/helpers";
 import { asyncSnapshot } from "../../../helpers";
@@ -25,6 +24,7 @@ import {
   Viewport,
 } from "../../../types";
 import { FcElement, Interval } from "../../../types";
+import { THROTTLE_INTERVAL } from "../../../util/constants";
 import { calculatePreferredSize } from "../../../util/misc";
 import { XAxisView } from "..";
 import { PaneView } from "../pane-view";

@@ -14,10 +14,6 @@ import React, {
 } from "react";
 
 import {
-  INITIAL_NUM_CANDLES_TO_DISPLAY,
-  INITIAL_NUM_CANDLES_TO_FETCH,
-} from "../../constants";
-import {
   constructTopLevelSpec,
   getCandleWidth,
   getSubMinutes,
@@ -41,6 +37,10 @@ import {
   NonIdealState,
   PlotContainer,
 } from "../../ui/components";
+import {
+  INITIAL_NUM_CANDLES_TO_DISPLAY,
+  INITIAL_NUM_CANDLES_TO_FETCH,
+} from "../../util/constants";
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 

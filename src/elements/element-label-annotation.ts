@@ -1,7 +1,6 @@
 import { sum } from "d3-array";
 
 import { Colors } from "../feature/candlestick-chart/helpers";
-import { LABEL_ANNOTATION_HEIGHT } from "../constants";
 import { calculateShiftedPositions } from "../helpers";
 import {
   LabelAnnotation,
@@ -9,6 +8,7 @@ import {
   ScaleLinear,
   ScaleTime,
 } from "../types";
+import { LABEL_ANNOTATION_HEIGHT } from "../util/constants";
 
 const PADDING = 4;
 

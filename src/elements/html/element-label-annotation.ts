@@ -3,9 +3,9 @@ import "./element-label-annotation.css";
 import classNames from "classnames";
 import { Selection } from "d3-selection";
 
-import { LABEL_ANNOTATION_HEIGHT } from "../../constants";
 import { calculateShiftedPositions } from "../../helpers";
 import { LabelAnnotation, ScaleLinear, ScaleTime } from "../../types";
+import { LABEL_ANNOTATION_HEIGHT } from "../../util/constants";
 
 const size = LABEL_ANNOTATION_HEIGHT - 8;
 const strokeWidth = 16;
