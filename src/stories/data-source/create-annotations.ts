@@ -8,7 +8,6 @@ import {
 } from "../api/vega-graphql";
 import { formatNumber, parseVegaDecimal } from "../helpers";
 import * as i18n from "../i18n";
-import { OrderBlockChainState } from "./vega-protocol-data-source";
 
 function getSignFromValue(value: number) {
   return value >= 0 ? "+" : "-";
@@ -74,10 +73,7 @@ export function createOrderLabelAnnotation(
   ];
 
   // Optional cancel button
-  if (
-    order.createdAt !== OrderBlockChainState.Optimistic &&
-    order.status === OrderStatus.Active
-  ) {
+  if (order.status === OrderStatus.Active) {
     cells.push({
       label: `${i18n.GLOBAL.cancel}`,
       onClick: () => onOrderCancelled(order.id),

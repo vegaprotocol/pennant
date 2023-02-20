@@ -33,6 +33,10 @@ import { ChartType, Interval, Overlay, Study } from "../types";
 import { ChartElement } from "../types";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
+import {
+  MarketState,
+  MarketTradingMode,
+} from "./data-source/__generated__/types";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
 import { VegaDataSource } from "./data-source/vega-protocol-data-source";
 
@@ -147,48 +151,6 @@ const MarketsDocument = gql`
   }
   ${MarketFieldsFragmentDoc}
 `;
-
-/** The current state of a market */
-export enum MarketState {
-  /** Enactment date reached and usual auction exit checks pass */
-  STATE_ACTIVE = "STATE_ACTIVE",
-  /**
-   * Market triggers cancellation condition or governance
-   * votes to close before market becomes Active
-   */
-  STATE_CANCELLED = "STATE_CANCELLED",
-  /** Governance vote (to close) */
-  STATE_CLOSED = "STATE_CLOSED",
-  /** Governance vote passes/wins */
-  STATE_PENDING = "STATE_PENDING",
-  /** The governance proposal valid and accepted */
-  STATE_PROPOSED = "STATE_PROPOSED",
-  /** Outcome of governance votes is to reject the market */
-  STATE_REJECTED = "STATE_REJECTED",
-  /** Settlement triggered and completed as defined by product */
-  STATE_SETTLED = "STATE_SETTLED",
-  /** Price monitoring or liquidity monitoring trigger */
-  STATE_SUSPENDED = "STATE_SUSPENDED",
-  /**
-   * Defined by the product (i.e. from a product parameter,
-   * specified in market definition, giving close date/time)
-   */
-  STATE_TRADING_TERMINATED = "STATE_TRADING_TERMINATED",
-}
-
-/** What market trading mode is the market in */
-export enum MarketTradingMode {
-  /** Auction as normal trading mode for the market, where orders are uncrossed periodically */
-  TRADING_MODE_BATCH_AUCTION = "TRADING_MODE_BATCH_AUCTION",
-  /** Continuous trading where orders are processed and potentially matched on arrival */
-  TRADING_MODE_CONTINUOUS = "TRADING_MODE_CONTINUOUS",
-  /** Auction triggered by price/liquidity monitoring */
-  TRADING_MODE_MONITORING_AUCTION = "TRADING_MODE_MONITORING_AUCTION",
-  /** No trading allowed */
-  TRADING_MODE_NO_TRADING = "TRADING_MODE_NO_TRADING",
-  /** Auction trading where orders are uncrossed at the end of the opening auction period */
-  TRADING_MODE_OPENING_AUCTION = "TRADING_MODE_OPENING_AUCTION",
-}
 
 export type MarketFieldsFragment = {
   __typename?: "Market";
