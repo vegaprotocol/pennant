@@ -9,3 +9,51 @@
   gap: 8px;
   padding-bottom: 8px;
 }
+
+/* Styles for allotment */
+html {
+  --focus-border: #ff077f;
+  --separator-border: #d2d2d2;
+  --pennant-color-danger: #ff077f;
+}
+
+html.dark {
+  --focus-border: #d7fb50;
+  --separator-border: #404040;
+}
+
+/* Styles for charts */
+html [data-theme="dark"] {
+  --pennant-color-danger: #ff077f;
+
+  /* candles */
+  --pennant-color-buy-fill: #015d30;
+  --pennant-color-buy-stroke: #00f780;
+  /* sell candles only use stroke as the candle is solid (without border) */
+  --pennant-color-sell-stroke: #ff077f;
+
+  --pennant-color-volume-buy: #015d30;
+  --pennant-color-volume-sell: #cb0666;
+
+  /* depth chart */
+  --pennant-color-depth-buy-fill: #015d30;
+  --pennant-color-depth-buy-stroke: #00f780;
+  --pennant-color-depth-sell-fill: #600330;
+  --pennant-color-depth-sell-stroke: #ff077f;
+}
+
+html [data-theme="light"] {
+  --pennant-color-danger: #ff077f;
+
+  /* candles */
+  --pennant-color-buy-fill: #6cfab6;
+  --pennant-color-buy-stroke: #01c566;
+  /* sell candles only use stroke as the candle is solid (without border) */
+  --pennant-color-sell-stroke: #ff70b5;
+
+  /* depth chart */
+  --pennant-color-depth-buy-fill: #6cfab6;
+  --pennant-color-depth-buy-stroke: #01c566;
+  --pennant-color-depth-sell-fill: #ff70b5;
+  --pennant-color-depth-sell-stroke: #cb0666;
+}

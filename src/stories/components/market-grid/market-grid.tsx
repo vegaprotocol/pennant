@@ -10,7 +10,7 @@ import { useDarkMode } from "storybook-dark-mode";
 
 import { Chart } from "../../../components/chart";
 import { Interval } from "../../../types";
-import { markets_markets } from "../../api/vega-graphql";
+import { MarketFieldsFragment } from "../../data-source/__generated__/markets";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
 
 const httpLink = new HttpLink({
@@ -41,7 +41,7 @@ const client = new ApolloClient({
 });
 
 export type MarketGridProps = {
-  markets: markets_markets[];
+  markets: MarketFieldsFragment[];
 };
 
 export const MarketGrid = ({ markets }: MarketGridProps) => {
@@ -54,8 +54,7 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
           new VegaDataSource(
             client,
             market.id,
-            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
-            console.log
+            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
           )
       ),
     [markets]
@@ -87,11 +86,13 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
               justifyContent: "space-between",
             }}
           >
-            <div className="bp4-ui-text">{market.name}</div>
+            <div className="bp4-ui-text">
+              {market.tradableInstrument.instrument.code}
+            </div>
             <Icon icon="more" />
           </div>
           <div className="bp4-ui-text text-muted" style={{ fontSize: "12px" }}>
-            {market.tradableInstrument.instrument.code}
+            {market.tradableInstrument.instrument.name}
           </div>
           <div style={{ flex: "1 1 0" }}>
             <Chart
