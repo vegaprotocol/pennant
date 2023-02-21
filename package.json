@@ -153,7 +153,7 @@
     "rollup-plugin-tsconfig-paths": "1.4.0",
     "sass-loader": "13.2.0",
     "standard-version": "9.5.0",
-    "storybook-dark-mode": "2.1.0",
+    "storybook-dark-mode": "2.1.1",
     "subscriptions-transport-ws": "0.11.0",
     "ts-jest": "27.1.5",
     "ts-node": "10.9.1",
