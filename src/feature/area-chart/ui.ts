@@ -412,8 +412,6 @@ export class UI extends EventEmitter {
   private onPointerMove = (event: InteractionEvent) => {
     if ("ontouchstart" in self) return;
 
-    console.log(this.data);
-
     this.crosshair.visible = true;
     this.priceLabel.visible = true;
     this.timeLabel.visible = true;
