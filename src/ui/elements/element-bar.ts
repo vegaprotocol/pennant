@@ -1,4 +1,3 @@
-import { align, alignSpan } from "@util/misc";
 import { PositionalElement, ScaleLinear, ScaleTime } from "@util/types";
 
 export type Bar = {
@@ -43,10 +42,10 @@ export class BarElement implements PositionalElement {
     const pixelWidth = Math.max(xScale(this.width) - xScale(0), 1 / pixelRatio);
 
     ctx.rect(
-      align(xScale(this.x.getTime() - this.width / 2), pixelRatio),
-      align(yScale(this.y), pixelRatio),
-      alignSpan(pixelWidth, pixelRatio),
-      alignSpan(Math.abs(yScale(this.height) - yScale(0)), pixelRatio)
+      xScale(this.x.getTime() - this.width / 2),
+      yScale(this.y),
+      pixelWidth,
+      Math.abs(yScale(this.height) - yScale(0))
     );
 
     ctx.fillStyle = this.fill;

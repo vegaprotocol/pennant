@@ -1,4 +1,3 @@
-import { align } from "@util/misc";
 import { PositionalElement, ScaleLinear, ScaleTime } from "@util/types";
 
 export class TickElement implements PositionalElement {
@@ -27,23 +26,15 @@ export class TickElement implements PositionalElement {
     ctx.beginPath();
 
     ctx.moveTo(
-      align(
-        xScale(
-          this.x.getTime() - (this.orient === "left" ? this.width / 2 : 0)
-        ),
-        pixelRatio
-      ),
-      align(yScale(this.y), pixelRatio)
+      xScale(this.x.getTime() - (this.orient === "left" ? this.width / 2 : 0)),
+
+      yScale(this.y)
     );
 
     ctx.lineTo(
-      align(
-        xScale(
-          this.x.getTime() + (this.orient === "right" ? this.width / 2 : 0)
-        ),
-        pixelRatio
-      ),
-      align(yScale(this.y), pixelRatio)
+      xScale(this.x.getTime() + (this.orient === "right" ? this.width / 2 : 0)),
+
+      yScale(this.y)
     );
 
     ctx.strokeStyle = this.color;

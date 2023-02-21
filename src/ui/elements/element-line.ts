@@ -1,4 +1,3 @@
-import { align, alignSpan } from "@util/misc";
 import { PositionalElement, ScaleLinear, ScaleTime } from "@util/types";
 import { curveLinear, line as d3Line } from "d3-shape";
 
@@ -31,9 +30,7 @@ export class LineElement implements PositionalElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1
   ) {
-    this.lineGenerator
-      .x((d) => align(xScale(d[0]), pixelRatio))
-      .y((d) => alignSpan(yScale(d[1]), pixelRatio));
+    this.lineGenerator.x((d) => xScale(d[0])).y((d) => yScale(d[1]));
 
     this.lineGenerator.context(ctx);
 

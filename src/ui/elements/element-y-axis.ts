@@ -1,6 +1,6 @@
 import { hex2rgb, string2hex } from "@ui/renderer";
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "@util/constants";
-import { align, getNumYTicks } from "@util/misc";
+import { getNumYTicks } from "@util/misc";
 import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 
 import { Colors } from "../../feature/candlestick-chart/helpers";
@@ -78,8 +78,8 @@ function addYAxisPath(
 
   ctx.beginPath();
   ctx.strokeStyle = colors.emphasis300;
-  ctx.moveTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[0]);
-  ctx.lineTo(align(xRange[1] - Y_AXIS_WIDTH, pixelRatio), yRange[1]);
+  ctx.moveTo(xRange[1] - Y_AXIS_WIDTH, yRange[0]);
+  ctx.lineTo(xRange[1] - Y_AXIS_WIDTH, yRange[1]);
   ctx.stroke();
   ctx.closePath();
 }
