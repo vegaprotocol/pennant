@@ -1,6 +1,6 @@
+import { Candle } from "@util/types";
 import { range } from "d3-array";
 
-import { Candle } from "../../types";
 import { mergeData } from "./data";
 
 const arrayA = range(10).map((d) => new Date(2021, 1, d));

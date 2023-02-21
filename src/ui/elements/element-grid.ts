@@ -1,7 +1,5 @@
 import { align, getNumXTicks, getNumYTicks } from "@util/misc";
-
-import { ScaleLinear, ScaleTime } from "../../types";
-import { RenderableElement } from "../../types";
+import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 
 function addGridPath(
   ctx: CanvasRenderingContext2D,

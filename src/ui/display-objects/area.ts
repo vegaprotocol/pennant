@@ -1,8 +1,8 @@
 import { Container } from "@ui/renderer";
+import { ScaleLinear, ScaleTime } from "@util/types";
 import { curveLinear } from "d3-shape";
 
 import { Colors } from "../../feature/line-chart/helpers";
-import { ScaleLinear, ScaleTime } from "../../types";
 import { Graphics } from "../renderer/graphics";
 import { PriceCurve } from "./price-curve";
 

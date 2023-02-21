@@ -30,6 +30,7 @@ import {
   getRuleConfig,
   getTickConfig,
 } from "@util/misc";
+import { Annotation, Candle, Scenegraph } from "@util/types";
 import {
   BaseSpec,
   compile,
@@ -44,8 +45,6 @@ import {
   TopLevelSpec,
 } from "@util/vega-lite";
 import { extent } from "d3-array";
-
-import { Annotation, Candle, Scenegraph } from "../../types";
 
 function compileLayer(
   data: Data,

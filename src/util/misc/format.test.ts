@@ -1,4 +1,5 @@
-import { Interval } from "../../types";
+import { Interval } from "@util/types";
+
 import { dateFormat, tickFormat } from "./format";
 
 describe("dateFormat", () => {

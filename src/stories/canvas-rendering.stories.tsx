@@ -1,10 +1,9 @@
 import { Meta, Story } from "@storybook/react";
 import { BarElement } from "@ui/elements";
+import { FcElement } from "@util/types";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { select } from "d3-selection";
 import { useEffect, useRef } from "react";
-
-import { FcElement } from "../types";
 
 export default {
   title: "Elements/Pixel perfection",

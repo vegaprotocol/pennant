@@ -1,6 +1,6 @@
 import { RenderableHTMLElement } from "@ui/elements";
 
-import { ScaleLinear, ScaleTime } from "../types";
+import { ScaleLinear, ScaleTime } from "./scales";
 
 export interface RenderableElement {
   draw(

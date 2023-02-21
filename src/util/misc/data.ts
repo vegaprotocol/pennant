@@ -1,4 +1,4 @@
-import { Candle } from "../../types";
+import { Candle } from "@util/types";
 
 /**
  * Merges two arrays

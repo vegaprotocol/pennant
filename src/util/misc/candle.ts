@@ -1,4 +1,5 @@
-import { Interval } from "../../types";
+import { Interval } from "@util/types";
+
 import { parseInterval } from "./interval";
 
 const minutesToMS = (mins: number): number => mins * 60 * 1000;

@@ -1,4 +1,4 @@
-import { Intent } from ".";
+import { Intent } from "./intent";
 
 export type LabelAnnotationCell = {
   label: string;

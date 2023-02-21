@@ -22,14 +22,13 @@ import {
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
 import { formatter } from "@util/misc";
+import { ChartElement, ChartType, Interval, Overlay, Study } from "@util/types";
 import { createClient } from "graphql-ws";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
 
 import { CandlestickChart } from "../feature/candlestick-chart";
-import { ChartType, Interval, Overlay, Study } from "../types";
-import { ChartElement } from "../types";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
 import {

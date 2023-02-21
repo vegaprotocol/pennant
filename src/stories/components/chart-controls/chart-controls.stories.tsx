@@ -2,11 +2,10 @@ import "./chart-controls.stories.scss";
 
 import { FocusStyleManager } from "@blueprintjs/core";
 import { Meta, Story } from "@storybook/react";
-import classnames from "classnames";
+import { ChartType, Interval, Overlay, Study } from "@util/types";
 import { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { ChartType, Interval, Overlay, Study } from "../../../types";
 import { ChartControls, ChartControlsProps } from "./chart-controls";
 
 export default {

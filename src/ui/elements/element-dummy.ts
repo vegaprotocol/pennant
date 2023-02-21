@@ -1,6 +1,6 @@
-import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
+import * as types from "@util/types";
 
-export class DummyElement implements RenderableElement {
+export class DummyElement implements types.RenderableElement {
   readonly x: Date;
 
   constructor(cfg: any) {
@@ -11,7 +11,7 @@ export class DummyElement implements RenderableElement {
 
   draw(
     _ctx: CanvasRenderingContext2D,
-    _xScale: ScaleTime,
-    _yScale: ScaleLinear
+    _xScale: types.ScaleTime,
+    _yScale: types.ScaleLinear
   ) {}
 }

@@ -1,7 +1,6 @@
 import { align, alignSpan } from "@util/misc";
+import { PositionalElement, ScaleLinear, ScaleTime } from "@util/types";
 import { curveLinear, line as d3Line } from "d3-shape";
-
-import { PositionalElement, ScaleLinear, ScaleTime } from "../../types";
 
 export type Line = {
   points: [Date, number][];

@@ -1,4 +1,5 @@
-import { DataSource } from "../../types";
+import { DataSource } from "@util/types";
+
 import { Interval } from "../api/vega-graphql";
 
 export class EmptyDataSource implements DataSource {

@@ -7,6 +7,13 @@ import {
   Y_AXIS_WIDTH,
 } from "@util/constants";
 import { getSubMinutes } from "@util/misc";
+import {
+  Interval,
+  RenderableElement,
+  ScaleLinear,
+  ScaleTime,
+  Viewport,
+} from "@util/types";
 import { dispatch } from "d3-dispatch";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { select, Selection } from "d3-selection";
@@ -22,13 +29,6 @@ import { difference, intersection, omit, union } from "lodash";
 import { MutableRefObject } from "react";
 
 import { Colors } from "../../feature/candlestick-chart/helpers";
-import {
-  Interval,
-  RenderableElement,
-  ScaleLinear,
-  ScaleTime,
-  Viewport,
-} from "../../types";
 import {
   drawPlotArea,
   drawPlotAreaInteraction,

@@ -1,6 +1,5 @@
 import { Container, Graphics } from "@ui/renderer";
-
-import { ScaleLinear } from "../../types";
+import { ScaleLinear } from "@util/types";
 
 /**
  * Draws vertical grid lines

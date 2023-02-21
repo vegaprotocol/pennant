@@ -1,4 +1,6 @@
-import { Annotation, Candle, Interval } from ".";
+import { Annotation } from "./annotation";
+import { Candle } from "./candle";
+import { Interval } from "./interval";
 
 export interface Configuration {
   decimalPlaces: number;

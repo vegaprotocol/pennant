@@ -1,6 +1,5 @@
 import { Container, Graphics } from "@ui/renderer";
-
-import { ScaleTime } from "../../types";
+import { ScaleTime } from "@util/types";
 
 /**
  * Draws vertical grid lines

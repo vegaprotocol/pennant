@@ -1,3 +1,4 @@
+import { Interval } from "@util/types";
 import {
   timeDay,
   timeMonth,
@@ -11,8 +12,6 @@ import {
 } from "d3-time";
 import { timeFormat } from "d3-time-format";
 import { format } from "date-fns";
-
-import { Interval } from "../../types";
 
 const formatMillisecond = timeFormat(".%L");
 const formatSecond = timeFormat(":%S");

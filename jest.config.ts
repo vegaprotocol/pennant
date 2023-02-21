@@ -93,6 +93,7 @@ const jestConfig = {
     "^@util/hooks$": "<rootDir>/src/util/hooks",
     "^@util/misc$": "<rootDir>/src/util/misc",
     "^@util/scenegraph$": "<rootDir>/src/util/scenegraph",
+    "^@util/types$": "<rootDir>/src/util/types",
     "^@util/vega-lite$": "<rootDir>/src/util/vega-lite",
   },
 

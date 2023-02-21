@@ -1,12 +1,11 @@
 import { TICK_LABEL_FONT, TICK_LABEL_FONT_SIZE } from "@util/constants";
 import { getNumXTicks, tickFormat } from "@util/misc";
-
 import {
   Interval,
   RenderableElement,
   ScaleLinear,
   ScaleTime,
-} from "../../types";
+} from "@util/types";
 
 function addXAxisPath(
   ctx: CanvasRenderingContext2D,

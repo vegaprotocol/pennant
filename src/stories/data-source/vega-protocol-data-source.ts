@@ -1,7 +1,7 @@
 import type { ApolloClient } from "@apollo/client";
+import { Candle, DataSource, Interval as PennantInterval } from "@util/types";
 import type { Subscription } from "zen-observable-ts";
 
-import { Candle, DataSource, Interval as PennantInterval } from "../../types";
 import type {
   CandleFieldsFragment,
   CandlesEventsSubscription,

@@ -2,9 +2,9 @@ import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { NonIdealState, Tooltip, TooltipProps } from "@ui/components";
 import { useThrottledResizeObserver } from "@util/hooks";
 import { defaultPriceFormat } from "@util/misc";
+import { ThemeVariant } from "@util/types";
 import { useEffect, useRef, useState } from "react";
 
-import { ThemeVariant } from "../../types";
 import styles from "./area-chart.module.css";
 import { Chart } from "./chart";
 import { getColors } from "./helpers";

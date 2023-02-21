@@ -10,7 +10,6 @@ import {
   MenuItem,
 } from "@blueprintjs/core";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
-
 import {
   ChartType,
   chartTypeLabels,
@@ -20,7 +19,7 @@ import {
   overlayLabels,
   Study,
   studyLabels,
-} from "../../../types";
+} from "@util/types";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
   [ChartType.AREA, "timeline-area-chart"],

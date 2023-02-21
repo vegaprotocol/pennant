@@ -1,9 +1,9 @@
 import { AXIS_HEIGHT, AXIS_WIDTH } from "@util/constants";
+import { ScaleLinear, ScaleTime } from "@util/types";
 import { extent } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
 import {
   Series,
-  SeriesPoint,
   stack as d3Stack,
   stackOffsetNone,
   stackOrderNone,
@@ -12,7 +12,6 @@ import { zoomIdentity } from "d3-zoom";
 import { addHours } from "date-fns";
 import EventEmitter from "eventemitter3";
 
-import { ScaleLinear, ScaleTime } from "../../types";
 import { Zoom, ZoomTransform } from "../../util/zoom";
 import { Data } from "./area-chart";
 import { Contents } from "./contents";

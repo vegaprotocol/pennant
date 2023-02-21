@@ -1,10 +1,10 @@
+import { Candle, ChartType, Overlay, Study } from "@util/types";
 import { BaseSpec, TopLevelSpec, Transform } from "@util/vega-lite";
 
 import {
   Colors,
   getAccentColor,
 } from "../../feature/candlestick-chart/helpers";
-import { Candle, ChartType, Overlay, Study } from "../../types";
 import {
   indicatorAbsoluteChange,
   indicatorPercentageChange,

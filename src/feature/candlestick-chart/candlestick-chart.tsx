@@ -14,17 +14,6 @@ import {
   mergeData,
 } from "@util/misc";
 import { parse } from "@util/scenegraph";
-import { dispatch } from "d3-dispatch";
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
 import {
   Annotation,
   Candle,
@@ -36,7 +25,18 @@ import {
   Study,
   ThemeVariant,
   Viewport,
-} from "../../types";
+} from "@util/types";
+import { dispatch } from "d3-dispatch";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
 import { useOnReady } from "./hooks";
 

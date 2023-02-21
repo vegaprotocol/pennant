@@ -3,6 +3,7 @@ import "../../styles/variables.css";
 import { NonIdealState } from "@ui/components";
 import { useThrottledResizeObserver } from "@util/hooks";
 import { defaultPriceFormat, numberFormatter } from "@util/misc";
+import { ThemeVariant } from "@util/types";
 import React, {
   forwardRef,
   useEffect,
@@ -10,7 +11,6 @@ import React, {
   useRef,
 } from "react";
 
-import { ThemeVariant } from "../../types";
 import { Chart } from "./chart";
 import styles from "./depth-chart.module.css";
 import { getColors, getDimensions } from "./helpers";

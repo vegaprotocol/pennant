@@ -1,5 +1,6 @@
+import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
+
 import { Colors } from "../../feature/candlestick-chart/helpers";
-import { RenderableElement, ScaleLinear, ScaleTime } from "../../types";
 
 function addAnnotationPath(
   ctx: CanvasRenderingContext2D,

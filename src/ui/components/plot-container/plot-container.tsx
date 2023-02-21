@@ -4,6 +4,14 @@ import "../../../lib/d3fc-element";
 import { Core } from "@ui/core";
 import { THROTTLE_INTERVAL } from "@util/constants";
 import { asyncSnapshot, calculatePreferredSize } from "@util/misc";
+import {
+  Bounds,
+  FcElement,
+  Interval,
+  PlotContainerElement,
+  Scenegraph,
+  Viewport,
+} from "@util/types";
 import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
 import React, {
@@ -18,13 +26,6 @@ import React, {
 } from "react";
 
 import { Colors } from "../../../feature/candlestick-chart/helpers";
-import {
-  Bounds,
-  PlotContainerElement,
-  Scenegraph,
-  Viewport,
-} from "../../../types";
-import { FcElement, Interval } from "../../../types";
 import { XAxisView } from "..";
 import { PaneView } from "../pane-view";
 

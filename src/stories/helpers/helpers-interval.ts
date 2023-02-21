@@ -1,4 +1,4 @@
-import { Interval } from "../../types";
+import { Interval } from "@util/types";
 
 export enum VegaInterval {
   /** 1 day interval */

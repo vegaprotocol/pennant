@@ -1,3 +1,4 @@
+import { ScaleLinear, ScaleTime } from "@util/types";
 import { mean } from "d3-array";
 import { Dispatch, dispatch } from "d3-dispatch";
 import { pointers, Selection } from "d3-selection";
@@ -7,8 +8,6 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3-zoom";
-
-import { ScaleLinear, ScaleTime } from "../../types";
 
 export class PlotAreaInteraction {
   private listeners: Dispatch<object> = dispatch(

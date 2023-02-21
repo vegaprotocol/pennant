@@ -1,7 +1,7 @@
 import { YAxisElement, YAxisTooltipElement } from "@ui/elements";
+import { ScaleLinear, ScaleTime } from "@util/types";
 
 import { Colors } from "../../feature/candlestick-chart/helpers";
-import { ScaleLinear, ScaleTime } from "../../types";
 
 /**
  * The y-axis component renders human readable reference marks.

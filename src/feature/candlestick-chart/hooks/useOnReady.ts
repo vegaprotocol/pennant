@@ -1,6 +1,5 @@
+import { Configuration, DataSource } from "@util/types";
 import { useEffect, useState } from "react";
-
-import { Configuration, DataSource } from "../../../types";
 
 /**
  * Signal we're loading while we wait for onReady call to resolve.

@@ -5,6 +5,7 @@ import {
   RuleElement,
   TickElement,
 } from "@ui/elements";
+import { PositionalElement } from "@util/types";
 import {
   Color,
   Gradient,
@@ -14,7 +15,6 @@ import {
   Predicate,
 } from "@util/vega-lite";
 
-import { PositionalElement } from "../../types";
 import { COLORS } from ".";
 
 export const PADDING_INNER = 0.4;

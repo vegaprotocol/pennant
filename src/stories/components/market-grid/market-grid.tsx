@@ -4,12 +4,12 @@ import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Icon } from "@blueprintjs/core";
+import { Interval } from "@util/types";
 import { createClient } from "graphql-ws";
 import { useMemo } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
 import { CandlestickChart } from "../../../feature/candlestick-chart";
-import { Interval } from "../../../types";
 import { MarketFieldsFragment } from "../../data-source/__generated__/markets";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
 
