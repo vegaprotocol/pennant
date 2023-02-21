@@ -26,7 +26,7 @@ export function handleXAxisDrag(
 ) {
   xElement.call(
     xZoom.scaleBy,
-    1 - e.dx / (xScale.range()[1] - xScale.range()[0]),
+    Math.pow(2, -e.dx / (xScale.range()[1] - xScale.range()[0])),
     [
       isPinned
         ? xScale.range()[1] - Y_AXIS_WIDTH
@@ -63,7 +63,7 @@ export function handleYAxisDrag(
 ): void {
   yElement.call(
     yZoom.scaleBy,
-    1 - e.dy / (yScale.range()[0] - yScale.range()[1]),
+    Math.pow(2, -e.dy / (yScale.range()[0] - yScale.range()[1])),
     [0, (yScale.range()[0] - yScale.range()[1]) / 2]
   );
 
