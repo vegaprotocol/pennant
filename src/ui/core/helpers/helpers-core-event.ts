@@ -340,8 +340,7 @@ export function handleZoom(
           id,
           plotAreas,
           yElements,
-          yZooms,
-          yTransforms
+          yZooms
         );
       });
     }
@@ -373,8 +372,7 @@ export function handleZoom(
           id,
           plotAreas,
           yElements,
-          yZooms,
-          yTransforms
+          yZooms
         );
       });
     }

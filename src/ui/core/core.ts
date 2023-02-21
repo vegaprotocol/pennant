@@ -496,8 +496,7 @@ export class Core {
           id,
           this.plotAreas,
           this.yElements,
-          this.yZooms,
-          this.yTransforms
+          this.yZooms
         );
       }
     });
@@ -914,8 +913,7 @@ export class Core {
           id,
           this.plotAreas,
           this.yElements,
-          this.yZooms,
-          this.yTransforms
+          this.yZooms
         );
       }
     });

@@ -10,8 +10,7 @@ export function recalculateScale(
   id: string,
   plotAreas: { [id: string]: PlotArea },
   yElements: any,
-  yZooms: any,
-  yTransforms: any
+  yZooms: any
 ) {
   const xr = xTransform().rescaleX(xScale);
   const domain = xr.domain() as [Date, Date];
