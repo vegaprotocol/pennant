@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react/types-6-0";
+import { DegenerateDataSource } from "src/stories/data-source/degenerate-data-source";
 import { useDarkMode } from "storybook-dark-mode";
 
 import { Interval } from "../../stories/api/vega-graphql";
@@ -59,6 +60,12 @@ export const Positions = Template.bind({});
 Positions.args = {
   ...Default.args,
   options: { chartType: "area" },
+};
+
+export const DegenerateData = Template.bind({});
+DegenerateData.args = {
+  dataSource: new DegenerateDataSource(),
+  interval: Interval.I5M,
 };
 
 export const NoData = Template.bind({});
