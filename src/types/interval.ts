@@ -7,7 +7,7 @@ export const Interval = {
   I1D: "I1D",
 } as const;
 
-export type Interval = typeof Interval[keyof typeof Interval];
+export type Interval = (typeof Interval)[keyof typeof Interval];
 
 export const intervalLabels: Record<Interval, string> = {
   I1M: "1m",

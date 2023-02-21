@@ -2,12 +2,12 @@ import "./plot-container.stories.css";
 
 import { Meta, Story } from "@storybook/react/types-6-0";
 import { parse } from "@util/scenegraph";
+import { TopLevelSpec } from "@util/vega-lite";
 
 import { Interval } from "../../../stories/api/vega-graphql";
 import json from "../../../stories/data-source/data.json";
 import { extendCandle } from "../../../stories/data-source/json-data-source";
 import { Scenegraph } from "../../../types";
-import { TopLevelSpec } from "../../../util/vega-lite/spec";
 import { PlotContainer, PlotContainerProps } from "./plot-container";
 
 export default {

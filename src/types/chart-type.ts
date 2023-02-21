@@ -5,7 +5,7 @@ export const ChartType = {
   OHLC: "ohlc",
 } as const;
 
-export type ChartType = typeof ChartType[keyof typeof ChartType];
+export type ChartType = (typeof ChartType)[keyof typeof ChartType];
 
 export const chartTypeLabels: Record<ChartType, string> = {
   area: "Mountain",

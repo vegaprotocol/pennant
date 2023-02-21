@@ -30,17 +30,22 @@ import {
   getRuleConfig,
   getTickConfig,
 } from "@util/misc";
+import {
+  BaseSpec,
+  compile,
+  Data,
+  Encoding,
+  Field,
+  isVConcatSpec,
+  Mark,
+  MarkDef,
+  OutputNode,
+  TechnicalIndicatorTransformNode,
+  TopLevelSpec,
+} from "@util/vega-lite";
 import { extent } from "d3-array";
 
 import { Annotation, Candle, Scenegraph } from "../../types";
-import { Field } from "../vega-lite/channeldef";
-import { compile } from "../vega-lite/compile/compile";
-import { OutputNode } from "../vega-lite/compile/data/dataflow";
-import { TechnicalIndicatorTransformNode } from "../vega-lite/compile/data/technical-indicator";
-import { Data } from "../vega-lite/data";
-import { Encoding } from "../vega-lite/encoding";
-import { Mark, MarkDef } from "../vega-lite/mark";
-import { BaseSpec, isVConcatSpec, TopLevelSpec } from "../vega-lite/spec";
 
 function compileLayer(
   data: Data,

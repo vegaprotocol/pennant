@@ -6,7 +6,7 @@ export const Overlay = {
   PRICE_MONITORING_BOUNDS: "priceMonitoringBounds",
 } as const;
 
-export type Overlay = typeof Overlay[keyof typeof Overlay];
+export type Overlay = (typeof Overlay)[keyof typeof Overlay];
 
 export const overlayLabels: Record<Overlay, string> = {
   bollinger: "Bollinger bands",

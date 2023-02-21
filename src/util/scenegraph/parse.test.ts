@@ -1,5 +1,6 @@
+import { TopLevelSpec } from "@util/vega-lite";
+
 import { getColors } from "../../feature/candlestick-chart/helpers";
-import { TopLevelSpec } from "../vega-lite/spec";
 import { parse, parseLayer } from "./parse";
 
 const colors = getColors(null);

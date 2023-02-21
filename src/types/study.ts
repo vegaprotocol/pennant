@@ -6,7 +6,7 @@ export const Study = {
   VOLUME: "volume",
 } as const;
 
-export type Study = typeof Study[keyof typeof Study];
+export type Study = (typeof Study)[keyof typeof Study];
 
 export const studyLabels: Record<Study, string> = {
   eldarRay: "Eldar-ray",

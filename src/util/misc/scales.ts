@@ -1,6 +1,5 @@
+import { BaseSpec } from "@util/vega-lite";
 import { extent } from "d3-array";
-
-import { BaseSpec } from "../vega-lite/spec";
 
 export function calculateScales(
   pane: BaseSpec,
