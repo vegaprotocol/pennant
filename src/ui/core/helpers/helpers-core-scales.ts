@@ -1,6 +1,8 @@
 import { ScaleLinear, ScaleTime } from "@util/types";
-import { zoomIdentity, ZoomTransform } from "d3-zoom";
+import { Selection } from "d3-selection";
+import { ZoomBehavior, zoomIdentity, ZoomTransform } from "d3-zoom";
 
+import { Panes } from "../core";
 import { PlotArea } from "../plot-area";
 
 export function recalculateScale(
@@ -9,8 +11,8 @@ export function recalculateScale(
   yScales: Record<string, ScaleLinear>,
   id: string,
   plotAreas: { [id: string]: PlotArea },
-  yElements: any,
-  yZooms: any
+  yElements: Panes<Selection<Element, unknown, null, undefined>>,
+  yZooms: Panes<ZoomBehavior<Element, unknown>>
 ) {
   const xr = xTransform().rescaleX(xScale);
   const domain = xr.domain() as [Date, Date];
