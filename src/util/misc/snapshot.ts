@@ -49,7 +49,7 @@ export async function asyncSnapshot(
         ? new OffscreenCanvas(width, height)
         : createCanvas(width, height);
 
-    const offScreenContext = offscreen.getContext("2d");
+    const offScreenContext = offscreen.getContext("2d") as any;
 
     if (offScreenContext) {
       let offset = 0;
@@ -76,7 +76,7 @@ export async function asyncSnapshot(
 
       // TODO: Replace with user-defined type-guard
       if ("OffscreenCanvas" in window) {
-        return await (offscreen as OffscreenCanvas).convertToBlob();
+        return await (offscreen as any).convertToBlob();
       } else {
         return new Promise<Blob | null>(function (resolve, reject) {
           (offscreen as HTMLCanvasElement).toBlob(function (blob) {

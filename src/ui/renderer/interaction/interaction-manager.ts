@@ -212,7 +212,7 @@ export class InteractionManager extends EventEmitter {
 
     const style = this.interactionDOMElement.style as CrossCSSStyleDeclaration;
 
-    if (self.navigator.msPointerEnabled) {
+    if ((self.navigator as any).msPointerEnabled) {
       style.msContentZooming = "none";
       style.msTouchAction = "none";
     } else if (this.supportsPointerEvents) {
