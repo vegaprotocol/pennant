@@ -3,7 +3,7 @@ import { scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
 import { orderBy, sortBy, zip } from "lodash";
 
-import cumsum from "../../math/array/cumsum";
+import cumsum from "../../util/math/array/cumsum";
 import { Contents } from "./contents";
 import { AXIS_HEIGHT, PriceLevel } from "./depth-chart";
 import { Colors, Dimensions } from "./helpers";

@@ -21,7 +21,7 @@ import { format } from "date-fns";
 import EventEmitter from "eventemitter3";
 import { range } from "lodash";
 
-import { bisectCenter } from "../../math/array";
+import { bisectCenter } from "../../util/math/array";
 import { Gesture, Zoom, zoomIdentity, ZoomTransform } from "../../util/zoom";
 import { Colors } from "./helpers";
 import { Data } from "./line-chart";

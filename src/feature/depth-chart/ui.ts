@@ -12,7 +12,7 @@ import { ScaleLinear, scaleLinear } from "d3-scale";
 import EventEmitter from "eventemitter3";
 import { clamp } from "lodash";
 
-import { bisectCenter } from "../../math/array";
+import { bisectCenter } from "../../util/math/array";
 import { AXIS_HEIGHT } from "./depth-chart";
 import {
   HorizontalAxis,
