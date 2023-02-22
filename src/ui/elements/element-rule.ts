@@ -1,4 +1,3 @@
-import { align } from "@util/misc";
 import { PositionalElement, ScaleLinear, ScaleTime } from "@util/types";
 
 export type Rule = {
@@ -53,8 +52,8 @@ export class RuleElement implements PositionalElement {
 
     ctx.beginPath();
 
-    ctx.moveTo(align(x, pixelRatio), align(y, pixelRatio));
-    ctx.lineTo(align(x2, pixelRatio), align(y2, pixelRatio));
+    ctx.moveTo(x, y);
+    ctx.lineTo(x2, y2);
 
     ctx.strokeStyle = this.color;
     ctx.lineCap = "butt";

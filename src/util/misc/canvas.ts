@@ -26,17 +26,3 @@ export function clearCanvas(
 
   ctx.restore();
 }
-
-/**
- * Returns the aligned pixel value to avoid anti-aliasing blur
- * @param x - A pixel value
- * @param pixelRatio - Device pixel ratio
- * @returns The aligned pixel value
- */
-export function align(x: number, pixelRatio: number = 1): number {
-  return Math.round(pixelRatio * Math.round(x)) / pixelRatio + 0.5 / pixelRatio;
-}
-
-export function alignSpan(x: number, pixelRatio: number = 1) {
-  return Math.round(pixelRatio * Math.round(x)) / pixelRatio;
-}

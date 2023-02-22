@@ -1,4 +1,4 @@
-import { align, getNumXTicks, getNumYTicks } from "@util/misc";
+import { getNumXTicks, getNumYTicks } from "@util/misc";
 import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 
 function addGridPath(
@@ -25,8 +25,8 @@ function addGridPath(
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
-    ctx.moveTo(align(xScale(tick)!, pixelRatio), yRange[0]);
-    ctx.lineTo(align(xScale(tick)!, pixelRatio), yRange[1]);
+    ctx.moveTo(xScale(tick)!, yRange[0]);
+    ctx.lineTo(xScale(tick)!, yRange[1]);
 
     ctx.fill();
     ctx.stroke();
@@ -43,8 +43,8 @@ function addGridPath(
     ctx.fillStyle = "transparent";
     ctx.lineWidth = 1 / pixelRatio;
 
-    ctx.moveTo(xRange[0], align(yScale(tick)!, pixelRatio));
-    ctx.lineTo(xRange[1], align(yScale(tick)!, pixelRatio));
+    ctx.moveTo(xRange[0], yScale(tick)!);
+    ctx.lineTo(xRange[1], yScale(tick)!);
 
     ctx.fill();
     ctx.stroke();

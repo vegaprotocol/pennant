@@ -1,5 +1,5 @@
 import { TICK_LABEL_FONT_SIZE, Y_AXIS_WIDTH } from "@util/constants";
-import { align, formatter } from "@util/misc";
+import { formatter } from "@util/misc";
 import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 
 import { Colors } from "../../feature/candlestick-chart/helpers";
@@ -31,8 +31,8 @@ function addYAxisPath(
     ctx.strokeStyle = colors.textSecondary;
 
     ctx.beginPath();
-    ctx.moveTo(xScale.range()[0], align(y) + 0.5);
-    ctx.lineTo(xScale.range()[1], align(y) + 0.5);
+    ctx.moveTo(xScale.range()[0], y + 0.5);
+    ctx.lineTo(xScale.range()[1], y + 0.5);
     ctx.stroke();
     ctx.closePath();
 
