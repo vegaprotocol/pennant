@@ -107,7 +107,7 @@ export class Core {
 
   // Data
   private dates: Date[];
-  private marketOpen: Date;
+  private marketOpen?: Date;
 
   // x-axis
   private xAxis: XAxis;
@@ -139,7 +139,7 @@ export class Core {
     simple = false,
     initialNumCandles = 24,
     colors: Colors,
-    marketOpen: Date
+    marketOpen?: Date
   ) {
     this._decimalPlaces = decimalPlaces;
     this.isSimple = simple;

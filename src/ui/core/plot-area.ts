@@ -11,7 +11,7 @@ export class PlotArea {
   public colors: Colors;
 
   private _noData: NoDataElement = new NoDataElement();
-  private marketOpen: Date;
+  private marketOpen?: Date;
   private _crosshair: CrosshairElement = new CrosshairElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private _data: any[];
@@ -36,7 +36,7 @@ export class PlotArea {
     labels: RenderableElement[],
     isSimple: boolean,
     colors: Colors,
-    marketOpen: Date
+    marketOpen?: Date
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -87,14 +87,16 @@ export class PlotArea {
         element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
       }
 
-      this._noData.draw(
-        this.ctx,
-        this._xScale,
-        this._yScale,
-        this._pixelRatio,
-        this.marketOpen,
-        this.colors.textSecondary
-      );
+      if (this.marketOpen) {
+        this._noData.draw(
+          this.ctx,
+          this._xScale,
+          this._yScale,
+          this._pixelRatio,
+          this.marketOpen,
+          this.colors.textSecondary
+        );
+      }
 
       if (!this.isSimple) {
         this.latestPriceCrosshair.draw(

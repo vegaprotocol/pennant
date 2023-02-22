@@ -40,7 +40,7 @@ export type PlotContainerProps = {
   simple: boolean;
   initialNumCandles: number;
   colors: Colors;
-  marketOpen: Date;
+  marketOpen?: Date;
   studySize: number | string;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;

@@ -124,8 +124,6 @@ export class VegaDataSource implements DataSource {
         this._positionDecimalPlaces = data.market.positionDecimalPlaces;
         this._marketOpen = data.market.marketTimestamps?.open;
 
-        console.log(data.market.marketTimestamps);
-
         return {
           decimalPlaces: this._decimalPlaces,
           positionDecimalPlaces: this._positionDecimalPlaces,
