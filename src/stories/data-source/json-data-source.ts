@@ -86,6 +86,10 @@ export class JsonDataSource implements DataSource {
     return this._decimalPlaces;
   }
 
+  get marketOpen(): Date {
+    return new Date("2021-02-23T09:35:00Z");
+  }
+
   constructor(
     marketId: string,
     decimalPlaces: number,

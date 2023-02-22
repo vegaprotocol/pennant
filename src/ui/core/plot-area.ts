@@ -1,4 +1,4 @@
-import { CrosshairElement, GridElement } from "@ui/elements";
+import { CrosshairElement, GridElement, NoDataElement } from "@ui/elements";
 import { clearCanvas } from "@util/misc";
 import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 import { bisector, extent } from "d3-array";
@@ -10,6 +10,8 @@ import { Colors } from "../../feature/candlestick-chart/helpers";
 export class PlotArea {
   public colors: Colors;
 
+  private _noData: NoDataElement = new NoDataElement();
+  private marketOpen: Date;
   private _crosshair: CrosshairElement = new CrosshairElement();
   private ctx: CanvasRenderingContext2D | null = null;
   private _data: any[];
@@ -33,7 +35,8 @@ export class PlotArea {
     fields: string[],
     labels: RenderableElement[],
     isSimple: boolean,
-    colors: Colors
+    colors: Colors,
+    marketOpen: Date
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -43,6 +46,7 @@ export class PlotArea {
     this._labels = labels;
     this.isSimple = isSimple;
     this.colors = colors;
+    this.marketOpen = marketOpen;
   }
 
   context(context: CanvasRenderingContext2D) {
@@ -82,6 +86,15 @@ export class PlotArea {
       for (const element of this._renderableElements) {
         element.draw(this.ctx, this._xScale, this._yScale, this._pixelRatio);
       }
+
+      this._noData.draw(
+        this.ctx,
+        this._xScale,
+        this._yScale,
+        this._pixelRatio,
+        this.marketOpen,
+        this.colors.textSecondary
+      );
 
       if (!this.isSimple) {
         this.latestPriceCrosshair.draw(

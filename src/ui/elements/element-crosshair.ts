@@ -1,9 +1,9 @@
-import * as types from "@util/types";
+import { RenderableElement, ScaleLinear, ScaleTime } from "@util/types";
 
 function addCrosshairPath(
   ctx: CanvasRenderingContext2D,
-  xScale: types.ScaleTime,
-  yScale: types.ScaleLinear,
+  xScale: ScaleTime,
+  yScale: ScaleLinear,
   position: [Date | null, number | null],
   color: string
 ) {
@@ -38,11 +38,11 @@ function addCrosshairPath(
   ctx.restore();
 }
 
-export class CrosshairElement implements types.RenderableElement {
+export class CrosshairElement implements RenderableElement {
   draw(
     ctx: CanvasRenderingContext2D,
-    xScale: types.ScaleTime,
-    yScale: types.ScaleLinear,
+    xScale: ScaleTime,
+    yScale: ScaleLinear,
     pixelRatio: number = 1,
     position: [Date | null, number | null],
     color: string
