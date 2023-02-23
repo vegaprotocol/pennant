@@ -3,7 +3,7 @@ import { NonIdealState, Tooltip, TooltipProps } from "@ui/components";
 import { useThrottledResizeObserver } from "@util/hooks";
 import { defaultPriceFormat } from "@util/misc";
 import { ThemeVariant } from "@util/types";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Chart } from "./chart";
 import { getColors } from "./helpers";
