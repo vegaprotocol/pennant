@@ -60,6 +60,44 @@ describe("constructTopLevelSpec", () => {
               },
               mark: { type: "bar" },
             },
+            {
+              encoding: {
+                fill: {
+                  condition: {
+                    test: {
+                      equal: 0,
+                      field: "volume",
+                    },
+                    value: "#494949",
+                  },
+                  value: "#00000000",
+                },
+                stroke: {
+                  condition: {
+                    test: {
+                      equal: 0,
+                      field: "volume",
+                    },
+                    value: "#494949",
+                  },
+                  value: "#00000000",
+                },
+                strokeWidth: {
+                  value: 4,
+                },
+                y: {
+                  field: "open",
+                  type: "quantitative",
+                },
+                y2: {
+                  field: "close",
+                  type: "quantitative",
+                },
+              },
+              mark: {
+                type: "bar",
+              },
+            },
           ],
         },
       ],
