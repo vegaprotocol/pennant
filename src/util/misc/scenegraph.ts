@@ -9,6 +9,7 @@ import { PositionalElement } from "@util/types";
 import {
   Color,
   Gradient,
+  isFieldEqualPredicate,
   isFieldGTPredicate,
   isFieldLTPredicate,
   Mark,
@@ -159,7 +160,17 @@ export function getConditionalColor(colorDef: any | undefined) {
   } else if ("condition" in colorDef) {
     const predicate: Predicate = colorDef.condition?.test;
 
-    if (isFieldLTPredicate(predicate)) {
+    if (isFieldEqualPredicate(predicate)) {
+      const comparison =
+        typeof predicate.equal === "string"
+          ? (datum: any) => datum[predicate.equal]
+          : () => predicate.equal;
+
+      color = (datum) =>
+        datum[predicate.field] === comparison(datum)
+          ? colorDef.condition.value ?? COLORS.GRAY
+          : colorDef.value ?? COLORS.GRAY;
+    } else if (isFieldLTPredicate(predicate)) {
       const comparison =
         typeof predicate.lt === "string"
           ? (datum: any) => datum[predicate.lt]

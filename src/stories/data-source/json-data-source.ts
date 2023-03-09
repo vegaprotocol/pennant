@@ -111,8 +111,6 @@ export class JsonDataSource implements DataSource {
   async query(interval: Interval, _from: string, _to: string) {
     const data: any = files.get(this.filename);
 
-    console.log(data);
-
     const candles = data[interval].candles.map((d: any) =>
       extendCandle(d, this.decimalPlaces)
     );
