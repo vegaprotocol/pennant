@@ -17,7 +17,21 @@
     "jsx": "react-jsx",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "dist/types"
+    "declarationDir": "dist/types",
+    "baseUrl": ".",
+    "paths": {
+      "@ui/components": ["src/ui/components/index.ts"],
+      "@ui/core": ["src/ui/core/index.ts"],
+      "@ui/display-objects": ["src/ui/display-objects/index.ts"],
+      "@ui/elements": ["src/ui/elements/index.ts"],
+      "@ui/renderer": ["src/ui/renderer/index.ts"],
+      "@util/constants": ["src/util/constants/index.ts"],
+      "@util/hooks": ["src/util/hooks/index.ts"],
+      "@util/misc": ["src/util/misc/index.ts"],
+      "@util/scenegraph": ["src/util/scenegraph/index.ts"],
+      "@util/types": ["src/util/types/index.ts"],
+      "@util/vega-lite": ["src/util/vega-lite/index.ts"]
+    }
   },
   "include": ["src"]
 }

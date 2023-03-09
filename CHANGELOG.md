@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0-alpha.1](https://github.com/vegaprotocol/pennant/compare/v1.8.0-alpha.0...v1.8.0-alpha.1) (2023-02-23)
+
+## [1.8.0-alpha.0](https://github.com/vegaprotocol/pennant/compare/v1.7.0...v1.8.0-alpha.0) (2023-02-23)
+
+### Features
+
+- add line and area charts ([#726](https://github.com/vegaprotocol/pennant/issues/726)) ([6793579](https://github.com/vegaprotocol/pennant/commit/679357925992fe2d319e3bd2afabb39223377154))
+- add option to set default study height ([#733](https://github.com/vegaprotocol/pennant/issues/733)) ([46f7ad8](https://github.com/vegaprotocol/pennant/commit/46f7ad82cbf6ee1d5a59bfe29649645f41c430e8))
+- customize color of volume bar depending on price increase/decrease ([#734](https://github.com/vegaprotocol/pennant/issues/734)) ([0c6bbbb](https://github.com/vegaprotocol/pennant/commit/0c6bbbb6c3824a63cf0adb7dec2e784d356558c3))
+
+### Bug Fixes
+
+- **candlestick-chart:** improve aignment of canvas elements ([#768](https://github.com/vegaprotocol/pennant/issues/768)) ([b47d305](https://github.com/vegaprotocol/pennant/commit/b47d305b63370a8e1715d24596ee6dbe8d2c9328))
+- accept hex, rgb and named css colors ([#731](https://github.com/vegaprotocol/pennant/issues/731)) ([94f8f40](https://github.com/vegaprotocol/pennant/commit/94f8f40d345c0cd6703ba03e8239d69830a53e6b))
+- prevent invalid zoom values ([#770](https://github.com/vegaprotocol/pennant/issues/770)) ([ec75f51](https://github.com/vegaprotocol/pennant/commit/ec75f510f7192cc8571fd0c84a506363cc0289b5))
+
 ## [1.7.0](https://github.com/vegaprotocol/pennant/compare/v1.6.0...v1.7.0) (2023-02-03)
 
 ### Features

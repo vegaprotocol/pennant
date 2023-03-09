@@ -1,5 +1,5 @@
-import { ZeroVolumeCandles } from "../../components/chart/chart.stories";
-import { Annotation, DataSource, LabelAnnotation } from "../../types";
+import { Annotation, DataSource, LabelAnnotation } from "@util/types";
+
 import { Interval } from "../api/vega-graphql";
 import { parseVegaDecimal } from "../helpers";
 import json from "./data.json";

@@ -1,4 +1,5 @@
 const path = require("path");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
   core: {
@@ -23,6 +24,8 @@ module.exports = {
         rules: [...(module.rules || [])],
       },
     };
+
+    newConfig.resolve.plugins = [new TsconfigPathsPlugin()];
 
     //
     // CSS Modules

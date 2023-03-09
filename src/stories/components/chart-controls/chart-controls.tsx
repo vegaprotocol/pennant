@@ -10,7 +10,6 @@ import {
   MenuItem,
 } from "@blueprintjs/core";
 import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
-
 import {
   ChartType,
   chartTypeLabels,
@@ -20,7 +19,7 @@ import {
   overlayLabels,
   Study,
   studyLabels,
-} from "../../../types";
+} from "@util/types";
 
 const chartTypeIcon = new Map<ChartType, IconName>([
   [ChartType.AREA, "timeline-area-chart"],
@@ -64,11 +63,26 @@ export const ChartControls = ({
               text={intervalLabels[Interval.I1M]}
               onClick={() => onSetInterval(Interval.I1M)}
             />
+            <MenuItem
+              icon={interval === Interval.I5M ? "tick" : "blank"}
+              text={intervalLabels[Interval.I5M]}
+              onClick={() => onSetInterval(Interval.I5M)}
+            />
+            <MenuItem
+              icon={interval === Interval.I15M ? "tick" : "blank"}
+              text={intervalLabels[Interval.I15M]}
+              onClick={() => onSetInterval(Interval.I15M)}
+            />
             <MenuDivider title="Hours" />
             <MenuItem
               icon={interval === Interval.I1H ? "tick" : "blank"}
               text={intervalLabels[Interval.I1H]}
               onClick={() => onSetInterval(Interval.I1H)}
+            />
+            <MenuItem
+              icon={interval === Interval.I6H ? "tick" : "blank"}
+              text={intervalLabels[Interval.I6H]}
+              onClick={() => onSetInterval(Interval.I6H)}
             />
             <MenuDivider title="Days" />
             <MenuItem

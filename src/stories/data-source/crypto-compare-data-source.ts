@@ -1,4 +1,5 @@
-import { Candle, DataSource } from "../../types";
+import { Candle, DataSource } from "@util/types";
+
 import { Interval } from "../api/vega-graphql";
 
 const API_KEY =

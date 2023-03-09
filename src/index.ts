@@ -1,10 +1,11 @@
-export type { ChartProps } from "./components/chart";
-export { Chart } from "./components/chart";
-export type {
-  DepthChartHandle,
-  DepthChartProps,
-} from "./components/depth-chart";
-export { DepthChart } from "./components/depth-chart";
-export type { PriceChartProps } from "./components/price-chart";
-export { PriceChart } from "./components/price-chart";
-export * from "./types";
+export type { AreaChartProps } from "./feature/area-chart";
+export { AreaChart } from "./feature/area-chart";
+export type { CandlestickChartProps } from "./feature/candlestick-chart";
+export { CandlestickChart } from "./feature/candlestick-chart";
+export type { DepthChartHandle, DepthChartProps } from "./feature/depth-chart";
+export { DepthChart } from "./feature/depth-chart";
+export type { LineChartProps } from "./feature/line-chart";
+export { LineChart } from "./feature/line-chart";
+export type { PriceChartProps } from "./feature/price-chart";
+export { PriceChart } from "./feature/price-chart";
+export * from "./util/types";

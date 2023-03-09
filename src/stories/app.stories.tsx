@@ -2,7 +2,6 @@ import "./app.stories.css";
 
 import {
   ApolloClient,
-  gql,
   HttpLink,
   InMemoryCache,
   split,
@@ -22,18 +21,26 @@ import {
 } from "@blueprintjs/core";
 import { ItemRenderer, Select } from "@blueprintjs/select";
 import { Meta, Story } from "@storybook/react";
-import classnames from "classnames";
+import { formatter } from "@util/misc";
+import { ChartElement, ChartType, Interval, Overlay, Study } from "@util/types";
 import { createClient } from "graphql-ws";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { useDarkMode } from "storybook-dark-mode";
 
-import { Chart } from "../components/chart";
-import { formatter } from "../helpers";
-import { ChartType, Interval, Overlay, Study } from "../types";
-import { ChartElement } from "../types";
+import { CandlestickChart } from "../feature/candlestick-chart";
 import { ChartControls } from "./components/chart-controls";
 import { AppToaster } from "./components/toaster";
+import {
+  MarketFieldsFragment,
+  MarketsDocument,
+  MarketsQuery,
+  MarketsQueryVariables,
+} from "./data-source/__generated__/markets";
+import {
+  MarketState,
+  MarketTradingMode,
+} from "./data-source/__generated__/types";
 import { CryptoCompareDataSource } from "./data-source/crypto-compare-data-source";
 import { VegaDataSource } from "./data-source/vega-protocol-data-source";
 
@@ -41,13 +48,15 @@ export default {
   title: "Overview/Application Examples",
 } as Meta;
 
+const VEGA_URL = "api.n11.testnet.vega.xyz/graphql";
+
 const httpLink = new HttpLink({
-  uri: "https://api.n08.testnet.vega.xyz/graphql",
+  uri: `https://${VEGA_URL}`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://api.n08.testnet.vega.xyz/graphql",
+    url: `wss://${VEGA_URL}`,
   })
 );
 
@@ -68,15 +77,9 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-type Market = {
-  id: string;
-  name: string;
-  state: string;
-};
+const MarketSelect = Select.ofType<MarketFieldsFragment>();
 
-const MarketSelect = Select.ofType<Market>();
-
-const renderMarket: ItemRenderer<Market> = (
+const renderMarket: ItemRenderer<MarketFieldsFragment> = (
   market,
   { handleClick, modifiers }
 ) => {
@@ -88,68 +91,34 @@ const renderMarket: ItemRenderer<Market> = (
       active={modifiers.active}
       disabled={market.state !== MarketState.STATE_ACTIVE}
       key={market.id}
-      label={market.name}
+      label={market.tradableInstrument.instrument.code}
       onClick={handleClick}
-      text={market.name}
+      text={market.tradableInstrument.instrument.name}
     />
   );
 };
 
-const GET_MARKETS = gql`
-  query GetMarkets {
-    markets {
-      id
-      name
-      state
-    }
-  }
-`;
-
-/** The current state of a market */
-export enum MarketState {
-  /** Enactment date reached and usual auction exit checks pass */
-  STATE_ACTIVE = "STATE_ACTIVE",
-  /**
-   * Market triggers cancellation condition or governance
-   * votes to close before market becomes Active
-   */
-  STATE_CANCELLED = "STATE_CANCELLED",
-  /** Governance vote (to close) */
-  STATE_CLOSED = "STATE_CLOSED",
-  /** Governance vote passes/wins */
-  STATE_PENDING = "STATE_PENDING",
-  /** The governance proposal valid and accepted */
-  STATE_PROPOSED = "STATE_PROPOSED",
-  /** Outcome of governance votes is to reject the market */
-  STATE_REJECTED = "STATE_REJECTED",
-  /** Settlement triggered and completed as defined by product */
-  STATE_SETTLED = "STATE_SETTLED",
-  /** Price monitoring or liquidity monitoring trigger */
-  STATE_SUSPENDED = "STATE_SUSPENDED",
-  /**
-   * Defined by the product (i.e. from a product parameter,
-   * specified in market definition, giving close date/time)
-   */
-  STATE_TRADING_TERMINATED = "STATE_TRADING_TERMINATED",
-}
-
 export const VegaProtocol: Story = () => {
   const ref = useRef<ChartElement>(null!);
   const [market, setMarket] = useState("");
-  const [chartType, setChartType] = useState<ChartType>("ohlc");
-  const [studies, setStudies] = useState<Study[]>([]);
+  const [chartType, setChartType] = useState<ChartType>("candle");
+  const [studies, setStudies] = useState<Study[]>(["volume"]);
   const [overlays, setOverlays] = useState<Overlay[]>([]);
-  const [interval, setInterval] = useState<Interval>(Interval.I1M);
+  const [interval, setInterval] = useState<Interval>(Interval.I15M);
 
-  const { loading, error, data } = useQuery(GET_MARKETS);
+  const { loading, error, data } = useQuery<
+    MarketsQuery,
+    MarketsQueryVariables
+  >(MarketsDocument, {
+    fetchPolicy: "no-cache",
+  });
 
   const dataSource = useMemo(
     () =>
       new VegaDataSource(
         client,
         market,
-        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
-        console.log
+        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
       ),
     [market]
   );
@@ -157,9 +126,9 @@ export const VegaProtocol: Story = () => {
   const darkmode = useDarkMode();
 
   const marketId =
-    data?.markets?.find(
-      (market: Market) => market.state === MarketState.STATE_ACTIVE
-    )?.id ?? data?.markets?.[0]?.id;
+    data?.marketsConnection?.edges.find(
+      (edge) => edge.node.state === MarketState.STATE_ACTIVE
+    )?.node.id ?? data?.marketsConnection?.edges[0]?.node.id;
 
   useEffect(() => {
     if (marketId) {
@@ -175,9 +144,9 @@ export const VegaProtocol: Story = () => {
       <h1>Vega Protocol Charts</h1>
       <div className="content-wrapper">
         <MarketSelect
-          items={data.markets}
+          items={data?.marketsConnection?.edges.map((edge) => edge.node) ?? []}
           itemRenderer={renderMarket}
-          onItemSelect={(item: Market) => {
+          onItemSelect={(item: MarketFieldsFragment) => {
             setMarket(item.id);
           }}
           noResults={<MenuItem disabled={true} text="No results." />}
@@ -185,8 +154,9 @@ export const VegaProtocol: Story = () => {
         >
           <Button
             text={
-              data.markets.find((s: any) => s.id === market)?.name ??
-              "No market selected"
+              data?.marketsConnection?.edges.find(
+                (s: any) => s.node.id === market
+              )?.node.tradableInstrument.instrument.name ?? "No market selected"
             }
             disabled={false}
           />
@@ -223,7 +193,7 @@ export const VegaProtocol: Story = () => {
         />
       </div>
       <div style={{ height: "60vh" }}>
-        <Chart
+        <CandlestickChart
           ref={ref}
           dataSource={dataSource}
           options={{
@@ -396,7 +366,7 @@ export const CryptoCompare: Story = () => {
           }}
         />
         <div style={{ height: "70vh" }}>
-          <Chart
+          <CandlestickChart
             ref={ref}
             dataSource={dataSource}
             options={{

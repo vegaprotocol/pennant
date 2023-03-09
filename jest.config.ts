@@ -3,7 +3,7 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 
-export default {
+const jestConfig = {
   setupFilesAfterEnv: ["jest-extended"],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -84,6 +84,17 @@ export default {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "^.+\\.(css|less|scss)$": "babel-jest",
+    "^@ui/components$": "<rootDir>/src/ui/components",
+    "^@ui/core$": "<rootDir>/src/ui/core",
+    "^@ui/display-objects$": "<rootDir>/src/ui/display-objects",
+    "^@ui/elements$": "<rootDir>/src/ui/elements",
+    "^@ui/renderer$": "<rootDir>/src/ui/renderer",
+    "^@util/constants$": "<rootDir>/src/util/constants",
+    "^@util/hooks$": "<rootDir>/src/util/hooks",
+    "^@util/misc$": "<rootDir>/src/util/misc",
+    "^@util/scenegraph$": "<rootDir>/src/util/scenegraph",
+    "^@util/types$": "<rootDir>/src/util/types",
+    "^@util/vega-lite$": "<rootDir>/src/util/vega-lite",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -128,7 +139,7 @@ export default {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  // setupFiles: [],
+  setupFiles: ["jest-canvas-mock"],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
@@ -194,3 +205,5 @@ export default {
   // Whether to use watchman for file crawling
   // watchman: true,
 };
+
+export default jestConfig;

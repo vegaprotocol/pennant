@@ -11,24 +11,28 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { Meta, Story } from "@storybook/react";
 import { createClient } from "graphql-ws";
 
-import { markets } from "./api/vega-graphql";
-import { marketsQuery } from "./api/vega-graphql/queries/markets";
 import { MarketGrid } from "./components/market-grid/market-grid";
+import {
+  MarketsDocument,
+  MarketsQuery,
+  MarketsQueryVariables,
+} from "./data-source/__generated__/markets";
 
 export default {
   title: "Overview/Use Cases",
 } as Meta;
 
+const VEGA_URL = "api.n11.testnet.vega.xyz/graphql";
+
 const httpLink = new HttpLink({
-  uri: "https://lb.testnet.vega.xyz/query",
+  uri: `https://${VEGA_URL}`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://lb.testnet.vega.xyz/query",
+    url: `wss://${VEGA_URL}`,
   })
 );
-
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -47,13 +51,25 @@ const client = new ApolloClient({
 });
 
 const Grid: Story = () => {
-  const { data, loading } = useQuery<markets>(marketsQuery);
+  const { data, loading } = useQuery<MarketsQuery, MarketsQueryVariables>(
+    MarketsDocument,
+    { fetchPolicy: "no-cache" }
+  );
 
-  if (loading || typeof data === "undefined" || data.markets === null) {
+  if (
+    loading ||
+    typeof data === "undefined" ||
+    data.marketsConnection === undefined ||
+    data.marketsConnection === null
+  ) {
     return <div>Loading</div>;
   }
 
-  return <MarketGrid markets={data.markets} />;
+  return (
+    <MarketGrid
+      markets={data.marketsConnection.edges.map((edge) => edge.node)}
+    />
+  );
 };
 
 export const Simple = () => (
