@@ -1,5 +1,6 @@
 import { Container, Graphics } from "@ui/renderer";
-import { ScaleTime } from "@util/types";
+import { isDate, isDateArray } from "@util/misc";
+import { ScaleLinear, ScaleTime } from "@util/types";
 
 /**
  * Draws vertical grid lines
@@ -15,7 +16,7 @@ export class HorizontalGrid extends Container {
   }
 
   public update(
-    scale: ScaleTime,
+    scale: ScaleLinear | ScaleTime,
     width: number,
     height: number,
     resolution: number = 1
@@ -23,17 +24,31 @@ export class HorizontalGrid extends Container {
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
 
-    const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tick.getTime())
-    );
+    let enter: number[] | Date[];
+    let update: number[] | Date[];
+    let exit: number[] | Date[];
 
-    const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tick.getTime())
-    );
+    if (isDateArray(ticks)) {
+      enter = ticks.filter((tick) => !this.nodeByKeyValue.has(tick.getTime()));
+    } else {
+      enter = ticks.filter((tick) => !this.nodeByKeyValue.has(tick));
+    }
 
-    const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
-    );
+    if (isDateArray(ticks)) {
+      update = ticks.filter((tick) => this.nodeByKeyValue.has(tick.getTime()));
+    } else {
+      update = ticks.filter((tick) => this.nodeByKeyValue.has(tick));
+    }
+
+    if (isDateArray(ticks)) {
+      exit = [...this.nodeByKeyValue.keys()].filter(
+        (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
+      );
+    } else {
+      exit = [...this.nodeByKeyValue.keys()].filter(
+        (node) => !(ticks.map((tick) => tick).indexOf(node) !== -1)
+      );
+    }
 
     for (const node of enter) {
       const line = new Graphics();
@@ -49,12 +64,14 @@ export class HorizontalGrid extends Container {
       line.endFill();
       line.x = scale(node);
 
-      this.nodeByKeyValue.set(node.getTime(), line);
+      this.nodeByKeyValue.set(isDate(node) ? node.getTime() : node, line);
       this.addChild(line);
     }
 
     for (const node of update) {
-      const line = this.nodeByKeyValue.get(node.getTime())!;
+      const line = this.nodeByKeyValue.get(
+        isDate(node) ? node.getTime() : node
+      )!;
 
       line.clear();
       line.lineStyle({

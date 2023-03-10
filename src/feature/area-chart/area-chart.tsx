@@ -1,8 +1,9 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { NonIdealState, Tooltip, TooltipProps } from "@ui/components";
 import { useThrottledResizeObserver } from "@util/hooks";
-import { defaultPriceFormat } from "@util/misc";
+import { defaultNumberFormat, defaultPriceFormat, isDate } from "@util/misc";
 import { ThemeVariant } from "@util/types";
+import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 
 import styles from "./area-chart.module.css";
@@ -17,7 +18,7 @@ export type CustomTooltipProps<A> = TooltipProps & { annotations?: A[] };
 /**
  * A set of data points with the same x-axis location.
  */
-export type Row = readonly [Date | number, ...number[]];
+export type Row = readonly [Date, ...number[]] | readonly [number, ...number[]];
 
 export interface Data {
   /**
@@ -66,11 +67,12 @@ export type AreaChartProps<A> = {
   /**
    * Override the default tooltip.
    */
-  tooltip?: ({
-    date,
-    series,
-    annotations,
-  }: CustomTooltipProps<A>) => JSX.Element;
+  tooltip?: (props: CustomTooltipProps<A>) => JSX.Element;
+
+  /**
+   * Used to format values on x axis if numbers.
+   */
+  xFormat?: (x: number) => string;
 };
 
 /**
@@ -84,6 +86,7 @@ export const AreaChart = <A,>({
   priceFormat = defaultPriceFormat,
   theme = "dark",
   tooltip,
+  xFormat = defaultNumberFormat,
 }: AreaChartProps<A>) => {
   /**
    * Where to render chart contents, e.g. line series.
@@ -133,6 +136,7 @@ export const AreaChart = <A,>({
       width: 300,
       height: 300,
       priceFormat,
+      xFormat,
       colors,
     });
 
@@ -170,7 +174,15 @@ export const AreaChart = <A,>({
           });
 
           setTooltipContent({
-            date: d.date,
+            value: d.value,
+            label: {
+              primary: isDate(d.value)
+                ? format(d.value, "dd/MM/yyyy")
+                : data.cols[0],
+              sub: isDate(d.value)
+                ? format(d.value, "HH:mm a")
+                : xFormat(d.value),
+            },
             series: d.series,
             annotations: annotations?.[d.index],
           });
@@ -187,7 +199,7 @@ export const AreaChart = <A,>({
     return () => {
       chartRef.current.destroy();
     };
-  }, [annotations, priceFormat]);
+  }, [annotations, data.cols, priceFormat, xFormat]);
 
   // Update chart when dimensions or data change
   useEffect(() => {
@@ -241,14 +253,7 @@ export const AreaChart = <A,>({
       </div>
       <div ref={tooltipRef} className={styles.tooltipContainer}>
         {tooltipContent &&
-          (tooltip ? (
-            tooltip(tooltipContent)
-          ) : (
-            <Tooltip
-              date={tooltipContent.date}
-              series={tooltipContent.series}
-            />
-          ))}
+          (tooltip ? tooltip(tooltipContent) : <Tooltip {...tooltipContent} />)}
       </div>
     </div>
   );

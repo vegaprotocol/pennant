@@ -533,10 +533,10 @@ export class UI extends EventEmitter {
 
       // TODO: This is just a hack to see what this looks like
       if (!this.isZooming) {
-        this.emit("mousemove", {
+        const arg = {
           index,
           point: [this.timeScale(nearestX[0]) / resolution, y],
-          date: nearestX[0],
+          value: nearestX[0],
           series: range(0, this.data.cols.length - 1).map((i) => ({
             color:
               this.data.cols.length === 2
@@ -547,7 +547,9 @@ export class UI extends EventEmitter {
             name: this.data.cols[i + 1],
             value: this.priceFormat(nearestX[i + 1] as number),
           })),
-        });
+        };
+
+        this.emit("mousemove", arg);
       } else {
         this.onPointerOut();
       }

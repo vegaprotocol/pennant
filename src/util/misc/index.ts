@@ -14,3 +14,4 @@ export * from "./snapshot";
 export * from "./specification";
 export * from "./string";
 export * from "./technical-indicators";
+export * from "./user-defined-typeguards";

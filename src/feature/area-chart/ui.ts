@@ -15,6 +15,7 @@ import {
   Renderer,
 } from "@ui/renderer";
 import { AXIS_HEIGHT, AXIS_WIDTH } from "@util/constants";
+import { isDate } from "@util/misc";
 import { ScaleLinear, ScaleTime } from "@util/types";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { format } from "date-fns";
@@ -61,11 +62,11 @@ export class UI extends EventEmitter {
   private _interactive = true;
   private data: SeriesData = [];
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
-  private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
+  private lastXZoomTransform: ZoomTransform = zoomIdentity;
   private priceScale: ScaleLinear = scaleLinear();
   private priceZoom: Zoom = new Zoom();
-  private timeScale: ScaleTime = scaleTime();
-  private timeZoom: Zoom = new Zoom();
+  private xScale: ScaleLinear | ScaleTime | null = null;
+  private xZoom: Zoom = new Zoom();
   private firstPoint: [number, number] | null = null;
   private gesture = new Gesture(this);
   private isZooming = false;
@@ -83,10 +84,11 @@ export class UI extends EventEmitter {
   );
 
   private priceLabel: Label = new Label();
-  private timeLabel: Label = new Label();
+  private xLabel: Label = new Label();
   private hitBox: Container = new Container();
 
   private priceFormat: (price: number) => string;
+  private xFormat: (x: number) => string;
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -95,6 +97,7 @@ export class UI extends EventEmitter {
     height: number;
     colors: UiColors;
     priceFormat: (price: number) => string;
+    xFormat: (x: number) => string;
   }) {
     super();
 
@@ -106,6 +109,7 @@ export class UI extends EventEmitter {
     });
 
     this.priceFormat = options.priceFormat;
+    this.xFormat = options.xFormat;
 
     this.colors = options.colors;
     this.horizontalAxis = new HorizontalAxis(this.renderer);
@@ -118,7 +122,7 @@ export class UI extends EventEmitter {
     this.stage.addChild(this.crosshair);
     this.stage.addChild(...this.indicator);
     this.stage.addChild(this.priceLabel);
-    this.stage.addChild(this.timeLabel);
+    this.stage.addChild(this.xLabel);
     this.stage.addChild(this.hitBox);
 
     this.hitBox.interactive = true;
@@ -165,12 +169,14 @@ export class UI extends EventEmitter {
 
   public update(
     data: SeriesData,
-    timeScale: ScaleTime,
+    xScale: ScaleLinear | ScaleTime,
+    xFormat: (x: number) => string,
     priceScale: ScaleLinear,
     priceFormat: (price: number) => string
   ): void {
     this.data = data;
-    this.timeScale = timeScale;
+    this.xScale = xScale;
+    this.xFormat = xFormat;
     this.priceScale = priceScale;
     this.priceFormat = priceFormat;
 
@@ -193,7 +199,7 @@ export class UI extends EventEmitter {
     );
 
     this.horizontalAxis.update(
-      this.timeScale,
+      this.xScale,
       width,
       height,
       resolution,
@@ -299,29 +305,26 @@ export class UI extends EventEmitter {
       );
 
       const transform = this.zoom.__zoom;
-      const k = transform.k / this.lastTimeZoomTransform.k;
+      const k = transform.k / this.lastXZoomTransform.k;
 
       if (k === 1) {
-        this.timeZoom.scaleBy(
+        this.xZoom.scaleBy(
           Math.pow(
             2,
-            -(transform.x - this.lastTimeZoomTransform.x) /
+            -(transform.x - this.lastXZoomTransform.x) /
               1 /
-              (this.timeScale.range()[1] - this.timeScale.range()[0])
+              (this.xScale!.range()[1] - this.xScale!.range()[0])
           ),
-          [
-            Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
-            0,
-          ]
+          [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0]
         );
       } else {
-        this.timeZoom.scaleBy(k, [
-          (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+        this.xZoom.scaleBy(k, [
+          (this.xScale!.range()[1] - this.xScale!.range()[0]) / 2,
           0,
         ]);
       }
 
-      this.lastTimeZoomTransform = transform;
+      this.lastXZoomTransform = transform;
       this.emit("zoom.horizontalAxis", this.zoom.__zoom, p);
     }
   };
@@ -414,7 +417,7 @@ export class UI extends EventEmitter {
 
     this.crosshair.visible = true;
     this.priceLabel.visible = true;
-    this.timeLabel.visible = true;
+    this.xLabel.visible = true;
 
     for (let index = 0; index < this.indicator.length; index++) {
       if (index < this.data.length) {
@@ -433,14 +436,14 @@ export class UI extends EventEmitter {
       const height = this.renderer.view.height;
 
       const index = bisectCenter(
-        this.data[0].i.map((d) => this.timeScale(d)),
+        this.data[0].i.map((d) => this.xScale!(d)),
         x
       );
 
       const nearestX = this.data[0].i[index];
 
       this.crosshair.update(
-        this.timeScale(nearestX),
+        this.xScale!(nearestX),
         resolution * y,
         width,
         height,
@@ -450,7 +453,7 @@ export class UI extends EventEmitter {
       for (let i = 0; i < this.indicator.length; i++) {
         if (i < this.data.length) {
           this.indicator[i].update(
-            this.timeScale(nearestX),
+            this.xScale!(nearestX),
             this.priceScale(this.data[i][index][1]),
             (this.colors as any)[`accent${i + 1}`]
           );
@@ -468,9 +471,11 @@ export class UI extends EventEmitter {
         { ...this.colors, backgroundSurface: this.colors.emphasis100 }
       );
 
-      this.timeLabel.update(
-        format(nearestX, "dd/MM/yyyy HH:mm a"),
-        this.timeScale(nearestX),
+      this.xLabel.update(
+        isDate(nearestX)
+          ? format(nearestX, "dd/MM/yyyy HH:mm a")
+          : this.xFormat(nearestX),
+        this.xScale!(nearestX),
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
         resolution,
@@ -483,8 +488,8 @@ export class UI extends EventEmitter {
       if (!this.isZooming) {
         this.emit("mousemove", {
           index,
-          point: [this.timeScale(nearestX) / resolution, y],
-          date: nearestX,
+          point: [this.xScale!(nearestX) / resolution, y],
+          value: nearestX,
           series: range(0, this.data.length).map((i) => ({
             color: hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data[i].key,
@@ -512,26 +517,26 @@ export class UI extends EventEmitter {
     transform: ZoomTransform;
     point: [number, number];
   }) => {
-    const k = transform.k / this.lastTimeZoomTransform.k;
+    const k = transform.k / this.lastXZoomTransform.k;
 
     if (k === 1) {
-      this.timeZoom.scaleBy(
+      this.xZoom.scaleBy(
         Math.pow(
           2,
-          -(transform.x - this.lastTimeZoomTransform.x) /
-            (this.timeScale.range()[1] - this.timeScale.range()[0])
+          -(transform.x - this.lastXZoomTransform.x) /
+            (this.xScale!.range()[1] - this.xScale!.range()[0])
         ),
-        [Math.abs(this.timeScale.range()[1] - this.timeScale.range()[0]) / 2, 0]
+        [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0]
       );
     } else {
-      this.timeZoom.scaleBy(k, [
-        (this.timeScale.range()[1] - this.timeScale.range()[0]) / 2,
+      this.xZoom.scaleBy(k, [
+        (this.xScale!.range()[1] - this.xScale!.range()[0]) / 2,
         0,
       ]);
     }
 
-    this.lastTimeZoomTransform = transform;
-    this.emit("zoom.horizontalAxis", this.timeZoom.__zoom, point);
+    this.lastXZoomTransform = transform;
+    this.emit("zoom.horizontalAxis", this.xZoom.__zoom, point);
   };
 
   private onZoomVerticalAxis = ({
@@ -570,7 +575,7 @@ export class UI extends EventEmitter {
   private hideTooltips = () => {
     this.crosshair.visible = false;
     this.priceLabel.visible = false;
-    this.timeLabel.visible = false;
+    this.xLabel.visible = false;
 
     for (let i = 0; i < this.indicator.length; i++) {
       this.indicator[i].visible = false;

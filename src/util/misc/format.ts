@@ -120,3 +120,7 @@ export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
 export function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
+
+export function defaultNumberFormat(price: number) {
+  return numberFormatter(2).format(price);
+}

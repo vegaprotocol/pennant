@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-
 import styles from "./tooltip.module.css";
 
 /**
@@ -12,19 +10,22 @@ export interface Series {
 }
 
 export type TooltipProps = {
-  date: Date;
+  value: number | Date;
+  label: { primary: string; sub: string | null };
   series: Series[];
 };
 
 /**
- * Tooltip for price chart.
+ * Tooltip for area, line and price charts.
  */
-export const Tooltip = ({ date, series }: TooltipProps) => {
+export const Tooltip = ({ label, series }: TooltipProps) => {
   return (
     <div className={styles.tooltip}>
       <div className={styles.date}>
-        <div className={styles.primary}>{format(date, "dd/MM/yyyy")}</div>
-        <div className={styles.sub}>{format(date, "HH:mm a")}</div>
+        {label.primary ? (
+          <div className={styles.primary}>{label.primary}</div>
+        ) : null}
+        {label.sub ? <div className={styles.sub}>{label.sub}</div> : null}
       </div>
       {series.map((s) => (
         <div key={s.name} className={styles.series}>
