@@ -97,7 +97,7 @@ function compileLayer(
           candleWidth,
           getConditionalColor(encoding.fill)(d),
           getConditionalColor(encoding.stroke)(d),
-          lineWidth
+          (encoding.strokeWidth as any)?.value ?? lineWidth
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(

@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react/types-6-0";
+import { ChartType } from "@util/types";
 import { useDarkMode } from "storybook-dark-mode";
 
 import { Interval } from "../../stories/api/vega-graphql";
@@ -93,4 +94,15 @@ export const NoChange = Template.bind({});
 NoChange.args = {
   dataSource: new JsonDataSource("", 5, "no-change-data.json", false),
   interval: Interval.I1D,
+};
+
+export const ZeroVolumeCandles = Template.bind({});
+ZeroVolumeCandles.args = {
+  dataSource: new JsonDataSource("", 5, "zero-volume-candles-data.json", false),
+  interval: Interval.I5M,
+  options: {
+    chartType: ChartType.OHLC,
+    overlays: ["bollinger"],
+    studies: ["volume"],
+  },
 };

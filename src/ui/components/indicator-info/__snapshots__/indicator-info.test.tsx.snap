@@ -9,14 +9,10 @@ exports[`IndicatorInfo renders correctly 1`] = `
   >
     RSI: 
   </span>
-  <div
-    className="indicator-info__item"
+  <span
+    className="text-muted"
   >
-    <span
-      className="monospace-text"
-    >
-      100
-    </span>
-  </div>
+    No trading
+  </span>
 </div>
 `;

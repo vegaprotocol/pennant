@@ -146,6 +146,32 @@ function constructMainLayerSpec(
             type: "bar",
           },
         },
+        {
+          encoding: {
+            y: { field: "open", type: "quantitative" },
+            y2: { field: "close", type: "quantitative" },
+            fill: {
+              condition: {
+                test: { field: "volume", equal: 0 },
+                value: colors.emphasis500,
+              },
+              value: "#00000000",
+            },
+            stroke: {
+              condition: {
+                test: { field: "volume", equal: 0 },
+                value: colors.emphasis500,
+              },
+              value: "#00000000",
+            },
+            strokeWidth: {
+              value: 4,
+            },
+          },
+          mark: {
+            type: "bar",
+          },
+        },
       ];
   }
 }
