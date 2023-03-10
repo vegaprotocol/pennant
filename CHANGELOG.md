@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0-alpha.2](https://github.com/vegaprotocol/pennant/compare/v1.8.0-alpha.1...v1.8.0-alpha.2) (2023-03-10)
+
+### Features
+
+- handle candles with zero volume ([#791](https://github.com/vegaprotocol/pennant/issues/791)) ([cc7602b](https://github.com/vegaprotocol/pennant/commit/cc7602bcccdedcc1a47c26ddbceefadbbcf06397))
+- suppoer continuous numerical values for horizontal axis of area and line charts ([#790](https://github.com/vegaprotocol/pennant/issues/790)) ([a1813b7](https://github.com/vegaprotocol/pennant/commit/a1813b7c2591ff7baf1a2871d3cfa07634e4a4cc))
+
 ## [1.8.0-alpha.1](https://github.com/vegaprotocol/pennant/compare/v1.8.0-alpha.0...v1.8.0-alpha.1) (2023-02-23)
 
 ## [1.8.0-alpha.0](https://github.com/vegaprotocol/pennant/compare/v1.7.0...v1.8.0-alpha.0) (2023-02-23)
