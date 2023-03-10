@@ -29,13 +29,20 @@ export const studyInfoFields: Record<
       label: string;
       format?: (d: any, decimalPlaces?: number) => string;
       intent?: boolean;
+      /** Should still be displayed when no trading occurs */
+      displayWhileNoTrading?: boolean;
     }[];
   }
 > = {
   main: {
     label: "",
     fields: [
-      { id: "date", label: "", format: (d) => format(d, DATE_FORMAT) },
+      {
+        id: "date",
+        label: "",
+        format: (d) => format(d, DATE_FORMAT),
+        displayWhileNoTrading: true,
+      },
       { id: "open", label: "O" },
       { id: "high", label: "H" },
       { id: "low", label: "L" },
