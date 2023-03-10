@@ -1,4 +1,4 @@
-import { ColorDef, Field, PositionDef } from "./channeldef";
+import { ColorDef, Field, NumericDef, PositionDef } from "./channeldef";
 
 export interface Encoding<F extends Field> {
   x?: PositionDef<F>;
@@ -8,4 +8,5 @@ export interface Encoding<F extends Field> {
   color?: ColorDef<F>;
   fill?: ColorDef<F>;
   stroke?: ColorDef<F>;
+  strokeWidth?: NumericDef<F>;
 }

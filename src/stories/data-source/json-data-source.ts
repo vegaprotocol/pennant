@@ -4,10 +4,12 @@ import { Interval } from "../api/vega-graphql";
 import { parseVegaDecimal } from "../helpers";
 import json from "./data.json";
 import noChangeJson from "./no-change-data.json";
+import zeroVolumeCandlesJson from "./zero-volume-candles-data.json";
 
 const files = new Map([
   ["data.json", json],
   ["no-change-data.json", noChangeJson],
+  ["zero-volume-candles-data.json", zeroVolumeCandlesJson],
 ]);
 
 const initialAverageEntryPrice = 595 + Math.random();

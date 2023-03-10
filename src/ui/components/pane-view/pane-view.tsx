@@ -43,6 +43,14 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
       null
     );
 
+    const volume = getStudyInfoFieldValue(
+      pane.originalData,
+      dataIndex,
+      "volume"
+    );
+
+    const noTrading = volume === 0;
+
     let colorCount = 0;
 
     return (
@@ -104,10 +112,12 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                   value: field.format
                     ? field.format(value, decimalPlaces)
                     : formatter(value, decimalPlaces),
+                  displayWhileNoTrading: field.displayWhileNoTrading,
                   intent: getIntent(field, value),
                 };
               }
             )}
+            noTrading={noTrading}
           />
 
           {pane.id === "main" &&
@@ -131,6 +141,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                     color: colors[getAccentColor(colorCount++)],
                   };
                 })}
+                noTrading={noTrading}
                 closeable
                 onClose={() => {
                   onRemoveOverlay(overlay);
