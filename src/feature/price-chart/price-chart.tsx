@@ -1,8 +1,9 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/react-dom";
 import { NonIdealState, Tooltip, TooltipProps } from "@ui/components";
 import { useThrottledResizeObserver } from "@util/hooks";
-import { defaultPriceFormat } from "@util/misc";
+import { defaultPriceFormat, isDate } from "@util/misc";
 import { ThemeVariant } from "@util/types";
+import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Chart } from "./chart";
@@ -61,11 +62,7 @@ export type PriceChartProps<A> = {
   /**
    * Override the default tooltip.
    */
-  tooltip?: ({
-    date,
-    series,
-    annotations,
-  }: CustomTooltipProps<A>) => JSX.Element;
+  tooltip?: (props: CustomTooltipProps<A>) => JSX.Element;
 };
 
 /**
@@ -165,7 +162,15 @@ export const PriceChart = <A,>({
           });
 
           setTooltipContent({
-            date: d.date,
+            value: d.value,
+            label: {
+              primary: isDate(d.value)
+                ? format(d.value, "dd/MM/yyyy")
+                : data.cols[0],
+              sub: isDate(d.value)
+                ? format(d.value, "HH:mm a")
+                : String(d.value),
+            },
             series: d.series,
             annotations: annotations?.[d.index],
           });
@@ -182,7 +187,7 @@ export const PriceChart = <A,>({
     return () => {
       chartRef.current.destroy();
     };
-  }, [annotations, priceFormat]);
+  }, [annotations, data.cols, priceFormat]);
 
   // Update chart when dimensions or data change
   useEffect(() => {
@@ -236,14 +241,7 @@ export const PriceChart = <A,>({
       </div>
       <div ref={tooltipRef} className={styles.tooltipContainer}>
         {tooltipContent &&
-          (tooltip ? (
-            tooltip(tooltipContent)
-          ) : (
-            <Tooltip
-              date={tooltipContent.date}
-              series={tooltipContent.series}
-            />
-          ))}
+          (tooltip ? tooltip(tooltipContent) : <Tooltip {...tooltipContent} />)}
       </div>
     </div>
   );

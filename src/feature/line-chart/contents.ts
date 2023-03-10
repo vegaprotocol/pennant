@@ -63,7 +63,7 @@ export class Contents {
 
   public update(
     priceScale: ScaleLinear,
-    timeScale: ScaleTime,
+    xScale: ScaleLinear | ScaleTime,
     data: [number, ...number[]][],
     startPrice: number,
     height: number
@@ -71,7 +71,7 @@ export class Contents {
     const resolution = this.renderer.resolution;
 
     this.horizontalGrid.update(
-      timeScale,
+      xScale,
       this.renderer.width,
       this.renderer.height - resolution * AXIS_HEIGHT,
       resolution

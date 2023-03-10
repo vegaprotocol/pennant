@@ -1,33 +1,28 @@
 import { numberFormatter } from "@util/misc";
 import { format } from "date-fns";
 
-import { Series } from "../tooltip/tooltip";
+import { Series, TooltipProps } from "../tooltip/tooltip";
 import styles from "./custom-tooltip.module.css";
 
 function defaultPriceFormat(price: number) {
   return numberFormatter(2).format(price);
 }
 
-export type CustomTooltipProps = {
-  date: Date;
-  series: Series[];
-};
-
 /**
  * Tooltip for price chart.
  */
 export const CustomTooltip = ({
-  date,
+  value,
   series,
   annotations,
-}: CustomTooltipProps & {
+}: TooltipProps & {
   annotations?: { volume: number; marketCap: number }[];
 }) => {
   return (
     <div className={styles.tooltip}>
       <div className={styles.date}>
-        <div className={styles.primary}>{format(date, "dd/MM/yyyy")}</div>
-        <div className={styles.sub}>{format(date, "HH:mm a")}</div>
+        <div className={styles.primary}>{format(value, "dd/MM/yyyy")}</div>
+        <div className={styles.sub}>{format(value, "HH:mm a")}</div>
       </div>
       {series.map((s, i) => (
         <div key={s.name}>

@@ -9,8 +9,14 @@ import EventEmitter from "eventemitter3";
 import { Zoom, ZoomTransform } from "../../util/zoom";
 import { Contents } from "./contents";
 import { Colors } from "./helpers";
-import { Data } from "./line-chart";
+import { Data, Row } from "./line-chart";
 import { UI } from "./ui";
+
+export function isDateData(
+  array: ReadonlyArray<Row>
+): array is ReadonlyArray<[Date, ...number[]]> {
+  return typeof array[0][0] !== "number";
+}
 
 /**
  * Price chart class. Its main roles are to manage interactivity, e.g. zooming and panning
@@ -24,12 +30,13 @@ export class Chart extends EventEmitter {
   private priceZoom: Zoom = new Zoom();
   private lastPriceZoomTransform: ZoomTransform = zoomIdentity;
 
-  private timeScale: ScaleTime = scaleTime();
-  private timeZoom: Zoom = new Zoom();
-  private lastTimeZoomTransform: ZoomTransform = zoomIdentity;
+  private xScale: ScaleLinear | ScaleTime | null = null;
+  private xZoom: Zoom = new Zoom();
+  private lastXZoomTransform: ZoomTransform = zoomIdentity;
 
   private _data: Data = { cols: [], rows: [] };
   private priceFormat: (price: number) => string;
+  private xFormat: (x: number) => string;
   private _colors: Colors;
 
   constructor(options: {
@@ -39,11 +46,13 @@ export class Chart extends EventEmitter {
     width: number;
     height: number;
     priceFormat: (price: number) => string;
+    xFormat: (x: number) => string;
     colors: Colors;
   }) {
     super();
 
     this.priceFormat = options.priceFormat;
+    this.xFormat = options.xFormat;
     this._colors = options.colors;
 
     this.contents = new Contents({
@@ -61,6 +70,7 @@ export class Chart extends EventEmitter {
       height: options.height,
       colors: options.colors,
       priceFormat: this.priceFormat,
+      xFormat: this.xFormat,
     });
 
     this.ui
@@ -87,10 +97,10 @@ export class Chart extends EventEmitter {
 
   public reset() {
     this.priceZoom.transform(zoomIdentity);
-    this.timeZoom.transform(zoomIdentity);
+    this.xZoom.transform(zoomIdentity);
 
     this.lastPriceZoomTransform = zoomIdentity;
-    this.lastTimeZoomTransform = zoomIdentity;
+    this.lastXZoomTransform = zoomIdentity;
 
     this.update();
     this.render();
@@ -104,8 +114,8 @@ export class Chart extends EventEmitter {
     const resolution = this.ui.renderer.resolution;
 
     this.priceScale.range([this.height - resolution * AXIS_HEIGHT, 0]);
-    this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
-    const xr = this.timeZoom.__zoom.rescaleX(this.timeScale) as ScaleTime;
+    this.xScale!.range([0, this.width - resolution * AXIS_WIDTH]);
+    const xr = this.xZoom.__zoom.rescaleX(this.xScale!) as ScaleTime;
 
     const priceExtent = extent(this._data.rows.flatMap((d) => d.slice(1))) as [
       number,
@@ -134,11 +144,11 @@ export class Chart extends EventEmitter {
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, yr, this._data.rows[0][1], this.priceFormat);
+    this.ui.update(this._data, xr, this.xFormat, yr, this.priceFormat);
   }
 
   private onZoomStart = (t: ZoomTransform) => {
-    this.lastTimeZoomTransform = t;
+    this.lastXZoomTransform = t;
     this.emit("zoomstart");
   };
 
@@ -147,11 +157,11 @@ export class Chart extends EventEmitter {
   };
 
   private onZoom = ({ transform: t }: { transform: ZoomTransform }) => {
-    const k = this.timeZoom.__zoom.k;
-    const x = t.x - this.lastTimeZoomTransform.x;
+    const k = this.xZoom.__zoom.k;
+    const x = t.x - this.lastXZoomTransform.x;
 
-    this.timeZoom.translateBy(x / k, 0);
-    this.lastTimeZoomTransform = t;
+    this.xZoom.translateBy(x / k, 0);
+    this.lastXZoomTransform = t;
 
     this.update();
     this.render();
@@ -162,18 +172,18 @@ export class Chart extends EventEmitter {
   private onMouseOut = () => this.emit("mouseout");
 
   private onZoomStartHorizontalAxis = (t: ZoomTransform) => {
-    this.lastTimeZoomTransform = t;
+    this.lastXZoomTransform = t;
   };
 
   private onZoomHorizontalAxis = (
     t: ZoomTransform,
     point: [number, number]
   ) => {
-    const k = t.k / this.lastTimeZoomTransform.k;
+    const k = t.k / this.lastXZoomTransform.k;
 
-    this.timeZoom.scaleBy(k, [point[0], 0]);
+    this.xZoom.scaleBy(k, [point[0], 0]);
 
-    this.lastTimeZoomTransform = t;
+    this.lastXZoomTransform = t;
 
     this.update();
     this.render();
@@ -214,38 +224,42 @@ export class Chart extends EventEmitter {
     const resolution = this.ui.renderer.resolution;
 
     if (data.rows.length > 0) {
-      const priceExtent = extent(data.rows.flatMap((d) => d.slice(1))) as [
-        number,
-        number
-      ];
+      const priceExtent = extent(
+        data.rows.flatMap((d) => d.slice(1) as number[])
+      ) as [number, number];
 
       const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;
-      const timeExtent = [data.rows[0][0], data.rows[data.rows.length - 1][0]];
 
-      if (timeExtent[0] === timeExtent[1]) {
-        timeExtent[0] = addHours(timeExtent[0], -1);
-        timeExtent[1] = addHours(timeExtent[1], 1);
+      const xExtent = [data.rows[0][0], data.rows[data.rows.length - 1][0]];
+
+      // FIXME: Only makes sense for time
+      if (xExtent[0] === xExtent[1]) {
+        xExtent[0] = addHours(xExtent[0], -1);
+        xExtent[1] = addHours(xExtent[1], 1);
       }
 
       this.priceScale = this.priceScale.domain([
         priceExtent[0] - adjustment,
         priceExtent[1] + adjustment,
       ]);
-      this.timeScale = this.timeScale.domain(timeExtent);
+
+      this.xScale = isDateData(data.rows) ? scaleTime() : scaleLinear();
+
+      this.xScale.domain(xExtent);
 
       this.priceScale.range([0, this.height - resolution * AXIS_HEIGHT]);
-      this.timeScale.range([0, this.width - resolution * AXIS_WIDTH]);
+      this.xScale.range([0, this.width - resolution * AXIS_WIDTH]);
 
-      this.timeZoom.extent = [
+      this.xZoom.extent = [
         [0, 0],
         [this.width - resolution * AXIS_WIDTH, this.height],
       ];
 
-      this.timeZoom.scaleExtent = [1, 10];
+      this.xZoom.scaleExtent = [1, 10];
 
-      this.timeZoom.translateExtent = [
-        [this.timeScale(data.rows[0][0]), -Infinity],
-        [this.timeScale(data.rows[data.rows.length - 1][0]), Infinity],
+      this.xZoom.translateExtent = [
+        [this.xScale(data.rows[0][0]), -Infinity],
+        [this.xScale(data.rows[data.rows.length - 1][0]), Infinity],
       ];
     }
 

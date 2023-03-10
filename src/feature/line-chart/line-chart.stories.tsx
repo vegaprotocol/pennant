@@ -2,17 +2,20 @@ import { Button, ButtonGroup } from "@blueprintjs/core";
 import { useCallback } from "@storybook/addons";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { CustomTooltip as Tooltip } from "@ui/components";
+import { numberFormatter } from "@util/misc";
 import { zipWith } from "lodash";
 import React, { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
 import coinmarketcap from "../../data/coinmarketcap-data.json";
 import lineData from "../../data/line-chart.json";
+import vectorVals from "../../data/vectorVals.json";
 import vega from "../../data/vega-data.json";
 import { LineChart, Row } from "./line-chart";
 
 type Range = "1D" | "7D" | "1M" | "3M" | "1Y" | "ALL";
 type Asset = "BTC" | "ETH" | "TETHER";
+type VectorVal = "bid" | "ask";
 
 export default {
   title: "Charts/LineChart",
@@ -341,7 +344,11 @@ export const MortalityRates: ComponentStory<typeof LineChart> = () => {
         flexDirection: "column",
       }}
     >
-      <LineChart data={{ cols, rows }} theme={theme} />
+      <LineChart
+        data={{ cols, rows }}
+        theme={theme}
+        xFormat={numberFormatter(0).format}
+      />
     </div>
   );
 };
@@ -544,6 +551,60 @@ export const Vega2: ComponentStory<typeof LineChart> = () => {
       }}
     >
       <LineChart data={data} theme={theme} priceFormat={priceFormat} />
+    </div>
+  );
+};
+
+export const VectorVals: ComponentStory<typeof LineChart> = () => {
+  const theme = useDarkMode() ? "dark" : "light";
+  const [vectorVal, setVectorVal] = useState<VectorVal>("bid");
+
+  const priceFormat = useCallback((price: number) => price.toFixed(2), []);
+
+  const data: { cols: string[]; rows: [Date, ...number[]][] } = {
+    cols: [`${vectorVal} offset`, `${vectorVal} probability`],
+    rows: zipWith<any, any>(
+      vectorVals.stateVariableProposal.proposal.kvb[vectorVal === "bid" ? 0 : 2]
+        .value.vectorVal.value,
+      vectorVals.stateVariableProposal.proposal.kvb[
+        (vectorVal === "bid" ? 0 : 2) + 1
+      ].value.vectorVal.value,
+      function (a, b) {
+        return [+a, +b];
+      }
+    ),
+  };
+
+  return (
+    <div>
+      <ButtonGroup style={{ marginBottom: 12 }}>
+        <Button
+          text="Bid"
+          active={vectorVal === "bid"}
+          onClick={() => {
+            setVectorVal("bid");
+          }}
+        />
+        <Button
+          text="Ask"
+          active={vectorVal === "ask"}
+          onClick={() => {
+            setVectorVal("ask");
+          }}
+        />
+      </ButtonGroup>
+      <div
+        style={{
+          resize: "both",
+          overflow: "scroll",
+          width: "400px",
+          height: "120px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <LineChart data={data} theme={theme} priceFormat={priceFormat} />
+      </div>
     </div>
   );
 };

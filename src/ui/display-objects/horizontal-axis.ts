@@ -7,7 +7,7 @@ import {
 } from "@ui/renderer";
 import { AXIS_HEIGHT, FONT_SIZE } from "@util/constants";
 import { range } from "@util/misc";
-import { ScaleTime } from "@util/types";
+import { ScaleLinear, ScaleTime } from "@util/types";
 
 import { Colors } from "../../feature/depth-chart/helpers";
 import { Gesture, Zoom } from "../../util/zoom";
@@ -61,7 +61,7 @@ export class HorizontalAxis extends Container {
   }
 
   public update(
-    scale: ScaleTime,
+    scale: ScaleLinear | ScaleTime,
     width: number,
     height: number,
     resolution: number = 1,
@@ -92,7 +92,7 @@ export class HorizontalAxis extends Container {
 
       text.visible = true;
 
-      text.text = tickFormat(ticks[i]);
+      text.text = tickFormat(ticks[i] as any);
 
       text.x = scale(ticks[i]);
       text.y = height - (resolution * AXIS_HEIGHT) / 2;
