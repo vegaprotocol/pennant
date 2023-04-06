@@ -43,7 +43,12 @@ const config = {
       extensions,
       plugins: ["@babel/plugin-transform-runtime"],
       presets: [
-        "@babel/preset-react",
+        [
+          "@babel/preset-react",
+          {
+            runtime: "automatic",
+          },
+        ],
         ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
       ],
       babelHelpers: "runtime",
