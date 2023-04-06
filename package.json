@@ -98,7 +98,7 @@
     "@babel/preset-env": "7.21.4",
     "@babel/preset-react": "7.18.6",
     "@babel/preset-typescript": "7.21.4",
-    "@blueprintjs/core": "4.17.6",
+    "@blueprintjs/core": "4.17.8",
     "@blueprintjs/popover2": "1.13.12",
     "@blueprintjs/select": "4.9.12",
     "@popperjs/core": "2.11.7",
