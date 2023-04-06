@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/vegaprotocol/pennant/compare/v1.8.0...v1.8.1) (2023-04-06)
+
+### Bug Fixes
+
+- do not treat React as global in Tooltip component ([10fd404](https://github.com/vegaprotocol/pennant/commit/10fd4044b1230f54726efa879a940a36a1482ef6))
+
 ## [1.8.0](https://github.com/vegaprotocol/pennant/compare/v1.8.0-alpha.1...v1.8.0) (2023-04-06)
 
 ### Features
