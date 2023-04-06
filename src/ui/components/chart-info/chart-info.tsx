@@ -2,7 +2,6 @@ import "./chart-info.css";
 
 import { DATE_FORMAT } from "@util/constants";
 import { format } from "date-fns";
-import React from "react";
 
 export type ChartInfoProps = {
   bounds: [Date, Date];

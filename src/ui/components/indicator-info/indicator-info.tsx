@@ -1,7 +1,6 @@
 import "./indicator-info.css";
 
 import classNames from "classnames";
-import React from "react";
 
 import { CloseButton } from "../close-button";
 

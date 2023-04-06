@@ -14,7 +14,7 @@ import {
 } from "@util/types";
 import { Allotment, AllotmentHandle } from "allotment";
 import { throttle } from "lodash";
-import React, {
+import {
   createRef,
   forwardRef,
   useCallback,

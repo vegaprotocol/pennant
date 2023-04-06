@@ -3,7 +3,7 @@ import "./pane-view.css";
 import { Y_AXIS_WIDTH } from "@util/constants";
 import { formatter } from "@util/misc";
 import { Bounds, Pane } from "@util/types";
-import React, { forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
 import {
   Colors,
