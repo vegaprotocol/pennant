@@ -6,29 +6,32 @@ import { Candle } from "@util/types";
  * @param b Second array
  * @returns Merged array
  */
-export function mergeData(a: Candle[], b: Candle[]) {
+export function mergeData(a: readonly Candle[], b: readonly Candle[]) {
   let i = 0;
   let j = 0;
 
+  const sortedA = [...a].sort((a, b) => a.date.getTime() - b.date.getTime());
+  const sortedB = [...b].sort((a, b) => a.date.getTime() - b.date.getTime());
+
   const mergedArray = [];
 
-  while (i < a.length && j < b.length) {
-    if (a[i].date < b[j].date) {
-      mergedArray.push(a[i++]);
-    } else if (a[i].date > b[j].date) {
-      mergedArray.push(b[j++]);
+  while (i < sortedA.length && j < sortedB.length) {
+    if (sortedA[i].date < sortedB[j].date) {
+      mergedArray.push(sortedA[i++]);
+    } else if (sortedA[i].date > sortedB[j].date) {
+      mergedArray.push(sortedB[j++]);
     } else {
-      mergedArray.push(a[i++]);
+      mergedArray.push(sortedA[i++]);
       j++;
     }
   }
 
-  while (i < a.length) {
-    mergedArray.push(a[i++]);
+  while (i < sortedA.length) {
+    mergedArray.push(sortedA[i++]);
   }
 
-  while (j < b.length) {
-    mergedArray.push(b[j++]);
+  while (j < sortedB.length) {
+    mergedArray.push(sortedB[j++]);
   }
 
   return mergedArray;
