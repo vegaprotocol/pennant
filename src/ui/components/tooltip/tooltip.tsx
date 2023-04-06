@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import styles from "./tooltip.module.css";
 
 /**
