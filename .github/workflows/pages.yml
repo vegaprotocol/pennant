@@ -31,7 +31,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 19
-          cache: 'yarn'
       - run: cd website && yarn && yarn build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
