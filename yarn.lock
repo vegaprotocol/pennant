@@ -11083,10 +11083,10 @@ iterate-value@^1.0.2:
     es-get-iterator "^1.0.2"
     iterate-iterator "^1.0.1"
 
-jest-canvas-mock@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/jest-canvas-mock/-/jest-canvas-mock-2.5.0.tgz#3e60f87f77ddfa273cf8e7e4ea5f86fa827c7117"
-  integrity sha512-s2bmY2f22WPMzhB2YA93kiyf7CAfWAnV/sFfY9s48IVOrGmwui1eSFluDPesq1M+7tSC1hJAit6mzO0ZNXvVBA==
+jest-canvas-mock@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/jest-canvas-mock/-/jest-canvas-mock-2.5.1.tgz#81509af658ef485e9a1bf39c64e06761517bdbcb"
+  integrity sha512-IVnRiz+v4EYn3ydM/pBo8GW/J+nU/Hg5gHBQQOUQhdRyNfvHnabB8ReqARLO0p+kvQghqr4V0tA92CF3JcUSRg==
   dependencies:
     cssfontparser "^1.2.1"
     moo-color "^1.0.2"
@@ -15759,16 +15759,6 @@ terser@^5.10.0, terser@^5.7.2:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
-terser@^5.17.4:
-  version "5.17.4"
-  resolved "https://registry.yarnpkg.com/terser/-/terser-5.17.4.tgz#b0c2d94897dfeba43213ed5f90ed117270a2c696"
-  integrity sha512-jcEKZw6UPrgugz/0Tuk/PVyLAPfMBJf5clnGueo45wTweoV8yh7Q7PEkhkJ5uuUbC7zAxEcG3tqNr1bstkQ8nw==
-  dependencies:
-    "@jridgewell/source-map" "^0.3.2"
-    acorn "^8.5.0"
-    commander "^2.20.0"
-    source-map-support "~0.5.20"
-
 terser@^5.16.8:
   version "5.18.0"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.18.0.tgz#dc811fb8e3481a875d545bda247c8730ee4dc76b"
@@ -15776,6 +15766,16 @@ terser@^5.16.8:
   dependencies:
     "@jridgewell/source-map" "^0.3.3"
     acorn "^8.8.2"
+    commander "^2.20.0"
+    source-map-support "~0.5.20"
+
+terser@^5.17.4:
+  version "5.17.4"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-5.17.4.tgz#b0c2d94897dfeba43213ed5f90ed117270a2c696"
+  integrity sha512-jcEKZw6UPrgugz/0Tuk/PVyLAPfMBJf5clnGueo45wTweoV8yh7Q7PEkhkJ5uuUbC7zAxEcG3tqNr1bstkQ8nw==
+  dependencies:
+    "@jridgewell/source-map" "^0.3.2"
+    acorn "^8.5.0"
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
