@@ -14703,12 +14703,12 @@ rollup-plugin-postcss@4.0.2:
     safe-identifier "^0.4.2"
     style-inject "^0.3.0"
 
-rollup-plugin-tsconfig-paths@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-tsconfig-paths/-/rollup-plugin-tsconfig-paths-1.5.0.tgz#fd3fdc6b1005a550dc47536dcf36a98a79833047"
-  integrity sha512-b460afESVscekQAVFvRhHGsmti9vDd2wp1PirKBuVrkC0OgqbhPfKlAEDOcn6PUPYW73vwuEnMu76kCiFOzZaw==
+rollup-plugin-tsconfig-paths@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-tsconfig-paths/-/rollup-plugin-tsconfig-paths-1.5.1.tgz#96a01ed35d3175af1069b6d9d4cd68df9d4bed2a"
+  integrity sha512-HhqSvheeEdSQY/X1gMj7MBccx9BE4FbzIaCrRpOqNc9OwvbqbTf1WOUY56bGW4nJ3OWLOuzaBFJFle9LeRmXIg==
   dependencies:
-    typescript-paths "^1.5.0"
+    typescript-paths "^1.5.1"
 
 rollup-pluginutils@^2.8.2:
   version "2.8.2"
@@ -16149,10 +16149,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript-paths@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/typescript-paths/-/typescript-paths-1.5.0.tgz#a6a5a50bca9507059f2c3d2aa679e61704bb3e80"
-  integrity sha512-t6AEWi3g4wW2N/Ui8NpKjfpZ8EcJnGAs64uux54N8zMAZaz8ldjb0GCLIyo9panMUzKsxz+ePt4BGk+ssBGNFw==
+typescript-paths@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/typescript-paths/-/typescript-paths-1.5.1.tgz#975cf5883915b24f9287315a8fa70b3b3451e32e"
+  integrity sha512-lYErSLCON2MSplVV5V/LBgD4UNjMgY3guATdFCZY2q1Nr6OZEu4q6zX/rYMsG1TaWqqQSszg6C9EU7AGWMDrIw==
 
 typescript@4.9.5:
   version "4.9.5"
