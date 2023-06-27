@@ -148,7 +148,7 @@
     "react-dom": "18.2.0",
     "react-popper": "2.3.0",
     "react-test-renderer": "18.2.0",
-    "rollup": "3.25.1",
+    "rollup": "3.25.3",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-tsconfig-paths": "1.5.0",
     "sass-loader": "13.2.2",
