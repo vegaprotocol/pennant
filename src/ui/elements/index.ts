@@ -6,6 +6,7 @@ export * from "./element-dummy";
 export * from "./element-grid";
 export * from "./element-label-annotation";
 export * from "./element-line";
+export * from "./element-no-data";
 export * from "./element-rule";
 export * from "./element-tick";
 export * from "./element-x-axis";

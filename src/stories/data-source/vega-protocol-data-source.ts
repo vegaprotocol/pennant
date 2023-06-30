@@ -64,6 +64,7 @@ export class VegaDataSource implements DataSource {
   partyId: null | string;
   _decimalPlaces = 0;
   _positionDecimalPlaces = 0;
+  _marketOpen?: Date;
 
   candlesSub: Subscription | null = null;
 
@@ -81,6 +82,10 @@ export class VegaDataSource implements DataSource {
    */
   get positionDecimalPlaces(): number {
     return this._positionDecimalPlaces;
+  }
+
+  get marketOpen(): Date {
+    return new Date();
   }
 
   /**
@@ -117,6 +122,7 @@ export class VegaDataSource implements DataSource {
       if (data && data.market && data.market.data) {
         this._decimalPlaces = data.market.decimalPlaces;
         this._positionDecimalPlaces = data.market.positionDecimalPlaces;
+        this._marketOpen = data.market.marketTimestamps?.open;
 
         return {
           decimalPlaces: this._decimalPlaces,

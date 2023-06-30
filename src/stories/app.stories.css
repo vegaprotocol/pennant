@@ -10,20 +10,13 @@
   padding-bottom: 8px;
 }
 
-/* Styles for allotment */
-html {
-  --focus-border: #ff077f;
-  --separator-border: #d2d2d2;
-  --pennant-color-danger: #ff077f;
-}
-
-html.dark {
-  --focus-border: #d7fb50;
-  --separator-border: #404040;
-}
-
 /* Styles for charts */
 html [data-theme="dark"] {
+  --focus-border: #d7fb50;
+  --separator-border: #404040;
+
+  --pennant-color-danger: #ff077f;
+
   --pennant-color-danger: #ff077f;
 
   /* candles */
@@ -43,6 +36,10 @@ html [data-theme="dark"] {
 }
 
 html [data-theme="light"] {
+  --focus-border: #ff077f;
+
+  --separator-border: #d2d2d2;
+
   --pennant-color-danger: #ff077f;
 
   /* candles */

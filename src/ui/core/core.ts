@@ -73,7 +73,7 @@ type ChartPane = {
 /**
  * The Core class renders multiple plot areas which share a common x-axis.
  *
- * Zooming and panning of plot areas is supported. Dragging the axes will zoom the apprpriate dimension.
+ * Zooming and panning of plot areas is supported. Dragging the axes will zoom the appropriate dimension.
  */
 export class Core {
   private listeners = dispatch(
@@ -107,6 +107,7 @@ export class Core {
 
   // Data
   private dates: Date[];
+  private marketOpen?: Date;
 
   // x-axis
   private xAxis: XAxis;
@@ -137,12 +138,14 @@ export class Core {
     decimalPlaces: number = 5,
     simple = false,
     initialNumCandles = 24,
-    colors: Colors
+    colors: Colors,
+    marketOpen?: Date
   ) {
     this._decimalPlaces = decimalPlaces;
     this.isSimple = simple;
     this.initialNumCandles = initialNumCandles;
     this._colors = colors;
+    this.marketOpen = marketOpen;
 
     // x-axis
     this.dates = axis.data;
@@ -238,7 +241,8 @@ export class Core {
           pane.yEncodingFields,
           pane.labelLines,
           this.isSimple,
-          this._colors
+          this._colors,
+          this.marketOpen
         ),
       ])
     );
@@ -685,7 +689,8 @@ export class Core {
           panes[id].yEncodingFields,
           panes[id].labelLines,
           this.isSimple,
-          this._colors
+          this._colors,
+          this.marketOpen
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(

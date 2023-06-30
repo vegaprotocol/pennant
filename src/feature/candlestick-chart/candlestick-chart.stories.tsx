@@ -24,7 +24,7 @@ const Template: Story<CandlestickChartProps> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  dataSource: new JsonDataSource("", 5),
+  dataSource: new JsonDataSource("", 5, undefined, false),
   interval: Interval.I5M,
 };
 

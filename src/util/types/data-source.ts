@@ -10,6 +10,7 @@ export interface Configuration {
 
 export interface DataSource {
   readonly decimalPlaces: number;
+  readonly marketOpen?: Date;
 
   /**
    * Used by the charting library to initialize itself.

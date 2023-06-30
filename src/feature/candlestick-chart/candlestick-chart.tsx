@@ -335,6 +335,8 @@ export const CandlestickChart = forwardRef(
       );
     }
 
+    console.log(dataSource.marketOpen);
+
     return (
       <ErrorBoundary>
         <div ref={styleRef} className="chart__wrapper" data-theme={theme}>
@@ -350,6 +352,7 @@ export const CandlestickChart = forwardRef(
             simple={simple}
             initialNumCandles={initialNumCandles}
             colors={colors}
+            marketOpen={dataSource.marketOpen}
             studySize={studySize}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}

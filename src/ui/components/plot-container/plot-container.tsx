@@ -40,6 +40,7 @@ export type PlotContainerProps = {
   simple: boolean;
   initialNumCandles: number;
   colors: Colors;
+  marketOpen?: Date;
   studySize: number | string;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
@@ -62,6 +63,7 @@ export const PlotContainer = forwardRef<
       simple,
       initialNumCandles,
       colors,
+      marketOpen,
       studySize,
       onViewportChanged = () => {},
       onRightClick = () => {},
@@ -158,7 +160,8 @@ export const PlotContainer = forwardRef<
         decimalPlaces,
         simple,
         initialNumCandles,
-        colors
+        colors,
+        marketOpen
       )
         .interval(interval)
         .on("redraw", () => {

@@ -23,6 +23,11 @@ export type ChartQuery = {
         referencePrice: string;
       }> | null;
     } | null;
+    marketTimestamps: {
+      __typename?: "MarketTimestamps";
+      open: any;
+      close: any;
+    } | null;
   } | null;
 };
 
