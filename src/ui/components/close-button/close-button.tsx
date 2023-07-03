@@ -1,5 +1,3 @@
-import React from "react";
-
 import styles from "./close-button.module.css";
 
 export type CloseButtonProps = {

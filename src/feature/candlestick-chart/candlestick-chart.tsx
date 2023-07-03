@@ -27,7 +27,7 @@ import {
   Viewport,
 } from "@util/types";
 import { dispatch } from "d3-dispatch";
-import React, {
+import {
   forwardRef,
   useCallback,
   useEffect,

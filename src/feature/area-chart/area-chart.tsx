@@ -4,7 +4,7 @@ import { useThrottledResizeObserver } from "@util/hooks";
 import { defaultNumberFormat, defaultPriceFormat, isDate } from "@util/misc";
 import { ThemeVariant } from "@util/types";
 import { format } from "date-fns";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./area-chart.module.css";
 import { Chart } from "./chart";

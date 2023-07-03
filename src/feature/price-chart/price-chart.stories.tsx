@@ -2,7 +2,7 @@ import { Button, ButtonGroup } from "@blueprintjs/core";
 import { useCallback } from "@storybook/addons";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { CustomTooltip as Tooltip } from "@ui/components";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDarkMode } from "storybook-dark-mode";
 
 import coinmarketcap from "../../data/coinmarketcap-data.json";

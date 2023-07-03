@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { BigNumber as EthersBigNumber } from "ethers";
 import isNil from "lodash/isNil";
 import memoize from "lodash/memoize";
-import React from "react";
+import { useMemo } from "react";
 
 const MIN_FRACTION_DIGITS = 2;
 const MAX_FRACTION_DIGITS = 20;
@@ -132,7 +132,7 @@ export const useNumberParts = (
   value: BigNumber | null | undefined,
   decimals: number
 ): [integers: string, decimalPlaces: string] => {
-  return React.useMemo(() => toNumberParts(value, decimals), [decimals, value]);
+  return useMemo(() => toNumberParts(value, decimals), [decimals, value]);
 };
 
 export const isNumeric = (

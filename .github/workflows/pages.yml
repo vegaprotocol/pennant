@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: 'website/build'
+          path: "website/build"
 
   # Deployment job
   deploy:
