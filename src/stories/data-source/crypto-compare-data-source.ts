@@ -19,7 +19,6 @@ export class CryptoCompareDataSource implements DataSource {
     return Promise.resolve({
       decimalPlaces: this.decimalPlaces,
       supportedIntervals: [Interval.I1D, Interval.I1H, Interval.I1M],
-      priceMonitoringBounds: {},
     });
   }
 

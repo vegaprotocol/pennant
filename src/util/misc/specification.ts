@@ -1,4 +1,10 @@
-import { Candle, ChartType, Overlay, Study } from "@util/types";
+import {
+  Candle,
+  ChartType,
+  Overlay,
+  PriceMonitoringBounds,
+  Study,
+} from "@util/types";
 import { BaseSpec, TopLevelSpec, Transform } from "@util/vega-lite";
 
 import {
@@ -366,7 +372,7 @@ export function constructTopLevelSpec(
   colors: Colors,
   overlays?: Overlay[],
   studies?: Study[],
-  priceMonitoringBounds?: any
+  priceMonitoringBounds?: PriceMonitoringBounds
 ) {
   const vconcat: BaseSpec[] = [];
   const transform: Transform[] = [];

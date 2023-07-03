@@ -48,7 +48,7 @@ export default {
   title: "Overview/Application Examples",
 } as Meta;
 
-const VEGA_URL = "api.n11.testnet.vega.xyz/graphql";
+const VEGA_URL = "api.n07.testnet.vega.xyz/graphql";
 
 const httpLink = new HttpLink({
   uri: `https://${VEGA_URL}`,

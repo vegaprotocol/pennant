@@ -14,12 +14,12 @@ import { MarketFieldsFragment } from "../../data-source/__generated__/markets";
 import { VegaDataSource } from "../../data-source/vega-protocol-data-source";
 
 const httpLink = new HttpLink({
-  uri: "https://api.n08.testnet.vega.xyz/graphql",
+  uri: "https://api.n07.testnet.vega.xyz/graphql",
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://api.n08.testnet.vega.xyz/graphql",
+    url: "wss://api.n07.testnet.vega.xyz/graphql",
   })
 );
 
