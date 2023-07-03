@@ -4,9 +4,14 @@ import { Interval } from "../api/vega-graphql";
 
 export class EmptyDataSource implements DataSource {
   _decimalPlaces = 0;
+  _positionDecimalPlaces = 0;
 
   get decimalPlaces(): number {
     return this._decimalPlaces;
+  }
+
+  get positionDecimalPlaces(): number {
+    return this._positionDecimalPlaces;
   }
 
   async onReady() {

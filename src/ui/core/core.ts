@@ -96,6 +96,7 @@ export class Core {
   private _interval: Interval = Interval.I1M;
 
   private _decimalPlaces = 5;
+  private _positionDecimalPlaces = 3;
   private initialNumCandles = INITIAL_NUM_CANDLES_TO_DISPLAY;
 
   // Modes
@@ -135,11 +136,13 @@ export class Core {
     axis: { ref: MutableRefObject<HTMLDivElement>; data: any[] },
     initialViewport: Viewport,
     decimalPlaces: number = 5,
+    positionDecimalPlaces: number = 0,
     simple = false,
     initialNumCandles = 24,
     colors: Colors
   ) {
     this._decimalPlaces = decimalPlaces;
+    this._positionDecimalPlaces = positionDecimalPlaces;
     this.isSimple = simple;
     this.initialNumCandles = initialNumCandles;
     this._colors = colors;
@@ -186,7 +189,12 @@ export class Core {
     this.yAxes = Object.fromEntries(
       Object.entries(this.yScales).map(([id, scale]) => [
         id,
-        new YAxis(this.xScale, scale, this._decimalPlaces, this._colors),
+        new YAxis(
+          this.xScale,
+          scale,
+          id === "volume" ? this._positionDecimalPlaces : this._decimalPlaces,
+          this._colors
+        ),
       ])
     );
 
@@ -651,7 +659,7 @@ export class Core {
         this.yAxes[id] = new YAxis(
           this.xTransform().rescaleX(this.xScale),
           this.yScales[id],
-          this._decimalPlaces,
+          id === "volume" ? this._positionDecimalPlaces : this._decimalPlaces,
           this._colors
         );
 

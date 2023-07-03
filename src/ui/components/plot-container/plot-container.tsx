@@ -33,6 +33,7 @@ export type PlotContainerProps = {
   width: number;
   height: number;
   decimalPlaces: number;
+  positionDecimalPlaces: number;
   scenegraph: Scenegraph;
   interval: Interval;
   initialViewport: Viewport;
@@ -58,6 +59,7 @@ export const PlotContainer = forwardRef<
       interval,
       initialViewport,
       decimalPlaces,
+      positionDecimalPlaces,
       overlays,
       simple,
       initialNumCandles,
@@ -156,6 +158,7 @@ export const PlotContainer = forwardRef<
         },
         initialViewport,
         decimalPlaces,
+        positionDecimalPlaces,
         simple,
         initialNumCandles,
         colors
@@ -275,6 +278,7 @@ export const PlotContainer = forwardRef<
                 colors={colors}
                 dataIndex={dataIndex}
                 decimalPlaces={decimalPlaces}
+                positionDecimalPlaces={positionDecimalPlaces}
                 overlays={overlays}
                 pane={pane}
                 simple={simple}

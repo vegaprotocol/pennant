@@ -17,6 +17,7 @@ export type PaneViewProps = {
   colors: Colors;
   dataIndex: number | null;
   decimalPlaces: number;
+  positionDecimalPlaces: number;
   overlays: string[];
   pane: Pane;
   simple: boolean;
@@ -31,6 +32,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
       colors,
       dataIndex,
       decimalPlaces,
+      positionDecimalPlaces,
       overlays,
       pane,
       simple,
@@ -106,12 +108,15 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                   field.id
                 );
 
+                const places =
+                  field.id === "volume" ? positionDecimalPlaces : decimalPlaces;
+
                 return {
                   id: field.id,
                   label: field.label,
                   value: field.format
-                    ? field.format(value, decimalPlaces)
-                    : formatter(value, decimalPlaces),
+                    ? field.format(value, places)
+                    : formatter(value, places),
                   displayWhileNoTrading: field.displayWhileNoTrading,
                   intent: getIntent(field, value),
                 };

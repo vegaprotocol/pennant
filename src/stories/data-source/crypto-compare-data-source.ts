@@ -15,6 +15,10 @@ export class CryptoCompareDataSource implements DataSource {
     return 2;
   }
 
+  get positionDecimalPlaces(): number {
+    return 0;
+  }
+
   async onReady() {
     return Promise.resolve({
       decimalPlaces: this.decimalPlaces,
