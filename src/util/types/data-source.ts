@@ -10,7 +10,15 @@ export interface Configuration {
 }
 
 export interface DataSource {
+  /**
+   * Decimal places used for the market, sets the smallest price increment on the book.
+   */
   readonly decimalPlaces: number;
+
+  /**
+   * Decimal places for order sizes, sets what size the smallest order / position on the market can be.
+   */
+  readonly positionDecimalPlaces: number;
 
   /**
    * Used by the charting library to initialize itself.

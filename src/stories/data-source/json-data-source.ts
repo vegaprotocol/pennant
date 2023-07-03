@@ -81,11 +81,16 @@ export class JsonDataSource implements DataSource {
   sub: any = null;
   marketId: string;
   _decimalPlaces: number;
+  _positionDecimalPlaces: number;
   filename: string;
   annotations: boolean;
 
   get decimalPlaces(): number {
     return this._decimalPlaces;
+  }
+
+  get positionDecimalPlaces(): number {
+    return this._positionDecimalPlaces;
   }
 
   constructor(
@@ -96,6 +101,7 @@ export class JsonDataSource implements DataSource {
   ) {
     this.marketId = marketId;
     this._decimalPlaces = decimalPlaces;
+    this._positionDecimalPlaces = 0;
     this.filename = filename;
     this.annotations = annotations;
   }

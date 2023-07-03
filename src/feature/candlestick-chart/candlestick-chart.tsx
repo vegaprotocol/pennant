@@ -343,6 +343,7 @@ export const CandlestickChart = forwardRef(
             width={400}
             height={300}
             decimalPlaces={dataSource.decimalPlaces}
+            positionDecimalPlaces={dataSource.positionDecimalPlaces}
             scenegraph={scenegraph}
             interval={internalInterval}
             initialViewport={viewport}
