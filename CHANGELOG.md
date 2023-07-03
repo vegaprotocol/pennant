@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/vegaprotocol/pennant/compare/v1.8.1...v1.9.0) (2023-07-03)
+
+### Features
+
+- **candlestick:** support position decimal places ([#857](https://github.com/vegaprotocol/pennant/issues/857)) ([3a1b7a1](https://github.com/vegaprotocol/pennant/commit/3a1b7a16c962408047044449a4151a27c5aa744e))
+
 ### [1.8.1](https://github.com/vegaprotocol/pennant/compare/v1.8.0...v1.8.1) (2023-04-06)
 
 ### Bug Fixes
