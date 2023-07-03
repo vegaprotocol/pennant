@@ -13,7 +13,6 @@ export class EmptyDataSource implements DataSource {
     return Promise.resolve({
       decimalPlaces: this._decimalPlaces,
       supportedIntervals: [Interval.I1D, Interval.I1H, Interval.I1M],
-      priceMonitoringBounds: {},
     });
   }
 

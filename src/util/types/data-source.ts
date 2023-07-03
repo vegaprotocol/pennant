@@ -1,11 +1,12 @@
 import { Annotation } from "./annotation";
 import { Candle } from "./candle";
 import { Interval } from "./interval";
+import { PriceMonitoringBounds } from "./price-monitoring-bounds";
 
 export interface Configuration {
   decimalPlaces: number;
   supportedIntervals: Interval[];
-  priceMonitoringBounds: any;
+  priceMonitoringBounds?: PriceMonitoringBounds;
 }
 
 export interface DataSource {

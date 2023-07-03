@@ -1,6 +1,6 @@
 import "./plot-container.stories.css";
 
-import { Meta, Story } from "@storybook/react/types-6-0";
+import { Meta, Story } from "@storybook/react";
 import { parse } from "@util/scenegraph";
 import { Scenegraph } from "@util/types";
 import { TopLevelSpec } from "@util/vega-lite";
