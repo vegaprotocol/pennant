@@ -57,12 +57,6 @@ interface PositionFieldDef<F> {
   type?: Type;
 }
 
-interface PositionDatumDef<F> {
-  datum?: Value;
-}
-
-export type PositionDef<F extends Field> =
-  | PositionFieldDef<F>
-  | PositionDatumDef<F>;
+export type PositionDef<F extends Field> = PositionFieldDef<F>;
 
 export type NumericDef<F extends Field> = MarkPropDef<F, number>;
