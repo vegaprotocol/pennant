@@ -2,7 +2,7 @@ import "./pane-view.css";
 
 import { Y_AXIS_WIDTH } from "@util/constants";
 import { formatter } from "@util/misc";
-import { Bounds, Pane } from "@util/types";
+import { Bounds, Pane, PriceMonitoringBounds } from "@util/types";
 import { forwardRef, useState } from "react";
 
 import {
@@ -18,6 +18,7 @@ export type PaneViewProps = {
   dataIndex: number | null;
   decimalPlaces: number;
   positionDecimalPlaces: number;
+  priceMonitoringBounds: PriceMonitoringBounds[];
   overlays: string[];
   pane: Pane;
   simple: boolean;
@@ -33,6 +34,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
       dataIndex,
       decimalPlaces,
       positionDecimalPlaces,
+      priceMonitoringBounds,
       overlays,
       pane,
       simple,
@@ -126,33 +128,70 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
           />
 
           {pane.id === "main" &&
-            overlays.map((overlay) => (
-              <IndicatorInfo
-                key={studyInfoFields[overlay].label}
-                title={studyInfoFields[overlay].label}
-                info={studyInfoFields[overlay].fields.map((field) => {
-                  const value = getStudyInfoFieldValue(
-                    pane.originalData,
-                    dataIndex,
-                    field.id
-                  );
+            overlays.map((overlay) => {
+              if (overlay === "priceMonitoringBounds") {
+                // Cap at 4 bounds for the UI
+                return priceMonitoringBounds.slice(0, 4).map((_bounds, i) => (
+                  <IndicatorInfo
+                    key={studyInfoFields[`priceMonitoringBounds${i + 1}`].label}
+                    title={
+                      studyInfoFields[`priceMonitoringBounds${i + 1}`].label
+                    }
+                    info={studyInfoFields[
+                      `priceMonitoringBounds${i + 1}`
+                    ].fields.map((field) => {
+                      const value = getStudyInfoFieldValue(
+                        pane.originalData,
+                        dataIndex,
+                        field.id
+                      );
 
-                  return {
-                    id: field.id,
-                    label: field.label,
-                    value: field.format
-                      ? field.format(value, decimalPlaces)
-                      : formatter(value, decimalPlaces),
-                    color: colors[getAccentColor(colorCount++)],
-                  };
-                })}
-                noTrading={noTrading}
-                closeable
-                onClose={() => {
-                  onRemoveOverlay(overlay);
-                }}
-              />
-            ))}
+                      return {
+                        id: field.id,
+                        label: field.label,
+                        value: field.format
+                          ? field.format(value, decimalPlaces)
+                          : formatter(value, decimalPlaces),
+                        color: colors[getAccentColor(colorCount++)],
+                      };
+                    })}
+                    noTrading={noTrading}
+                    closeable
+                    onClose={() => {
+                      onRemoveOverlay(overlay);
+                    }}
+                  />
+                ));
+              }
+
+              return (
+                <IndicatorInfo
+                  key={studyInfoFields[overlay].label}
+                  title={studyInfoFields[overlay].label}
+                  info={studyInfoFields[overlay].fields.map((field) => {
+                    const value = getStudyInfoFieldValue(
+                      pane.originalData,
+                      dataIndex,
+                      field.id
+                    );
+
+                    return {
+                      id: field.id,
+                      label: field.label,
+                      value: field.format
+                        ? field.format(value, decimalPlaces)
+                        : formatter(value, decimalPlaces),
+                      color: colors[getAccentColor(colorCount++)],
+                    };
+                  })}
+                  noTrading={noTrading}
+                  closeable
+                  onClose={() => {
+                    onRemoveOverlay(overlay);
+                  }}
+                />
+              );
+            })}
         </div>
       </div>
     );

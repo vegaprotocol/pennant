@@ -122,25 +122,22 @@ export class VegaDataSource implements DataSource {
         this._decimalPlaces = data.market.decimalPlaces;
         this._positionDecimalPlaces = data.market.positionDecimalPlaces;
 
-        let priceMonitoringBounds: PriceMonitoringBounds | undefined;
+        let priceMonitoringBounds: PriceMonitoringBounds[] | undefined;
 
-        if (
-          data.market.data.priceMonitoringBounds &&
-          data.market.data.priceMonitoringBounds.length > 0
-        ) {
-          const bounds = data.market.data.priceMonitoringBounds[0];
-
-          priceMonitoringBounds = {
-            maxValidPrice: Number(
-              addDecimal(bounds.maxValidPrice, this._decimalPlaces)
-            ),
-            minValidPrice: Number(
-              addDecimal(bounds.minValidPrice, this._decimalPlaces)
-            ),
-            referencePrice: Number(
-              addDecimal(bounds.referencePrice, this._decimalPlaces)
-            ),
-          };
+        if (data.market.data.priceMonitoringBounds) {
+          priceMonitoringBounds = data.market.data.priceMonitoringBounds.map(
+            (bounds) => ({
+              maxValidPrice: Number(
+                addDecimal(bounds.maxValidPrice, this._decimalPlaces)
+              ),
+              minValidPrice: Number(
+                addDecimal(bounds.minValidPrice, this._decimalPlaces)
+              ),
+              referencePrice: Number(
+                addDecimal(bounds.referencePrice, this._decimalPlaces)
+              ),
+            })
+          );
         }
 
         return {

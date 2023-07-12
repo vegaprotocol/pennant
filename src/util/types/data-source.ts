@@ -6,7 +6,7 @@ import { PriceMonitoringBounds } from "./price-monitoring-bounds";
 export interface Configuration {
   decimalPlaces: number;
   supportedIntervals: Interval[];
-  priceMonitoringBounds?: PriceMonitoringBounds;
+  priceMonitoringBounds?: PriceMonitoringBounds[];
 }
 
 export interface DataSource {

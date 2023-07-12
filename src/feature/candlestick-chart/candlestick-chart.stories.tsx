@@ -52,7 +52,11 @@ Overlays.args = {
   ...Default.args,
   options: {
     chartType: "candle",
-    overlays: ["exponentialMovingAverage", "movingAverage"],
+    overlays: [
+      "exponentialMovingAverage",
+      "movingAverage",
+      "priceMonitoringBounds",
+    ],
   },
 };
 
