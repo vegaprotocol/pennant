@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/vegaprotocol/pennant/compare/v1.9.0...v1.10.0) (2023-07-13)
+
+### Features
+
+- support multiple price monitoring bounds ([#870](https://github.com/vegaprotocol/pennant/issues/870)) ([c879ec3](https://github.com/vegaprotocol/pennant/commit/c879ec31a812ac4d0ce01dfd46f19183d481b145))
+
 ## [1.9.0](https://github.com/vegaprotocol/pennant/compare/v1.8.1...v1.9.0) (2023-07-03)
 
 ### Features
