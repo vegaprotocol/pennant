@@ -132,12 +132,36 @@ export const studyInfoFields: Record<
     label: "Moving average",
     fields: [{ id: "movingAverage", label: "" }],
   },
-  priceMonitoringBounds: {
-    label: "Price Monitoring Bounds",
+  priceMonitoringBounds1: {
+    label: "Price Monitoring Bounds 1",
     fields: [
-      { id: "minValidPrice", label: "Min" },
-      { id: "maxValidPrice", label: "Max" },
-      { id: "referencePrice", label: "Reference" },
+      { id: "minValidPrice_1", label: "Min" },
+      { id: "maxValidPrice_1", label: "Max" },
+      { id: "referencePrice_1", label: "Reference" },
+    ],
+  },
+  priceMonitoringBounds2: {
+    label: "Price Monitoring Bounds 2",
+    fields: [
+      { id: "minValidPrice_2", label: "Min" },
+      { id: "maxValidPrice_2", label: "Max" },
+      { id: "referencePrice_2", label: "Reference" },
+    ],
+  },
+  priceMonitoringBounds3: {
+    label: "Price Monitoring Bounds 3",
+    fields: [
+      { id: "minValidPrice_3", label: "Min" },
+      { id: "maxValidPrice_3", label: "Max" },
+      { id: "referencePrice_3", label: "Reference" },
+    ],
+  },
+  priceMonitoringBounds4: {
+    label: "Price Monitoring Bounds 4",
+    fields: [
+      { id: "minValidPrice_4", label: "Min" },
+      { id: "maxValidPrice_4", label: "Max" },
+      { id: "referencePrice_4", label: "Reference" },
     ],
   },
   relativeStrengthIndex: {

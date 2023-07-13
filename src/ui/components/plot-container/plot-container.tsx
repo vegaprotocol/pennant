@@ -9,6 +9,7 @@ import {
   FcElement,
   Interval,
   PlotContainerElement,
+  PriceMonitoringBounds,
   Scenegraph,
   Viewport,
 } from "@util/types";
@@ -34,6 +35,7 @@ export type PlotContainerProps = {
   height: number;
   decimalPlaces: number;
   positionDecimalPlaces: number;
+  priceMonitoringBounds: PriceMonitoringBounds[];
   scenegraph: Scenegraph;
   interval: Interval;
   initialViewport: Viewport;
@@ -60,6 +62,7 @@ export const PlotContainer = forwardRef<
       initialViewport,
       decimalPlaces,
       positionDecimalPlaces,
+      priceMonitoringBounds,
       overlays,
       simple,
       initialNumCandles,
@@ -279,6 +282,7 @@ export const PlotContainer = forwardRef<
                 dataIndex={dataIndex}
                 decimalPlaces={decimalPlaces}
                 positionDecimalPlaces={positionDecimalPlaces}
+                priceMonitoringBounds={priceMonitoringBounds}
                 overlays={overlays}
                 pane={pane}
                 simple={simple}

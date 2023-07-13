@@ -302,7 +302,7 @@ export const CandlestickChart = forwardRef(
       (id: string) => {
         onOptionsChanged({
           ...options,
-          overlays: overlays.filter((study) => study !== id),
+          overlays: overlays.filter((overlay) => overlay !== id),
         });
       },
       [onOptionsChanged, options, overlays]
@@ -344,6 +344,7 @@ export const CandlestickChart = forwardRef(
             height={300}
             decimalPlaces={dataSource.decimalPlaces}
             positionDecimalPlaces={dataSource.positionDecimalPlaces}
+            priceMonitoringBounds={configuration?.priceMonitoringBounds ?? []}
             scenegraph={scenegraph}
             interval={internalInterval}
             initialViewport={viewport}

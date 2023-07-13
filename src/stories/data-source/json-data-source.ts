@@ -1,4 +1,9 @@
-import { Annotation, DataSource, LabelAnnotation } from "@util/types";
+import {
+  Annotation,
+  Configuration,
+  DataSource,
+  LabelAnnotation,
+} from "@util/types";
 
 import { Interval } from "../api/vega-graphql";
 import { parseVegaDecimal } from "../helpers";
@@ -106,10 +111,22 @@ export class JsonDataSource implements DataSource {
     this.annotations = annotations;
   }
 
-  async onReady() {
+  async onReady(): Promise<Configuration> {
     return Promise.resolve({
       decimalPlaces: this.decimalPlaces,
       supportedIntervals: [Interval.I1D, Interval.I1H, Interval.I1M],
+      priceMonitoringBounds: [
+        {
+          minValidPrice: 595,
+          maxValidPrice: 597,
+          referencePrice: 596,
+        },
+        {
+          minValidPrice: 594,
+          maxValidPrice: 598,
+          referencePrice: 596,
+        },
+      ],
     });
   }
 

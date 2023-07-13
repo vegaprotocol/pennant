@@ -372,7 +372,7 @@ export function constructTopLevelSpec(
   colors: Colors,
   overlays?: Overlay[],
   studies?: Study[],
-  priceMonitoringBounds?: PriceMonitoringBounds
+  priceMonitoringBounds?: PriceMonitoringBounds[]
 ) {
   const vconcat: BaseSpec[] = [];
   const transform: Transform[] = [];
@@ -448,10 +448,14 @@ export function constructTopLevelSpec(
           },
         ];
       case "priceMonitoringBounds":
-        return [
+        if (!priceMonitoringBounds) {
+          return [];
+        }
+
+        return priceMonitoringBounds.flatMap((_bounds, i) => [
           {
             encoding: {
-              y: { field: "minValidPrice", type: "quantitative" },
+              y: { field: `minValidPrice_${i + 1}`, type: "quantitative" },
             },
             mark: {
               type: "line",
@@ -460,7 +464,7 @@ export function constructTopLevelSpec(
           },
           {
             encoding: {
-              y: { field: "maxValidPrice", type: "quantitative" },
+              y: { field: `maxValidPrice_${i + 1}`, type: "quantitative" },
             },
             mark: {
               type: "line",
@@ -469,14 +473,14 @@ export function constructTopLevelSpec(
           },
           {
             encoding: {
-              y: { field: "referencePrice", type: "quantitative" },
+              y: { field: `referencePrice_${i + 1}`, type: "quantitative" },
             },
             mark: {
               type: "line",
               color: colors[getAccentColor(colorIndex++)],
             },
           },
-        ];
+        ]);
       default:
         return [];
     }
@@ -530,12 +534,14 @@ export function constructTopLevelSpec(
   }));
 
   if (priceMonitoringBounds) {
-    data = data.map((d) => ({
-      ...d,
-      maxValidPrice: priceMonitoringBounds.maxValidPrice,
-      minValidPrice: priceMonitoringBounds.minValidPrice,
-      referencePrice: priceMonitoringBounds.referencePrice,
-    }));
+    for (let i = 0; i < priceMonitoringBounds.length; i++) {
+      data = data.map((d) => ({
+        ...d,
+        [`maxValidPrice_${i + 1}`]: priceMonitoringBounds[i].maxValidPrice,
+        [`minValidPrice_${i + 1}`]: priceMonitoringBounds[i].minValidPrice,
+        [`referencePrice_${i + 1}`]: priceMonitoringBounds[i].referencePrice,
+      }));
+    }
   }
 
   const topLevelSpec: TopLevelSpec = {
