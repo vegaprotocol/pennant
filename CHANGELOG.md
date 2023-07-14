@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/vegaprotocol/pennant/compare/v1.8.0...v1.9.0) (2023-07-14)
+
+
+### Features
+
+* **candlestick:** support position decimal places ([#857](https://github.com/vegaprotocol/pennant/issues/857)) ([3a1b7a1](https://github.com/vegaprotocol/pennant/commit/3a1b7a16c962408047044449a4151a27c5aa744e))
+* support multiple price monitoring bounds ([#870](https://github.com/vegaprotocol/pennant/issues/870)) ([c879ec3](https://github.com/vegaprotocol/pennant/commit/c879ec31a812ac4d0ce01dfd46f19183d481b145))
+
+
+### Bug Fixes
+
+* **deps:** update dependency allotment to v1.19.0 ([#862](https://github.com/vegaprotocol/pennant/issues/862)) ([04594f6](https://github.com/vegaprotocol/pennant/commit/04594f61ae2cfdc9c18c9d538b9e027c9d535c95))
+* **deps:** update docusaurus monorepo to v2.4.1 ([#821](https://github.com/vegaprotocol/pennant/issues/821)) ([2c147b6](https://github.com/vegaprotocol/pennant/commit/2c147b66c5d895024137f78a39419e4c0ae24ccb))
+* do not treat React as global in Tooltip component ([10fd404](https://github.com/vegaprotocol/pennant/commit/10fd4044b1230f54726efa879a940a36a1482ef6))
+
 ## [1.10.0](https://github.com/vegaprotocol/pennant/compare/v1.9.0...v1.10.0) (2023-07-13)
 
 ### Features
