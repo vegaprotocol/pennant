@@ -141,7 +141,7 @@
     "husky": "8.0.3",
     "jest": "27.5.1",
     "jest-canvas-mock": "2.5.2",
-    "jest-extended": "3.2.4",
+    "jest-extended": "4.0.0",
     "postcss": "8.4.25",
     "prettier": "2.8.8",
     "pretty-quick": "3.1.3",
