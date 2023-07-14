@@ -1,10 +1,6 @@
 const path = require("path");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-
 module.exports = {
-  core: {
-    builder: "webpack5",
-  },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   staticDirs: ["../assets"],
   addons: [
@@ -16,7 +12,6 @@ module.exports = {
   webpackFinal: async (baseConfig, options) => {
     // Modify or replace config. Mutating the original reference object can cause unexpected bugs.
     const { module = {} } = baseConfig;
-
     const newConfig = {
       ...baseConfig,
       module: {
@@ -24,7 +19,6 @@ module.exports = {
         rules: [...(module.rules || [])],
       },
     };
-
     newConfig.resolve.plugins = [new TsconfigPathsPlugin()];
 
     //
@@ -52,7 +46,13 @@ module.exports = {
         },
       ],
     });
-
     return newConfig;
+  },
+  framework: {
+    name: "@storybook/react-webpack5",
+    options: {},
+  },
+  docs: {
+    autodocs: true,
   },
 };

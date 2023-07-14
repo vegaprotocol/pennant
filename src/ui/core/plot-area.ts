@@ -154,7 +154,7 @@ export class PlotArea {
 
     if (firstElement && secondElement) {
       const nearestCandleDates = [firstElement, secondElement];
-      indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates);
+      indexOffset = closestIndexTo(timeAtMouseX, nearestCandleDates) ?? 0;
     } else if (firstElement) {
       indexOffset = 0;
     } else {
