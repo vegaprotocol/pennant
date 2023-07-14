@@ -501,7 +501,7 @@ export class UI extends EventEmitter {
             this.timeScale(nearestX[0]),
             this.priceScale(nearestX[i + 1]),
             this.data.cols.length === 2
-              ? nearestX[i + 1] > this.startPrice
+              ? (nearestX[i + 1] as number) > this.startPrice
                 ? this.colors.positiveStroke
                 : this.colors.negativeStroke
               : (this.colors as any)[`accent${i + 1}`]
@@ -540,7 +540,7 @@ export class UI extends EventEmitter {
           series: range(0, this.data.cols.length - 1).map((i) => ({
             color:
               this.data.cols.length === 2
-                ? nearestX[i + 1] > this.startPrice
+                ? (nearestX[i + 1] as number) > this.startPrice
                   ? hex2string(this.colors.positiveStroke)
                   : hex2string(this.colors.negativeStroke)
                 : hex2string((this.colors as any)[`accent${i + 1}`]),
