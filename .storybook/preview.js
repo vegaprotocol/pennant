@@ -1,3 +1,5 @@
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "../src/styles/variables.css";
 import "./global.css";
 
 import { themes } from "@storybook/theming";

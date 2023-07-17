@@ -25,6 +25,8 @@
   white-space: nowrap;
 }
 
+.cell.numeric {
+  font-family: var(--pennant-font-family-monospace);
 }
 
 .annotation.intent-primary {

@@ -2,6 +2,7 @@ import { Intent } from "./intent";
 
 export type LabelAnnotationCell = {
   label: string;
+  numeric?: boolean;
   stroke?: boolean;
   fill?: boolean;
   intent?: Intent; // override annotation intent for this cell
