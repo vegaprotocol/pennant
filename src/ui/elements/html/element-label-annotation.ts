@@ -73,6 +73,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
           "cell",
           { fill: d.fill },
           { stroke: d.stroke },
+          { numeric: d.numeric },
           { [`cell-intent-${d.intent}`]: d.intent }
         )
       )
