@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/vegaprotocol/pennant/compare/v1.10.0...v1.11.0) (2023-07-17)
+
+
+### Features
+
+* support formatting numeric values in annotations with monospace font ([#894](https://github.com/vegaprotocol/pennant/issues/894)) ([2464436](https://github.com/vegaprotocol/pennant/commit/2464436e198c8946d143ecd4f1f45a7bc0a3300f))
+
+
+### Bug Fixes
+
+* **candlestick:** annotation text should not wrap ([#891](https://github.com/vegaprotocol/pennant/issues/891)) ([405c924](https://github.com/vegaprotocol/pennant/commit/405c9241ff537e0f49ee5c168f1622065dcb55f4))
+
 ## [1.10.0](https://github.com/vegaprotocol/pennant/compare/v1.9.0...v1.10.0) (2023-07-13)
 
 ### Features
