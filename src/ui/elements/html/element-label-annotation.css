@@ -18,8 +18,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
   padding: 0 4px;
   position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 }
 
 .annotation.intent-primary {
