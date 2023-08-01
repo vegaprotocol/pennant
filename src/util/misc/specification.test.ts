@@ -204,7 +204,7 @@ describe("constructTopLevelSpec", () => {
 
   test("Basic area chart spec with study", () => {
     expect(
-      constructTopLevelSpec(data, "area", colors, undefined, ["volume"])
+      constructTopLevelSpec(data, "area", colors, undefined, ["volume"]),
     ).toEqual({
       data: { values: outputData },
       encoding: { x: { field: "date", type: "temporal" } },

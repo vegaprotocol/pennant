@@ -74,7 +74,7 @@ export const PlotContainer = forwardRef<
       onClosePane,
       onRemoveOverlay,
     },
-    ref
+    ref,
   ) => {
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -96,12 +96,12 @@ export const PlotContainer = forwardRef<
 
     const onViewportChangedThrottled = useMemo(
       () => throttle(onViewportChanged, 200),
-      [onViewportChanged]
+      [onViewportChanged],
     );
 
     const onGetDataRangeThrottled = useMemo(
       () => throttle(onGetDataRange, 800),
-      [onGetDataRange]
+      [onGetDataRange],
     );
 
     const snapshot = useCallback(() => asyncSnapshot(chartRef), []);
@@ -113,28 +113,31 @@ export const PlotContainer = forwardRef<
 
     const handleBoundsChanged = useMemo(
       () => throttle(setBounds, THROTTLE_INTERVAL),
-      []
+      [],
     );
 
     const handleDataIndexChanged = useMemo(
       () => throttle(setDataIndex, THROTTLE_INTERVAL),
-      []
+      [],
     );
 
     const handleViewportChanged = useMemo(
       () => throttle(onViewportChanged, THROTTLE_INTERVAL),
-      [onViewportChanged]
+      [onViewportChanged],
     );
 
     const refs = useMemo(
       () =>
         scenegraph.panes
           .map((pane) => pane.id)
-          .reduce((acc, value) => {
-            acc[value] = createRef<HTMLDivElement>();
-            return acc;
-          }, {} as { [index: string]: React.RefObject<HTMLDivElement> }),
-      [scenegraph.panes]
+          .reduce(
+            (acc, value) => {
+              acc[value] = createRef<HTMLDivElement>();
+              return acc;
+            },
+            {} as { [index: string]: React.RefObject<HTMLDivElement> },
+          ),
+      [scenegraph.panes],
     );
 
     const chartElement = useRef<Core | null>(null);
@@ -153,7 +156,7 @@ export const PlotContainer = forwardRef<
               labels: pane.labels ?? [],
               labelLines: pane.labelLines ?? [],
             },
-          ])
+          ]),
         ),
         {
           ref: xAxisRef,
@@ -164,7 +167,7 @@ export const PlotContainer = forwardRef<
         positionDecimalPlaces,
         simple,
         initialNumCandles,
-        colors
+        colors,
       )
         .interval(interval)
         .on("redraw", () => {
@@ -191,8 +194,8 @@ export const PlotContainer = forwardRef<
 
       chartRef.current?.requestRedraw();
 
-      requestAnimationFrame(() =>
-        chartElement.current?.initialize(initialViewport)
+      requestAnimationFrame(
+        () => chartElement.current?.initialize(initialViewport),
       );
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,12 +227,12 @@ export const PlotContainer = forwardRef<
                 labels: pane.labels ?? [],
                 labelLines: pane.labelLines ?? [],
               },
-            ])
+            ]),
           ),
           {
             ref: xAxisRef,
             data: scenegraph.panes[0].originalData.map((d) => d.date),
-          }
+          },
         );
 
         chartRef.current?.requestRedraw();
@@ -272,7 +275,7 @@ export const PlotContainer = forwardRef<
               preferredSize={calculatePreferredSize(
                 studySize,
                 numPanes,
-                index === 0
+                index === 0,
               )}
             >
               <PaneView
@@ -295,5 +298,5 @@ export const PlotContainer = forwardRef<
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>
     );
-  }
+  },
 );

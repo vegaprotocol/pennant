@@ -109,7 +109,7 @@ export class Chart extends EventEmitter {
 
     const priceExtent = extent(this._data.rows.flatMap((d) => d.slice(1))) as [
       number,
-      number
+      number,
     ];
 
     if (priceExtent[0] === priceExtent[1]) {
@@ -126,7 +126,7 @@ export class Chart extends EventEmitter {
       xr,
       this._data.rows.map((d) => [xr(d[0]), yr(d[1])]),
       yr(this._data.rows[0][1]),
-      this.height
+      this.height,
     );
 
     this.ui.colors = this._colors;
@@ -164,7 +164,7 @@ export class Chart extends EventEmitter {
 
   private onZoomHorizontalAxis = (
     t: ZoomTransform,
-    point: [number, number]
+    point: [number, number],
   ) => {
     const k = t.k / this.lastTimeZoomTransform.k;
 
@@ -213,7 +213,7 @@ export class Chart extends EventEmitter {
     if (data.rows.length > 0) {
       const priceExtent = extent(data.rows.flatMap((d) => d.slice(1))) as [
         number,
-        number
+        number,
       ];
 
       const adjustment = Math.abs(priceExtent[1] - priceExtent[0]) / 10;

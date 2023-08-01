@@ -23,7 +23,7 @@ export class YAxis {
     x: ScaleTime,
     y: ScaleLinear,
     decimalPlaces: number = 5,
-    colors: Colors
+    colors: Colors,
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -49,7 +49,7 @@ export class YAxis {
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.colors
+        this.colors,
       );
 
       this.latestPriceTooltip.draw(
@@ -58,7 +58,7 @@ export class YAxis {
         this._yScale,
         this._pixelRatio,
         this.latestPricePosition,
-        this.colors
+        this.colors,
       );
 
       this.tooltip.draw(
@@ -67,7 +67,7 @@ export class YAxis {
         this._yScale,
         this._pixelRatio,
         this.position,
-        this.colors
+        this.colors,
       );
     }
   }

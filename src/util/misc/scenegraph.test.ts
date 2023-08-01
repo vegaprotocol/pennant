@@ -11,7 +11,7 @@ describe("getConditionalColor", () => {
         value: GREEN,
       })({
         close: 100,
-      })
+      }),
     ).toEqual(RED);
 
     expect(
@@ -20,7 +20,7 @@ describe("getConditionalColor", () => {
         value: GREEN,
       })({
         close: 300,
-      })
+      }),
     ).toEqual(GREEN);
 
     expect(
@@ -29,7 +29,7 @@ describe("getConditionalColor", () => {
         value: GREEN,
       })({
         close: 200,
-      })
+      }),
     ).toEqual(GREEN);
   });
 
@@ -41,7 +41,7 @@ describe("getConditionalColor", () => {
       })({
         close: 100,
         open: 200,
-      })
+      }),
     ).toEqual(RED);
 
     expect(
@@ -51,7 +51,7 @@ describe("getConditionalColor", () => {
       })({
         close: 300,
         open: 200,
-      })
+      }),
     ).toEqual(GREEN);
 
     expect(
@@ -61,7 +61,7 @@ describe("getConditionalColor", () => {
       })({
         close: 200,
         open: 200,
-      })
+      }),
     ).toEqual(GREEN);
   });
 
@@ -72,7 +72,7 @@ describe("getConditionalColor", () => {
         value: GREEN,
       })({
         close: 100,
-      })
+      }),
     ).toEqual(GREEN);
 
     expect(
@@ -81,7 +81,7 @@ describe("getConditionalColor", () => {
         value: GREEN,
       })({
         close: 300,
-      })
+      }),
     ).toEqual(RED);
 
     expect(
@@ -90,7 +90,7 @@ describe("getConditionalColor", () => {
         value: RED,
       })({
         close: 200,
-      })
+      }),
     ).toEqual(RED);
   });
 
@@ -102,7 +102,7 @@ describe("getConditionalColor", () => {
       })({
         close: 100,
         open: 200,
-      })
+      }),
     ).toEqual(GREEN);
 
     expect(
@@ -112,7 +112,7 @@ describe("getConditionalColor", () => {
       })({
         close: 300,
         open: 200,
-      })
+      }),
     ).toEqual(RED);
 
     expect(
@@ -122,7 +122,7 @@ describe("getConditionalColor", () => {
       })({
         close: 200,
         open: 200,
-      })
+      }),
     ).toEqual(GREEN);
   });
 
@@ -130,7 +130,7 @@ describe("getConditionalColor", () => {
     expect(
       getConditionalColor({
         value: GREEN,
-      })({})
+      })({}),
     ).toEqual(GREEN);
   });
 

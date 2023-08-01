@@ -57,7 +57,7 @@ const httpLink = new HttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url: `wss://${VEGA_URL}`,
-  })
+  }),
 );
 
 const splitLink = split(
@@ -69,7 +69,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  httpLink
+  httpLink,
 );
 
 const client = new ApolloClient({
@@ -81,7 +81,7 @@ const MarketSelect = Select.ofType<MarketFieldsFragment>();
 
 const renderMarket: ItemRenderer<MarketFieldsFragment> = (
   market,
-  { handleClick, modifiers }
+  { handleClick, modifiers },
 ) => {
   if (!modifiers.matchesPredicate) {
     return null;
@@ -118,16 +118,16 @@ export const VegaProtocol: Story = () => {
       new VegaDataSource(
         client,
         market,
-        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
+        "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
       ),
-    [market]
+    [market],
   );
 
   const darkmode = useDarkMode();
 
   const marketId =
     data?.marketsConnection?.edges.find(
-      (edge) => edge.node.state === MarketState.STATE_ACTIVE
+      (edge) => edge.node.state === MarketState.STATE_ACTIVE,
     )?.node.id ?? data?.marketsConnection?.edges[0]?.node.id;
 
   useEffect(() => {
@@ -155,7 +155,7 @@ export const VegaProtocol: Story = () => {
           <Button
             text={
               data?.marketsConnection?.edges.find(
-                (s: any) => s.node.id === market
+                (s: any) => s.node.id === market,
               )?.node.tradableInstrument.instrument.name ?? "No market selected"
             }
             disabled={false}
@@ -237,12 +237,12 @@ export const CryptoCompare: Story = () => {
   });
 
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const { styles, attributes } = usePopper(
     virtualReference.current as any,
     popperElement,
-    { placement: "bottom-start" }
+    { placement: "bottom-start" },
   );
 
   const [chartType, setChartType] = useState<ChartType>("ohlc");
@@ -289,7 +289,7 @@ export const CryptoCompare: Story = () => {
         onKeyDown: () => ref.current.zoomIn(0.1),
       },
     ],
-    []
+    [],
   );
 
   useEffect(() => {

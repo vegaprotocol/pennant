@@ -28,14 +28,14 @@ interface FieldDefBase<F> {
 
 type FieldDefWithCondition<
   F extends FieldDef<any>,
-  V extends Value = Value
+  V extends Value = Value,
 > = F & {
   condition?: Conditional<ValueDef<V>> | Conditional<ValueDef<V>>[];
 };
 
 type ValueDefWithCondition<
   F extends FieldDef<any>,
-  V extends Value = Value
+  V extends Value = Value,
 > = ValueDef & {
   condition?: Conditional<ValueDef<V>> | Conditional<ValueDef<V>>[];
 };

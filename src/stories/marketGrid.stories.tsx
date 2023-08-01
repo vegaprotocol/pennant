@@ -31,7 +31,7 @@ const httpLink = new HttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url: `wss://${VEGA_URL}`,
-  })
+  }),
 );
 const splitLink = split(
   ({ query }) => {
@@ -42,7 +42,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  httpLink
+  httpLink,
 );
 
 const client = new ApolloClient({
@@ -53,7 +53,7 @@ const client = new ApolloClient({
 const Grid: Story = () => {
   const { data, loading } = useQuery<MarketsQuery, MarketsQueryVariables>(
     MarketsDocument,
-    { fetchPolicy: "no-cache" }
+    { fetchPolicy: "no-cache" },
   );
 
   if (

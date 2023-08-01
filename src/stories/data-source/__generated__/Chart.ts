@@ -59,21 +59,21 @@ export const ChartDocument = gql`
  * });
  */
 export function useChartQuery(
-  baseOptions: Apollo.QueryHookOptions<ChartQuery, ChartQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<ChartQuery, ChartQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ChartQuery, ChartQueryVariables>(
     ChartDocument,
-    options
+    options,
   );
 }
 export function useChartLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ChartQuery, ChartQueryVariables>
+  baseOptions?: Apollo.LazyQueryHookOptions<ChartQuery, ChartQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<ChartQuery, ChartQueryVariables>(
     ChartDocument,
-    options
+    options,
   );
 }
 export type ChartQueryHookResult = ReturnType<typeof useChartQuery>;

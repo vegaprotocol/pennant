@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export function useOnReady(dataSource: DataSource) {
   const [ready, setReady] = useState(true);
   const [configuration, setConfiguration] = useState<Configuration | null>(
-    null
+    null,
   );
 
   useEffect(() => {

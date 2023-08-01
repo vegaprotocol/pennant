@@ -46,7 +46,7 @@ export class AreaElement implements PositionalElement {
         0,
         yScale.range()[1],
         0,
-        yScale.range()[0]
+        yScale.range()[0],
       );
 
       for (const stop of this.fill.stops) {

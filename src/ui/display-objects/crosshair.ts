@@ -25,7 +25,7 @@ export class Crosshair extends Container {
     y: number | null,
     width: number,
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
   ) {
     if (x !== null) {
       this.verticalLine.visible = true;

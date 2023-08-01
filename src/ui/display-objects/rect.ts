@@ -19,7 +19,7 @@ export class Rect extends Graphics {
     y: number,
     width: number,
     height: number,
-    color: number
+    color: number,
   ) {
     this.color = color;
 

@@ -85,13 +85,13 @@ declare module "@d3fc/d3fc-technical-indicator" {
   // EXPONENTIAL MOVING AVERAGE
   export function indicatorExponentialMovingAverage(): ExponentialMovingAverage<number>;
   export function indicatorExponentialMovingAverage<
-    T
+    T,
   >(): ExponentialMovingAverage<T>;
 
   interface ExponentialMovingAverage<T> {
     value(): (datum: T, index: number) => number;
     value(
-      accessor: (datum: T, index: number) => number
+      accessor: (datum: T, index: number) => number,
     ): ExponentialMovingAverage<T>;
 
     period(): (data: T[]) => number;

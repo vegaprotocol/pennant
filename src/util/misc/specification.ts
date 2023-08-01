@@ -18,7 +18,7 @@ import {
 
 function constructMainLayerSpec(
   chartType: ChartType,
-  colors: Colors
+  colors: Colors,
 ): BaseSpec[] {
   switch (chartType) {
     case ChartType.AREA:
@@ -372,7 +372,7 @@ export function constructTopLevelSpec(
   colors: Colors,
   overlays?: Overlay[],
   studies?: Study[],
-  priceMonitoringBounds?: PriceMonitoringBounds[]
+  priceMonitoringBounds?: PriceMonitoringBounds[],
 ) {
   const vconcat: BaseSpec[] = [];
   const transform: Transform[] = [];
@@ -515,15 +515,15 @@ export function constructTopLevelSpec(
 
   // Calculate change
   const percentageChangeData = indicatorPercentageChange().period(2)(
-    data.map((d) => d.close)
+    data.map((d) => d.close),
   );
 
   const percentageChangeData24 = indicatorPercentageChange().period(25)(
-    data.map((d) => d.close)
+    data.map((d) => d.close),
   );
 
   const absoluteChangeData = indicatorAbsoluteChange().period(2)(
-    data.map((d) => d.close)
+    data.map((d) => d.close),
   );
 
   data = data.map((d, i) => ({

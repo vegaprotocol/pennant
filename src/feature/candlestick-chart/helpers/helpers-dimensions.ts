@@ -11,7 +11,7 @@ export function getDimensions(element: HTMLElement | null): Dimensions {
     strokeWidth: string2num(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-candlestick-stroke-width")
-        .trim() || "1px"
+        .trim() || "1px",
     ),
   };
 }

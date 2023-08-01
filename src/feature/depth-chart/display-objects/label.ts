@@ -29,7 +29,7 @@ export class Label extends Container {
     y: number,
     anchor: { x: number; y: number },
     resolution: number = 1,
-    colors: LabelColors
+    colors: LabelColors,
   ) {
     this.text.x = x;
     this.text.y = y;
@@ -52,7 +52,7 @@ export class Label extends Container {
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),
       width + 2 * padding,
-      height + 2 * padding
+      height + 2 * padding,
     );
     this.background.endFill();
   }

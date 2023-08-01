@@ -7,17 +7,17 @@ describe("getStudyInfoFieldValue", () => {
 
   test("returns latest value for index out of bounds", () => {
     expect(getStudyInfoFieldValue([{ open: 1 }, { open: 2 }], 2, "open")).toBe(
-      2
+      2,
     );
 
     expect(getStudyInfoFieldValue([{ open: 1 }, { open: 2 }], -1, "open")).toBe(
-      2
+      2,
     );
   });
 
   test("returns latest value for index equal to null", () => {
     expect(
-      getStudyInfoFieldValue([{ open: 1 }, { open: 2 }], null, "open")
+      getStudyInfoFieldValue([{ open: 1 }, { open: 2 }], null, "open"),
     ).toBe(2);
   });
 });

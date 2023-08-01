@@ -44,7 +44,7 @@ export class GraphicsGeometry extends BatchGeometry {
     shape: Shape,
     fillStyle: FillStyle | null = null,
     lineStyle: LineStyle | null = null,
-    matrix: Matrix | null = null
+    matrix: Matrix | null = null,
   ): GraphicsGeometry {
     const data = new GraphicsData(shape, fillStyle, lineStyle, matrix);
 

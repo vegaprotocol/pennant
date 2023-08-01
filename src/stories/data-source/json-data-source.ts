@@ -52,7 +52,7 @@ const annotations: LabelAnnotation[] = [
         onClick: () => {
           console.log({ type: "order", id: "2" });
           const annotation = annotations.find(
-            (annotation) => annotation.id === "2"
+            (annotation) => annotation.id === "2",
           );
 
           if (annotation) {
@@ -102,7 +102,7 @@ export class JsonDataSource implements DataSource {
     marketId: string,
     decimalPlaces: number,
     filename: string = "data.json",
-    annotations: boolean = true
+    annotations: boolean = true,
   ) {
     this.marketId = marketId;
     this._decimalPlaces = decimalPlaces;
@@ -134,7 +134,7 @@ export class JsonDataSource implements DataSource {
     const data: any = files.get(this.filename);
 
     const candles = data[interval].candles.map((d: any) =>
-      extendCandle(d, this.decimalPlaces)
+      extendCandle(d, this.decimalPlaces),
     );
 
     return Promise.resolve(candles);
@@ -142,13 +142,13 @@ export class JsonDataSource implements DataSource {
 
   subscribeData(
     _interval: Interval,
-    _onSubscriptionData: (datum: any) => void
+    _onSubscriptionData: (datum: any) => void,
   ) {}
 
   unsubscribeData() {}
 
   subscribeAnnotations(
-    onSubscriptionAnnotation: (annotations: Annotation[]) => void
+    onSubscriptionAnnotation: (annotations: Annotation[]) => void,
   ) {
     if (this.annotations) {
       onSubscriptionAnnotation(annotations);

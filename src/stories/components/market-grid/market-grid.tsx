@@ -20,7 +20,7 @@ const httpLink = new HttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url: "wss://api.n07.testnet.vega.xyz/graphql",
-  })
+  }),
 );
 
 const splitLink = split(
@@ -32,7 +32,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  httpLink
+  httpLink,
 );
 
 const client = new ApolloClient({
@@ -54,10 +54,10 @@ export const MarketGrid = ({ markets }: MarketGridProps) => {
           new VegaDataSource(
             client,
             market.id,
-            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6"
-          )
+            "0a0ed5f704cf29041bfa320b1015b0b0c0eedb101954ecd687e513d8472a3ff6",
+          ),
       ),
-    [markets]
+    [markets],
   );
 
   return (

@@ -21,7 +21,7 @@ export interface RenderableHTMLElement {
   draw(
     selection: Selection<Element, any, any, any>,
     xScale: ScaleTime,
-    yScale: ScaleLinear
+    yScale: ScaleLinear,
   ): void;
 }
 
@@ -37,12 +37,12 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
   draw(
     selection: Selection<Element, any, any, any>,
     _xScale: ScaleTime,
-    yScale: ScaleLinear
+    yScale: ScaleLinear,
   ): void {
     const yPositions = this.labels.map((label) => yScale(label.y));
     const shiftedYPositions = calculateShiftedPositions(
       yPositions,
-      LABEL_ANNOTATION_HEIGHT
+      LABEL_ANNOTATION_HEIGHT,
     );
 
     const data: LabelAnnotation[] = this.labels.map((label, labelIndex) => ({
@@ -59,7 +59,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
           .style("left", `0px`)
           .style("height", `22px`)
           .style("position", "absolute")
-          .style("pointer-events", "auto")
+          .style("pointer-events", "auto"),
       )
       .attr("class", (d) => `annotation intent-${d.intent}`)
       .style("top", (d) => `${d.y - LABEL_ANNOTATION_HEIGHT / 2}px`);
@@ -74,8 +74,8 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
           { fill: d.fill },
           { stroke: d.stroke },
           { numeric: d.numeric },
-          { [`cell-intent-${d.intent}`]: d.intent }
-        )
+          { [`cell-intent-${d.intent}`]: d.intent },
+        ),
       )
       .text((d) => d.label);
 
@@ -100,7 +100,7 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
             .attr("class", (d) =>
               classNames("content", "spinner-animation", {
                 "no-spin": !d.spinner,
-              })
+              }),
             )
             .style("visibility", (d) => (d.spinner ? "visible" : "hidden"))
             .selectAll("svg")
@@ -110,14 +110,14 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
             .attr("height", size)
             .attr(
               "viewBox",
-              `${viewBoxX} ${viewBoxX} ${viewBoxWidth} ${viewBoxWidth}`
+              `${viewBoxX} ${viewBoxX} ${viewBoxWidth} ${viewBoxWidth}`,
             )
             .selectAll("path")
             .data([null, null])
             .join("path")
             .attr("d", SPINNER_TRACK)
             .attr("class", (d, i) =>
-              i === 1 ? "spinner-head" : "spinner-track"
+              i === 1 ? "spinner-head" : "spinner-track",
             )
             .attr("stroke-width", strokeWidth)
             .attr("fill-opacity", 0)
@@ -137,12 +137,12 @@ export class LabelAnnotationHtmlElement implements RenderableHTMLElement {
             .attr("class", (d) =>
               classNames("content", "spinner-animation", {
                 "no-spin": !d.spinner,
-              })
+              }),
             )
             .style("visibility", (d) => (d.spinner ? "visible" : "hidden"));
 
           return update;
-        }
+        },
       );
   }
 }

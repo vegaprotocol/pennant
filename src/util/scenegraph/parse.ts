@@ -51,7 +51,7 @@ function compileLayer(
   encoding: Encoding<Field>,
   mark: Mark | MarkDef,
   candleWidth: number,
-  lineWidth: number
+  lineWidth: number,
 ) {
   let markType: string;
   let cfg = {};
@@ -69,7 +69,7 @@ function compileLayer(
       encoding.y?.field!,
       encoding.y2?.field!,
       (mark as MarkDef)?.color,
-      (mark as MarkDef)?.line?.color
+      (mark as MarkDef)?.line?.color,
     );
 
     return [createElement("area", cfg)];
@@ -78,7 +78,7 @@ function compileLayer(
       data?.values,
       encoding.x?.field!,
       encoding.y?.field!,
-      (mark as MarkDef)?.color
+      (mark as MarkDef)?.color,
     );
 
     return [createElement("line", cfg)];
@@ -97,7 +97,7 @@ function compileLayer(
           candleWidth,
           getConditionalColor(encoding.fill)(d),
           getConditionalColor(encoding.stroke)(d),
-          (encoding.strokeWidth as any)?.value ?? lineWidth
+          (encoding.strokeWidth as any)?.value ?? lineWidth,
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(
@@ -106,7 +106,7 @@ function compileLayer(
           encoding.x2?.field!,
           encoding.y?.field!,
           encoding.y2?.field!,
-          getConditionalColor(encoding?.color)(d)
+          getConditionalColor(encoding?.color)(d),
         );
       } else if (markType === "tick") {
         cfg = getTickConfig(
@@ -115,7 +115,7 @@ function compileLayer(
           encoding.y?.field!,
           candleWidth,
           getConditionalColor(encoding?.color)(d),
-          (mark as MarkDef).orient ?? "left" // FIXME: Type this correctly
+          (mark as MarkDef).orient ?? "left", // FIXME: Type this correctly
         );
       }
 
@@ -129,7 +129,7 @@ export function parseLayer(
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number,
-  lineWidth: number
+  lineWidth: number,
 ) {
   const series: any[] = [];
   let layerData = data;
@@ -145,7 +145,13 @@ export function parseLayer(
 
   if (layer?.mark) {
     series.push(
-      compileLayer(layerData, layerEncoding, layer.mark, candleWidth, lineWidth)
+      compileLayer(
+        layerData,
+        layerEncoding,
+        layer.mark,
+        candleWidth,
+        lineWidth,
+      ),
     );
   }
 
@@ -157,8 +163,8 @@ export function parseLayer(
           layerData,
           layerEncoding,
           candleWidth,
-          lineWidth
-        )
+          lineWidth,
+        ),
       );
     }
   }
@@ -168,7 +174,7 @@ export function parseLayer(
 
 function extractYDomain(layer: BaseSpec, data: any[]) {
   const mappedData = extractYEncodingFields(layer).flatMap(
-    (field: any) => data.map((d: any) => d[field]) as unknown as number
+    (field: any) => data.map((d: any) => d[field]) as unknown as number,
   );
 
   const domain = extent(mappedData) as [number, number];
@@ -177,7 +183,7 @@ function extractYDomain(layer: BaseSpec, data: any[]) {
   // TO DO: Include zero if specified in specification
   return [domain[0] - domainSize * 0.1, domain[1] + domainSize * 0.2] as [
     number,
-    number
+    number,
   ];
 }
 
@@ -214,11 +220,11 @@ export function parse(
   candleWidth: number,
   lineWidth: number,
   decimalPlaces: number,
-  annotations: Annotation[]
+  annotations: Annotation[],
 ): Scenegraph | null {
   if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
     console.warn(
-      `Expected no more than 2 panes. Received ${specification.vconcat.length}`
+      `Expected no more than 2 panes. Received ${specification.vconcat.length}`,
     );
   }
 
@@ -241,7 +247,7 @@ export function parse(
         case "bollinger":
           {
             const indicatorData = indicatorBollingerBands<Candle>().value(
-              (datum) => datum.close
+              (datum) => datum.close,
             )(data);
 
             newData = newData.map((d, i) => ({
@@ -262,7 +268,7 @@ export function parse(
         case "envelope":
           {
             const indicatorData = indicatorEnvelope<Candle>().value(
-              (datum) => datum.close
+              (datum) => datum.close,
             )(data);
 
             newData = newData.map((d, i) => ({
@@ -276,7 +282,7 @@ export function parse(
           {
             const indicatorData =
               indicatorExponentialMovingAverage<Candle>().value(
-                (datum) => datum.close
+                (datum) => datum.close,
               )(data);
 
             newData = newData.map((d, i) => ({
@@ -298,7 +304,7 @@ export function parse(
         case "movingAverage":
           {
             const indicatorData = indicatorMovingAverage<Candle>().value(
-              (datum) => datum.close
+              (datum) => datum.close,
             )(data);
 
             newData = newData.map((d, i) => ({
@@ -310,7 +316,7 @@ export function parse(
         case "macd":
           {
             const indicatorData = indicatorMacd<Candle>().value(
-              (datum) => datum.close
+              (datum) => datum.close,
             )(data);
 
             newData = newData.map((d, i) => ({ ...d, ...indicatorData[i] }));
@@ -320,7 +326,7 @@ export function parse(
           {
             const indicatorData =
               indicatorRelativeStrengthIndex<Candle>().value(
-                (datum) => datum.close
+                (datum) => datum.close,
               )(data);
 
             newData = newData.map((d, i) => ({
@@ -352,12 +358,12 @@ export function parse(
               { values: newData },
               specification.encoding ?? {},
               candleWidth,
-              lineWidth
+              lineWidth,
             ),
             bounds: calculateScales(
               pane,
               newData,
-              extractYEncodingFields(pane)
+              extractYEncodingFields(pane),
             ),
             originalData: newData ?? [],
             grid: new GridElement(),
@@ -369,7 +375,7 @@ export function parse(
                 ? [
                     new YAxisAnnotationElement(
                       newData[newData.length - 1].close,
-                      decimalPlaces
+                      decimalPlaces,
                     ),
                   ]
                 : [],
@@ -402,7 +408,7 @@ export function parse(
           (d) =>
             new DummyElement({
               x: d.date,
-            })
+            }),
         ),
       ],
       axis: new XAxisElement(),

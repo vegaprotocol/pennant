@@ -65,7 +65,7 @@ export class Contents {
     timeScale: ScaleTime,
     data: ReadonlyArray<[number, number]>,
     startPrice: number,
-    height: number
+    height: number,
   ): void {
     const resolution = this.renderer.resolution;
 
@@ -73,14 +73,14 @@ export class Contents {
       timeScale,
       this.renderer.width,
       this.renderer.height - resolution * AXIS_HEIGHT,
-      resolution
+      resolution,
     );
 
     this.verticalgrid.update(
       priceScale,
       this.renderer.width - resolution * AXIS_WIDTH,
       this.renderer.height,
-      resolution
+      resolution,
     );
 
     this.priceCurve.visible = true;
@@ -92,7 +92,7 @@ export class Contents {
       data.map((d) => [d[0], d[1]]),
       startPrice,
       height,
-      resolution
+      resolution,
     );
   }
 }

@@ -90,7 +90,7 @@ export class Core {
     "mouseover",
     "redraw",
     "rightclick",
-    "viewport_changed"
+    "viewport_changed",
   );
 
   private _interval: Interval = Interval.I1M;
@@ -139,7 +139,7 @@ export class Core {
     positionDecimalPlaces: number = 0,
     simple = false,
     initialNumCandles = 24,
-    colors: Colors
+    colors: Colors,
   ) {
     this._decimalPlaces = decimalPlaces;
     this._positionDecimalPlaces = positionDecimalPlaces;
@@ -170,7 +170,7 @@ export class Core {
           this.yAxes,
           (bounds: [Date, Date]) =>
             this.listeners.call("bounds_changed", this, bounds),
-          () => this.listeners.call("redraw")
+          () => this.listeners.call("redraw"),
         );
       })
       .on("dblclick", () => {
@@ -183,7 +183,7 @@ export class Core {
 
     // y-axis
     this.yScales = Object.fromEntries(
-      Object.keys(panes).map((id) => [id, scaleLinear()])
+      Object.keys(panes).map((id) => [id, scaleLinear()]),
     );
 
     this.yAxes = Object.fromEntries(
@@ -193,9 +193,9 @@ export class Core {
           this.xScale,
           scale,
           id === "volume" ? this._positionDecimalPlaces : this._decimalPlaces,
-          this._colors
+          this._colors,
         ),
-      ])
+      ]),
     );
 
     this.yAxisInteractions = Object.fromEntries(
@@ -214,7 +214,7 @@ export class Core {
               (isFreePan: boolean) => {
                 this.isFreePan = isFreePan;
               },
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("dblclick", () => {
@@ -222,7 +222,7 @@ export class Core {
             this.isFreePan = false;
             this.listeners.call("redraw");
           }),
-      ])
+      ]),
     );
 
     this.yElements = Object.fromEntries(
@@ -231,7 +231,7 @@ export class Core {
         select(pane.ref.current)
           .select<Element>(".y-axis")
           .style("pointer-events", "none"),
-      ])
+      ]),
     );
 
     // plot-area
@@ -246,9 +246,9 @@ export class Core {
           pane.yEncodingFields,
           pane.labelLines,
           this.isSimple,
-          this._colors
+          this._colors,
         ),
-      ])
+      ]),
     );
 
     this.plotAreaInteractions = Object.fromEntries(
@@ -283,7 +283,7 @@ export class Core {
                 this.listeners.call("fetch_data", this, from, to),
               (isPinned) => {
                 this.isPinned = isPinned;
-              }
+              },
             );
           })
           .on("zoomstart", () => {
@@ -297,7 +297,7 @@ export class Core {
               this.xAxis,
               this.yAxes[id],
               id,
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("dblclick", () => {
@@ -313,7 +313,7 @@ export class Core {
               this.xAxis,
               id,
               (index, id) => this.listeners.call("mousemove", this, index, id),
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("mouseout", () => {
@@ -322,13 +322,13 @@ export class Core {
               this.xAxis,
               this.yAxes,
               () => this.listeners.call("redraw"),
-              () => this.listeners.call("mouseout", this)
+              () => this.listeners.call("mouseout", this),
             );
           })
           .on("contextmenu", (event) => {
             this.listeners.call("contextmenu", this, event);
           }),
-      ])
+      ]),
     );
 
     this.plotAreaAnnotations = Object.fromEntries(
@@ -337,9 +337,9 @@ export class Core {
         new PlotAreaAnnotations(
           this.xScale,
           this.yScales[id],
-          panes[id].labels
+          panes[id].labels,
         ),
-      ])
+      ]),
     );
 
     this.plotAreaElements = Object.fromEntries(
@@ -348,14 +348,14 @@ export class Core {
         select<Element, any>(area.ref.current!)
           .select<Element>(".plot-area")
           .style("pointer-events", "none"),
-      ])
+      ]),
     );
 
     this.yTransforms = Object.fromEntries(
       Object.entries(this.yElements).map(([id, yElement]) => [
         id,
         () => zoomTransform(yElement.node()!),
-      ])
+      ]),
     );
 
     // Configure
@@ -364,13 +364,13 @@ export class Core {
     });
 
     this.yZooms = Object.fromEntries(
-      Object.keys(panes).map((id) => [id, d3Zoom<Element, unknown>()])
+      Object.keys(panes).map((id) => [id, d3Zoom<Element, unknown>()]),
     );
 
     this.xElement.call(this.xZoom);
 
     Object.entries(this.plotAreaElements).forEach(([id, plotAreaElement]) =>
-      plotAreaElement.call(this.yZooms[id])
+      plotAreaElement.call(this.yZooms[id]),
     );
 
     // Measure and draw
@@ -388,7 +388,7 @@ export class Core {
           this.dates,
           (bounds: [Date, Date]) => {
             this.listeners.call("bounds_changed", this, bounds);
-          }
+          },
         );
       })
       .on("draw", (event) => {
@@ -415,12 +415,12 @@ export class Core {
             this.yAxes[id],
             this.isFreePan,
             id,
-            this.resetYAxis.bind(this)
+            this.resetYAxis.bind(this),
           );
         })
         .on("draw", (event) => {
           drawYAxis(event, this.yAxes[id]);
-        })
+        }),
     );
 
     Object.entries(panes).forEach(([id, area]) =>
@@ -428,14 +428,14 @@ export class Core {
         .select(".y-axis-interaction")
         .on("draw", (event) => {
           this.yAxisInteractions[id].draw(
-            select(event.currentTarget).select("svg")
+            select(event.currentTarget).select("svg"),
           );
-        })
+        }),
     );
 
     Object.entries(panes).forEach(([id, area]) => {
       const selection = select<Element, any>(area.ref.current!).select<Element>(
-        ".plot-area-annotations"
+        ".plot-area-annotations",
       );
 
       select<HTMLDivElement, unknown>(area.ref.current!)
@@ -488,7 +488,7 @@ export class Core {
         this.xScale(1000 * 60 * getSubMinutes(this._interval, n)) -
         this.xScale(0)
       ),
-      0
+      0,
     );
 
     this.xAxis.xScale(xr);
@@ -504,7 +504,7 @@ export class Core {
           id,
           this.plotAreas,
           this.yElements,
-          this.yZooms
+          this.yZooms,
         );
       }
     });
@@ -538,7 +538,7 @@ export class Core {
     this.listeners.call(
       "bounds_changed",
       this,
-      this.xTransform().rescaleX(this.xScale).domain()
+      this.xTransform().rescaleX(this.xScale).domain(),
     );
   }
 
@@ -565,7 +565,7 @@ export class Core {
 
     const latestDate = this.dates[this.dates.length - 1];
     const previousLatestDate = xr.invert(
-      xr.range()[1] - getCandlePadding(this.isSimple, intervalWidth)
+      xr.range()[1] - getCandlePadding(this.isSimple, intervalWidth),
     );
 
     if (compareAsc(latestDate, previousLatestDate) === 1) {
@@ -594,19 +594,19 @@ export class Core {
         (Math.abs(
           this.xScale.range()[1] -
             this.xScale.range()[0] -
-            getCandlePadding(this.isSimple, intervalWidth)
+            getCandlePadding(this.isSimple, intervalWidth),
         ) /
           intervalWidth) *
           1000 *
           60 *
-          getSubMinutes(this._interval, 1)
+          getSubMinutes(this._interval, 1),
     );
 
     const domain = [
       date0,
       new Date(
         latestDate.getTime() +
-          (latestDate.getTime() - date0.getTime()) * (ratio - 1)
+          (latestDate.getTime() - date0.getTime()) * (ratio - 1),
       ),
     ];
 
@@ -616,7 +616,7 @@ export class Core {
 
   resetYAxis(id: string) {
     const domain = this.plotAreas[id].extent(
-      this.xTransform().rescaleX(this.xScale).domain() as [Date, Date]
+      this.xTransform().rescaleX(this.xScale).domain() as [Date, Date],
     );
 
     this.yScales[id].domain(domain);
@@ -632,7 +632,7 @@ export class Core {
    */
   update(
     panes: Panes<ChartPane>,
-    axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] }
+    axis: { ref: React.MutableRefObject<HTMLDivElement>; data: any[] },
   ): this {
     const oldIds = Object.keys(this.plotAreas);
     const newIds = Object.keys(panes);
@@ -660,7 +660,7 @@ export class Core {
           this.xTransform().rescaleX(this.xScale),
           this.yScales[id],
           id === "volume" ? this._positionDecimalPlaces : this._decimalPlaces,
-          this._colors
+          this._colors,
         );
 
         this.yAxisInteractions[id] = new YAxisInteraction()
@@ -676,7 +676,7 @@ export class Core {
               (isFreePan: boolean) => {
                 this.isFreePan = isFreePan;
               },
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("dblclick", () => {
@@ -693,12 +693,12 @@ export class Core {
           panes[id].yEncodingFields,
           panes[id].labelLines,
           this.isSimple,
-          this._colors
+          this._colors,
         );
 
         this.plotAreaInteractions[id] = new PlotAreaInteraction(
           this.xTransform().rescaleX(this.xScale),
-          this.yScales[id]
+          this.yScales[id],
         )
           .on("zoom", (e, t, point) => {
             handleZoom(
@@ -728,7 +728,7 @@ export class Core {
                 this.listeners.call("fetch_data", this, from, to),
               (isPinned) => {
                 this.isPinned = isPinned;
-              }
+              },
             );
           })
           .on("zoomstart", () => {
@@ -742,7 +742,7 @@ export class Core {
               this.xAxis,
               this.yAxes[id],
               id,
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("dblclick", () => {
@@ -758,7 +758,7 @@ export class Core {
               this.xAxis,
               id,
               (index, id) => this.listeners.call("mousemove", this, index, id),
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("mouseout", () => {
@@ -767,7 +767,7 @@ export class Core {
               this.xAxis,
               this.yAxes,
               () => this.listeners.call("mouseout", this),
-              () => this.listeners.call("redraw")
+              () => this.listeners.call("redraw"),
             );
           })
           .on("contextmenu", (event) => {
@@ -780,19 +780,19 @@ export class Core {
         this.plotAreaAnnotations[id] = new PlotAreaAnnotations(
           this.xScale,
           this.yScales[id],
-          panes[id].labels
+          panes[id].labels,
         );
 
         const domain = this.xTransform().rescaleX(this.xScale).domain() as [
           Date,
-          Date
+          Date,
         ];
 
         const newExtent = this.plotAreas[id].extent(domain);
 
         this.yZooms[id] = d3Zoom<Element, unknown>();
         this.plotAreaElements[id] = select<Element, unknown>(
-          panes[id].ref.current!
+          panes[id].ref.current!,
         );
         this.yTransforms[id] = () => zoomTransform(this.yElements[id].node()!);
         this.yScales[id].domain(newExtent);
@@ -813,7 +813,7 @@ export class Core {
               this.dates,
               (bounds: [Date, Date]) => {
                 this.listeners.call("bounds_changed", this, bounds);
-              }
+              },
             );
           })
           .on("draw", (event) => {
@@ -833,7 +833,7 @@ export class Core {
               this.yAxes[id],
               this.isFreePan,
               id,
-              this.resetYAxis.bind(this)
+              this.resetYAxis.bind(this),
             );
           })
           .on("draw", (event) => {
@@ -844,7 +844,7 @@ export class Core {
           .select(".y-axis-interaction")
           .on("draw", (event) => {
             this.yAxisInteractions[id].draw(
-              select(event.currentTarget).select("svg")
+              select(event.currentTarget).select("svg"),
             );
           });
 
@@ -854,7 +854,7 @@ export class Core {
             drawPlotArea(event, this.plotAreas[id]);
 
             this.plotAreaAnnotations[id].draw(
-              select(panes[id].ref.current).select(".plot-area-annotations")
+              select(panes[id].ref.current).select(".plot-area-annotations"),
             );
           });
 
@@ -921,7 +921,7 @@ export class Core {
           id,
           this.plotAreas,
           this.yElements,
-          this.yZooms
+          this.yZooms,
         );
       }
     });

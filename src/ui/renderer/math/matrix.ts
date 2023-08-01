@@ -35,7 +35,7 @@ export class Matrix {
     c: number,
     d: number,
     tx: number,
-    ty: number
+    ty: number,
   ): this {
     this.a = a;
     this.b = b;
@@ -173,7 +173,7 @@ export class Matrix {
     scaleY: number,
     rotation: number,
     skewX: number,
-    skewY: number
+    skewY: number,
   ): this {
     this.a = Math.cos(rotation + skewY) * scaleX;
     this.b = Math.sin(rotation + skewY) * scaleX;

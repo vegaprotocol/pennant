@@ -160,7 +160,7 @@ export class UI extends EventEmitter {
 
     this.separator.update(
       options.height - resolution * AXIS_HEIGHT,
-      options.width
+      options.width,
     );
 
     this.buyPriceText.visible = false;
@@ -204,13 +204,13 @@ export class UI extends EventEmitter {
 
         const k = Math.pow(
           2,
-          -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1)
+          -tempEvent.deltaY * 0.002 * (tempEvent.ctrlKey ? 10 : 1),
         );
 
         this.transform = clamp(
           this.transform * k,
           this.scaleExtent[0],
-          this.scaleExtent[1]
+          this.scaleExtent[1],
         );
 
         this.gesture.wheel = window.setTimeout(() => {
@@ -296,11 +296,11 @@ export class UI extends EventEmitter {
             this.transform = clamp(
               this.originalTransform * k,
               this.scaleExtent[0],
-              this.scaleExtent[1]
+              this.scaleExtent[1],
             );
 
             this.gesture.zoom(
-              clamp(this.transform, this.scaleExtent[0], this.scaleExtent[1])
+              clamp(this.transform, this.scaleExtent[0], this.scaleExtent[1]),
             );
           }
         }
@@ -348,7 +348,7 @@ export class UI extends EventEmitter {
     midPriceLabel: string,
     midPriceTitle: string,
     priceScale: ScaleLinear<number, number>,
-    volumeScale: ScaleLinear<number, number>
+    volumeScale: ScaleLinear<number, number>,
   ): void {
     this.prices = prices;
     this.volumes = volumes;
@@ -366,7 +366,7 @@ export class UI extends EventEmitter {
       width,
       height,
       resolution,
-      this.colors
+      this.colors,
     );
 
     this.verticalAxis.update(
@@ -374,7 +374,7 @@ export class UI extends EventEmitter {
       width,
       height,
       resolution,
-      this.colors
+      this.colors,
     );
 
     this.midMarketPriceLabel.update(
@@ -387,7 +387,7 @@ export class UI extends EventEmitter {
       resolution,
       this.colors,
       midPriceLabel,
-      midPriceTitle
+      midPriceTitle,
     );
 
     this.midPriceLine.update(width / 2, height, resolution);
@@ -397,7 +397,7 @@ export class UI extends EventEmitter {
       0,
       0,
       this.renderer.screen.width,
-      this.renderer.screen.height
+      this.renderer.screen.height,
     );
 
     if (this.lastEvent) {
@@ -440,7 +440,7 @@ export class UI extends EventEmitter {
         // TODO: Cache the result of this calculation
         const points = zip<number>(this.prices, this.volumes) as [
           number,
-          number
+          number,
         ][];
 
         const delaunay = Delaunay.from(points);
@@ -454,16 +454,16 @@ export class UI extends EventEmitter {
             Math.max(
               Math.min(
                 this.prices[index],
-                width - (resolution * this.auctionPriceText.width) / 2 - 2
+                width - (resolution * this.auctionPriceText.width) / 2 - 2,
               ),
               width / 2 +
                 (resolution * this.sellPriceText.width) / 2 +
-                resolution * 2
+                resolution * 2,
             ),
             height - (resolution * AXIS_HEIGHT) / 2,
             { x: 0.5, y: 0.5 },
             resolution,
-            this.colors
+            this.colors,
           );
 
           this.auctionVolumeText.update(
@@ -480,22 +480,22 @@ export class UI extends EventEmitter {
             Math.min(
               Math.max(
                 this.volumes[index],
-                this.auctionVolumeText.height / 2 + 2
+                this.auctionVolumeText.height / 2 + 2,
               ),
               height -
                 resolution * AXIS_HEIGHT -
                 this.auctionVolumeText.height / 2 -
-                2
+                2,
             ),
             { x: this.prices[index] > width / 2 ? 0 : 1, y: 0.5 },
             resolution,
-            this.colors
+            this.colors,
           );
 
           this.auctionIndicator.update(
             this.prices[index],
             this.volumes[index],
-            width
+            width,
           );
 
           this.auctionPriceText.visible = true;
@@ -521,7 +521,7 @@ export class UI extends EventEmitter {
               ? -1
               : bisectLeft(
                   this.prices,
-                  2 * this.priceScale(this.midPrice) - nearestX
+                  2 * this.priceScale(this.midPrice) - nearestX,
                 );
 
           sellIndex = index;
@@ -536,7 +536,7 @@ export class UI extends EventEmitter {
               ? -1
               : bisectRight(
                   this.prices,
-                  2 * this.priceScale(this.midPrice) - nearestX
+                  2 * this.priceScale(this.midPrice) - nearestX,
                 ) - 1;
 
           buyNearestX = nearestX;
@@ -548,16 +548,16 @@ export class UI extends EventEmitter {
           Math.min(
             Math.max(
               buyNearestX,
-              (resolution * this.buyPriceText.width) / 2 + 2
+              (resolution * this.buyPriceText.width) / 2 + 2,
             ),
             width / 2 -
               (resolution * this.buyPriceText.width) / 2 -
-              resolution * 2
+              resolution * 2,
           ),
           height - (resolution * AXIS_HEIGHT) / 2,
           { x: 0.5, y: 0.5 },
           resolution,
-          this.colors
+          this.colors,
         );
 
         this.buyVolumeText.update(
@@ -568,16 +568,16 @@ export class UI extends EventEmitter {
           Math.min(
             Math.max(
               this.volumes[buyIndex],
-              (resolution * this.buyVolumeText.height) / 2 + 2
+              (resolution * this.buyVolumeText.height) / 2 + 2,
             ),
             height -
               resolution * AXIS_HEIGHT -
               (resolution * this.buyVolumeText.height) / 2 -
-              2
+              2,
           ),
           { x: 1, y: 0.5 },
           resolution,
-          this.colors
+          this.colors,
         );
 
         this.sellPriceText.update(
@@ -585,16 +585,16 @@ export class UI extends EventEmitter {
           Math.max(
             Math.min(
               sellNearestX,
-              width - (resolution * this.sellPriceText.width) / 2 - 2
+              width - (resolution * this.sellPriceText.width) / 2 - 2,
             ),
             width / 2 +
               (resolution * this.sellPriceText.width) / 2 +
-              resolution * 2
+              resolution * 2,
           ),
           height - (resolution * AXIS_HEIGHT) / 2,
           { x: 0.5, y: 0.5 },
           resolution,
-          this.colors
+          this.colors,
         );
 
         this.sellVolumeText.update(
@@ -605,16 +605,16 @@ export class UI extends EventEmitter {
           Math.min(
             Math.max(
               this.volumes[sellIndex],
-              (resolution * this.sellVolumeText.height) / 2 + 2
+              (resolution * this.sellVolumeText.height) / 2 + 2,
             ),
             height -
               resolution * AXIS_HEIGHT -
               (resolution * this.sellVolumeText.height) / 2 -
-              2
+              2,
           ),
           { x: 0, y: 0.5 },
           resolution,
-          this.colors
+          this.colors,
         );
 
         const sellPricesPresent =
@@ -630,7 +630,7 @@ export class UI extends EventEmitter {
           0,
           buyNearestX,
           height - resolution * AXIS_HEIGHT,
-          this.colors.textPrimary
+          this.colors.textPrimary,
         );
 
         this.sellOverlay.update(
@@ -638,7 +638,7 @@ export class UI extends EventEmitter {
           0,
           width - sellNearestX,
           height - resolution * AXIS_HEIGHT,
-          this.colors.textPrimary
+          this.colors.textPrimary,
         );
 
         // TODO: Changing visibility in groups like this suggests they should be in a Container

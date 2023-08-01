@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 export function useWhyDidYouUpdate(
   name: string,
-  props: { [index: string]: any }
+  props: { [index: string]: any },
 ) {
   const previousProps = useRef<{ [index: string]: any }>({});
 

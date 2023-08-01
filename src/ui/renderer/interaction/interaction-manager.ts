@@ -96,13 +96,13 @@ export class InteractionManager extends EventEmitter {
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
     func?: InteractionCallback,
-    hitTest?: boolean
+    hitTest?: boolean,
   ): boolean {
     const hit = this.search.findHit(
       interactionEvent,
       displayObject,
       func,
-      hitTest
+      hitTest,
     );
 
     const delayedEvents = this.delayedEvents;
@@ -227,23 +227,23 @@ export class InteractionManager extends EventEmitter {
       self.document.addEventListener(
         "pointermove",
         this.onPointerMove,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "pointerdown",
         this.onPointerDown,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
 
       this.interactionDOMElement.addEventListener(
         "pointerleave",
         this.onPointerOut,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "pointerover",
         this.onPointerOver,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       /*       self.addEventListener(
         "pointercancel",
@@ -253,46 +253,46 @@ export class InteractionManager extends EventEmitter {
       self.addEventListener(
         "pointerup",
         this.onPointerUp,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
     } else {
       self.document.addEventListener(
         "mousemove",
         this.onPointerMove,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "mousedown",
         this.onPointerDown,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "mouseout",
         this.onPointerOut,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "mouseover",
         this.onPointerOver,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       self.addEventListener(
         "mouseup",
         this.onPointerUp,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
     }
 
     this.interactionDOMElement.addEventListener(
       "wheel",
       this.onWheel,
-      this._eventListenerOptions
+      this._eventListenerOptions,
     );
 
     this.interactionDOMElement.addEventListener(
       "dblclick",
       this.onDblClick,
-      this._eventListenerOptions
+      this._eventListenerOptions,
     );
 
     // always look directly for touch events so that we can provide original data
@@ -302,7 +302,7 @@ export class InteractionManager extends EventEmitter {
       this.interactionDOMElement.addEventListener(
         "touchstart",
         this.onPointerDown,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       /*       this.interactionDOMElement.addEventListener(
         "touchcancel",
@@ -312,12 +312,12 @@ export class InteractionManager extends EventEmitter {
       this.interactionDOMElement.addEventListener(
         "touchend",
         this.onPointerUp,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
       this.interactionDOMElement.addEventListener(
         "touchmove",
         this.onPointerMove,
-        this._eventListenerOptions
+        this._eventListenerOptions,
       );
     }
   }
@@ -331,7 +331,7 @@ export class InteractionManager extends EventEmitter {
   private delayDispatchEvent(
     displayObject: DisplayObject,
     eventString: string,
-    eventData: InteractionEvent
+    eventData: InteractionEvent,
   ): void {
     this.delayedEvents.push({ displayObject, eventString, eventData });
   }
@@ -349,7 +349,7 @@ export class InteractionManager extends EventEmitter {
       const interactionEvent = this.configureInteractionEventForDOMEvent(
         this.eventData,
         event,
-        interactionData
+        interactionData,
       );
 
       interactionEvent.data!.originalEvent = originalEvent;
@@ -358,7 +358,7 @@ export class InteractionManager extends EventEmitter {
         interactionEvent,
         this.lastObjectRendered,
         this.processPointerMove,
-        true
+        true,
       );
 
       this.emit("pointermove", interactionEvent);
@@ -372,7 +372,7 @@ export class InteractionManager extends EventEmitter {
   private processPointerMove = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     const data = interactionEvent.data;
 
@@ -398,7 +398,7 @@ export class InteractionManager extends EventEmitter {
   private processPointerOverOut = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     const data = interactionEvent.data;
 
@@ -453,7 +453,7 @@ export class InteractionManager extends EventEmitter {
       const interactionEvent = this.configureInteractionEventForDOMEvent(
         this.eventData,
         event,
-        interactionData
+        interactionData,
       );
 
       interactionEvent.data!.originalEvent = originalEvent;
@@ -462,7 +462,7 @@ export class InteractionManager extends EventEmitter {
         interactionEvent,
         this.lastObjectRendered,
         this.processPointerDown,
-        true
+        true,
       );
 
       this.emit("pointerdown", interactionEvent);
@@ -480,7 +480,7 @@ export class InteractionManager extends EventEmitter {
   private processPointerDown = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     const data = interactionEvent.data;
     const id = interactionEvent?.data?.identifier ?? -1;
@@ -505,7 +505,7 @@ export class InteractionManager extends EventEmitter {
         this.dispatchEvent(
           displayObject,
           isRightButton ? "rightdown" : "mousedown",
-          interactionEvent
+          interactionEvent,
         );
       }
     }
@@ -527,7 +527,7 @@ export class InteractionManager extends EventEmitter {
     const interactionEvent = this.configureInteractionEventForDOMEvent(
       this.eventData,
       event,
-      interactionData
+      interactionData,
     );
 
     interactionEvent.data!.originalEvent = event;
@@ -536,7 +536,7 @@ export class InteractionManager extends EventEmitter {
       interactionEvent,
       this.lastObjectRendered,
       this.processPointerOverOut,
-      false
+      false,
     );
 
     this.emit("pointerout", interactionEvent);
@@ -560,7 +560,7 @@ export class InteractionManager extends EventEmitter {
     const interactionEvent = this.configureInteractionEventForDOMEvent(
       this.eventData,
       event,
-      interactionData
+      interactionData,
     );
 
     interactionEvent.data!.originalEvent = event;
@@ -582,7 +582,7 @@ export class InteractionManager extends EventEmitter {
   private processPointerUp = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     const data = interactionEvent.data;
 
@@ -612,14 +612,14 @@ export class InteractionManager extends EventEmitter {
         this.dispatchEvent(
           displayObject,
           isRightButton ? "rightup" : "mouseup",
-          interactionEvent
+          interactionEvent,
         );
 
         if (isDown) {
           this.dispatchEvent(
             displayObject,
             isRightButton ? "rightclick" : "click",
-            interactionEvent
+            interactionEvent,
           );
           // because we can confirm that the mousedown happened on this object, flag for later emit of pointertap
           isMouseTap = true;
@@ -628,7 +628,7 @@ export class InteractionManager extends EventEmitter {
         this.dispatchEvent(
           displayObject,
           isRightButton ? "rightupoutside" : "mouseupoutside",
-          interactionEvent
+          interactionEvent,
         );
       }
       // update the down state of the tracking data
@@ -673,7 +673,7 @@ export class InteractionManager extends EventEmitter {
   private onPointerComplete = (
     originalEvent: InteractivePointerEvent,
     cancelled: boolean,
-    func: InteractionCallback
+    func: InteractionCallback,
   ): void => {
     const events = this.normalizeToPointerData(originalEvent);
 
@@ -692,7 +692,7 @@ export class InteractionManager extends EventEmitter {
       const interactionEvent = this.configureInteractionEventForDOMEvent(
         this.eventData,
         event,
-        interactionData
+        interactionData,
       );
 
       interactionEvent.data!.originalEvent = originalEvent;
@@ -702,12 +702,12 @@ export class InteractionManager extends EventEmitter {
         interactionEvent,
         this.lastObjectRendered,
         func,
-        cancelled || !eventAppend
+        cancelled || !eventAppend,
       );
 
       this.emit(
         cancelled ? "pointercancel" : `pointerup${eventAppend}`,
-        interactionEvent
+        interactionEvent,
       );
 
       if (event.pointerType === "mouse" || event.pointerType === "pen") {
@@ -715,12 +715,12 @@ export class InteractionManager extends EventEmitter {
 
         this.emit(
           isRightButton ? `rightup${eventAppend}` : `mouseup${eventAppend}`,
-          interactionEvent
+          interactionEvent,
         );
       } else if (event.pointerType === "touch") {
         this.emit(
           cancelled ? "touchcancel" : `touchend${eventAppend}`,
-          interactionEvent
+          interactionEvent,
         );
 
         this.releaseInteractionDataForPointerId(event.pointerId);
@@ -739,7 +739,7 @@ export class InteractionManager extends EventEmitter {
     const interactionEvent = this.configureInteractionEventForDOMEvent(
       this.eventData,
       event,
-      interactionData
+      interactionData,
     );
 
     interactionEvent.data!.originalEvent = originalEvent;
@@ -748,14 +748,14 @@ export class InteractionManager extends EventEmitter {
       interactionEvent,
       this.lastObjectRendered,
       this.processDblClick,
-      true
+      true,
     );
   };
 
   private processDblClick = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     if (hit) {
       interactionEvent.data?.originalEvent?.preventDefault();
@@ -776,7 +776,7 @@ export class InteractionManager extends EventEmitter {
       const interactionEvent = this.configureInteractionEventForDOMEvent(
         this.eventData,
         event,
-        interactionData
+        interactionData,
       );
 
       interactionEvent.data!.originalEvent = originalEvent;
@@ -785,7 +785,7 @@ export class InteractionManager extends EventEmitter {
         interactionEvent,
         this.lastObjectRendered,
         this.processWheel,
-        true
+        true,
       );
 
       this.emit("pointermove", interactionEvent);
@@ -795,7 +795,7 @@ export class InteractionManager extends EventEmitter {
   private processWheel = (
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
-    hit?: boolean
+    hit?: boolean,
   ): void => {
     if (hit) {
       interactionEvent.data?.originalEvent?.preventDefault();
@@ -816,7 +816,7 @@ export class InteractionManager extends EventEmitter {
   private dispatchEvent(
     displayObject: DisplayObject,
     eventString: string,
-    eventData: InteractionEvent
+    eventData: InteractionEvent,
   ): void {
     if (
       !eventData.stopPropagationHint ||
@@ -836,14 +836,14 @@ export class InteractionManager extends EventEmitter {
   private configureInteractionEventForDOMEvent(
     interactionEvent: InteractionEvent,
     pointerEvent: PointerEvent,
-    interactionData: InteractionData
+    interactionData: InteractionData,
   ): InteractionEvent {
     interactionEvent.data = interactionData;
 
     this.mapPositionToPoint(
       interactionData.global,
       pointerEvent.clientX,
-      pointerEvent.clientY
+      pointerEvent.clientY,
     );
 
     // Not really sure why this is happening, but it's how a previous version handled things
@@ -859,7 +859,7 @@ export class InteractionManager extends EventEmitter {
   }
 
   private normalizeToPointerData(
-    event: InteractivePointerEvent
+    event: InteractivePointerEvent,
   ): PennantPointerEvent[] {
     const normalizedEvents = [];
 
@@ -941,7 +941,7 @@ export class InteractionManager extends EventEmitter {
   }
 
   private getInteractionDataForPointerId(
-    event: PennantPointerEvent
+    event: PennantPointerEvent,
   ): InteractionData {
     const pointerId = event.pointerId;
 

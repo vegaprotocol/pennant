@@ -35,7 +35,7 @@ export class BarElement implements PositionalElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio: number = 1
+    pixelRatio: number = 1,
   ) {
     ctx.beginPath();
 
@@ -45,7 +45,7 @@ export class BarElement implements PositionalElement {
       xScale(this.x.getTime() - this.width / 2),
       yScale(this.y),
       pixelWidth,
-      Math.abs(yScale(this.height) - yScale(0))
+      Math.abs(yScale(this.height) - yScale(0)),
     );
 
     ctx.fillStyle = this.fill;

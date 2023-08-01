@@ -14,7 +14,7 @@ function addXAxisTooltipPath(
   pixelRatio: number,
   position: Date | null,
   interval: Interval,
-  colors: Colors
+  colors: Colors,
 ) {
   if (position) {
     const x = xScale(position);
@@ -72,7 +72,7 @@ export class XAxisTooltipElement implements RenderableElement {
     pixelRatio: number = 1,
     position: Date | null,
     interval: Interval,
-    colors: Colors
+    colors: Colors,
   ) {
     addXAxisTooltipPath(ctx, xScale, pixelRatio, position, interval, colors);
   }

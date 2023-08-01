@@ -13,7 +13,7 @@ function createGradTexture(
   colorStop2: number,
   size = 600,
   offset = 0,
-  invert = false
+  invert = false,
 ) {
   if (!invert) {
     offset = 0;
@@ -44,14 +44,14 @@ const createTexture = memoize(
     colorStop2: number,
     size: number,
     offset = 0,
-    invert = false
+    invert = false,
   ) => {
     const gradTexture = createGradTexture(
       colorStop1,
       colorStop2,
       size,
       offset,
-      invert
+      invert,
     );
 
     gradTexture.orig = new Rectangle(0, 0, 1, size + offset);
@@ -59,7 +59,7 @@ const createTexture = memoize(
 
     return gradTexture;
   },
-  (...args) => values(args).join("_")
+  (...args) => values(args).join("_"),
 );
 
 /**
@@ -76,7 +76,7 @@ export class LineCurve extends Container {
     stroke: number = 0,
     fill: number = 0xffffff,
     backgroundSurface: number = 0xffffff,
-    curve: CurveFactory = curveLinear
+    curve: CurveFactory = curveLinear,
   ) {
     super();
 
@@ -97,7 +97,7 @@ export class LineCurve extends Container {
     stroke: number = 0,
     backgroundSurface: number = 0,
     invert: boolean,
-    startPrice: number
+    startPrice: number,
   ): void {
     this.stroke = stroke;
     this.backgroundSurface = backgroundSurface;

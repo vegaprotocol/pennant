@@ -14,7 +14,7 @@ describe("ZoomTransform", () => {
     const transform = zoomIdentity.translate(2, 3);
     expect(transform.translate(-4, 4)).toEqual(new ZoomTransform(1, -2, 7));
     expect(transform.scale(2).translate(-4, 4)).toEqual(
-      new ZoomTransform(2, -6, 11)
+      new ZoomTransform(2, -6, 11),
     );
   });
 

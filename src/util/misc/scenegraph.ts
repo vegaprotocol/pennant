@@ -42,7 +42,7 @@ export function getAreaConfig(
   y: string,
   y2: string,
   fill: string | Gradient | undefined,
-  line: Color | undefined
+  line: Color | undefined,
 ) {
   if (y2 === undefined) {
     return {
@@ -67,7 +67,7 @@ export function getBarConfig(
   width: number,
   fill: string | null,
   stroke: string | null,
-  lineWidth: number | null
+  lineWidth: number | null,
 ) {
   let base = 0;
 
@@ -90,7 +90,7 @@ export function getLineConfig(
   data: any,
   x: string,
   y: string,
-  color: string | Gradient | undefined
+  color: string | Gradient | undefined,
 ) {
   return {
     points: data.map((d: any) => [d[x], d[y]]),
@@ -104,7 +104,7 @@ export function getRuleConfig(
   x2: string,
   y: string,
   y2: string,
-  color: string | null
+  color: string | null,
 ) {
   if (x === undefined) {
     return {
@@ -141,7 +141,7 @@ export function getTickConfig(
   y: string,
   width: number,
   color: string | null,
-  orient: "left" | "right"
+  orient: "left" | "right",
 ) {
   return {
     x: d[x],

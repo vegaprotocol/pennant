@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 
 export function parseVegaDecimal(
   value: string,
-  decimalPlaces: number = 0
+  decimalPlaces: number = 0,
 ): number {
   return new BigNumber(value).dividedBy(Math.pow(10, decimalPlaces)).toNumber();
 }
@@ -14,7 +14,7 @@ export function formatNumber(value: string, decimalPlaces: number): string {
   return numberWithCommas(
     new BigNumber(value)
       .dividedBy(Math.pow(10, decimalPlaces))
-      .toFixed(decimalPlaces)
+      .toFixed(decimalPlaces),
   );
 }
 

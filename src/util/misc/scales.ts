@@ -4,7 +4,7 @@ import { extent } from "d3-array";
 export function calculateScales(
   pane: BaseSpec,
   data: any[],
-  yEncodingFields: string[]
+  yEncodingFields: string[],
 ): [number, number] {
   if (!pane) {
     return [0, 1];
@@ -12,7 +12,7 @@ export function calculateScales(
 
   if (yEncodingFields) {
     const mappedData = yEncodingFields.flatMap(
-      (field: any) => data.map((d: any) => d[field]) as unknown as number
+      (field: any) => data.map((d: any) => d[field]) as unknown as number,
     );
 
     const domain = extent(mappedData) as [number, number];

@@ -659,7 +659,7 @@ function getSingleColor(color: string | number): string {
 function getColor(color: (string | number)[]): string[];
 function getColor(color: string | number): string;
 function getColor(
-  color: string | number | (string | number)[]
+  color: string | number | (string | number)[],
 ): string | string[] {
   if (!Array.isArray(color)) {
     return getSingleColor(color);
@@ -708,7 +708,7 @@ function areArraysEqual<T>(array1: T[], array2: T[]): boolean {
 function deepCopyProperties(
   target: Record<string, any>,
   source: Record<string, any>,
-  propertyObj: Record<string, any>
+  propertyObj: Record<string, any>,
 ): void {
   for (const prop in propertyObj) {
     if (Array.isArray(source[prop])) {

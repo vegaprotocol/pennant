@@ -21,7 +21,7 @@ let canvas: null | HTMLCanvasElement = null;
 function tintWithMultiply(
   texture: Texture,
   color: number,
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
 ): void {
   const context = canvas.getContext("2d");
   const crop = texture._frame.clone();
@@ -54,7 +54,7 @@ function tintWithMultiply(
       0,
       0,
       crop.width,
-      crop.height
+      crop.height,
     );
 
     context.globalCompositeOperation = "destination-atop";
@@ -68,7 +68,7 @@ function tintWithMultiply(
       0,
       0,
       crop.width,
-      crop.height
+      crop.height,
     );
     context.restore();
   }
@@ -149,7 +149,7 @@ export class GraphicsRenderer {
         renderer.setContextTransform(
           transform.copyTo(this._tempMatrix).append(data.matrix),
           true,
-          1
+          1,
         );
       }
 
@@ -197,7 +197,7 @@ export class GraphicsRenderer {
             tempShape,
             lineStyle,
             contextStrokeStyle,
-            context
+            context,
           );
         }
       } else if (data.type === SHAPES.LINE) {
@@ -246,7 +246,7 @@ export class GraphicsRenderer {
             tempShape.x,
             tempShape.y,
             tempShape.width,
-            tempShape.height
+            tempShape.height,
           );
         }
 
@@ -260,7 +260,7 @@ export class GraphicsRenderer {
             tempShape.x - alignmentOffset,
             tempShape.y - alignmentOffset,
             width,
-            height
+            height,
           );
         }
       } else if (data.type === SHAPES.CIRCLE) {
@@ -290,7 +290,7 @@ export class GraphicsRenderer {
     shape: Polygon,
     lineStyle: LineStyle,
     contextStrokeStyle: string | CanvasPattern,
-    context: CanvasRenderingContext2D
+    context: CanvasRenderingContext2D,
   ): void {
     context.globalAlpha = lineStyle.alpha;
     context.strokeStyle = contextStrokeStyle;
@@ -300,7 +300,7 @@ export class GraphicsRenderer {
 
   private _calcCanvasStyle(
     style: FillStyle,
-    tint: number
+    tint: number,
   ): string | CanvasPattern {
     let res;
 

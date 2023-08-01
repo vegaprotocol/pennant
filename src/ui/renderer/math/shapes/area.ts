@@ -11,7 +11,7 @@ export class Area {
   constructor(
     data: [number, number, number][] = [],
     curve: CurveFactory = curveLinear,
-    y0: number = 0
+    y0: number = 0,
   ) {
     this.data = data;
     this.curve = curve;

@@ -13,7 +13,7 @@
 export function clearCanvas(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-  fillStyle?: string
+  fillStyle?: string,
 ) {
   ctx.save();
   ctx.resetTransform();

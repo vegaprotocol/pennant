@@ -22,7 +22,7 @@ export class Text extends Sprite {
   constructor(
     text: string,
     style: Partial<ITextStyle> | TextStyle,
-    canvas?: HTMLCanvasElement
+    canvas?: HTMLCanvasElement,
   ) {
     if (!canvas) {
       canvas = document.createElement("canvas");
@@ -58,7 +58,7 @@ export class Text extends Sprite {
       this._text || " ",
       this._style,
       this._style.wordWrap,
-      this.canvas
+      this.canvas,
     );
 
     const width = measured.width;
@@ -122,7 +122,7 @@ export class Text extends Sprite {
           lines[i],
           linePositionX + style.padding,
           linePositionY + style.padding,
-          true
+          true,
         );
       }
 
@@ -130,7 +130,7 @@ export class Text extends Sprite {
         this.drawLetterSpacing(
           lines[i],
           linePositionX + style.padding,
-          linePositionY + style.padding
+          linePositionY + style.padding,
         );
       }
     }
@@ -151,7 +151,7 @@ export class Text extends Sprite {
   private _generateFillStyle(
     style: TextStyle,
     lines: string[],
-    metrics: TextMetrics
+    metrics: TextMetrics,
   ): string | CanvasGradient | CanvasPattern {
     // TODO: Can't have different types for getter and setter. The getter shouldn't have the number type as
     //       the setter converts to string. See this thread for more details:
@@ -215,7 +215,7 @@ export class Text extends Sprite {
         width / 2,
         padding,
         width / 2,
-        height + padding
+        height + padding,
       );
 
       // we need to repeat the gradient so that each individual line of text has the same vertical gradient effect
@@ -243,7 +243,7 @@ export class Text extends Sprite {
 
           let globalStop = Math.min(
             1,
-            Math.max(0, thisLineTop / height + lineStop * gradStopLineHeight)
+            Math.max(0, thisLineTop / height + lineStop * gradStopLineHeight),
           );
 
           // There's potential for floating point precision issues at the seams between gradient repeats.
@@ -257,7 +257,7 @@ export class Text extends Sprite {
         padding,
         height / 2,
         width + padding,
-        height / 2
+        height / 2,
       );
 
       // can just evenly space out the gradients in this case, as multiple lines makes no difference
@@ -285,7 +285,7 @@ export class Text extends Sprite {
     text: string,
     x: number,
     y: number,
-    isStroke = false
+    isStroke = false,
   ): void {
     const style = this._style;
 

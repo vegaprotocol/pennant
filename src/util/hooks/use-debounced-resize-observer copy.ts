@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import useResizeObserver, { ObservedSize } from "./use-resize-observer";
 
 export function useDebouncedResizeObserver<T extends HTMLElement>(
-  wait: number
+  wait: number,
 ) {
   const [size, setSize] = useState<ObservedSize>({
     width: undefined,
@@ -15,7 +15,7 @@ export function useDebouncedResizeObserver<T extends HTMLElement>(
 
   const onResize = useMemo(
     () => debounce(setSize, wait, { leading: true }),
-    [wait]
+    [wait],
   );
 
   const { ref } = useResizeObserver<T>({ onResize });

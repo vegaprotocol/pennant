@@ -6,7 +6,7 @@ function addGridPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   pixelRatio: number = 1,
-  color: string
+  color: string,
 ) {
   const xRange = xScale.range().map(Math.round);
   const yRange = yScale.range().map(Math.round);
@@ -60,7 +60,7 @@ export class GridElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio: number = 1,
-    color: string
+    color: string,
   ) {
     addGridPath(ctx, xScale, yScale, pixelRatio, color);
   }

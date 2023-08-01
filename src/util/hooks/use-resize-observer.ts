@@ -40,7 +40,7 @@ type SubscriberResponse = SubscriberCleanup | void;
 // seem to work with module imports and I had no more time to spend on this...
 function useResolvedElement<T extends HTMLElement>(
   subscriber: (element: T) => SubscriberResponse,
-  refOrElement?: T | RefObject<T> | null
+  refOrElement?: T | RefObject<T> | null,
 ): RefCallback<T> {
   const callbackRefElement = useRef<T | null>(null);
   const refCallback = useCallback<RefCallback<T>>((element) => {
@@ -110,7 +110,7 @@ function useResizeObserver<T extends HTMLElement>(
   opts: {
     ref?: RefObject<T> | T | null | undefined;
     onResize?: ResizeHandler;
-  } = {}
+  } = {},
 ): HookResponse<T> {
   // Saving the callback as a ref. With this, I don't need to put onResize in the
   // effect dep array, and just passing in an anonymous function without memoising
@@ -223,7 +223,7 @@ function useResizeObserver<T extends HTMLElement>(
         ? {
             box: "device-pixel-content-box",
           }
-        : {}
+        : {},
     );
 
     return () => {
@@ -249,7 +249,7 @@ function useResizeObserver<T extends HTMLElement>(
       size ? size.height : null,
       size ? size.devicePixelContentBoxSizeInlineSize : null,
       size ? size.devicePixelContentBoxSizeBlockSize : null,
-    ]
+    ],
   );
 }
 

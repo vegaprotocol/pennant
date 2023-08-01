@@ -13,7 +13,7 @@ function createGradTexture(
   colorStop2: number,
   size = 600,
   offset = 0,
-  invert = false
+  invert = false,
 ) {
   if (!invert) {
     offset = 0;
@@ -44,32 +44,32 @@ const createTexture = memoize(
     colorStop2: number,
     size: number,
     offset = 0,
-    invert = false
+    invert = false,
   ) => {
     const gradTexture = createGradTexture(
       colorStop1,
       colorStop2,
       size,
       offset,
-      invert
+      invert,
     );
 
     gradTexture.orig = new Rectangle(
       0,
       0,
       1,
-      Math.max(1, Math.abs(size + offset))
+      Math.max(1, Math.abs(size + offset)),
     );
     gradTexture._frame = new Rectangle(
       0,
       0,
       1,
-      Math.max(1, Math.abs(size + offset))
+      Math.max(1, Math.abs(size + offset)),
     );
 
     return gradTexture;
   },
-  (...args) => values(args).join("_")
+  (...args) => values(args).join("_"),
 );
 
 /**
@@ -88,7 +88,7 @@ export class PriceCurve extends Container {
     stroke: number = 0,
     fill: number = 0xffffff,
     backgroundSurface: number = 0xffffff,
-    curve: CurveFactory = curveStepBefore
+    curve: CurveFactory = curveStepBefore,
   ) {
     super();
 
@@ -112,7 +112,7 @@ export class PriceCurve extends Container {
     stroke: number = 0,
     backgroundSurface: number = 0,
     invert: boolean,
-    startPrice: number
+    startPrice: number,
   ): void {
     this.fill = fill;
     this.stroke = stroke;
@@ -126,13 +126,13 @@ export class PriceCurve extends Container {
         this.backgroundSurface,
         height,
         startPrice,
-        invert
+        invert,
       ),
     });
 
     this.area.drawArea(
       points.map((d) => [d[0], startPrice, d[1]]),
-      this.curve
+      this.curve,
     );
     this.area.endFill();
 

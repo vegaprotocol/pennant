@@ -19,7 +19,7 @@ import { Colors } from "./helpers";
 import { UI } from "./ui";
 
 export function isDateData(
-  array: ReadonlyArray<Row>
+  array: ReadonlyArray<Row>,
 ): array is ReadonlyArray<[Date, ...number[]]> {
   return typeof array[0][0] !== "number";
 }
@@ -176,7 +176,7 @@ export class Chart extends EventEmitter {
 
   private onZoomHorizontalAxis = (
     t: ZoomTransform,
-    point: [number, number]
+    point: [number, number],
   ) => {
     const k = t.k / this.lastXZoomTransform.k;
 
@@ -229,9 +229,9 @@ export class Chart extends EventEmitter {
       this.series = stack(
         _data.rows.map((row) =>
           Object.fromEntries(
-            _data.cols.map((col, i) => [col, row[i] as number])
-          )
-        )
+            _data.cols.map((col, i) => [col, row[i] as number]),
+          ),
+        ),
       ).map((s) => Object.assign(s, { i: _data.rows.map((row) => row[0]) }));
 
       const priceExtent = extent(this.series.flat(2)) as [number, number];

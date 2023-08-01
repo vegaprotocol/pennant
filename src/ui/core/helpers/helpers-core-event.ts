@@ -22,7 +22,7 @@ export function handleXAxisDrag(
   plotAreas: Panes<PlotArea>,
   yAxes: Panes<YAxis>,
   onBoundsChanged: (bounds: [Date, Date]) => void,
-  onRedraw: () => void
+  onRedraw: () => void,
 ) {
   xElement.call(
     xZoom.scaleBy,
@@ -32,7 +32,7 @@ export function handleXAxisDrag(
         ? xScale.range()[1] - Y_AXIS_WIDTH
         : (xScale.range()[1] - xScale.range()[0]) / 2,
       0,
-    ]
+    ],
   );
 
   const xr = xTransform().rescaleX(xScale);
@@ -59,12 +59,12 @@ export function handleYAxisDrag(
   plotArea: PlotArea,
   yAxis: YAxis,
   onFreePanChanged: (isFreePan: boolean) => void,
-  onRedraw: () => void
+  onRedraw: () => void,
 ): void {
   yElement.call(
     yZoom.scaleBy,
     Math.pow(2, -e.dy / (yScale.range()[0] - yScale.range()[1])),
-    [0, (yScale.range()[0] - yScale.range()[1]) / 2]
+    [0, (yScale.range()[0] - yScale.range()[1]) / 2],
   );
 
   const yr = yTransform().rescaleY(yScale);
@@ -85,7 +85,7 @@ export function measureXAxis(
   yAxes: Panes<YAxis>,
   plotAreas: Panes<PlotArea>,
   dates: Date[],
-  onBoundsChanged: (bounds: [Date, Date]) => void
+  onBoundsChanged: (bounds: [Date, Date]) => void,
 ) {
   const { width, pixelRatio } = event.detail;
 
@@ -153,7 +153,7 @@ export function handleZoomend(
   xAxis: XAxis,
   yAxis: YAxis,
   id: string,
-  onRedraw: () => void
+  onRedraw: () => void,
 ) {
   const index = plotAreas[id].getIndex(offset[0]);
 
@@ -174,7 +174,7 @@ export function handleZoomend(
 export function handleZoomstart(
   plotAreas: Panes<PlotArea>,
   yAxes: Panes<YAxis>,
-  xAxis: XAxis
+  xAxis: XAxis,
 ) {
   for (const plotArea of Object.values(plotAreas)) {
     plotArea.crosshair([null, null]);
@@ -197,7 +197,7 @@ export function measureYAxis(
   yAxis: YAxis,
   isFreePan: boolean,
   id: string,
-  resetYAxis: (id: string) => void
+  resetYAxis: (id: string) => void,
 ) {
   const { height, pixelRatio } = event.detail;
 
@@ -216,7 +216,7 @@ export function measureYAxis(
 
 export function drawPlotAreaInteraction(
   event: any,
-  plotAreaInteraction: PlotAreaInteraction
+  plotAreaInteraction: PlotAreaInteraction,
 ) {
   plotAreaInteraction.draw(select(event.currentTarget).select("svg"));
 }
@@ -252,7 +252,7 @@ export function handleMouseout(
   xAxis: XAxis,
   yAxes: Panes<YAxis>,
   onMouseout: () => void,
-  onRedraw: () => void
+  onRedraw: () => void,
 ) {
   for (const plotArea of Object.values(plotAreas)) {
     plotArea.crosshair([null, null]);
@@ -276,7 +276,7 @@ export function handleMousemove(
   xAxis: XAxis,
   id: string,
   onMousemove: (index: number, id: string) => void,
-  onRedraw: () => void
+  onRedraw: () => void,
 ) {
   // Calculate index of data item
   const index = plotAreas[id].getIndex(offset[0]);
@@ -324,7 +324,7 @@ export function handleZoom(
   onBoundsChanged: (bounds: [Date, Date]) => void,
   onRedraw: () => void,
   onFetchData: (from: Date, to: Date) => void,
-  onIsPinnedChanged: (isPinned: boolean) => void
+  onIsPinnedChanged: (isPinned: boolean) => void,
 ) {
   if (t.k === 1) {
     xElement.call(xZoom.translateBy, t.x / xTransform().k, 0);
@@ -340,7 +340,7 @@ export function handleZoom(
           id,
           plotAreas,
           yElements,
-          yZooms
+          yZooms,
         );
       });
     }
@@ -372,7 +372,7 @@ export function handleZoom(
           id,
           plotAreas,
           yElements,
-          yZooms
+          yZooms,
         );
       });
     }

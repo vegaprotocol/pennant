@@ -42,7 +42,7 @@ export const IndicatorInfo = ({
                 },
                 {
                   danger: d.intent === "danger",
-                }
+                },
               )}
               {...(d.color && {
                 style: { color: d.color },

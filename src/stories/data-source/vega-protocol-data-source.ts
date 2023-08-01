@@ -96,7 +96,7 @@ export class VegaDataSource implements DataSource {
   constructor(
     client: ApolloClient<object>,
     marketId: string,
-    partyId: null | string = null
+    partyId: null | string = null,
   ) {
     this.client = client;
     this.marketId = marketId;
@@ -115,7 +115,7 @@ export class VegaDataSource implements DataSource {
             marketId: this.marketId,
           },
           fetchPolicy: "no-cache",
-        }
+        },
       );
 
       if (data && data.market && data.market.data) {
@@ -128,15 +128,15 @@ export class VegaDataSource implements DataSource {
           priceMonitoringBounds = data.market.data.priceMonitoringBounds.map(
             (bounds) => ({
               maxValidPrice: Number(
-                addDecimal(bounds.maxValidPrice, this._decimalPlaces)
+                addDecimal(bounds.maxValidPrice, this._decimalPlaces),
               ),
               minValidPrice: Number(
-                addDecimal(bounds.minValidPrice, this._decimalPlaces)
+                addDecimal(bounds.minValidPrice, this._decimalPlaces),
               ),
               referencePrice: Number(
-                addDecimal(bounds.referencePrice, this._decimalPlaces)
+                addDecimal(bounds.referencePrice, this._decimalPlaces),
               ),
-            })
+            }),
           );
         }
 
@@ -187,7 +187,7 @@ export class VegaDataSource implements DataSource {
           .map((edge) => edge?.node)
           .filter((node): node is CandleFieldsFragment => !!node)
           .map((node) =>
-            parseCandle(node, decimalPlaces, positionDecimalPlaces)
+            parseCandle(node, decimalPlaces, positionDecimalPlaces),
           );
 
         return candles;
@@ -204,7 +204,7 @@ export class VegaDataSource implements DataSource {
    */
   subscribeData(
     interval: PennantInterval,
-    onSubscriptionData: (data: Candle) => void
+    onSubscriptionData: (data: Candle) => void,
   ) {
     const res = this.client.subscribe<
       CandlesEventsSubscription,
@@ -222,7 +222,7 @@ export class VegaDataSource implements DataSource {
         const candle = parseCandle(
           data.candles,
           this.decimalPlaces,
-          this.positionDecimalPlaces
+          this.positionDecimalPlaces,
         );
 
         onSubscriptionData(candle);
@@ -241,7 +241,7 @@ export class VegaDataSource implements DataSource {
 function parseCandle(
   candle: CandleFieldsFragment,
   decimalPlaces: number,
-  positionDecimalPlaces: number
+  positionDecimalPlaces: number,
 ): Candle {
   return {
     date: new Date(candle.periodStart),

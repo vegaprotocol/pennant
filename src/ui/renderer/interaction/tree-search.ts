@@ -17,7 +17,7 @@ export class TreeSearch {
     displayObject: DisplayObject,
     func?: InteractionCallback,
     hitTest?: boolean,
-    interactive?: boolean
+    interactive?: boolean,
   ): boolean {
     if (!displayObject || !displayObject.visible || !interactionEvent.data) {
       return false;
@@ -67,7 +67,7 @@ export class TreeSearch {
           child,
           func,
           hitTest,
-          interactiveParent
+          interactiveParent,
         );
 
         if (childHit) {
@@ -129,14 +129,14 @@ export class TreeSearch {
     interactionEvent: InteractionEvent,
     displayObject: DisplayObject,
     func?: InteractionCallback,
-    hitTest?: boolean
+    hitTest?: boolean,
   ): boolean {
     return this.recursiveFindHit(
       interactionEvent,
       displayObject,
       func,
       hitTest,
-      false
+      false,
     );
   }
 }

@@ -59,7 +59,7 @@ export class VerticalAxis extends Container {
     width: number,
     height: number,
     resolution: number = 1,
-    colors: VerticalAxisColors
+    colors: VerticalAxisColors,
   ) {
     this.overlay.clear();
     this.overlay.beginFill(colors.backgroundSurface, 0.7);
@@ -68,7 +68,7 @@ export class VerticalAxis extends Container {
       width - resolution * AXIS_WIDTH,
       0,
       resolution * AXIS_WIDTH,
-      height
+      height,
     );
 
     this.overlay.endFill();
@@ -78,15 +78,15 @@ export class VerticalAxis extends Container {
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1),
     );
 
     for (const node of enter) {
@@ -145,7 +145,7 @@ export class VerticalAxis extends Container {
       [
         [0, 0],
         [100, 100],
-      ]
+      ],
     );
 
     this.emit("zoom", { transform: this.zoom.__zoom, point: p });
@@ -175,15 +175,15 @@ export class VerticalAxis extends Container {
             this.zoom.translate(
               this.zoom.__zoom,
               this.gesture.mouse[0],
-              this.gesture.mouse[1]
+              this.gesture.mouse[1],
             ),
             [
               [0, 0],
               [100, 100],
             ],
-            this.zoom.translateExtent
+            this.zoom.translateExtent,
           ),
-          this.firstPoint!
+          this.firstPoint!,
         );
       }
     };
@@ -196,7 +196,7 @@ export class VerticalAxis extends Container {
 
       if (event.data?.identifier) {
         this.renderer.context.canvas.releasePointerCapture(
-          event.data?.identifier
+          event.data?.identifier,
         );
       }
 

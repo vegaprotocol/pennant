@@ -60,7 +60,7 @@ export class Renderer extends AbstractRenderer {
 
   public clear(
     clearColor: string = this._backgroundColorString,
-    alpha: number = this.backgroundAlpha
+    alpha: number = this.backgroundAlpha,
   ): void {
     const context = this.context;
 
@@ -77,7 +77,7 @@ export class Renderer extends AbstractRenderer {
   setContextTransform(
     transform: Matrix,
     roundPixels?: boolean,
-    localResolution?: number
+    localResolution?: number,
   ): void {
     let mat = transform;
     const proj = this._projTransform;
@@ -98,7 +98,7 @@ export class Renderer extends AbstractRenderer {
         mat.c * localResolution,
         mat.d * localResolution,
         (mat.tx * resolution) | 0,
-        (mat.ty * resolution) | 0
+        (mat.ty * resolution) | 0,
       );
     } else {
       this.context.setTransform(
@@ -107,7 +107,7 @@ export class Renderer extends AbstractRenderer {
         mat.c * localResolution,
         mat.d * localResolution,
         mat.tx * resolution,
-        mat.ty * resolution
+        mat.ty * resolution,
       );
     }
   }

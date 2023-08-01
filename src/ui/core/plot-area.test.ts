@@ -27,7 +27,7 @@ describe("getIndex", () => {
       fields,
       [],
       false,
-      colors
+      colors,
     );
 
     expect(plotArea.getIndex(200)).toEqual([2, new Date(2021, 6, 11)]);
@@ -50,7 +50,7 @@ describe("getIndex", () => {
       fields,
       [],
       false,
-      colors
+      colors,
     );
 
     expect(plotArea.getIndex(100)).toEqual(null);
@@ -77,7 +77,7 @@ describe("getIndex", () => {
       fields,
       [],
       false,
-      colors
+      colors,
     );
 
     expect(plotArea.getIndex(200)).toEqual([2, new Date(2021, 6, 11)]);

@@ -33,7 +33,7 @@ export class PlotArea {
     fields: string[],
     labels: RenderableElement[],
     isSimple: boolean,
-    colors: Colors
+    colors: Colors,
   ) {
     this._xScale = x.copy();
     this._yScale = y.copy();
@@ -69,14 +69,14 @@ export class PlotArea {
         this._xScale,
         this._yScale,
         this._pixelRatio,
-        this.colors.emphasis100
+        this.colors.emphasis100,
       );
 
       this._renderableElements[0].draw(
         this.ctx,
         this._xScale,
         this._yScale,
-        this._pixelRatio
+        this._pixelRatio,
       );
 
       for (const element of this._renderableElements) {
@@ -90,7 +90,7 @@ export class PlotArea {
           this._yScale,
           this._pixelRatio,
           [null, this.latestPricePosition],
-          this.colors.textPrimary
+          this.colors.textPrimary,
         );
       }
 
@@ -100,7 +100,7 @@ export class PlotArea {
         this._yScale,
         this._pixelRatio,
         this.position,
-        this.colors.textPrimary
+        this.colors.textPrimary,
       );
 
       for (const label of this._labels) {
@@ -109,7 +109,7 @@ export class PlotArea {
           this._xScale,
           this._yScale,
           this._pixelRatio,
-          this.colors
+          this.colors,
         );
       }
     }
@@ -120,12 +120,12 @@ export class PlotArea {
       ? extent(
           this._data
             .filter((d) => d.date >= bounds[0] && d.date <= bounds[1])
-            .flatMap((d) => this._yEncodingFields?.map((field) => d[field]))
+            .flatMap((d) => this._yEncodingFields?.map((field) => d[field])),
         )
       : extent(
-          this._data.flatMap((d) =>
-            this._yEncodingFields?.map((field) => d[field])
-          )
+          this._data.flatMap(
+            (d) => this._yEncodingFields?.map((field) => d[field]),
+          ),
         );
 
     const domainWidth = Math.abs(domain[1] - domain[0]);

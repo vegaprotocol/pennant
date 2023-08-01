@@ -35,7 +35,7 @@ export interface DataSource {
    */
   subscribeData(
     interval: Interval,
-    onSubscriptionData: (datum: Candle) => void
+    onSubscriptionData: (datum: Candle) => void,
   ): void;
 
   /**
@@ -47,7 +47,7 @@ export interface DataSource {
    * Used by the charting library to create a subscription to streaming annotation data.
    */
   subscribeAnnotations?(
-    onSubscriptionAnnotations: (annotations: Annotation[]) => void
+    onSubscriptionAnnotations: (annotations: Annotation[]) => void,
   ): void;
 
   /**

@@ -5,7 +5,7 @@ import { format } from "date-fns";
 export function getStudyInfoFieldValue(
   data: any[],
   index: number | null,
-  id: string
+  id: string,
 ): number {
   const length = data.length;
 
@@ -183,7 +183,7 @@ export function getIntent(
       | undefined;
     intent?: boolean | undefined;
   },
-  value: number
+  value: number,
 ): "success" | "danger" | undefined {
   if (!field.intent || isNaN(value) || value === 0) {
     return undefined;

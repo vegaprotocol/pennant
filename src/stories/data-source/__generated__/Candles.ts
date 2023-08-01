@@ -130,21 +130,24 @@ export const CandlesDocument = gql`
  * });
  */
 export function useCandlesQuery(
-  baseOptions: Apollo.QueryHookOptions<CandlesQuery, CandlesQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<CandlesQuery, CandlesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<CandlesQuery, CandlesQueryVariables>(
     CandlesDocument,
-    options
+    options,
   );
 }
 export function useCandlesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CandlesQuery, CandlesQueryVariables>
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CandlesQuery,
+    CandlesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<CandlesQuery, CandlesQueryVariables>(
     CandlesDocument,
-    options
+    options,
   );
 }
 export type CandlesQueryHookResult = ReturnType<typeof useCandlesQuery>;
@@ -183,7 +186,7 @@ export function useCandlesEventsSubscription(
   baseOptions: Apollo.SubscriptionHookOptions<
     CandlesEventsSubscription,
     CandlesEventsSubscriptionVariables
-  >
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useSubscription<

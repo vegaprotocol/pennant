@@ -7,7 +7,7 @@ test("IndicatorInfo renders correctly", () => {
     <IndicatorInfo
       title="RSI"
       info={[{ id: "index", label: "", value: "100" }]}
-    />
+    />,
   );
 
   let tree = component.toJSON();

@@ -9,7 +9,7 @@ export class Line {
 
   constructor(
     data: [number, number][] = [],
-    curve: CurveFactory | CurveFactoryLineOnly = curveLinear
+    curve: CurveFactory | CurveFactoryLineOnly = curveLinear,
   ) {
     this.data = data;
     this.curve = curve;

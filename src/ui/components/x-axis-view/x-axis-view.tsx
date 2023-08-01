@@ -21,5 +21,5 @@ export const XAxisView = forwardRef<HTMLDivElement, XAxisViewProps>(
         <d3fc-svg class="x-axis-interaction" />
       </div>
     );
-  }
+  },
 );

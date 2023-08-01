@@ -44,7 +44,7 @@ export class XAxis {
         null!,
         this._pixelRatio,
         this._interval,
-        this.colors.textSecondary
+        this.colors.textSecondary,
       );
 
       this.tooltip.draw(
@@ -54,7 +54,7 @@ export class XAxis {
         this._pixelRatio,
         this.position,
         this._interval,
-        this.colors
+        this.colors,
       );
     }
   }

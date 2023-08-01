@@ -54,7 +54,7 @@ export default (createNode, applyMeasurements) =>
       } = this;
       if (other.length > 0) {
         throw new Error(
-          "A d3fc-svg/canvas element must only contain a single svg/canvas element."
+          "A d3fc-svg/canvas element must only contain a single svg/canvas element.",
         );
       }
       applyMeasurements(this, node, { width, height });

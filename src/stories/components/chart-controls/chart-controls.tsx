@@ -138,7 +138,7 @@ export const ChartControls = ({
                   const newOverlays = [...overlays];
 
                   const index = overlays.findIndex(
-                    (overlay) => overlay === item
+                    (overlay) => overlay === item,
                   );
 
                   index !== -1

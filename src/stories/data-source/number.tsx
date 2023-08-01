@@ -13,17 +13,17 @@ export function toDecimal(numberOfDecimals: number) {
 
 export function toBigNum(
   rawValue: string | number | EthersBigNumber,
-  decimals: number
+  decimals: number,
 ): BigNumber {
   return new BigNumber(
-    rawValue instanceof EthersBigNumber ? rawValue.toString() : rawValue || 0
+    rawValue instanceof EthersBigNumber ? rawValue.toString() : rawValue || 0,
   ).dividedBy(Math.pow(10, decimals));
 }
 
 export function addDecimal(
   value: string | number | EthersBigNumber,
   decimals: number,
-  decimalPrecision = decimals
+  decimalPrecision = decimals,
 ): string {
   if (!decimals) return value.toString();
   if (!decimalPrecision || decimalPrecision < 0) {
@@ -63,7 +63,7 @@ export const getDecimalSeparator = memoize(
   () =>
     getNumberFormat(1)
       .formatToParts(1.1)
-      .find((part) => part.type === "decimal")?.value
+      .find((part) => part.type === "decimal")?.value,
 );
 
 /** formatNumber will format the number with fixed decimals
@@ -72,7 +72,7 @@ export const getDecimalSeparator = memoize(
  */
 export const formatNumber = (
   rawValue: string | number | BigNumber,
-  formatDecimals = 0
+  formatDecimals = 0,
 ) => {
   return getNumberFormat(formatDecimals).format(Number(rawValue));
 };
@@ -83,7 +83,7 @@ export const formatNumber = (
  */
 export const formatNumberFixed = (
   rawValue: string | number | BigNumber,
-  formatDecimals = 0
+  formatDecimals = 0,
 ) => {
   return getFixedNumberFormat(formatDecimals).format(Number(rawValue));
 };
@@ -91,7 +91,7 @@ export const formatNumberFixed = (
 export const addDecimalsFormatNumber = (
   rawValue: string | number,
   decimalPlaces: number,
-  formatDecimals: number = decimalPlaces
+  formatDecimals: number = decimalPlaces,
 ) => {
   const x = addDecimal(rawValue, decimalPlaces);
 
@@ -101,7 +101,7 @@ export const addDecimalsFormatNumber = (
 export const addDecimalsFixedFormatNumber = (
   rawValue: string | number,
   decimalPlaces: number,
-  formatDecimals: number = decimalPlaces
+  formatDecimals: number = decimalPlaces,
 ) => {
   const x = addDecimal(rawValue, decimalPlaces);
 
@@ -116,7 +116,7 @@ export const formatNumberPercentage = (value: BigNumber, decimals?: number) => {
 
 export const toNumberParts = (
   value: BigNumber | null | undefined,
-  decimals = 18
+  decimals = 18,
 ): [integers: string, decimalPlaces: string] => {
   if (!value) {
     return ["0", "0".repeat(decimals)];
@@ -130,13 +130,13 @@ export const toNumberParts = (
 
 export const useNumberParts = (
   value: BigNumber | null | undefined,
-  decimals: number
+  decimals: number,
 ): [integers: string, decimalPlaces: string] => {
   return useMemo(() => toNumberParts(value, decimals), [decimals, value]);
 };
 
 export const isNumeric = (
-  value?: string | number | BigNumber | bigint | null
+  value?: string | number | BigNumber | bigint | null,
 ): value is NonNullable<number | string> => /^-?\d*\.?\d+$/.test(String(value));
 
 const INFINITY = "∞";
@@ -155,7 +155,7 @@ export const compactNumber = (
   decimals: number | "infer" = "infer",
   compactDisplay: "short" | "long" = "short",
   compactAbove = DEFAULT_COMPACT_ABOVE,
-  cap = DEFAULT_COMPACT_CAP
+  cap = DEFAULT_COMPACT_CAP,
 ) => {
   if (!number.isFinite()) return `${number.isNegative() ? "-" : ""}${INFINITY}`;
 

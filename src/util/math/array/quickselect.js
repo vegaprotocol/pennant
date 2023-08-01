@@ -7,7 +7,7 @@ export default function quickselect(
   k,
   left = 0,
   right = array.length - 1,
-  compare = ascending
+  compare = ascending,
 ) {
   while (right > left) {
     if (right - left > 600) {

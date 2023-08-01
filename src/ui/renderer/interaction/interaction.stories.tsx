@@ -129,7 +129,7 @@ export const Advanced = () => {
         [200, 200],
         [240, 100],
       ],
-      curveBasis
+      curveBasis,
     );
 
     curve.position.x = 50;

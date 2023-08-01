@@ -22,7 +22,7 @@ export class CanvasContextSystem {
   setContextTransform(
     transform: Matrix,
     roundPixels?: boolean,
-    localResolution?: number
+    localResolution?: number,
   ): void {
     let mat = transform;
     const proj = this._projTransform;
@@ -43,7 +43,7 @@ export class CanvasContextSystem {
         mat.c * localResolution,
         mat.d * localResolution,
         (mat.tx * contextResolution) | 0,
-        (mat.ty * contextResolution) | 0
+        (mat.ty * contextResolution) | 0,
       );
     } else {
       this.activeContext?.setTransform(
@@ -52,7 +52,7 @@ export class CanvasContextSystem {
         mat.c * localResolution,
         mat.d * localResolution,
         mat.tx * contextResolution,
-        mat.ty * contextResolution
+        mat.ty * contextResolution,
       );
     }
   }

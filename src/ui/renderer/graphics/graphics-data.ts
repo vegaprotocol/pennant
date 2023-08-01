@@ -16,7 +16,7 @@ export class GraphicsData {
     shape: Shape,
     fillStyle: FillStyle | null = null,
     lineStyle: LineStyle | null = null,
-    matrix: Matrix | null = null
+    matrix: Matrix | null = null,
   ) {
     this.shape = shape;
     this.lineStyle = lineStyle;

@@ -67,7 +67,7 @@ export class Contents {
     priceScale: ScaleLinear,
     timeScale: ScaleTime,
     data: SeriesData,
-    height: number
+    height: number,
   ): void {
     const resolution = this.renderer.resolution;
 
@@ -75,14 +75,14 @@ export class Contents {
       timeScale,
       this.renderer.width,
       this.renderer.height - resolution * AXIS_HEIGHT,
-      resolution
+      resolution,
     );
 
     this.verticalgrid.update(
       priceScale,
       this.renderer.width - resolution * AXIS_WIDTH,
       this.renderer.height,
-      resolution
+      resolution,
     );
 
     for (let i = 0; i < this.series.length; i++) {
@@ -98,7 +98,7 @@ export class Contents {
           resolution,
           undefined,
           (this.colors as any)[`accent${i + 1}`],
-          this.colors.backgroundSurface
+          this.colors.backgroundSurface,
         );
 
         this.series[i].visible = true;

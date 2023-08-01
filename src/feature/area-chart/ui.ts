@@ -80,7 +80,7 @@ export class UI extends EventEmitter {
   private crosshair: Crosshair = new Crosshair(1, 0x888888, [3, 3]);
 
   private indicator: Indicator[] = range(0, 6).map(
-    () => new Indicator(0xff0000)
+    () => new Indicator(0xff0000),
   );
 
   private priceLabel: Label = new Label();
@@ -140,7 +140,7 @@ export class UI extends EventEmitter {
       options.width - AXIS_WIDTH,
       0,
       AXIS_WIDTH,
-      options.height
+      options.height,
     );
 
     this.horizontalAxis
@@ -155,7 +155,7 @@ export class UI extends EventEmitter {
       options.width - 100,
       0,
       100,
-      options.height
+      options.height,
     );
 
     this.verticalAxis
@@ -172,7 +172,7 @@ export class UI extends EventEmitter {
     xScale: ScaleLinear | ScaleTime,
     xFormat: (x: number) => string,
     priceScale: ScaleLinear,
-    priceFormat: (price: number) => string
+    priceFormat: (price: number) => string,
   ): void {
     this.data = data;
     this.xScale = xScale;
@@ -188,14 +188,14 @@ export class UI extends EventEmitter {
       0,
       0,
       this.renderer.screen.width - AXIS_WIDTH,
-      this.renderer.screen.height - AXIS_HEIGHT
+      this.renderer.screen.height - AXIS_HEIGHT,
     );
 
     this.horizontalAxis.hitArea = new Rectangle(
       0,
       this.renderer.screen.height - AXIS_HEIGHT,
       this.renderer.screen.width - AXIS_WIDTH,
-      AXIS_HEIGHT
+      AXIS_HEIGHT,
     );
 
     this.horizontalAxis.update(
@@ -203,14 +203,14 @@ export class UI extends EventEmitter {
       width,
       height,
       resolution,
-      this.colors
+      this.colors,
     );
 
     this.verticalAxis.hitArea = new Rectangle(
       this.renderer.screen.width - AXIS_WIDTH,
       0,
       AXIS_WIDTH,
-      this.renderer.screen.height - AXIS_HEIGHT
+      this.renderer.screen.height - AXIS_HEIGHT,
     );
 
     this.verticalAxis.update(
@@ -218,7 +218,7 @@ export class UI extends EventEmitter {
       width,
       height - resolution * AXIS_HEIGHT,
       resolution,
-      this.colors
+      this.colors,
     );
 
     // TODO: Abstract the vertical axis separator functionality
@@ -231,12 +231,12 @@ export class UI extends EventEmitter {
 
     this.verticalAxisSeparator.moveTo(
       resolution * this.renderer.screen.width - resolution * AXIS_WIDTH,
-      0
+      0,
     );
 
     this.verticalAxisSeparator.lineTo(
       resolution * this.renderer.screen.width - resolution * AXIS_WIDTH,
-      resolution * this.renderer.screen.height
+      resolution * this.renderer.screen.height,
     );
 
     this.verticalAxisSeparator.endFill();
@@ -251,12 +251,12 @@ export class UI extends EventEmitter {
 
     this.horizontalAxisSeparator.moveTo(
       0,
-      resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT
+      resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT,
     );
 
     this.horizontalAxisSeparator.lineTo(
       resolution * this.renderer.screen.width,
-      resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT
+      resolution * this.renderer.screen.height - resolution * AXIS_HEIGHT,
     );
 
     this.horizontalAxisSeparator.endFill();
@@ -301,7 +301,7 @@ export class UI extends EventEmitter {
         [
           [0, 0],
           [100, 100],
-        ]
+        ],
       );
 
       const transform = this.zoom.__zoom;
@@ -313,9 +313,9 @@ export class UI extends EventEmitter {
             2,
             -(transform.x - this.lastXZoomTransform.x) /
               1 /
-              (this.xScale!.range()[1] - this.xScale!.range()[0])
+              (this.xScale!.range()[1] - this.xScale!.range()[0]),
           ),
-          [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0]
+          [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0],
         );
       } else {
         this.xZoom.scaleBy(k, [
@@ -346,14 +346,14 @@ export class UI extends EventEmitter {
           this.zoom.translate(
             this.zoom.__zoom,
             this.gesture.mouse[0],
-            this.gesture.mouse[1]
+            this.gesture.mouse[1],
           ),
           [
             [0, 0],
             [100, 100],
           ],
-          this.zoom.translateExtent
-        )
+          this.zoom.translateExtent,
+        ),
       );
       this.isZooming = true;
       this.hideTooltips();
@@ -372,15 +372,15 @@ export class UI extends EventEmitter {
               this.zoom.translate(
                 this.zoom.__zoom,
                 this.gesture.mouse[0],
-                this.gesture.mouse[1]
+                this.gesture.mouse[1],
               ),
               [
                 [0, 0],
                 [100, 100],
               ],
-              this.zoom.translateExtent
+              this.zoom.translateExtent,
             ),
-            this.firstPoint!
+            this.firstPoint!,
           );
         }
       };
@@ -395,7 +395,7 @@ export class UI extends EventEmitter {
 
         if (event.data?.identifier) {
           this.renderer.context.canvas.releasePointerCapture(
-            event.data?.identifier
+            event.data?.identifier,
           );
         }
 
@@ -437,7 +437,7 @@ export class UI extends EventEmitter {
 
       const index = bisectCenter(
         this.data[0].i.map((d) => this.xScale!(d)),
-        x
+        x,
       );
 
       const nearestX = this.data[0].i[index];
@@ -447,7 +447,7 @@ export class UI extends EventEmitter {
         resolution * y,
         width,
         height,
-        resolution
+        resolution,
       );
 
       for (let i = 0; i < this.indicator.length; i++) {
@@ -455,7 +455,7 @@ export class UI extends EventEmitter {
           this.indicator[i].update(
             this.xScale!(nearestX),
             this.priceScale(this.data[i][index][1]),
-            (this.colors as any)[`accent${i + 1}`]
+            (this.colors as any)[`accent${i + 1}`],
           );
         } else {
           this.indicator[i].visible = false;
@@ -468,7 +468,7 @@ export class UI extends EventEmitter {
         resolution * y,
         { x: 1, y: 0.5 },
         resolution,
-        { ...this.colors, backgroundSurface: this.colors.emphasis100 }
+        { ...this.colors, backgroundSurface: this.colors.emphasis100 },
       );
 
       this.xLabel.update(
@@ -479,7 +479,7 @@ export class UI extends EventEmitter {
         height - (resolution * AXIS_HEIGHT) / 2,
         { x: 0.5, y: 0.5 },
         resolution,
-        { ...this.colors, backgroundSurface: this.colors.emphasis100 }
+        { ...this.colors, backgroundSurface: this.colors.emphasis100 },
       );
 
       this.render();
@@ -494,7 +494,7 @@ export class UI extends EventEmitter {
             color: hex2string((this.colors as any)[`accent${i + 1}`]),
             name: this.data[i].key,
             value: this.priceFormat(
-              this.data[i][index].data[this.data[i].key] as number
+              this.data[i][index].data[this.data[i].key] as number,
             ),
           })),
         });
@@ -524,9 +524,9 @@ export class UI extends EventEmitter {
         Math.pow(
           2,
           -(transform.x - this.lastXZoomTransform.x) /
-            (this.xScale!.range()[1] - this.xScale!.range()[0])
+            (this.xScale!.range()[1] - this.xScale!.range()[0]),
         ),
-        [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0]
+        [Math.abs(this.xScale!.range()[1] - this.xScale!.range()[0]) / 2, 0],
       );
     } else {
       this.xZoom.scaleBy(k, [
@@ -554,12 +554,12 @@ export class UI extends EventEmitter {
           2,
           -(transform.y - this.lastPriceZoomTransform.y) /
             1 /
-            (this.priceScale.range()[1] - this.priceScale.range()[0])
+            (this.priceScale.range()[1] - this.priceScale.range()[0]),
         ),
         [
           0,
           Math.abs(this.priceScale.range()[1] - this.priceScale.range()[0]) / 2,
-        ]
+        ],
       );
     } else {
       this.priceZoom.scaleBy(k, [

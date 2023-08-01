@@ -17,7 +17,7 @@ export class PlotAreaInteraction {
     "mouseout",
     "zoom",
     "zoomend",
-    "zoomstart"
+    "zoomstart",
   );
 
   private _xScale: ScaleTime;
@@ -55,7 +55,7 @@ export class PlotAreaInteraction {
             y: t.y - this.z.y,
             k: k,
           },
-          point
+          point,
         );
 
         this.z = t;
@@ -98,7 +98,7 @@ export class PlotAreaInteraction {
 
     selection
       .on("mousemove", (event) =>
-        this.listeners.call("mousemove", this, [event.offsetX, event.offsetY])
+        this.listeners.call("mousemove", this, [event.offsetX, event.offsetY]),
       )
       .on("mouseout", () => this.listeners.call("mouseout", this))
       .on("contextmenu", (event) => {

@@ -26,7 +26,7 @@ export const SingleSeries: ComponentStory<typeof PriceChart> = () => {
     cols: ["Date", asset] as const,
     rows: (coinmarketcap as any)[asset][range].map(
       (d: { price: number; time: number }) =>
-        [new Date(1000 * d.time), d.price] as const
+        [new Date(1000 * d.time), d.price] as const,
     ),
   };
 

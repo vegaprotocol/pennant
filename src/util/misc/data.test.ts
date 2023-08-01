@@ -35,7 +35,7 @@ describe("mergeData", () => {
         low: 0,
         close: 0,
         volume: 0,
-      }))
+      })),
     );
   });
 
@@ -59,7 +59,7 @@ describe("mergeData", () => {
         low: 0,
         close: 0,
         volume: 0,
-      }))
+      })),
     );
   });
 
@@ -92,7 +92,7 @@ describe("mergeData", () => {
           low: 0,
           close: 0,
           volume: 0,
-        }))
+        })),
     );
   });
 
@@ -116,7 +116,7 @@ describe("mergeData", () => {
         low: 0,
         close: 0,
         volume: 0,
-      }))
+      })),
     );
   });
 
@@ -140,7 +140,7 @@ describe("mergeData", () => {
         low: 0,
         close: 0,
         volume: 0,
-      }))
+      })),
     );
   });
 
@@ -173,7 +173,7 @@ describe("mergeData", () => {
           low: 0,
           close: 0,
           volume: 0,
-        }))
+        })),
     );
   });
 });

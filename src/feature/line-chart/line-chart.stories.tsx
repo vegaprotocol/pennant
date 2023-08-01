@@ -150,7 +150,7 @@ export const MultipleSeries: ComponentStory<typeof LineChart> = () => {
       coinmarketcap["BTC"][range].map((d) => d.price),
       coinmarketcap["ETH"][range].map((d) => d.price),
       (coinmarketcap as any)["TETHER"][range].map(
-        (d: any) => d.price as number
+        (d: any) => d.price as number,
       ) as number[],
       function (a, b, c, d) {
         const res: [Date, ...number[]] = [a];
@@ -168,7 +168,7 @@ export const MultipleSeries: ComponentStory<typeof LineChart> = () => {
         }
 
         return res;
-      }
+      },
     ).slice(0, coinmarketcap["BTC"][range].length),
   };
 
@@ -330,7 +330,7 @@ export const MortalityRates: ComponentStory<typeof LineChart> = () => {
   const cols = ["Age", "UK", "UK-Scotland", "Scotland"] as const;
 
   const rows = lineData.mortality_rates.map(
-    (d) => [d["Age"], ...cols.slice(1).map((col) => d[col])] as Row
+    (d) => [d["Age"], ...cols.slice(1).map((col) => d[col])] as Row,
   );
 
   return (
@@ -358,7 +358,7 @@ export const FTSE: ComponentStory<typeof LineChart> = () => {
 
   const cols = ["Date", "FTSE All Share (p)"];
   const rows = lineData.ftse.map(
-    (d) => [new Date(d["Date"]), d["FTSE All Share (p)"]] as const
+    (d) => [new Date(d["Date"]), d["FTSE All Share (p)"]] as const,
   );
 
   return (
@@ -571,7 +571,7 @@ export const VectorVals: ComponentStory<typeof LineChart> = () => {
       ].value.vectorVal.value,
       function (a, b) {
         return [+a, +b];
-      }
+      },
     ),
   };
 

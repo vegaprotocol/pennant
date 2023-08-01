@@ -18,22 +18,22 @@ export class VerticalGrid extends Container {
     scale: ScaleLinear,
     width: number,
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
   ) {
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1),
     );
 
     for (const node of enter) {

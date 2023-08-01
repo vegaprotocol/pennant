@@ -17,37 +17,37 @@ export function getColors(element: HTMLElement | null): Colors {
     buyFill: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-depth-buy-fill")
-        .trim() || "#16452d"
+        .trim() || "#16452d",
     ),
     buyStroke: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-depth-buy-stroke")
-        .trim() || "#26ff8a"
+        .trim() || "#26ff8a",
     ),
     sellFill: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-depth-sell-fill")
-        .trim() || "#800700"
+        .trim() || "#800700",
     ),
     sellStroke: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-color-depth-sell-stroke")
-        .trim() || "#ff261a"
+        .trim() || "#ff261a",
     ),
     textPrimary: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-font-color-base")
-        .trim() || "#ffffff"
+        .trim() || "#ffffff",
     ),
     textSecondary: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-font-color-secondary")
-        .trim() || "#fafafa"
+        .trim() || "#fafafa",
     ),
     backgroundSurface: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-background-surface-color")
-        .trim() || "#0a0a0a"
+        .trim() || "#0a0a0a",
     ),
   };
 }

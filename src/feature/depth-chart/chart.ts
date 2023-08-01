@@ -13,7 +13,7 @@ function getMidPrice(
   indicativePrice: number,
   midPrice: number,
   buyPrice: number,
-  sellPrice: number
+  sellPrice: number,
 ): number {
   if (indicativePrice) {
     return indicativePrice;
@@ -135,19 +135,19 @@ export class Chart extends EventEmitter {
 
     const cumulativeBuy = zip<number>(
       this._data.buy.map((priceLevel) => priceLevel.price),
-      cumsum(this._data.buy.map((priceLevel) => priceLevel.volume))
+      cumsum(this._data.buy.map((priceLevel) => priceLevel.volume)),
     ) as [number, number][];
 
     const cumulativeSell = zip<number>(
       this._data.sell.map((priceLevel) => priceLevel.price),
-      cumsum(this._data.sell.map((priceLevel) => priceLevel.volume))
+      cumsum(this._data.sell.map((priceLevel) => priceLevel.volume)),
     ) as [number, number][];
 
     const midPrice = getMidPrice(
       this._indicativePrice,
       this._midPrice,
       this._data.buy?.[0]?.price,
-      this._data.sell?.[0]?.price
+      this._data.sell?.[0]?.price,
     );
 
     this.maxPriceDifference =
@@ -162,7 +162,7 @@ export class Chart extends EventEmitter {
         if (
           Math.abs(
             (buyPriceLevels[0].price - buyPriceLevels[1].price) /
-              (buyPriceLevels[0].price - midPrice)
+              (buyPriceLevels[0].price - midPrice),
           ) /
             (buyPriceLevels[0].volume /
               cumulativeBuy[cumulativeBuy.length - 1][1]) >
@@ -181,7 +181,7 @@ export class Chart extends EventEmitter {
           Math.abs(
             (sellPriceLevels[maxIndex].price -
               sellPriceLevels[maxIndex - 1].price) /
-              (sellPriceLevels[maxIndex].price - midPrice)
+              (sellPriceLevels[maxIndex].price - midPrice),
           ) /
             (sellPriceLevels[maxIndex].volume /
               cumulativeSell[cumulativeSell.length - 1][1]) >
@@ -196,8 +196,8 @@ export class Chart extends EventEmitter {
       this.initialPriceDifference =
         max(
           [...buyPriceLevels, ...sellPriceLevels].map((priceLevel) =>
-            Math.abs(priceLevel.price - midPrice)
-          )
+            Math.abs(priceLevel.price - midPrice),
+          ),
         ) ?? 0;
 
       this.initialSpan = this.initialPriceDifference / this.maxPriceDifference;
@@ -215,9 +215,9 @@ export class Chart extends EventEmitter {
         .filter(
           (priceLevel) =>
             priceLevel.price >= priceExtent[0] &&
-            priceLevel.price <= priceExtent[1]
+            priceLevel.price <= priceExtent[1],
         )
-        .map((priceLevel) => priceLevel.index)
+        .map((priceLevel) => priceLevel.index),
     );
 
     const volumeExtent: [number, number] = [
@@ -258,7 +258,7 @@ export class Chart extends EventEmitter {
       cumulativeSell.map((point) => [
         priceScale(point[0]),
         volumeScale(point[1]),
-      ])
+      ]),
     );
 
     // TODO: Clean up this logic
@@ -267,13 +267,13 @@ export class Chart extends EventEmitter {
         (min(
           this.prices
             .filter((price) => midPrice - price > 0)
-            .map((price) => midPrice - price)
+            .map((price) => midPrice - price),
         ) as number) ??
         0 +
           (min(
             this.prices
               .filter((price) => price - midPrice > 0)
-              .map((price) => price - midPrice)
+              .map((price) => price - midPrice),
           ) as number) ??
         0;
 
@@ -295,7 +295,7 @@ export class Chart extends EventEmitter {
       this.priceFormat(midPrice),
       this._indicativePrice > 0 ? "Indicative price" : "Mid Market Price",
       priceScale,
-      volumeScale
+      volumeScale,
     );
   }
 
@@ -332,16 +332,16 @@ export class Chart extends EventEmitter {
 
     const cumulativeBuy = zip<number>(
       this._data.buy.map((priceLevel) => priceLevel.price),
-      cumsum(this._data.buy.map((priceLevel) => priceLevel.volume))
+      cumsum(this._data.buy.map((priceLevel) => priceLevel.volume)),
     ) as [number, number][];
 
     const cumulativeSell = zip<number>(
       this._data.sell.map((priceLevel) => priceLevel.price),
-      cumsum(this._data.sell.map((priceLevel) => priceLevel.volume))
+      cumsum(this._data.sell.map((priceLevel) => priceLevel.volume)),
     ) as [number, number][];
 
     this.volumes = orderBy([...cumulativeBuy, ...cumulativeSell], ["0"]).map(
-      (priceLevel) => priceLevel[1]
+      (priceLevel) => priceLevel[1],
     );
 
     this.volumeLabels = this.volumes.map((volume) => this.volumeFormat(volume));

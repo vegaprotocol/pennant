@@ -7,11 +7,11 @@ export default function groupSort(values, reduce, key) {
     reduce.length === 1
       ? sort(
           rollup(values, reduce, key),
-          ([ak, av], [bk, bv]) => ascending(av, bv) || ascending(ak, bk)
+          ([ak, av], [bk, bv]) => ascending(av, bv) || ascending(ak, bk),
         )
       : sort(
           group(values, key),
-          ([ak, av], [bk, bv]) => reduce(av, bv) || ascending(ak, bk)
+          ([ak, av], [bk, bv]) => reduce(av, bv) || ascending(ak, bk),
         )
   ).map(([key]) => key);
 }

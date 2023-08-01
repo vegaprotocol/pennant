@@ -14,7 +14,10 @@ export class Model {
   public readonly component: Component;
   public readonly children: Model[] = [];
 
-  constructor(spec: BaseSpec, public readonly parent: Model | null) {
+  constructor(
+    spec: BaseSpec,
+    public readonly parent: Model | null,
+  ) {
     this.data = spec.data ?? null;
     this.transforms = spec.transform ?? [];
 

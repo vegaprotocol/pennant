@@ -19,7 +19,7 @@ export class DepthCurve extends Container {
     fill: number = 0xffffff,
     stroke: number = 0,
     width: number = 1,
-    curve: CurveFactory = curveStepBefore
+    curve: CurveFactory = curveStepBefore,
   ) {
     super();
 
@@ -41,7 +41,7 @@ export class DepthCurve extends Container {
     resolution: number = 1,
     fill: number = 0xffffff,
     stroke: number = 0,
-    width: number = 1
+    width: number = 1,
   ): void {
     this.fill = fill;
     this.stroke = stroke;
@@ -55,7 +55,7 @@ export class DepthCurve extends Container {
         height - resolution * AXIS_HEIGHT,
         point[1],
       ]),
-      this.curve
+      this.curve,
     );
     this.area.endFill();
 

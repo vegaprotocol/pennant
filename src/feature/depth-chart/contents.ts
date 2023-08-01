@@ -46,14 +46,14 @@ export class Contents {
       options.colors.buyFill,
       options.colors.buyStroke,
       options.dimensions.strokeWidth,
-      curveStepAfter
+      curveStepAfter,
     );
 
     this.sellCurve = new DepthCurve(
       options.colors.sellFill,
       options.colors.sellStroke,
       options.dimensions.strokeWidth,
-      curveStepAfter
+      curveStepAfter,
     );
 
     this.stage.addChild(this.buyCurve);
@@ -66,7 +66,7 @@ export class Contents {
 
   public update(
     buyPoints: [number, number][],
-    sellPoints: [number, number][]
+    sellPoints: [number, number][],
   ): void {
     const resolution = this.renderer.resolution;
 
@@ -76,7 +76,7 @@ export class Contents {
       resolution,
       this.colors.buyFill,
       this.colors.buyStroke,
-      this.dimensions.strokeWidth
+      this.dimensions.strokeWidth,
     );
 
     this.sellCurve.update(
@@ -85,7 +85,7 @@ export class Contents {
       resolution,
       this.colors.sellFill,
       this.colors.sellStroke,
-      this.dimensions.strokeWidth
+      this.dimensions.strokeWidth,
     );
   }
 }

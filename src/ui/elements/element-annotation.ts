@@ -8,7 +8,7 @@ function addAnnotationPath(
   yScale: ScaleLinear,
   position: number | null,
   decimalPlaces: number,
-  colors: Colors
+  colors: Colors,
 ) {
   if (position) {
     ctx.beginPath();
@@ -76,7 +76,7 @@ export class AnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1,
     position: number | null,
-    colors: Colors
+    colors: Colors,
   ) {
     addAnnotationPath(
       ctx,
@@ -84,7 +84,7 @@ export class AnnotationElement implements RenderableElement {
       yScale,
       this.position,
       this.decimalPlaces,
-      colors
+      colors,
     );
   }
 }

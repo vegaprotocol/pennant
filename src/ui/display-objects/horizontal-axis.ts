@@ -51,7 +51,7 @@ export class HorizontalAxis extends Container {
           fill: 0xffffff,
           fontFamily: "monospace",
           fontSize: FONT_SIZE,
-        })
+        }),
     );
 
     for (let i = 0; i < this.tickNodes.length; i++) {
@@ -65,7 +65,7 @@ export class HorizontalAxis extends Container {
     width: number,
     height: number,
     resolution: number = 1,
-    colors: HorizontalAxisColors
+    colors: HorizontalAxisColors,
   ) {
     this.overlay.clear();
     this.overlay.beginFill(colors.backgroundSurface, 0.7);
@@ -74,7 +74,7 @@ export class HorizontalAxis extends Container {
       0,
       height - resolution * AXIS_HEIGHT,
       width,
-      resolution * AXIS_HEIGHT
+      resolution * AXIS_HEIGHT,
     );
 
     this.overlay.endFill();
@@ -126,7 +126,7 @@ export class HorizontalAxis extends Container {
       [
         [0, 0],
         [100, 100],
-      ]
+      ],
     );
 
     this.emit("zoom", { transform: this.zoom.__zoom, point: p });
@@ -148,14 +148,14 @@ export class HorizontalAxis extends Container {
         this.zoom.translate(
           this.zoom.__zoom,
           this.gesture.mouse[0],
-          this.gesture.mouse[1]
+          this.gesture.mouse[1],
         ),
         [
           [0, 0],
           [100, 100],
         ],
-        this.zoom.translateExtent
-      )
+        this.zoom.translateExtent,
+      ),
     );
 
     const handleMouseMove = (event: any) => {
@@ -169,15 +169,15 @@ export class HorizontalAxis extends Container {
             this.zoom.translate(
               this.zoom.__zoom,
               this.gesture.mouse[0],
-              this.gesture.mouse[1]
+              this.gesture.mouse[1],
             ),
             [
               [0, 0],
               [100, 100],
             ],
-            this.zoom.translateExtent
+            this.zoom.translateExtent,
           ),
-          this.firstPoint!
+          this.firstPoint!,
         );
       }
     };
@@ -190,7 +190,7 @@ export class HorizontalAxis extends Container {
 
       if (event.data?.identifier) {
         this.renderer.context.canvas.releasePointerCapture(
-          event.data?.identifier
+          event.data?.identifier,
         );
       }
 

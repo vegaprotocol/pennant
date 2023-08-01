@@ -37,7 +37,7 @@ const createTexture = memoize(
 
     return gradTexture;
   },
-  (...args) => values(args).join("_")
+  (...args) => values(args).join("_"),
 );
 
 /**
@@ -56,7 +56,7 @@ export class AreaCurve extends Container {
     stroke: number = 0,
     fill: number = 0xffffff,
     backgroundSurface: number = 0xffffff,
-    curve: CurveFactory = curveLinear
+    curve: CurveFactory = curveLinear,
   ) {
     super();
 
@@ -78,7 +78,7 @@ export class AreaCurve extends Container {
     resolution: number = 1,
     fill: number = 0xffffff,
     stroke: number = 0,
-    backgroundSurface: number = 0
+    backgroundSurface: number = 0,
   ): void {
     this.fill = fill;
     this.stroke = stroke;
@@ -97,7 +97,7 @@ export class AreaCurve extends Container {
     this.line.lineStyle({ width: 4, color: this.stroke });
     this.line.drawLine(
       points.map((d) => [d[0], d[2]]),
-      this.curve
+      this.curve,
     );
   }
 }

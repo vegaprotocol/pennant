@@ -37,13 +37,13 @@ export default (element) => {
     return;
   }
   const queueContainsAncestor = queue.some((queuedElement) =>
-    isDescendentOf(element, queuedElement)
+    isDescendentOf(element, queuedElement),
   );
   if (queueContainsAncestor) {
     return;
   }
   const queueExcludingDescendents = queue.filter(
-    (queuedElement) => !isDescendentOf(queuedElement, element)
+    (queuedElement) => !isDescendentOf(queuedElement, element),
   );
   queueExcludingDescendents.push(element);
   setQueue(element, queueExcludingDescendents);

@@ -41,16 +41,16 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
       onClosePane,
       onRemoveOverlay,
     },
-    ref
+    ref,
   ) => {
     const [showPaneControls, setShowPaneControls] = useState<string | null>(
-      null
+      null,
     );
 
     const volume = getStudyInfoFieldValue(
       pane.originalData,
       dataIndex,
-      "volume"
+      "volume",
     );
 
     const noTrading = volume === 0;
@@ -107,7 +107,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                 const value = getStudyInfoFieldValue(
                   pane.originalData,
                   dataIndex,
-                  field.id
+                  field.id,
                 );
 
                 const places =
@@ -122,7 +122,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                   displayWhileNoTrading: field.displayWhileNoTrading,
                   intent: getIntent(field, value),
                 };
-              }
+              },
             )}
             noTrading={noTrading}
           />
@@ -143,7 +143,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                       const value = getStudyInfoFieldValue(
                         pane.originalData,
                         dataIndex,
-                        field.id
+                        field.id,
                       );
 
                       return {
@@ -172,7 +172,7 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
                     const value = getStudyInfoFieldValue(
                       pane.originalData,
                       dataIndex,
-                      field.id
+                      field.id,
                     );
 
                     return {
@@ -195,5 +195,5 @@ export const PaneView = forwardRef<HTMLDivElement, PaneViewProps>(
         </div>
       </div>
     );
-  }
+  },
 );

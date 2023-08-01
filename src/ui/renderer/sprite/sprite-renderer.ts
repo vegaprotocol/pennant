@@ -47,7 +47,7 @@ export class SpriteRenderer {
       Math.floor(dx * renderer.resolution),
       Math.floor(dy * renderer.resolution),
       Math.floor(width * renderer.resolution),
-      Math.floor(height * renderer.resolution)
+      Math.floor(height * renderer.resolution),
     );
   }
 }

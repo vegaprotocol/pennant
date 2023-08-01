@@ -46,37 +46,37 @@ describe("interval", () => {
         getCandlesCount(Interval.I1M, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-01T01:30"),
-        ])
+        ]),
       ).toEqual(30);
       expect(
         getCandlesCount(Interval.I5M, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-01T01:30"),
-        ])
+        ]),
       ).toEqual(6);
       expect(
         getCandlesCount(Interval.I15M, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-01T01:30"),
-        ])
+        ]),
       ).toEqual(2);
       expect(
         getCandlesCount(Interval.I1H, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-02T01:00"),
-        ])
+        ]),
       ).toEqual(24);
       expect(
         getCandlesCount(Interval.I6H, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-02T01:00"),
-        ])
+        ]),
       ).toEqual(4);
       expect(
         getCandlesCount(Interval.I1D, [
           new Date("2020-01-01T01:00"),
           new Date("2020-01-11T01:00"),
-        ])
+        ]),
       ).toEqual(10);
     });
   });

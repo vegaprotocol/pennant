@@ -45,7 +45,7 @@ export abstract class AbstractRenderer {
       0,
       0,
       options?.width ?? 800,
-      options?.height ?? 600
+      options?.height ?? 600,
     );
     this.view = options?.view || document.createElement("canvas");
 

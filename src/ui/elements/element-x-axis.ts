@@ -12,7 +12,7 @@ function addXAxisPath(
   xScale: ScaleTime,
   pixelRatio: number,
   interval: Interval,
-  color: string
+  color: string,
 ) {
   ctx.strokeStyle = "#fff";
 
@@ -39,7 +39,7 @@ export class XAxisElement implements RenderableElement {
     _yScale: ScaleLinear,
     pixelRatio = 1,
     interval: Interval,
-    color: string
+    color: string,
   ) {
     addXAxisPath(ctx, xScale, pixelRatio, interval, color);
   }

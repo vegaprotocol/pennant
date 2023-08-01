@@ -13,7 +13,7 @@ function addYAxisPath(
   xScale: ScaleTime,
   yScale: ScaleLinear,
   pixelRatio: number,
-  colors: Colors
+  colors: Colors,
 ) {
   const xRange = xScale.range();
   const yRange = yScale.range();
@@ -29,7 +29,7 @@ function addYAxisPath(
     xScale.range()[1] - Y_AXIS_WIDTH,
     yRange[1],
     Y_AXIS_WIDTH,
-    yRange[0] - yRange[1]
+    yRange[0] - yRange[1],
   );
 
   ctx.closePath();
@@ -46,7 +46,7 @@ function addYAxisPath(
     ctx.fillText(
       tickFormat(tick),
       xRange[1] - Y_AXIS_WIDTH + MARGIN,
-      Math.round(yScale(tick))
+      Math.round(yScale(tick)),
     );
 
     ctx.closePath();
@@ -63,7 +63,7 @@ function addYAxisPath(
     0,
     yRange[0] - FADE_HEIGHT,
     0,
-    yRange[0]
+    yRange[0],
   );
   gradientBottom.addColorStop(0, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)`);
   gradientBottom.addColorStop(1, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},1)`);
@@ -73,7 +73,7 @@ function addYAxisPath(
     xRange[1] - Y_AXIS_WIDTH,
     yScale.range()[0] - FADE_HEIGHT,
     Y_AXIS_WIDTH,
-    FADE_HEIGHT
+    FADE_HEIGHT,
   );
 
   ctx.beginPath();
@@ -90,7 +90,7 @@ export class YAxisElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio = 1,
-    colors: Colors
+    colors: Colors,
   ) {
     addYAxisPath(ctx, xScale, yScale, pixelRatio, colors);
   }

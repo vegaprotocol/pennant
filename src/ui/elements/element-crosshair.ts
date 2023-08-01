@@ -5,7 +5,7 @@ function addCrosshairPath(
   xScale: types.ScaleTime,
   yScale: types.ScaleLinear,
   position: [Date | null, number | null],
-  color: string
+  color: string,
 ) {
   const x = position[0];
   const y = position[1];
@@ -45,7 +45,7 @@ export class CrosshairElement implements types.RenderableElement {
     yScale: types.ScaleLinear,
     pixelRatio: number = 1,
     position: [Date | null, number | null],
-    color: string
+    color: string,
   ) {
     addCrosshairPath(ctx, xScale, yScale, position, color);
   }

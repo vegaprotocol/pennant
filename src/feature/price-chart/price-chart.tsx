@@ -197,7 +197,7 @@ export const PriceChart = <A,>({
         : width,
       devicePixelContentBoxSizeBlockSize
         ? devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
-        : height
+        : height,
     );
 
     chartRef.current.data = data;
@@ -212,7 +212,7 @@ export const PriceChart = <A,>({
 
   useEffect(() => {
     requestAnimationFrame(
-      () => (chartRef.current.colors = getColors(styleRef?.current))
+      () => (chartRef.current.colors = getColors(styleRef?.current)),
     );
   }, [theme]);
 

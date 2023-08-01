@@ -27,22 +27,22 @@ export class VerticalAxis extends Container {
     width: number,
     height: number,
     resolution: number = 1,
-    colors: VerticalAxisColors
+    colors: VerticalAxisColors,
   ) {
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
-      (tick) => !this.nodeByKeyValue.has(tickFormat(tick))
+      (tick) => !this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const update = ticks.filter((tick) =>
-      this.nodeByKeyValue.has(tickFormat(tick))
+      this.nodeByKeyValue.has(tickFormat(tick)),
     );
 
     const exit = [...this.nodeByKeyValue.keys()].filter(
-      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1)
+      (node) => !(ticks.map(tickFormat).indexOf(node) !== -1),
     );
 
     for (const node of enter) {

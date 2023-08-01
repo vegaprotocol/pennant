@@ -22,7 +22,7 @@ export class YAxisInteraction {
 
   on(
     typenames: string,
-    callback: (this: object, ...args: any[]) => void
+    callback: (this: object, ...args: any[]) => void,
   ): this {
     this.listeners.on(typenames, callback);
     return this;

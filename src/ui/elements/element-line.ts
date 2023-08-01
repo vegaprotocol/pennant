@@ -28,7 +28,7 @@ export class LineElement implements PositionalElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio: number = 1
+    pixelRatio: number = 1,
   ) {
     this.lineGenerator.x((d) => xScale(d[0])).y((d) => yScale(d[1]));
 

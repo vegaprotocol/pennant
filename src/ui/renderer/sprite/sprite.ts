@@ -18,7 +18,7 @@ export class Sprite extends Container {
 
     this._anchor = new Point(
       texture ? texture.defaultAnchor.x : 0,
-      texture ? texture.defaultAnchor.y : 0
+      texture ? texture.defaultAnchor.y : 0,
     );
 
     this._height = 0;

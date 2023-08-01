@@ -12,8 +12,8 @@ describe("dateFormat", () => {
           new Date(2021, 5, 22, 6),
           new Date(2021, 5, 22, 12),
         ],
-        Interval.I1H
-      )
+        Interval.I1H,
+      ),
     ).toEqual(["18:00", "22", "06:00", "12:00"]);
 
     expect(
@@ -27,8 +27,8 @@ describe("dateFormat", () => {
           new Date(2021, 5, 22, 6),
           new Date(2021, 5, 22, 12),
         ],
-        Interval.I1H
-      )
+        Interval.I1H,
+      ),
     ).toEqual(["21", "06:00", "12:00", "18:00", "22", "06:00", "12:00"]);
   });
 
@@ -41,8 +41,8 @@ describe("dateFormat", () => {
           new Date(2021, 5, 5),
           new Date(2021, 5, 12),
         ],
-        Interval.I1D
-      )
+        Interval.I1D,
+      ),
     ).toEqual(["21", "28", "5 Jun", "12"]);
 
     expect(
@@ -53,8 +53,8 @@ describe("dateFormat", () => {
           new Date(2021, 7, 1),
           new Date(2021, 8, 1),
         ],
-        Interval.I1D
-      )
+        Interval.I1D,
+      ),
     ).toEqual(["1 Jun", "1 Jul", "1 Aug", "1 Sep"]);
   });
 });
@@ -62,7 +62,7 @@ describe("dateFormat", () => {
 describe("dateFormat", () => {
   test("I1D", () => {
     expect(dateFormat(new Date(2021, 4, 8, 1, 0, 0), Interval.I1D)).toEqual(
-      "May 08"
+      "May 08",
     );
   });
 });

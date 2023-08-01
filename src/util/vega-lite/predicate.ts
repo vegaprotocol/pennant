@@ -14,7 +14,7 @@ export interface FieldEqualPredicate extends FieldPredicateBase {
 }
 
 export function isFieldEqualPredicate(
-  predicate: any
+  predicate: any,
 ): predicate is FieldEqualPredicate {
   return predicate.equal !== undefined;
 }
@@ -24,7 +24,7 @@ interface FieldLTPredicate extends FieldPredicateBase {
 }
 
 export function isFieldLTPredicate(
-  predicate: any
+  predicate: any,
 ): predicate is FieldLTPredicate {
   return predicate.lt !== undefined;
 }
@@ -34,7 +34,7 @@ interface FieldGTPredicate extends FieldPredicateBase {
 }
 
 export function isFieldGTPredicate(
-  predicate: any
+  predicate: any,
 ): predicate is FieldGTPredicate {
   return predicate.gt !== undefined;
 }

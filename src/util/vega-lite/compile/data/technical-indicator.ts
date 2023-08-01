@@ -4,7 +4,7 @@ import { DataFlowNode } from "./dataflow";
 export class TechnicalIndicatorTransformNode extends DataFlowNode {
   constructor(
     parent: DataFlowNode | null,
-    private transform: TechnicalIndicatorTransform
+    private transform: TechnicalIndicatorTransform,
   ) {
     super(parent);
     this.transform = transform;

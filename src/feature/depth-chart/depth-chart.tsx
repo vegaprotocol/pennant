@@ -85,7 +85,7 @@ export const DepthChart = forwardRef(
       notEnoughDataText = "No data",
       theme = "dark",
     }: DepthChartProps,
-    ref: React.Ref<DepthChartHandle>
+    ref: React.Ref<DepthChartHandle>,
   ) => {
     const contentsRef = useRef<HTMLCanvasElement>(null!);
     const uiRef = useRef<HTMLCanvasElement>(null!);
@@ -133,7 +133,7 @@ export const DepthChart = forwardRef(
           : width,
         devicePixelContentBoxSizeBlockSize
           ? devicePixelContentBoxSizeBlockSize / window.devicePixelRatio
-          : height
+          : height,
       );
 
       chartRef.current.data = data;
@@ -186,7 +186,7 @@ export const DepthChart = forwardRef(
         </div>
       </div>
     );
-  }
+  },
 );
 
 DepthChart.displayName = "DepthChart";

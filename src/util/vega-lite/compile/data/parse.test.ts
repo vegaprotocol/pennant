@@ -22,7 +22,7 @@ describe("compile/data/parse", () => {
             y: { field: "B", type: "quantitative" },
           },
         },
-        null
+        null,
       );
       const root = new PlaceholderDataFlowNode(null);
       const result = parseTransformArray(root, model);

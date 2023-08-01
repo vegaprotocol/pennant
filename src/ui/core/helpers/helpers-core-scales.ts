@@ -12,7 +12,7 @@ export function recalculateScale(
   id: string,
   plotAreas: { [id: string]: PlotArea },
   yElements: Panes<Selection<Element, unknown, null, undefined>>,
-  yZooms: Panes<ZoomBehavior<Element, unknown>>
+  yZooms: Panes<ZoomBehavior<Element, unknown>>,
 ) {
   const xr = xTransform().rescaleX(xScale);
   const domain = xr.domain() as [Date, Date];
@@ -21,7 +21,7 @@ export function recalculateScale(
   const originalHeight = Math.abs(originalExtent[0] - originalExtent[1]);
 
   const newHeight = Math.abs(
-    yScales[id](newExtent[1]) - yScales[id](newExtent[0])
+    yScales[id](newExtent[1]) - yScales[id](newExtent[0]),
   );
 
   yElements[id].call(
@@ -31,7 +31,7 @@ export function recalculateScale(
       .scale(originalHeight / newHeight)
       .translate(
         0,
-        -(yScales[id](newExtent[0]) + yScales[id](newExtent[1])) / 2
-      )
+        -(yScales[id](newExtent[0]) + yScales[id](newExtent[1])) / 2,
+      ),
   );
 }

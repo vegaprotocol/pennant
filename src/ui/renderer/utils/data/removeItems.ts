@@ -8,7 +8,7 @@
 export function removeItems(
   arr: any[],
   startIdx: number,
-  removeCount: number
+  removeCount: number,
 ): void {
   const length = arr.length;
   let i;

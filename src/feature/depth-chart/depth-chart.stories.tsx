@@ -300,7 +300,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
   useInterval(() => {
     async function fetchData() {
       const res = await fetch(
-        `https://www.binance.com/api/v3/depth?symbol=BTCGBP&limit=1000`
+        `https://www.binance.com/api/v3/depth?symbol=BTCGBP&limit=1000`,
       );
 
       const json = await res.json();
@@ -311,7 +311,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
             price: +ask[0],
             volume: +ask[1],
           })),
-          ["price"]
+          ["price"],
         ),
         buy: orderBy(
           json.bids.map((bid: [string, string]) => ({
@@ -319,7 +319,7 @@ export const Binance: Story<DepthChartProps> = (args) => {
             volume: +bid[1],
           })),
           ["price"],
-          ["desc"]
+          ["desc"],
         ),
       });
 

@@ -10,7 +10,7 @@ function addYAxisPath(
   yScale: ScaleLinear,
   position: number | null,
   decimalPlaces: number,
-  colors: Colors
+  colors: Colors,
 ) {
   if (position) {
     const width = xScale.range()[1];
@@ -59,7 +59,7 @@ export class YAxisTooltipElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1,
     position: number | null,
-    colors: Colors
+    colors: Colors,
   ) {
     addYAxisPath(ctx, xScale, yScale, position, this.decimalPlaces, colors);
   }

@@ -12,7 +12,7 @@ describe("compile/data/technical-indicator", () => {
 
       const technicalIndicator = new TechnicalIndicatorTransformNode(
         null,
-        transform
+        transform,
       );
 
       expect(technicalIndicator.assemble()).toEqual({

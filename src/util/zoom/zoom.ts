@@ -3,7 +3,7 @@ import { zoomIdentity, ZoomTransform } from "./transform";
 function defaultConstrain(
   transform: ZoomTransform,
   extent: [[number, number], [number, number]],
-  translateExtent: [[number, number], [number, number]]
+  translateExtent: [[number, number], [number, number]],
 ): ZoomTransform {
   const dx0 = transform.invertX(extent[0][0]) - translateExtent[0][0];
   const dx1 = transform.invertX(extent[1][0]) - translateExtent[1][0];
@@ -12,7 +12,7 @@ function defaultConstrain(
 
   return transform.translate(
     dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
-    dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)
+    dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1),
   );
 }
 
@@ -26,7 +26,7 @@ export class Zoom {
   public constrain: (
     transform: ZoomTransform,
     extent: [[number, number], [number, number]],
-    translateExtent: [[number, number], [number, number]]
+    translateExtent: [[number, number], [number, number]],
   ) => ZoomTransform = defaultConstrain;
 
   /**
@@ -72,8 +72,8 @@ export class Zoom {
       this.constrain(
         this.translate(this.scale(this.__zoom, k), p, this.__zoom.invert(p)),
         this.extent,
-        this.translateExtent
-      )
+        this.translateExtent,
+      ),
     );
   }
 
@@ -82,8 +82,8 @@ export class Zoom {
       this.constrain(
         this.__zoom.translate(x, y),
         this.extent,
-        this.translateExtent
-      )
+        this.translateExtent,
+      ),
     );
   }
 
@@ -95,8 +95,8 @@ export class Zoom {
           .scale(this.__zoom.k)
           .translate(-x, -y),
         this.extent,
-        this.translateExtent
-      )
+        this.translateExtent,
+      ),
     );
   }
 
@@ -107,13 +107,13 @@ export class Zoom {
   public wheeled(
     wheelDelta: number,
     point: [number, number],
-    viewportExtent: [[number, number], [number, number]]
+    viewportExtent: [[number, number], [number, number]],
   ) {
     const t = this.__zoom;
 
     const k = Math.max(
       this.scaleExtent[0],
-      Math.min(this.scaleExtent[1], t.k * Math.pow(2, wheelDelta))
+      Math.min(this.scaleExtent[1], t.k * Math.pow(2, wheelDelta)),
     );
 
     this.scaleTo(k, point);
@@ -122,7 +122,7 @@ export class Zoom {
   public scale(transform: ZoomTransform, k: number) {
     const constrainedK = Math.max(
       this.scaleExtent[0],
-      Math.min(this.scaleExtent[1], k)
+      Math.min(this.scaleExtent[1], k),
     );
 
     return constrainedK === transform.k
@@ -133,7 +133,7 @@ export class Zoom {
   public translate(
     transform: ZoomTransform,
     p0: [number, number],
-    p1: [number, number]
+    p1: [number, number],
   ): ZoomTransform {
     const x = p0[0] - p1[0] * transform.k;
     const y = p0[1] - p1[1] * transform.k;

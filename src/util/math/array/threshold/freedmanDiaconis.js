@@ -6,6 +6,6 @@ export default function (values, min, max) {
     (max - min) /
       (2 *
         (quantile(values, 0.75) - quantile(values, 0.25)) *
-        Math.pow(count(values), -1 / 3))
+        Math.pow(count(values), -1 / 3)),
   );
 }

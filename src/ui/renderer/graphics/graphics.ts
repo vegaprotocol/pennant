@@ -67,7 +67,7 @@ export class Graphics extends Container {
       shape,
       this._fillStyle.clone(),
       this._lineStyle.clone(),
-      this._matrix
+      this._matrix,
     );
 
     return this;
@@ -103,7 +103,7 @@ export class Graphics extends Container {
         color: 0xffffff,
         matrix: null,
       },
-      options
+      options,
     ) as FillStyleOptions;
 
     const visible = (options?.alpha ?? 1) > 0;
@@ -140,7 +140,7 @@ export class Graphics extends Container {
         color: 0x0,
         lineDash: [],
       },
-      options
+      options,
     );
 
     const visible = (options?.width ?? 0 > 0) && (options?.alpha ?? 0 > 0);
@@ -156,7 +156,7 @@ export class Graphics extends Container {
    */
   public drawArea(
     data: [number, number, number][],
-    curve: CurveFactory = curveLinear
+    curve: CurveFactory = curveLinear,
   ): this {
     return this.drawShape(new Area(data, curve));
   }
@@ -173,7 +173,7 @@ export class Graphics extends Container {
    */
   public drawLine(
     data: [number, number][],
-    curve: CurveFactory | CurveFactoryLineOnly = curveLinear
+    curve: CurveFactory | CurveFactoryLineOnly = curveLinear,
   ): this {
     return this.drawShape(new Line(data, curve));
   }

@@ -12,6 +12,6 @@ export class DummyElement implements types.RenderableElement {
   draw(
     _ctx: CanvasRenderingContext2D,
     _xScale: types.ScaleTime,
-    _yScale: types.ScaleLinear
+    _yScale: types.ScaleLinear,
   ) {}
 }

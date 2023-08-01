@@ -4,7 +4,7 @@ import { InteractionData } from "./interaction-data";
 export type InteractionCallback = (
   interactionEvent: InteractionEvent,
   displayObject: DisplayObject,
-  hit?: boolean
+  hit?: boolean,
 ) => void;
 
 export class InteractionEvent {

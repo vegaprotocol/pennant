@@ -19,7 +19,7 @@ export class HorizontalGrid extends Container {
     scale: ScaleLinear | ScaleTime,
     width: number,
     height: number,
-    resolution: number = 1
+    resolution: number = 1,
   ) {
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
@@ -42,11 +42,11 @@ export class HorizontalGrid extends Container {
 
     if (isDateArray(ticks)) {
       exit = [...this.nodeByKeyValue.keys()].filter(
-        (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1)
+        (node) => !(ticks.map((tick) => tick.getTime()).indexOf(node) !== -1),
       );
     } else {
       exit = [...this.nodeByKeyValue.keys()].filter(
-        (node) => !(ticks.map((tick) => tick).indexOf(node) !== -1)
+        (node) => !(ticks.map((tick) => tick).indexOf(node) !== -1),
       );
     }
 
@@ -70,7 +70,7 @@ export class HorizontalGrid extends Container {
 
     for (const node of update) {
       const line = this.nodeByKeyValue.get(
-        isDate(node) ? node.getTime() : node
+        isDate(node) ? node.getTime() : node,
       )!;
 
       line.clear();

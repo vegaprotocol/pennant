@@ -19,7 +19,7 @@ function getSignFromSide(side: Side) {
 
 export function createPositionLabelAnnotation(
   position: positions_party_positions,
-  decimalPlaces: number
+  decimalPlaces: number,
 ): LabelAnnotation {
   return {
     type: "label",
@@ -31,14 +31,14 @@ export function createPositionLabelAnnotation(
       },
       {
         label: `${getSignFromValue(Number(position.openVolume))}${Math.abs(
-          Number(position.openVolume)
+          Number(position.openVolume),
         )}`,
         fill: true,
       },
       {
         label: `${i18n.GLOBAL.pnl} ${formatNumber(
           position.unrealisedPNL,
-          decimalPlaces
+          decimalPlaces,
         )}`,
         stroke: true,
       },
@@ -51,7 +51,7 @@ export function createPositionLabelAnnotation(
 export function createOrderLabelAnnotation(
   order: orders_orders,
   decimalPlaces: number,
-  onOrderCancelled: (id: string) => void
+  onOrderCancelled: (id: string) => void,
 ): LabelAnnotation {
   const cells: LabelAnnotationCell[] = [
     // Type and time-in-force
@@ -88,7 +88,7 @@ export function createOrderLabelAnnotation(
     intent: "danger",
     y: parseVegaDecimal(
       order.price,
-      order.market?.decimalPlaces ?? decimalPlaces
+      order.market?.decimalPlaces ?? decimalPlaces,
     ),
   };
 }

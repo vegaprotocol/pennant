@@ -9,7 +9,7 @@ export default class extends element(
       const context = node.getContext("webgl");
       context.viewport(0, 0, width, height);
     }
-  }
+  },
 ) {
   get setWebglViewport() {
     return (

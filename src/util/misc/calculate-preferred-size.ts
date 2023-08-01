@@ -1,7 +1,7 @@
 export function calculatePreferredSize(
   studySize: number | string,
   n: number,
-  main: boolean
+  main: boolean,
 ) {
   if (typeof studySize === "string") {
     const preferredSize = studySize.trim();

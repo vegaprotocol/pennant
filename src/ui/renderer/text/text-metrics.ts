@@ -45,7 +45,7 @@ export class TextMetrics {
     lineWidths: number[],
     lineHeight: number,
     maxLineWidth: number,
-    fontProperties: IFontMetrics
+    fontProperties: IFontMetrics,
   ) {
     /**
      * The text that was measured
@@ -100,7 +100,7 @@ export class TextMetrics {
     text: string,
     style: TextStyle,
     wordWrap?: boolean,
-    canvas = TextMetrics._canvas
+    canvas = TextMetrics._canvas,
   ): TextMetrics {
     wordWrap =
       wordWrap === undefined || wordWrap === null ? style.wordWrap : wordWrap;
@@ -158,7 +158,7 @@ export class TextMetrics {
       lineWidths,
       lineHeight + style.leading,
       maxLineWidth,
-      fontProperties
+      fontProperties,
     );
   }
 
@@ -169,7 +169,7 @@ export class TextMetrics {
   private static wordWrap(
     text: string,
     style: TextStyle,
-    canvas = TextMetrics._canvas
+    canvas = TextMetrics._canvas,
   ): string {
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -223,7 +223,7 @@ export class TextMetrics {
         // check both this and the last tokens for spaces
         const currIsBreakingSpace = TextMetrics.isBreakingSpace(token);
         const lastIsBreakingSpace = TextMetrics.isBreakingSpace(
-          line[line.length - 1]
+          line[line.length - 1],
         );
 
         if (currIsBreakingSpace && lastIsBreakingSpace) {
@@ -236,7 +236,7 @@ export class TextMetrics {
         token,
         letterSpacing,
         cache,
-        context
+        context,
       );
 
       // word is longer than desired bounds
@@ -272,7 +272,7 @@ export class TextMetrics {
                   nextChar,
                   token,
                   j,
-                  style.breakWords
+                  style.breakWords,
                 )
               ) {
                 // combine chars & move forward one
@@ -290,7 +290,7 @@ export class TextMetrics {
               char,
               letterSpacing,
               cache,
-              context
+              context,
             );
 
             if (characterWidth + width > wordWrapWidth) {
@@ -392,7 +392,7 @@ export class TextMetrics {
     key: string,
     letterSpacing: number,
     cache: CharacterWidthCache,
-    context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
+    context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   ): number {
     let width = cache[key];
 
@@ -558,7 +558,7 @@ export class TextMetrics {
     _nextChar: string,
     _token: string,
     _index: number,
-    _breakWords: boolean
+    _breakWords: boolean,
   ): boolean {
     return true;
   }
@@ -602,7 +602,7 @@ export class TextMetrics {
       TextMetrics.METRICS_STRING + TextMetrics.BASELINE_SYMBOL;
     const width = Math.ceil(context.measureText(metricsString).width);
     let baseline = Math.ceil(
-      context.measureText(TextMetrics.BASELINE_SYMBOL).width
+      context.measureText(TextMetrics.BASELINE_SYMBOL).width,
     );
     const height = Math.ceil(TextMetrics.HEIGHT_MULTIPLIER * baseline);
 

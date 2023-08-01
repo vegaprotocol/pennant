@@ -120,7 +120,7 @@ export class Bounds {
     x0: number,
     y0: number,
     x1: number,
-    y1: number
+    y1: number,
   ): void {
     this.addFrameMatrix(transform.worldTransform, x0, y0, x1, y1);
   }
@@ -130,7 +130,7 @@ export class Bounds {
     x0: number,
     y0: number,
     x1: number,
-    y1: number
+    y1: number,
   ): void {
     const a = matrix.a;
     const b = matrix.b;
@@ -185,7 +185,7 @@ export class Bounds {
   addVertexData(
     vertexData: Float32Array,
     beginOffset: number,
-    endOffset: number
+    endOffset: number,
   ): void {
     let minX = this.minX;
     let minY = this.minY;
@@ -212,13 +212,13 @@ export class Bounds {
     transform: Transform,
     vertices: Float32Array,
     beginOffset: number,
-    endOffset: number
+    endOffset: number,
   ): void {
     this.addVerticesMatrix(
       transform.worldTransform,
       vertices,
       beginOffset,
-      endOffset
+      endOffset,
     );
   }
 
@@ -228,7 +228,7 @@ export class Bounds {
     beginOffset: number,
     endOffset: number,
     padX = 0,
-    padY = padX
+    padY = padX,
   ): void {
     const a = matrix.a;
     const b = matrix.b;
@@ -297,7 +297,7 @@ export class Bounds {
       bounds.minX,
       bounds.minY,
       bounds.maxX,
-      bounds.maxY
+      bounds.maxY,
     );
   }
 
@@ -344,7 +344,7 @@ export class Bounds {
     x1: number,
     y1: number,
     padX: number,
-    padY: number
+    padY: number,
   ): void {
     x0 -= padX;
     y0 -= padY;

@@ -41,7 +41,7 @@ export class MidMarketPriceLabel extends Container {
     resolution: number = 1,
     colors: MidMarketPriceLabelColors,
     price?: string,
-    title?: string
+    title?: string,
   ) {
     this.price.x = x;
     this.price.y = y;
@@ -78,7 +78,7 @@ export class MidMarketPriceLabel extends Container {
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),
       width + 2 * padding,
-      height + 2 * padding
+      height + 2 * padding,
     );
 
     this.background.endFill();

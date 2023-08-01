@@ -25,7 +25,7 @@ export class Texture<R extends Resource = Resource> {
     baseTexture: BaseTexture<R>,
     frame: Rectangle = new Rectangle(0, 0, 1, 1),
     orig: Rectangle = frame,
-    anchor?: PointData
+    anchor?: PointData,
   ) {
     this.baseTexture = baseTexture;
 
@@ -64,7 +64,7 @@ export class Texture<R extends Resource = Resource> {
 
       throw new Error(
         "Texture Error: frame does not fit inside the base Texture dimensions: " +
-          `${errorX} ${relationship} ${errorY}`
+          `${errorX} ${relationship} ${errorY}`,
       );
     }
 
@@ -80,7 +80,7 @@ export class Texture<R extends Resource = Resource> {
 
   static from<R extends Resource = Resource>(
     source: TextureSource,
-    options: Partial<BaseTextureOptions> = {}
+    options: Partial<BaseTextureOptions> = {},
   ): Texture<R> {
     const texture = new Texture<R>(new BaseTexture<R>(source, options));
 

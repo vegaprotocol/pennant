@@ -17,7 +17,7 @@ function createCanvas(width: number, height: number) {
  * @returns A promise that will fulfill with a new Blob object represnting a file containing an image or null.
  */
 export async function asyncSnapshot(
-  chartRef: React.RefObject<HTMLElement>
+  chartRef: React.RefObject<HTMLElement>,
 ): Promise<Blob | null> {
   if (chartRef.current) {
     const bbox = chartRef.current.getBoundingClientRect();
@@ -36,7 +36,7 @@ export async function asyncSnapshot(
     }
 
     const xAxisCanvas = chartRef.current.querySelector<HTMLCanvasElement>(
-      ".x-axis canvas"
+      ".x-axis canvas",
     ) as HTMLCanvasElement;
 
     const devicePixelRatio = window.devicePixelRatio;

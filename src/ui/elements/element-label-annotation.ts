@@ -24,7 +24,7 @@ function addLabel(
   pixelRatio: number,
   label: LabelAnnotation,
   y: number,
-  colors: Colors
+  colors: Colors,
 ) {
   const stroke =
     label.intent === "success" ? colors.buyStroke : colors.sellStroke;
@@ -36,7 +36,7 @@ function addLabel(
 
   // Calculate widths of cells
   const widths = label.cells.map(
-    (cell) => ctx.measureText(cell.label).width + 2 * PADDING
+    (cell) => ctx.measureText(cell.label).width + 2 * PADDING,
   );
 
   const totalWidth = sum(widths);
@@ -65,12 +65,12 @@ export class LabelAnnotationElement implements RenderableElement {
     xScale: ScaleTime,
     yScale: ScaleLinear,
     pixelRatio: number = 1,
-    colors: Colors
+    colors: Colors,
   ) {
     const yPositions = this.labels.map((label) => yScale(label.y));
     const shiftedYPositions = calculateShiftedPositions(
       yPositions,
-      LABEL_ANNOTATION_HEIGHT
+      LABEL_ANNOTATION_HEIGHT,
     );
 
     for (let i = 0; i < this.labels.length; i++) {
@@ -81,7 +81,7 @@ export class LabelAnnotationElement implements RenderableElement {
         pixelRatio,
         this.labels[i],
         shiftedYPositions[i],
-        colors
+        colors,
       );
     }
   }

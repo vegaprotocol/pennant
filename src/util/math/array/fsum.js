@@ -70,6 +70,6 @@ export function fcumsum(values, valueof) {
     values,
     valueof === undefined
       ? (v) => adder.add(+v || 0)
-      : (v) => adder.add(+valueof(v, ++index, values) || 0)
+      : (v) => adder.add(+valueof(v, ++index, values) || 0),
   );
 }

@@ -97,7 +97,7 @@ export class Container extends DisplayObject implements RenderableObject {
    */
   public removeChildren(
     beginIndex = 0,
-    endIndex = this.children.length
+    endIndex = this.children.length,
   ): DisplayObject[] {
     const begin = beginIndex;
     const end = endIndex;
@@ -119,7 +119,7 @@ export class Container extends DisplayObject implements RenderableObject {
     }
 
     throw new RangeError(
-      "removeChildren: numeric values are outside the acceptable range."
+      "removeChildren: numeric values are outside the acceptable range.",
     );
   }
 
@@ -165,7 +165,7 @@ export class Container extends DisplayObject implements RenderableObject {
    */
   public getLocalBounds(
     rect?: Rectangle,
-    skipChildrenUpdate = false
+    skipChildrenUpdate = false,
   ): Rectangle {
     const result = super.getLocalBounds(rect);
 

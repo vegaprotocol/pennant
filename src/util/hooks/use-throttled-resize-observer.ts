@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import useResizeObserver, { ObservedSize } from "./use-resize-observer";
 
 export function useThrottledResizeObserver<T extends HTMLElement>(
-  wait: number
+  wait: number,
 ) {
   const [size, setSize] = useState<ObservedSize>({
     width: undefined,

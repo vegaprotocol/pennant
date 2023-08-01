@@ -10,7 +10,7 @@ function addYAxisPath(
   yScale: ScaleLinear,
   position: number | null,
   decimalPlaces: number,
-  colors: Colors
+  colors: Colors,
 ) {
   if (position) {
     const width = xScale.range()[1];
@@ -74,7 +74,7 @@ export class YAxisAnnotationElement implements RenderableElement {
     yScale: ScaleLinear,
     pixelRatio: number = 1,
     position: number | null,
-    colors: Colors
+    colors: Colors,
   ) {
     addYAxisPath(
       ctx,
@@ -82,7 +82,7 @@ export class YAxisAnnotationElement implements RenderableElement {
       yScale,
       this.position,
       this.decimalPlaces,
-      colors
+      colors,
     );
   }
 }

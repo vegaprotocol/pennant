@@ -35,7 +35,7 @@ export class Area extends Container {
       colors.positiveStroke,
       colors.positiveFill,
       colors.backgroundSurface,
-      curveLinear
+      curveLinear,
     );
 
     this.maskPositive = new Graphics();
@@ -47,7 +47,7 @@ export class Area extends Container {
       colors.negativeStroke,
       colors.negativeFill,
       colors.backgroundSurface,
-      curveLinear
+      curveLinear,
     );
 
     this.maskNegative = new Graphics();
@@ -71,7 +71,7 @@ export class Area extends Container {
     data: [number, number][],
     startPrice: number,
     height: number,
-    resolution = 1
+    resolution = 1,
   ): void {
     this.maskPositive.y = startPrice;
     this.maskNegative.y = startPrice;
@@ -84,7 +84,7 @@ export class Area extends Container {
       this.colors.positiveStroke,
       this.colors.backgroundSurface,
       false,
-      startPrice
+      startPrice,
     );
 
     this.priceCurveNegative.update(
@@ -95,7 +95,7 @@ export class Area extends Container {
       this.colors.negativeStroke,
       this.colors.backgroundSurface,
       true,
-      startPrice
+      startPrice,
     );
   }
 }

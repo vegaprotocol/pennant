@@ -27,7 +27,7 @@ export class EmptyDataSource implements DataSource {
 
   subscribeData(
     _interval: Interval,
-    _onSubscriptionData: (data: any) => void
+    _onSubscriptionData: (data: any) => void,
   ) {}
 
   unsubscribeData() {}

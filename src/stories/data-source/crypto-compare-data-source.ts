@@ -7,7 +7,7 @@ const API_KEY =
 
 const socket = new WebSocket(
   `wss://streamer.cryptocompare.com/v2?api_key=${API_KEY}`,
-  "protocolOne"
+  "protocolOne",
 );
 
 export class CryptoCompareDataSource implements DataSource {
@@ -46,7 +46,7 @@ export class CryptoCompareDataSource implements DataSource {
     }
 
     const res = await fetch(
-      `https://min-api.cryptocompare.com/data/v2/histo${resolution}?fsym=BTC&tsym=USD&limit=${limit}&toTs=${toTs}&api_key=${API_KEY}`
+      `https://min-api.cryptocompare.com/data/v2/histo${resolution}?fsym=BTC&tsym=USD&limit=${limit}&toTs=${toTs}&api_key=${API_KEY}`,
     );
 
     const data = await res.json();

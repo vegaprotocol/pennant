@@ -26,7 +26,7 @@ export class RuleElement implements PositionalElement {
     ctx: CanvasRenderingContext2D,
     xScale: ScaleTime,
     yScale: ScaleLinear,
-    pixelRatio: number = 1
+    pixelRatio: number = 1,
   ) {
     let x;
     let x2;
