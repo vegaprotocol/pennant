@@ -48,6 +48,7 @@ export const formatter = (value: number, fractionDigits: number = 5) => {
   // positional decimal places can be negative.
   // e.g. -3 means that the smallest order and position is of size 1000
   // in that case we dont need fractionDigits so we can set it to 0
+  // otherwise new Intl.NumberFormat will throw
   fractionDigits = Math.max(0, fractionDigits);
 
   return new Intl.NumberFormat("en-GB", {
