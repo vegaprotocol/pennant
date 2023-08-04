@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github.com/vegaprotocol/pennant/compare/v1.11.0...v1.11.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* handle negative position decimals in formatter ([7b65a0d](https://github.com/vegaprotocol/pennant/commit/7b65a0d6380ffabdab6d638ac9ec6d7c0216baee))
+
 ## [1.11.0](https://github.com/vegaprotocol/pennant/compare/v1.10.0...v1.11.0) (2023-07-17)
 
 
