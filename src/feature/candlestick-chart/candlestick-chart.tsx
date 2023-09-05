@@ -71,6 +71,7 @@ export type CandlestickChartProps = {
   options?: Options;
   theme?: ThemeVariant;
   onOptionsChanged?: (options: Options) => void;
+  onPaneChanged?: (size: number[]) => void;
   onViewportChanged?: (viewport: Viewport) => void;
 };
 
@@ -90,6 +91,7 @@ export const CandlestickChart = forwardRef(
       initialViewport,
       theme = "dark",
       onOptionsChanged = noop,
+      onPaneChanged = noop,
       onViewportChanged = noop,
     }: CandlestickChartProps,
     ref: React.Ref<ChartElement>,
@@ -356,6 +358,7 @@ export const CandlestickChart = forwardRef(
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
+            onChangePane={onPaneChanged}
             onRemoveOverlay={handleRemoveOverlay}
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
