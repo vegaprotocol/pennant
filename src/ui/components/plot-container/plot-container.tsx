@@ -280,15 +280,16 @@ export const PlotContainer = forwardRef<
             // get size from studySizes option, skip main as that should
             // always render greedily
             const size = isMain ? undefined : studySizes[index - 1];
+            const preferredSize = calculatePreferredSize(
+              size,
+              studySize,
+              numPanes,
+              isMain,
+            );
             return (
               <Allotment.Pane
                 key={pane.id}
-                preferredSize={calculatePreferredSize(
-                  size,
-                  studySize,
-                  numPanes,
-                  isMain,
-                )}
+                preferredSize={preferredSize}
                 priority={isMain ? LayoutPriority.High : LayoutPriority.Low}
               >
                 <PaneView

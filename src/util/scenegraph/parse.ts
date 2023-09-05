@@ -222,12 +222,6 @@ export function parse(
   decimalPlaces: number,
   annotations: Annotation[],
 ): Scenegraph | null {
-  if (isVConcatSpec(specification) && specification.vconcat.length > 2) {
-    console.warn(
-      `Expected no more than 2 panes. Received ${specification.vconcat.length}`,
-    );
-  }
-
   if (specification.data?.values.length === 0) {
     return null;
   }
