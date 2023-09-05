@@ -17,11 +17,7 @@ const Template: Story<CandlestickChartProps> = (args) => {
 
   return (
     <div style={{ height: "100%" }}>
-      <CandlestickChart
-        {...args}
-        onViewportChanged={console.log}
-        theme={theme}
-      />
+      <CandlestickChart {...args} theme={theme} />
     </div>
   );
 };
