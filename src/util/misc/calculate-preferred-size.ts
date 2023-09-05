@@ -1,10 +1,22 @@
 export function calculatePreferredSize(
-  studySize: number | string,
+  size: number | string | undefined,
+  defaultStudySize: number | string,
   n: number,
   main: boolean,
 ) {
-  if (typeof studySize === "string") {
-    const preferredSize = studySize.trim();
+  // main will always be greedy thanks to LayoutPriority.High
+  // and 100% preferred size
+  if (main) {
+    return "100%";
+  }
+
+  if (size !== undefined) {
+    return size;
+  }
+
+  // use default studySize
+  if (typeof defaultStudySize === "string") {
+    const preferredSize = defaultStudySize.trim();
 
     if (preferredSize.endsWith("%")) {
       const proportion = Number(preferredSize.slice(0, -1)) / 100;
@@ -13,35 +25,15 @@ export function calculatePreferredSize(
 
       const mainSize = ratio / (ratio + (n - 1));
 
-      if (main) {
-        return `${100 * mainSize}%`;
-      } else {
-        return `${100 * ((1 - mainSize) / Math.max(n - 1, 1))}%`;
-      }
+      const pctValue = 100 * ((1 - mainSize) / Math.max(n - 1, 1));
+
+      return `${pctValue}%`;
     } else if (preferredSize.endsWith("px")) {
-      const pixels = Number(preferredSize.slice(0, -2));
-
-      if (main) {
-        return undefined;
-      } else {
-        return pixels;
-      }
+      return Number(preferredSize.slice(0, -2));
     } else if (typeof Number.parseFloat(preferredSize) === "number") {
-      const pixels = Number.parseFloat(preferredSize);
-
-      if (main) {
-        return undefined;
-      } else {
-        return pixels;
-      }
+      return Number.parseFloat(preferredSize);
     }
   } else {
-    const pixels = studySize;
-
-    if (main) {
-      return undefined;
-    } else {
-      return pixels;
-    }
+    return defaultStudySize;
   }
 }

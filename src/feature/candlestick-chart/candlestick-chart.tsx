@@ -61,6 +61,7 @@ export type Options = {
    * If it ends in "%" it will be interpreted as a percentage of the size of the main pane, e.g. "50%".
    */
   studySize?: number | string;
+  studySizes?: Array<number | string>;
 };
 
 export type CandlestickChartProps = {
@@ -87,6 +88,7 @@ export const CandlestickChart = forwardRef(
         initialNumCandlesToDisplay: INITIAL_NUM_CANDLES_TO_DISPLAY,
         initialNumCandlesToFetch: INITIAL_NUM_CANDLES_TO_FETCH,
         studySize: "50%",
+        studySizes: [],
       },
       initialViewport,
       theme = "dark",
@@ -107,6 +109,7 @@ export const CandlestickChart = forwardRef(
         initialNumCandlesToFetch = INITIAL_NUM_CANDLES_TO_FETCH,
       notEnoughDataText,
       studySize = "50%",
+      studySizes = [],
     } = options;
     useImperativeHandle(ref, () => ({
       panBy: (n: number) => {
@@ -355,6 +358,7 @@ export const CandlestickChart = forwardRef(
             initialNumCandles={initialNumCandles}
             colors={colors}
             studySize={studySize}
+            studySizes={studySizes}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}

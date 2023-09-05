@@ -44,6 +44,7 @@ export type PlotContainerProps = {
   initialNumCandles: number;
   colors: Colors;
   studySize: number | string;
+  studySizes: Array<number | string>;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -69,6 +70,7 @@ export const PlotContainer = forwardRef<
       initialNumCandles,
       colors,
       studySize,
+      studySizes,
       onViewportChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
@@ -273,32 +275,39 @@ export const PlotContainer = forwardRef<
             onChangePane(sizes);
           }}
         >
-          {scenegraph.panes.map((pane, index) => (
-            <Allotment.Pane
-              key={pane.id}
-              preferredSize={calculatePreferredSize(
-                studySize,
-                numPanes,
-                index === 0,
-              )}
-              priority={index === 0 ? LayoutPriority.High : LayoutPriority.Low}
-            >
-              <PaneView
-                ref={refs[pane.id]}
-                bounds={bounds}
-                colors={colors}
-                dataIndex={dataIndex}
-                decimalPlaces={decimalPlaces}
-                positionDecimalPlaces={positionDecimalPlaces}
-                priceMonitoringBounds={priceMonitoringBounds}
-                overlays={overlays}
-                pane={pane}
-                simple={simple}
-                onClosePane={onClosePane}
-                onRemoveOverlay={onRemoveOverlay}
-              />
-            </Allotment.Pane>
-          ))}
+          {scenegraph.panes.map((pane, index) => {
+            const isMain = index === 0;
+            // get size from studySizes option, skip main as that should
+            // always render greedily
+            const size = isMain ? undefined : studySizes[index - 1];
+            return (
+              <Allotment.Pane
+                key={pane.id}
+                preferredSize={calculatePreferredSize(
+                  size,
+                  studySize,
+                  numPanes,
+                  isMain,
+                )}
+                priority={isMain ? LayoutPriority.High : LayoutPriority.Low}
+              >
+                <PaneView
+                  ref={refs[pane.id]}
+                  bounds={bounds}
+                  colors={colors}
+                  dataIndex={dataIndex}
+                  decimalPlaces={decimalPlaces}
+                  positionDecimalPlaces={positionDecimalPlaces}
+                  priceMonitoringBounds={priceMonitoringBounds}
+                  overlays={overlays}
+                  pane={pane}
+                  simple={simple}
+                  onClosePane={onClosePane}
+                  onRemoveOverlay={onRemoveOverlay}
+                />
+              </Allotment.Pane>
+            );
+          })}
         </Allotment>
         <XAxisView ref={xAxisRef} simple={simple} />
       </d3fc-group>
