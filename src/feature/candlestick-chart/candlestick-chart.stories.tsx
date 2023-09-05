@@ -16,8 +16,12 @@ const Template: Story<CandlestickChartProps> = (args) => {
   const theme = useDarkMode() ? "dark" : "light";
 
   return (
-    <div style={{ height: "400px" }}>
-      <CandlestickChart {...args} theme={theme} />
+    <div style={{ height: "100%" }}>
+      <CandlestickChart
+        {...args}
+        onViewportChanged={console.log}
+        theme={theme}
+      />
     </div>
   );
 };
@@ -44,6 +48,7 @@ Study.args = {
   options: {
     chartType: "area",
     studies: ["macd"],
+    studySize: 100,
   },
 };
 
