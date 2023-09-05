@@ -281,7 +281,7 @@ export const PlotContainer = forwardRef<
                 numPanes,
                 index === 0,
               )}
-              priority={LayoutPriority.Low}
+              priority={index === 0 ? LayoutPriority.High : LayoutPriority.Low}
             >
               <PaneView
                 ref={refs[pane.id]}
