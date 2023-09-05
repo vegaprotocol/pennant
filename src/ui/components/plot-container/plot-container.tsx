@@ -13,7 +13,7 @@ import {
   Scenegraph,
   Viewport,
 } from "@util/types";
-import { Allotment, AllotmentHandle } from "allotment";
+import { Allotment, AllotmentHandle, LayoutPriority } from "allotment";
 import { throttle } from "lodash";
 import {
   createRef,
@@ -48,6 +48,7 @@ export type PlotContainerProps = {
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePane: (id: string) => void;
+  onChangePane: (sizes: number[]) => void;
   onRemoveOverlay: (id: string) => void;
 };
 
@@ -72,6 +73,7 @@ export const PlotContainer = forwardRef<
       onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
+      onChangePane,
       onRemoveOverlay,
     },
     ref,
@@ -263,10 +265,12 @@ export const PlotContainer = forwardRef<
           ref={allotmentRef}
           minSize={20}
           vertical
-          onChange={(_sizes) => {
+          proportionalLayout={false}
+          onChange={(sizes) => {
             if (typeof chartRef.current?.requestRedraw === "function") {
               chartRef.current?.requestRedraw();
             }
+            onChangePane(sizes);
           }}
         >
           {scenegraph.panes.map((pane, index) => (
@@ -277,6 +281,7 @@ export const PlotContainer = forwardRef<
                 numPanes,
                 index === 0,
               )}
+              priority={index === 0 ? LayoutPriority.High : LayoutPriority.Low}
             >
               <PaneView
                 ref={refs[pane.id]}

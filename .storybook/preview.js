@@ -35,8 +35,9 @@ export const decorators = [
     return (
       <ApolloProvider client={client}>
         <div
+          id="root"
           data-theme={darkmode ? "dark" : "light"}
-          className={classNames({ ["bp4-dark"]: darkmode })}
+          className={classNames({ "bp4-dark": darkmode })}
         >
           <Story />
         </div>
