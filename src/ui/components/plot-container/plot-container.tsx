@@ -13,7 +13,7 @@ import {
   Scenegraph,
   Viewport,
 } from "@util/types";
-import { Allotment, AllotmentHandle } from "allotment";
+import { Allotment, AllotmentHandle, LayoutPriority } from "allotment";
 import { throttle } from "lodash";
 import {
   createRef,
@@ -277,6 +277,7 @@ export const PlotContainer = forwardRef<
                 numPanes,
                 index === 0,
               )}
+              priority={LayoutPriority.Low}
             >
               <PaneView
                 ref={refs[pane.id]}
