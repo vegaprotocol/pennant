@@ -52,6 +52,7 @@ function compileLayer(
   mark: Mark | MarkDef,
   candleWidth: number,
   lineWidth: number,
+  innerPadding: number,
 ) {
   let markType: string;
   let cfg = {};
@@ -98,6 +99,7 @@ function compileLayer(
           getConditionalColor(encoding.fill)(d),
           getConditionalColor(encoding.stroke)(d),
           (encoding.strokeWidth as any)?.value ?? lineWidth,
+          innerPadding,
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(
@@ -130,6 +132,7 @@ export function parseLayer(
   encoding: Encoding<Field>,
   candleWidth: number,
   lineWidth: number,
+  innerPadding: number,
 ) {
   const series: any[] = [];
   let layerData = data;
@@ -151,6 +154,7 @@ export function parseLayer(
         layer.mark,
         candleWidth,
         lineWidth,
+        innerPadding,
       ),
     );
   }
@@ -164,6 +168,7 @@ export function parseLayer(
           layerEncoding,
           candleWidth,
           lineWidth,
+          innerPadding,
         ),
       );
     }
@@ -219,6 +224,7 @@ export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
   lineWidth: number,
+  innerPadding: number,
   decimalPlaces: number,
   annotations: Annotation[],
 ): Scenegraph | null {
@@ -353,6 +359,7 @@ export function parse(
               specification.encoding ?? {},
               candleWidth,
               lineWidth,
+              innerPadding,
             ),
             bounds: calculateScales(
               pane,

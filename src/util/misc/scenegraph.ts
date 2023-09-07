@@ -68,6 +68,7 @@ export function getBarConfig(
   fill: string | null,
   stroke: string | null,
   lineWidth: number | null,
+  innerPadding = PADDING_INNER,
 ) {
   let base = 0;
 
@@ -79,7 +80,7 @@ export function getBarConfig(
     x: d[x],
     y: Math.max(d[y] as number, base),
     height: Math.abs(base - (d[y] as number)),
-    width: width * (1 - PADDING_INNER),
+    width: width * (1 - innerPadding),
     fill: fill,
     stroke: stroke,
     lineWidth: lineWidth ?? 1,
