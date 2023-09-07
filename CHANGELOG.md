@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/vegaprotocol/pennant/compare/v1.11.1...v1.12.0) (2023-09-07)
+
+
+### Features
+
+* add paneSizes option and use it for pane size if provided ([f3d1d72](https://github.com/vegaprotocol/pennant/commit/f3d1d7228ef7ba19145f4897db987daa9df41620))
+* pane configuration ([#910](https://github.com/vegaprotocol/pennant/issues/910)) ([438e74f](https://github.com/vegaprotocol/pennant/commit/438e74f0da8e4ba3a7a83943770a9f58f85ed128))
+* candle width configuration ([#909](https://github.com/vegaprotocol/pennant/issues/909)) ([4b5ee12](https://github.com/vegaprotocol/pennant/commit/4b5ee125531f7b208b70cc8472fd5ae9bada4c98))
+
 ## [1.11.1](https://github.com/vegaprotocol/pennant/compare/v1.11.0...v1.11.1) (2023-08-04)
 
 ### Bug Fixes
