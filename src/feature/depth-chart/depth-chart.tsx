@@ -94,8 +94,8 @@ export const DepthChart = forwardRef(
 
     const {
       ref: resizeOberverRef,
-      width = 300,
-      height = 300,
+      width = 0,
+      height = 0,
       devicePixelContentBoxSizeInlineSize,
       devicePixelContentBoxSizeBlockSize,
     } = useThrottledResizeObserver<HTMLDivElement>(50);
@@ -111,8 +111,8 @@ export const DepthChart = forwardRef(
         chartView: contentsRef.current,
         axisView: uiRef.current,
         resolution: window.devicePixelRatio,
-        width: 300,
-        height: 300,
+        width: 0,
+        height: 0,
         priceFormat,
         volumeFormat,
         colors,
