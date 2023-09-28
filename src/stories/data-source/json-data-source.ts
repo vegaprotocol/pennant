@@ -141,8 +141,6 @@ export class JsonDataSource implements DataSource {
       extendCandle(d, this.decimalPlaces, this.positionDecimalPlaces),
     );
 
-    console.log(candles);
-
     return Promise.resolve(candles);
   }
 
