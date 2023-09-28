@@ -51,7 +51,7 @@ export const formatter = (value: number, fractionDigits: number = 5) => {
   // otherwise new Intl.NumberFormat will throw
   fractionDigits = Math.max(0, fractionDigits);
 
-  return new Intl.NumberFormat("en-GB", {
+  return new Intl.NumberFormat("default", {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
   }).format(value);
@@ -118,7 +118,7 @@ export function tickFormat(ticks: Date[], interval: Interval) {
  * @param decimalPlaces Number of decimal places to display
  */
 export const numberFormatter = (decimalPlaces: number): Intl.NumberFormat =>
-  new Intl.NumberFormat("en-gb", {
+  new Intl.NumberFormat("default", {
     maximumFractionDigits: decimalPlaces,
     minimumFractionDigits: decimalPlaces,
   });
