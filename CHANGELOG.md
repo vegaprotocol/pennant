@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.1](https://github.com/vegaprotocol/pennant/compare/v1.13.0...v1.13.1) (2023-10-03)
+
+
+### Bug Fixes
+
+* hard coded en gb formatting ([b73f417](https://github.com/vegaprotocol/pennant/commit/b73f4170503dec082bb3d76e316655dbf8d02601))
+
 ## [1.13.0](https://github.com/vegaprotocol/pennant/compare/v1.12.0...v1.13.0) (2023-10-03)
 
 
