@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/vegaprotocol/pennant/compare/v1.12.0...v1.13.0) (2023-10-03)
+
+
+### Features
+
+* change depth chart default size to 0 to avoid resize on load ([25f79d5](https://github.com/vegaprotocol/pennant/commit/25f79d5f2b9092a42ecfb6f9e6df657415422c3c))
+
 ## [1.12.0](https://github.com/vegaprotocol/pennant/compare/v1.11.1...v1.12.0) (2023-09-07)
 
 
