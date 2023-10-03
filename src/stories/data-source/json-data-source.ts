@@ -70,7 +70,11 @@ const annotations: LabelAnnotation[] = [
   },
 ];
 
-export function extendCandle(candle: any, decimalPlaces: number): any {
+export function extendCandle(
+  candle: any,
+  decimalPlaces: number,
+  positionDecimalPlaces: number,
+): any {
   return {
     ...candle,
     date: new Date(candle.datetime),
@@ -78,7 +82,7 @@ export function extendCandle(candle: any, decimalPlaces: number): any {
     low: parseVegaDecimal(candle.low, decimalPlaces),
     open: parseVegaDecimal(candle.open, decimalPlaces),
     close: parseVegaDecimal(candle.close, decimalPlaces),
-    volume: parseVegaDecimal(candle.volume, 0),
+    volume: parseVegaDecimal(candle.volume, positionDecimalPlaces),
   };
 }
 
@@ -106,7 +110,7 @@ export class JsonDataSource implements DataSource {
   ) {
     this.marketId = marketId;
     this._decimalPlaces = decimalPlaces;
-    this._positionDecimalPlaces = 0;
+    this._positionDecimalPlaces = 2;
     this.filename = filename;
     this.annotations = annotations;
   }
@@ -134,7 +138,7 @@ export class JsonDataSource implements DataSource {
     const data: any = files.get(this.filename);
 
     const candles = data[interval].candles.map((d: any) =>
-      extendCandle(d, this.decimalPlaces),
+      extendCandle(d, this.decimalPlaces, this.positionDecimalPlaces),
     );
 
     return Promise.resolve(candles);

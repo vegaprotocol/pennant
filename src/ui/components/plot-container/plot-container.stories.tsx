@@ -26,7 +26,9 @@ const Template: Story<PlotContainerProps> = (args) => {
 const specification: TopLevelSpec = {
   name: "main",
   data: {
-    values: json[Interval.I5M].candles.map((candle) => extendCandle(candle, 5)),
+    values: json[Interval.I5M].candles.map((candle) =>
+      extendCandle(candle, 5, 0),
+    ),
   },
   encoding: {
     x: { field: "date", type: "temporal" },
