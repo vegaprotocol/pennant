@@ -69,6 +69,7 @@ export function getBarConfig(
   stroke: string | null,
   lineWidth: number | null,
   innerPadding = PADDING_INNER,
+  pixelsToTime = 1000,
 ) {
   let base = 0;
 
@@ -76,11 +77,17 @@ export function getBarConfig(
     base = d[y2];
   }
 
+  const strokesWidth = stroke && lineWidth ? lineWidth * 2 * pixelsToTime : 0;
+  const calculatedPadding = Math.min(
+    width - width * (1 - innerPadding),
+    innerPadding * 10 * pixelsToTime + strokesWidth,
+  );
+
   return {
     x: d[x],
     y: Math.max(d[y] as number, base),
     height: Math.abs(base - (d[y] as number)),
-    width: width * (1 - innerPadding),
+    width: width - calculatedPadding,
     fill: fill,
     stroke: stroke,
     lineWidth: lineWidth ?? 1,

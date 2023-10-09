@@ -16,6 +16,7 @@ import {
 import { parse } from "@util/scenegraph";
 import {
   Annotation,
+  Bounds,
   Candle,
   ChartElement,
   ChartType,
@@ -132,6 +133,7 @@ export const CandlestickChart = forwardRef(
       },
     }));
 
+    const [width, setWidth] = useState(400);
     const chartRef = useRef<ChartElement>(null!);
     const styleRef = useRef<HTMLDivElement>(null!);
     const listeners = useRef(dispatch("contextmenu"));
@@ -185,14 +187,21 @@ export const CandlestickChart = forwardRef(
       ],
     );
 
+    const candleWidth = getCandleWidth(internalInterval);
+    const [timeViewRange, setTimeViewRange] = useState(
+      initialNumCandles * candleWidth,
+    );
+    const pixelsToTime = timeViewRange / width;
+
     // Compile data and view specification into scenegraph ready for rendering
     const scenegraph = useMemo(
       () =>
         parse(
           specification,
-          getCandleWidth(internalInterval),
+          candleWidth,
           dimensions.strokeWidth,
           dimensions.innerPadding,
+          pixelsToTime,
           dataSource.decimalPlaces,
           annotations,
         ),
@@ -201,8 +210,9 @@ export const CandlestickChart = forwardRef(
         dataSource.decimalPlaces,
         dimensions.strokeWidth,
         dimensions.innerPadding,
-        internalInterval,
         specification,
+        pixelsToTime,
+        candleWidth,
       ],
     );
 
@@ -281,6 +291,16 @@ export const CandlestickChart = forwardRef(
       });
     }, [theme]);
 
+    const handleBoundsChanged = useCallback(
+      (bounds: Bounds) => {
+        setTimeViewRange(bounds[1].getTime() - bounds[0].getTime());
+      },
+      [setTimeViewRange],
+    );
+
+    const handleOnRedraw = useCallback(() => {
+      setWidth(styleRef.current?.getBoundingClientRect().width ?? 0);
+    }, []);
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
         onViewportChanged(viewport);
@@ -369,6 +389,8 @@ export const CandlestickChart = forwardRef(
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
             }}
+            onBoundsChanged={handleBoundsChanged}
+            onRedraw={handleOnRedraw}
           />
         </div>
       </ErrorBoundary>

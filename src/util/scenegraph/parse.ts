@@ -53,6 +53,7 @@ function compileLayer(
   candleWidth: number,
   lineWidth: number,
   innerPadding: number,
+  pixelsToTime: number,
 ) {
   let markType: string;
   let cfg = {};
@@ -100,6 +101,7 @@ function compileLayer(
           getConditionalColor(encoding.stroke)(d),
           (encoding.strokeWidth as any)?.value ?? lineWidth,
           innerPadding,
+          pixelsToTime,
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(
@@ -133,6 +135,7 @@ export function parseLayer(
   candleWidth: number,
   lineWidth: number,
   innerPadding: number,
+  pixelsToTime: number,
 ) {
   const series: any[] = [];
   let layerData = data;
@@ -155,6 +158,7 @@ export function parseLayer(
         candleWidth,
         lineWidth,
         innerPadding,
+        pixelsToTime,
       ),
     );
   }
@@ -169,6 +173,7 @@ export function parseLayer(
           candleWidth,
           lineWidth,
           innerPadding,
+          pixelsToTime,
         ),
       );
     }
@@ -225,6 +230,7 @@ export function parse(
   candleWidth: number,
   lineWidth: number,
   innerPadding: number,
+  pixelsToTime: number,
   decimalPlaces: number,
   annotations: Annotation[],
 ): Scenegraph | null {
@@ -360,6 +366,7 @@ export function parse(
               candleWidth,
               lineWidth,
               innerPadding,
+              pixelsToTime,
             ),
             bounds: calculateScales(
               pane,

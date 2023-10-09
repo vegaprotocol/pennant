@@ -45,12 +45,14 @@ export type PlotContainerProps = {
   colors: Colors;
   studySize: number | string;
   studySizes: Array<number | string>;
+  onBoundsChanged?: (bounds: Bounds) => void;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
   onClosePane: (id: string) => void;
   onChangePane: (sizes: number[]) => void;
   onRemoveOverlay: (id: string) => void;
+  onRedraw?: () => void;
 };
 
 export const PlotContainer = forwardRef<
@@ -72,11 +74,13 @@ export const PlotContainer = forwardRef<
       studySize,
       studySizes,
       onViewportChanged = () => {},
+      onBoundsChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
       onChangePane,
       onRemoveOverlay,
+      onRedraw = () => {},
     },
     ref,
   ) => {
@@ -98,9 +102,9 @@ export const PlotContainer = forwardRef<
       },
     }));
 
-    const onViewportChangedThrottled = useMemo(
-      () => throttle(onViewportChanged, 200),
-      [onViewportChanged],
+    const handleThrottledRedraw = useMemo(
+      () => throttle(onRedraw, 200),
+      [onRedraw],
     );
 
     const onGetDataRangeThrottled = useMemo(
@@ -115,9 +119,17 @@ export const PlotContainer = forwardRef<
     const xAxisRef = useRef<HTMLDivElement>(null!);
     const allotmentRef = useRef<AllotmentHandle>(null!);
 
-    const handleBoundsChanged = useMemo(
-      () => throttle(setBounds, THROTTLE_INTERVAL),
-      [],
+    const handleBoundsChanged = useCallback(
+      (bounds: Bounds) => {
+        setBounds(bounds);
+        onBoundsChanged?.(bounds);
+      },
+      [onBoundsChanged],
+    );
+
+    const handleThrottledBoundsChanged = useMemo(
+      () => throttle(handleBoundsChanged, THROTTLE_INTERVAL),
+      [handleBoundsChanged],
     );
 
     const handleDataIndexChanged = useMemo(
@@ -176,9 +188,10 @@ export const PlotContainer = forwardRef<
         .interval(interval)
         .on("redraw", () => {
           chartRef.current?.requestRedraw();
+          handleThrottledRedraw();
         })
         .on("bounds_changed", (bounds: Bounds) => {
-          handleBoundsChanged(bounds);
+          handleThrottledBoundsChanged(bounds);
         })
         .on("viewport_changed", (viewport: Viewport) => {
           handleViewportChanged(viewport);

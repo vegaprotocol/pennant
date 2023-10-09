@@ -86,6 +86,6 @@ export const Simple = Template.bind({});
 Simple.args = {
   interval: Interval.I5M,
   overlays: [],
-  scenegraph: parse(specification, 100, 1, 0.4, 0, []) as Scenegraph,
+  scenegraph: parse(specification, 100, 1, 0.4, 100, 0, []) as Scenegraph,
   simple: false,
 };
