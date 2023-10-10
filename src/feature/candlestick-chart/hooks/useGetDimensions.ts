@@ -1,5 +1,4 @@
 import { string2num } from "@util/misc";
-import { ThemeVariant } from "@util/types";
 import { useMemo } from "react";
 
 export interface Dimensions {
@@ -8,10 +7,7 @@ export interface Dimensions {
   maxPaddingInPixels: number;
 }
 
-export function useGetDimensions(
-  element: HTMLElement | null,
-  theme?: ThemeVariant,
-): Dimensions {
+export function useGetDimensions(element: HTMLElement | null): Dimensions {
   const cssStyleDeclaration = element ? getComputedStyle(element) : null;
 
   const strokeWidth = string2num(
@@ -29,9 +25,9 @@ export function useGetDimensions(
       ?.getPropertyValue("--pennant-candlestick-max-padding-in-pixels")
       .trim() || "2px",
   );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   return useMemo(
     () => ({ strokeWidth, innerPadding, maxPaddingInPixels }),
-    [strokeWidth, innerPadding, maxPaddingInPixels, theme],
+    [strokeWidth, innerPadding, maxPaddingInPixels],
   );
 }

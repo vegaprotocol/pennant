@@ -39,7 +39,7 @@ import {
 } from "react";
 
 import { Colors, getColors } from "./helpers";
-import { Dimensions, useGetDimensions, useOnReady } from "./hooks";
+import { useGetDimensions, useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -142,7 +142,7 @@ export const CandlestickChart = forwardRef(
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
 
-    const dimensions = useGetDimensions(styleRef.current, theme);
+    const dimensions = useGetDimensions(styleRef.current);
     const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
