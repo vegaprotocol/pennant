@@ -38,8 +38,8 @@ import {
   useState,
 } from "react";
 
-import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
-import { useOnReady } from "./hooks";
+import { Colors, getColors } from "./helpers";
+import { Dimensions, useGetDimensions, useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -142,10 +142,7 @@ export const CandlestickChart = forwardRef(
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
 
-    const [dimensions, setDimensions] = useState<Dimensions>(
-      getDimensions(null),
-    );
-
+    const dimensions = useGetDimensions(styleRef.current, theme);
     const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
@@ -199,8 +196,7 @@ export const CandlestickChart = forwardRef(
         parse(
           specification,
           candleWidth,
-          dimensions.strokeWidth,
-          dimensions.innerPadding,
+          dimensions,
           pixelsToTime,
           dataSource.decimalPlaces,
           annotations,
@@ -208,8 +204,7 @@ export const CandlestickChart = forwardRef(
       [
         annotations,
         dataSource.decimalPlaces,
-        dimensions.strokeWidth,
-        dimensions.innerPadding,
+        dimensions,
         specification,
         pixelsToTime,
         candleWidth,
@@ -287,20 +282,14 @@ export const CandlestickChart = forwardRef(
       // Hack to ensure we pick up the changed css
       requestAnimationFrame(() => {
         setColors(getColors(styleRef?.current));
-        setDimensions(getDimensions(styleRef?.current));
       });
     }, [theme]);
 
-    const handleBoundsChanged = useCallback(
-      (bounds: Bounds) => {
-        setTimeViewRange(bounds[1].getTime() - bounds[0].getTime());
-      },
-      [setTimeViewRange],
-    );
-
-    const handleOnRedraw = useCallback(() => {
+    const handleBoundsChanged = useCallback((bounds: Bounds) => {
+      setTimeViewRange(bounds[1].getTime() - bounds[0].getTime());
       setWidth(styleRef.current?.getBoundingClientRect().width ?? 0);
     }, []);
+
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
         onViewportChanged(viewport);
@@ -390,7 +379,6 @@ export const CandlestickChart = forwardRef(
               listeners.current.call("contextmenu", undefined, event);
             }}
             onBoundsChanged={handleBoundsChanged}
-            onRedraw={handleOnRedraw}
           />
         </div>
       </ErrorBoundary>

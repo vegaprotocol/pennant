@@ -19,6 +19,7 @@ import {
 import { COLORS } from ".";
 
 export const PADDING_INNER = 0.4;
+export const MAX_PADDING = 2;
 
 export function createElement(type: Mark, options: any): PositionalElement {
   if (type === "area") {
@@ -69,6 +70,7 @@ export function getBarConfig(
   stroke: string | null,
   lineWidth: number | null,
   innerPadding = PADDING_INNER,
+  maxPaddingInPixels = MAX_PADDING,
   pixelsToTime = 1000,
 ) {
   let base = 0;
@@ -80,7 +82,7 @@ export function getBarConfig(
   const strokesWidth = stroke && lineWidth ? lineWidth * 2 * pixelsToTime : 0;
   const calculatedPadding = Math.min(
     width - width * (1 - innerPadding),
-    innerPadding * 10 * pixelsToTime + strokesWidth,
+    maxPaddingInPixels * pixelsToTime + strokesWidth,
   );
 
   return {

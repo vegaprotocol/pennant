@@ -52,7 +52,6 @@ export type PlotContainerProps = {
   onClosePane: (id: string) => void;
   onChangePane: (sizes: number[]) => void;
   onRemoveOverlay: (id: string) => void;
-  onRedraw?: () => void;
 };
 
 export const PlotContainer = forwardRef<
@@ -80,7 +79,6 @@ export const PlotContainer = forwardRef<
       onClosePane,
       onChangePane,
       onRemoveOverlay,
-      onRedraw = () => {},
     },
     ref,
   ) => {
@@ -101,11 +99,6 @@ export const PlotContainer = forwardRef<
         chartElement.current?.zoomOut(delta);
       },
     }));
-
-    const handleThrottledRedraw = useMemo(
-      () => throttle(onRedraw, 200),
-      [onRedraw],
-    );
 
     const onGetDataRangeThrottled = useMemo(
       () => throttle(onGetDataRange, 800),
@@ -188,7 +181,6 @@ export const PlotContainer = forwardRef<
         .interval(interval)
         .on("redraw", () => {
           chartRef.current?.requestRedraw();
-          handleThrottledRedraw();
         })
         .on("bounds_changed", (bounds: Bounds) => {
           handleThrottledBoundsChanged(bounds);
