@@ -81,7 +81,7 @@ export function getBarConfig(
 
   const strokesWidth = stroke && lineWidth ? lineWidth * 2 * pixelsToTime : 0;
   const calculatedPadding = Math.min(
-    width - width * (1 - innerPadding),
+    width * innerPadding,
     maxPaddingInPixels * pixelsToTime + strokesWidth,
   );
 
