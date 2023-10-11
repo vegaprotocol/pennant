@@ -45,6 +45,7 @@ export type PlotContainerProps = {
   colors: Colors;
   studySize: number | string;
   studySizes: Array<number | string>;
+  onBoundsChanged?: (bounds: Bounds) => void;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
   onGetDataRange?: (from: Date, to: Date, interval: Interval) => void;
@@ -72,6 +73,7 @@ export const PlotContainer = forwardRef<
       studySize,
       studySizes,
       onViewportChanged = () => {},
+      onBoundsChanged = () => {},
       onRightClick = () => {},
       onGetDataRange = () => {},
       onClosePane,
@@ -98,11 +100,6 @@ export const PlotContainer = forwardRef<
       },
     }));
 
-    const onViewportChangedThrottled = useMemo(
-      () => throttle(onViewportChanged, 200),
-      [onViewportChanged],
-    );
-
     const onGetDataRangeThrottled = useMemo(
       () => throttle(onGetDataRange, 800),
       [onGetDataRange],
@@ -115,9 +112,17 @@ export const PlotContainer = forwardRef<
     const xAxisRef = useRef<HTMLDivElement>(null!);
     const allotmentRef = useRef<AllotmentHandle>(null!);
 
-    const handleBoundsChanged = useMemo(
-      () => throttle(setBounds, THROTTLE_INTERVAL),
-      [],
+    const handleBoundsChanged = useCallback(
+      (bounds: Bounds) => {
+        setBounds(bounds);
+        onBoundsChanged?.(bounds);
+      },
+      [onBoundsChanged],
+    );
+
+    const handleThrottledBoundsChanged = useMemo(
+      () => throttle(handleBoundsChanged, THROTTLE_INTERVAL),
+      [handleBoundsChanged],
     );
 
     const handleDataIndexChanged = useMemo(
@@ -178,7 +183,7 @@ export const PlotContainer = forwardRef<
           chartRef.current?.requestRedraw();
         })
         .on("bounds_changed", (bounds: Bounds) => {
-          handleBoundsChanged(bounds);
+          handleThrottledBoundsChanged(bounds);
         })
         .on("viewport_changed", (viewport: Viewport) => {
           handleViewportChanged(viewport);

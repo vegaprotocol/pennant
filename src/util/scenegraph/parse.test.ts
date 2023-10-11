@@ -19,7 +19,14 @@ test("simple case", () => {
     ],
   };
 
-  const scenegraph = parse(input, 10, 1, 0.4, 0, []);
+  const scenegraph = parse(
+    input,
+    10,
+    { strokeWidth: 1, innerPadding: 0.4, maxPaddingInPixels: 2 },
+    100,
+    0,
+    [],
+  );
 
   expect(scenegraph).toHaveProperty("panes");
   expect(scenegraph?.panes).toHaveLength(1);
@@ -112,7 +119,14 @@ test("candlestick chart with study", () => {
     ],
   };
 
-  const scenegraph = parse(input, 10, 1, 0.4, 0, []);
+  const scenegraph = parse(
+    input,
+    10,
+    { strokeWidth: 1, innerPadding: 0.4, maxPaddingInPixels: 2 },
+    100,
+    0,
+    [],
+  );
 
   expect(scenegraph).toHaveProperty("panes");
   expect(scenegraph?.panes).toHaveLength(2);
@@ -198,7 +212,14 @@ test("recursively parse a layer", () => {
     ],
   };
 
-  const layer = parseLayer(input, { values: [] }, {}, 10, 1, 0.4);
+  const layer = parseLayer(
+    input,
+    { values: [] },
+    {},
+    10,
+    { strokeWidth: 1, innerPadding: 0.4, maxPaddingInPixels: 2 },
+    100,
+  );
 
   expect(layer).toHaveLength(4);
 });

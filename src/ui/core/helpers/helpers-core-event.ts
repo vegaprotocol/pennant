@@ -129,6 +129,7 @@ export function measureXAxis(
   for (const plotArea of Object.values(plotAreas)) {
     plotArea.xScale(xr);
   }
+  onBoundsChanged(xr.domain() as [Date, Date]);
 }
 
 export function drawXAxis(event: any, xAxis: XAxis) {

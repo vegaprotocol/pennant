@@ -16,6 +16,7 @@ import {
 import { parse } from "@util/scenegraph";
 import {
   Annotation,
+  Bounds,
   Candle,
   ChartElement,
   ChartType,
@@ -37,8 +38,8 @@ import {
   useState,
 } from "react";
 
-import { Colors, Dimensions, getColors, getDimensions } from "./helpers";
-import { useOnReady } from "./hooks";
+import { Colors, getColors } from "./helpers";
+import { useGetDimensions, useOnReady } from "./hooks";
 
 const noop = () => {};
 
@@ -132,6 +133,7 @@ export const CandlestickChart = forwardRef(
       },
     }));
 
+    const [width, setWidth] = useState(400);
     const chartRef = useRef<ChartElement>(null!);
     const styleRef = useRef<HTMLDivElement>(null!);
     const listeners = useRef(dispatch("contextmenu"));
@@ -140,10 +142,7 @@ export const CandlestickChart = forwardRef(
     const [internalInterval, setInternalInterval] = useState(interval);
     const [colors, setColors] = useState<Colors>(getColors(null));
 
-    const [dimensions, setDimensions] = useState<Dimensions>(
-      getDimensions(null),
-    );
-
+    const dimensions = useGetDimensions(styleRef.current);
     const [loading, setLoading] = useState(true);
 
     // Callback for fetching historical data
@@ -185,24 +184,30 @@ export const CandlestickChart = forwardRef(
       ],
     );
 
+    const candleWidth = getCandleWidth(internalInterval);
+    const [timeViewRange, setTimeViewRange] = useState(
+      initialNumCandles * candleWidth,
+    );
+    const pixelsToTime = timeViewRange / width;
+
     // Compile data and view specification into scenegraph ready for rendering
     const scenegraph = useMemo(
       () =>
         parse(
           specification,
-          getCandleWidth(internalInterval),
-          dimensions.strokeWidth,
-          dimensions.innerPadding,
+          candleWidth,
+          dimensions,
+          pixelsToTime,
           dataSource.decimalPlaces,
           annotations,
         ),
       [
         annotations,
         dataSource.decimalPlaces,
-        dimensions.strokeWidth,
-        dimensions.innerPadding,
-        internalInterval,
+        dimensions,
         specification,
+        pixelsToTime,
+        candleWidth,
       ],
     );
 
@@ -277,9 +282,13 @@ export const CandlestickChart = forwardRef(
       // Hack to ensure we pick up the changed css
       requestAnimationFrame(() => {
         setColors(getColors(styleRef?.current));
-        setDimensions(getDimensions(styleRef?.current));
       });
     }, [theme]);
+
+    const handleBoundsChanged = useCallback((bounds: Bounds) => {
+      setTimeViewRange(bounds[1].getTime() - bounds[0].getTime());
+      setWidth(styleRef.current?.getBoundingClientRect().width ?? 0);
+    }, []);
 
     const handleViewportChanged = useCallback(
       (viewport: Viewport) => {
@@ -369,6 +378,7 @@ export const CandlestickChart = forwardRef(
             onRightClick={(event: any) => {
               listeners.current.call("contextmenu", undefined, event);
             }}
+            onBoundsChanged={handleBoundsChanged}
           />
         </div>
       </ErrorBoundary>

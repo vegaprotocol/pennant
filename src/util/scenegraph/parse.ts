@@ -46,13 +46,15 @@ import {
 } from "@util/vega-lite";
 import { extent } from "d3-array";
 
+import { Dimensions } from "../../feature/candlestick-chart/hooks";
+
 function compileLayer(
   data: Data,
   encoding: Encoding<Field>,
   mark: Mark | MarkDef,
   candleWidth: number,
-  lineWidth: number,
-  innerPadding: number,
+  dimensions: Dimensions,
+  pixelsToTime: number,
 ) {
   let markType: string;
   let cfg = {};
@@ -98,8 +100,10 @@ function compileLayer(
           candleWidth,
           getConditionalColor(encoding.fill)(d),
           getConditionalColor(encoding.stroke)(d),
-          (encoding.strokeWidth as any)?.value ?? lineWidth,
-          innerPadding,
+          (encoding.strokeWidth as any)?.value ?? dimensions.strokeWidth,
+          dimensions.innerPadding,
+          dimensions.maxPaddingInPixels,
+          pixelsToTime,
         );
       } else if (markType === "rule") {
         cfg = getRuleConfig(
@@ -131,8 +135,8 @@ export function parseLayer(
   data: Data,
   encoding: Encoding<Field>,
   candleWidth: number,
-  lineWidth: number,
-  innerPadding: number,
+  dimensions: Dimensions,
+  pixelsToTime: number,
 ) {
   const series: any[] = [];
   let layerData = data;
@@ -153,8 +157,8 @@ export function parseLayer(
         layerEncoding,
         layer.mark,
         candleWidth,
-        lineWidth,
-        innerPadding,
+        dimensions,
+        pixelsToTime,
       ),
     );
   }
@@ -167,8 +171,8 @@ export function parseLayer(
           layerData,
           layerEncoding,
           candleWidth,
-          lineWidth,
-          innerPadding,
+          dimensions,
+          pixelsToTime,
         ),
       );
     }
@@ -223,8 +227,8 @@ function extractYEncodingFields(layer: BaseSpec) {
 export function parse(
   specification: TopLevelSpec,
   candleWidth: number,
-  lineWidth: number,
-  innerPadding: number,
+  dimensions: Dimensions,
+  pixelsToTime: number,
   decimalPlaces: number,
   annotations: Annotation[],
 ): Scenegraph | null {
@@ -358,8 +362,8 @@ export function parse(
               { values: newData },
               specification.encoding ?? {},
               candleWidth,
-              lineWidth,
-              innerPadding,
+              dimensions,
+              pixelsToTime,
             ),
             bounds: calculateScales(
               pane,
