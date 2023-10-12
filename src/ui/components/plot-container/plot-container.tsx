@@ -112,6 +112,15 @@ export const PlotContainer = forwardRef<
     const xAxisRef = useRef<HTMLDivElement>(null!);
     const allotmentRef = useRef<AllotmentHandle>(null!);
 
+    const requestRedraw = useCallback(() => {
+      chartRef.current?.requestRedraw();
+    }, []);
+
+    const throttleRequestRedraw = useMemo(
+      () => throttle(requestRedraw, THROTTLE_INTERVAL),
+      [requestRedraw],
+    );
+
     const handleBoundsChanged = useCallback(
       (bounds: Bounds) => {
         setBounds(bounds);
@@ -180,7 +189,7 @@ export const PlotContainer = forwardRef<
       )
         .interval(interval)
         .on("redraw", () => {
-          chartRef.current?.requestRedraw();
+          throttleRequestRedraw();
         })
         .on("bounds_changed", (bounds: Bounds) => {
           handleThrottledBoundsChanged(bounds);
@@ -201,8 +210,7 @@ export const PlotContainer = forwardRef<
           onRightClick(event);
         });
 
-      chartRef.current?.requestRedraw();
-
+      throttleRequestRedraw();
       requestAnimationFrame(
         () => chartElement.current?.initialize(initialViewport),
       );
@@ -244,9 +252,9 @@ export const PlotContainer = forwardRef<
           },
         );
 
-        chartRef.current?.requestRedraw();
+        throttleRequestRedraw();
       }
-    }, [chartElement, refs, scenegraph.panes]);
+    }, [chartElement, refs, scenegraph.panes, throttleRequestRedraw]);
 
     useEffect(() => {
       if (chartElement.current) {
@@ -274,9 +282,7 @@ export const PlotContainer = forwardRef<
           vertical
           proportionalLayout={false}
           onChange={(sizes) => {
-            if (typeof chartRef.current?.requestRedraw === "function") {
-              chartRef.current?.requestRedraw();
-            }
+            throttleRequestRedraw();
             onChangePane(sizes);
           }}
         >
