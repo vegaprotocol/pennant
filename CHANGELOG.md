@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.3](https://github.com/vegaprotocol/pennant/compare/v1.13.2...v1.13.3) (2023-10-12)
+
+
+### Bug Fixes
+
+* 4826 throttle redraw request in plot container ([c0c8f93](https://github.com/vegaprotocol/pennant/commit/c0c8f93b0ed2c023ef0eee8879f1ffcef6393f58))
+
 ### [1.13.3](https://github.com/vegaprotocol/pennant/compare/v1.13.2...v1.13.3) (2023-10-11)
 
 ### [1.13.2](https://github.com/vegaprotocol/pennant/compare/v1.13.1...v1.13.2) (2023-10-03)
