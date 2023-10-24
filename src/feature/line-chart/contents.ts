@@ -14,6 +14,7 @@ type ContentsColors = Pick<
   | "accent4"
   | "accent5"
   | "accent6"
+  | "emphasis100"
   | "backgroundSurface"
   | "positiveFill"
   | "positiveStroke"
@@ -48,8 +49,8 @@ export class Contents {
 
     this.colors = options.colors;
 
-    this.horizontalGrid = new HorizontalGrid();
-    this.verticalgrid = new VerticalGrid();
+    this.horizontalGrid = new HorizontalGrid(this.colors.emphasis100);
+    this.verticalgrid = new VerticalGrid(this.colors.emphasis100);
     this.series = range(0, 5).map(() => new LineCurve());
 
     this.stage.addChild(this.horizontalGrid);

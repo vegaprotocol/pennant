@@ -10,8 +10,11 @@ export class VerticalGrid extends Container {
    */
   private nodeByKeyValue = new Map<string, Graphics>();
 
-  constructor() {
+  private color: number;
+
+  constructor(color = 0x3d3d3d) {
     super();
+    this.color = color;
   }
 
   public update(
@@ -42,7 +45,7 @@ export class VerticalGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0x3d3d3d,
+        color: this.color,
         lineDash: [],
       });
       line.moveTo(0, 0.5);
@@ -61,7 +64,7 @@ export class VerticalGrid extends Container {
 
       line.lineStyle({
         width: 1,
-        color: 0x3d3d3d,
+        color: this.color,
         lineDash: [],
       });
 

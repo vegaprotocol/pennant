@@ -10,9 +10,11 @@ export class HorizontalGrid extends Container {
    * Cache ticks
    */
   private nodeByKeyValue = new Map<number, Graphics>();
+  private color: number;
 
-  constructor() {
+  constructor(color = 0x3d3d3d) {
     super();
+    this.color = color;
   }
 
   public update(
@@ -56,7 +58,7 @@ export class HorizontalGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0x3d3d3d,
+        color: this.color,
         lineDash: [],
       });
       line.moveTo(0.5, 0);
@@ -76,7 +78,7 @@ export class HorizontalGrid extends Container {
       line.clear();
       line.lineStyle({
         width: 1,
-        color: 0x3d3d3d,
+        color: this.color,
         lineDash: [],
       });
       line.moveTo(0.5, 0);
