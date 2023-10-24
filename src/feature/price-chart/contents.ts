@@ -14,6 +14,7 @@ type ContentsColors = Pick<
   | "accent5"
   | "accent6"
   | "backgroundSurface"
+  | "emphasis100"
   | "positiveFill"
   | "positiveStroke"
   | "negativeFill"
@@ -47,8 +48,8 @@ export class Contents {
 
     this.colors = options.colors;
 
-    this.horizontalGrid = new HorizontalGrid();
-    this.verticalgrid = new VerticalGrid();
+    this.horizontalGrid = new HorizontalGrid(this.colors.emphasis100);
+    this.verticalgrid = new VerticalGrid(this.colors.emphasis100);
     this.priceCurve = new Area(options.colors);
 
     this.stage.addChild(this.horizontalGrid);

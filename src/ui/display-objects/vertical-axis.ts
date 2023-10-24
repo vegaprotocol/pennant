@@ -74,7 +74,7 @@ export class VerticalAxis extends Container {
     this.overlay.endFill();
 
     const numTicks = height / resolution / 50;
-    const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
+    const ticks = scale.ticks(numTicks);
     const tickFormat = scale.tickFormat(numTicks);
 
     const enter = ticks.filter(
