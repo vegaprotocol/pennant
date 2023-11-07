@@ -14,7 +14,7 @@ export const AXIS_HEIGHT = FONT_SIZE + 5;
 export const AXIS_WIDTH = FONT_SIZE + 60;
 
 export const Y_AXIS_WIDTH = 92;
-export const THROTTLE_INTERVAL = 150;
+export const THROTTLE_INTERVAL = 16.67; // This is used to throttle the redraw request so using 60fps for max butteryness
 export const INITIAL_NUM_CANDLES_TO_DISPLAY = 100;
 export const INITIAL_NUM_CANDLES_TO_FETCH = 10000;
 export const DEFAULT_INTERVAL_WIDTH = 10;
