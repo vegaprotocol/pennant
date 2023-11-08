@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/vegaprotocol/pennant/compare/v1.13.4...v1.14.0) (2023-11-08)
+
+
+### Features
+
+* change colors of horizontal and vertical grid ([903b5c7](https://github.com/vegaprotocol/pennant/commit/903b5c7ef9ddfad05849406095cb5cc8c715a725))
+* display 0 label on vertical axis ([f84b3ee](https://github.com/vegaprotocol/pennant/commit/f84b3ee71130327890e4adbddc4e64d139a9a129))
+
+
+### Bug Fixes
+
+* slow throttle interval making chart feel laggy ([#921](https://github.com/vegaprotocol/pennant/issues/921)) ([d635460](https://github.com/vegaprotocol/pennant/commit/d6354601670963f4f25bafb7bc10e226f4f64610))
+
 ## [1.14.0](https://github.com/vegaprotocol/pennant/compare/v1.13.4...v1.14.0) (2023-10-24)
 
 
