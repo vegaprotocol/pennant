@@ -2,7 +2,6 @@ import "./plot-container.css";
 import "../../../lib/d3fc-element";
 
 import { Core } from "@ui/core";
-import { THROTTLE_INTERVAL } from "@util/constants";
 import { asyncSnapshot, calculatePreferredSize } from "@util/misc";
 import {
   Bounds,
@@ -45,6 +44,7 @@ export type PlotContainerProps = {
   colors: Colors;
   studySize: number | string;
   studySizes: Array<number | string>;
+  drawThrottleMs: number;
   onBoundsChanged?: (bounds: Bounds) => void;
   onViewportChanged?: (viewport: Viewport) => void;
   onRightClick?: (event: any) => void;
@@ -72,6 +72,7 @@ export const PlotContainer = forwardRef<
       colors,
       studySize,
       studySizes,
+      drawThrottleMs,
       onViewportChanged = () => {},
       onBoundsChanged = () => {},
       onRightClick = () => {},
@@ -117,7 +118,7 @@ export const PlotContainer = forwardRef<
     }, []);
 
     const throttleRequestRedraw = useMemo(
-      () => throttle(requestRedraw, THROTTLE_INTERVAL),
+      () => throttle(requestRedraw, drawThrottleMs),
       [requestRedraw],
     );
 
@@ -130,17 +131,17 @@ export const PlotContainer = forwardRef<
     );
 
     const handleThrottledBoundsChanged = useMemo(
-      () => throttle(handleBoundsChanged, THROTTLE_INTERVAL),
+      () => throttle(handleBoundsChanged, drawThrottleMs),
       [handleBoundsChanged],
     );
 
     const handleDataIndexChanged = useMemo(
-      () => throttle(setDataIndex, THROTTLE_INTERVAL),
+      () => throttle(setDataIndex, drawThrottleMs),
       [],
     );
 
     const handleViewportChanged = useMemo(
-      () => throttle(onViewportChanged, THROTTLE_INTERVAL),
+      () => throttle(onViewportChanged, drawThrottleMs),
       [onViewportChanged],
     );
 

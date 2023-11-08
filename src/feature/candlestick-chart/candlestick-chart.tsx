@@ -72,6 +72,7 @@ export type CandlestickChartProps = {
   interval: Interval;
   options?: Options;
   theme?: ThemeVariant;
+  drawThrottleMs?: number;
   onOptionsChanged?: (options: Options) => void;
   onPaneChanged?: (size: number[]) => void;
   onViewportChanged?: (viewport: Viewport) => void;
@@ -93,6 +94,7 @@ export const CandlestickChart = forwardRef(
       },
       initialViewport,
       theme = "dark",
+      drawThrottleMs = 16.67,
       onOptionsChanged = noop,
       onPaneChanged = noop,
       onViewportChanged = noop,
@@ -370,6 +372,7 @@ export const CandlestickChart = forwardRef(
             colors={colors}
             studySize={studySize}
             studySizes={studySizes}
+            drawThrottleMs={drawThrottleMs}
             onViewportChanged={handleViewportChanged}
             onGetDataRange={handleGetDataRange}
             onClosePane={handleClosePane}
