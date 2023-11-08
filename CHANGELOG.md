@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.1](https://github.com/vegaprotocol/pennant/compare/v1.14.0...v1.14.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* slow throttle interval making chart feel laggy ([#921](https://github.com/vegaprotocol/pennant/issues/921)) ([d635460](https://github.com/vegaprotocol/pennant/commit/d6354601670963f4f25bafb7bc10e226f4f64610))
+
 ## [1.14.0](https://github.com/vegaprotocol/pennant/compare/v1.13.4...v1.14.0) (2023-11-08)
 
 
