@@ -119,7 +119,7 @@ export const PlotContainer = forwardRef<
 
     const throttleRequestRedraw = useMemo(
       () => throttle(requestRedraw, drawThrottleMs),
-      [requestRedraw],
+      [requestRedraw, drawThrottleMs],
     );
 
     const handleBoundsChanged = useCallback(
@@ -132,17 +132,17 @@ export const PlotContainer = forwardRef<
 
     const handleThrottledBoundsChanged = useMemo(
       () => throttle(handleBoundsChanged, drawThrottleMs),
-      [handleBoundsChanged],
+      [handleBoundsChanged, drawThrottleMs],
     );
 
     const handleDataIndexChanged = useMemo(
       () => throttle(setDataIndex, drawThrottleMs),
-      [],
+      [drawThrottleMs],
     );
 
     const handleViewportChanged = useMemo(
       () => throttle(onViewportChanged, drawThrottleMs),
-      [onViewportChanged],
+      [onViewportChanged, drawThrottleMs],
     );
 
     const refs = useMemo(
