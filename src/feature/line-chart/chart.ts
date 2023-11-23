@@ -36,6 +36,7 @@ export class Chart extends EventEmitter {
 
   private _data: Data = { cols: [], rows: [] };
   private priceFormat: (price: number) => string;
+  private yAxisTickFormat: string | undefined;
   private xFormat: (x: number) => string;
   private _colors: Colors;
 
@@ -46,12 +47,14 @@ export class Chart extends EventEmitter {
     width: number;
     height: number;
     priceFormat: (price: number) => string;
+    yAxisTickFormat?: string;
     xFormat: (x: number) => string;
     colors: Colors;
   }) {
     super();
 
     this.priceFormat = options.priceFormat;
+    this.yAxisTickFormat = options.yAxisTickFormat;
     this.xFormat = options.xFormat;
     this._colors = options.colors;
 
@@ -144,7 +147,14 @@ export class Chart extends EventEmitter {
 
     this.ui.colors = this._colors;
 
-    this.ui.update(this._data, xr, this.xFormat, yr, this.priceFormat);
+    this.ui.update(
+      this._data,
+      xr,
+      this.xFormat,
+      yr,
+      this.priceFormat,
+      this.yAxisTickFormat,
+    );
   }
 
   private onZoomStart = (t: ZoomTransform) => {
