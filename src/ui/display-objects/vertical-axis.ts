@@ -60,6 +60,7 @@ export class VerticalAxis extends Container {
     height: number,
     resolution: number = 1,
     colors: VerticalAxisColors,
+    tickFormatSpecifier?: string,
   ) {
     this.overlay.clear();
     this.overlay.beginFill(colors.backgroundSurface, 0.7);
@@ -75,7 +76,7 @@ export class VerticalAxis extends Container {
 
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks);
-    const tickFormat = scale.tickFormat(numTicks);
+    const tickFormat = scale.tickFormat(numTicks, tickFormatSpecifier);
 
     const enter = ticks.filter(
       (tick) => !this.nodeByKeyValue.has(tickFormat(tick)),

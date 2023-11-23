@@ -173,6 +173,7 @@ export class UI extends EventEmitter {
     xFormat: (x: number) => string,
     priceScale: ScaleLinear,
     priceFormat: (price: number) => string,
+    yAxisTickFormat?: string,
   ): void {
     this.data = data;
     this.xScale = xScale;
@@ -219,6 +220,7 @@ export class UI extends EventEmitter {
       height - resolution * AXIS_HEIGHT,
       resolution,
       this.colors,
+      yAxisTickFormat,
     );
 
     // TODO: Abstract the vertical axis separator functionality

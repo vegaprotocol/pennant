@@ -60,6 +60,11 @@ export type LineChartProps<A> = {
   priceFormat?: (price: number) => string;
 
   /**
+   * Specifier for y axis tick format
+   */
+  yAxisTickFormat?: string;
+
+  /**
    * Light or dark theme.
    */
   theme?: ThemeVariant;
@@ -87,6 +92,7 @@ export const LineChart = <A,>({
   theme = "dark",
   tooltip,
   xFormat = defaultNumberFormat,
+  yAxisTickFormat,
 }: LineChartProps<A>) => {
   /**
    * Where to render chart contents, e.g. line series.
@@ -136,6 +142,7 @@ export const LineChart = <A,>({
       width: 300,
       height: 300,
       priceFormat,
+      yAxisTickFormat,
       xFormat,
       colors,
     });
@@ -199,7 +206,7 @@ export const LineChart = <A,>({
     return () => {
       chartRef.current.destroy();
     };
-  }, [annotations, data.cols, priceFormat, xFormat]);
+  }, [annotations, data.cols, priceFormat, xFormat, yAxisTickFormat]);
 
   // Update chart when dimensions or data change
   useEffect(() => {
