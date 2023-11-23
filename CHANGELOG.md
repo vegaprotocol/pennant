@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/vegaprotocol/pennant/compare/v1.14.1...v1.15.0) (2023-11-23)
+
+
+### Features
+
+* add option to format y-axis tick in line-chart ([22f9f2c](https://github.com/vegaprotocol/pennant/commit/22f9f2c661650aae834b6ed35a6ffb3b4e6d7bde))
+
 ## [1.14.1](https://github.com/vegaprotocol/pennant/compare/v1.14.0...v1.14.1) (2023-11-08)
 
 ### Bug Fixes
