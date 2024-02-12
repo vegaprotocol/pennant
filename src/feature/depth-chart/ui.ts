@@ -476,6 +476,7 @@ export class UI extends EventEmitter {
             { x: 0.5, y: 0.5 },
             resolution,
             this.colors,
+            this._fontFamily,
           );
 
           this.auctionVolumeText.update(
@@ -502,6 +503,7 @@ export class UI extends EventEmitter {
             { x: this.prices[index] > width / 2 ? 0 : 1, y: 0.5 },
             resolution,
             this.colors,
+            this._fontFamily,
           );
 
           this.auctionIndicator.update(
@@ -570,6 +572,7 @@ export class UI extends EventEmitter {
           { x: 0.5, y: 0.5 },
           resolution,
           this.colors,
+          this._fontFamily,
         );
 
         this.buyVolumeText.update(
@@ -590,6 +593,7 @@ export class UI extends EventEmitter {
           { x: 1, y: 0.5 },
           resolution,
           this.colors,
+          this._fontFamily,
         );
 
         this.sellPriceText.update(
@@ -607,6 +611,7 @@ export class UI extends EventEmitter {
           { x: 0.5, y: 0.5 },
           resolution,
           this.colors,
+          this._fontFamily,
         );
 
         this.sellVolumeText.update(
@@ -627,6 +632,7 @@ export class UI extends EventEmitter {
           { x: 0, y: 0.5 },
           resolution,
           this.colors,
+          this._fontFamily,
         );
 
         const sellPricesPresent =

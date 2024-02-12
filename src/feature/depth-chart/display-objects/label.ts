@@ -30,6 +30,7 @@ export class Label extends Container {
     anchor: { x: number; y: number },
     resolution: number = 1,
     colors: LabelColors,
+    fontFamily: string,
   ) {
     this.text.x = x;
     this.text.y = y;
@@ -37,6 +38,7 @@ export class Label extends Container {
     this.text.anchor.x = anchor.x;
     this.text.anchor.y = anchor.y;
     this.text.style.fill = colors.textPrimary;
+    this.text.style.fontFamily = fontFamily;
 
     const width = resolution * this.text.width;
     const height = resolution * this.text.height;
