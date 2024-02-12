@@ -60,6 +60,16 @@ export type DepthChartProps = {
    * Light or dark theme
    */
   theme?: ThemeVariant;
+
+  /**
+   * Font family of texts in chart | default is monospace
+   */
+  fontFamily?: string;
+
+  /**
+   * visibility of middle price | default is true
+   */
+  showMidPrice?: boolean;
 };
 
 export interface DepthChartHandle {
@@ -84,6 +94,8 @@ export const DepthChart = forwardRef(
       midPrice = 0,
       notEnoughDataText = "No data",
       theme = "dark",
+      fontFamily = "monospace",
+      showMidPrice = true,
     }: DepthChartProps,
     ref: React.Ref<DepthChartHandle>,
   ) => {
@@ -117,6 +129,8 @@ export const DepthChart = forwardRef(
         volumeFormat,
         colors,
         dimensions,
+        fontFamily: fontFamily,
+        showMidPrice,
       });
 
       return () => {

@@ -99,6 +99,8 @@ export class UI extends EventEmitter {
   private midPrice: number = 0;
   private _indicativePrice: number = 0;
 
+  private _fontFamily: string = "monospace";
+
   /**
    * The current scale.
    */
@@ -132,6 +134,7 @@ export class UI extends EventEmitter {
 
   private gesture = new Gesture(this);
   private originalTransform: number = 1;
+  private _showMidPrice: boolean;
 
   constructor(options: {
     view: HTMLCanvasElement;
@@ -139,6 +142,8 @@ export class UI extends EventEmitter {
     width: number;
     height: number;
     colors: UiColors;
+    fontFamily: string;
+    showMidPrice: boolean;
   }) {
     super();
 
@@ -150,6 +155,9 @@ export class UI extends EventEmitter {
     });
 
     this.colors = options.colors;
+
+    this._fontFamily = options.fontFamily;
+    this._showMidPrice = options.showMidPrice;
 
     this.buyIndicator = new Indicator(options.colors.buyStroke);
     this.sellIndicator = new Indicator(options.colors.sellStroke);
@@ -180,7 +188,9 @@ export class UI extends EventEmitter {
     this.stage.addChild(this.horizontalAxis);
     this.stage.addChild(this.verticalAxis);
     this.stage.addChild(this.midPriceLine);
-    this.stage.addChild(this.midMarketPriceLabel);
+    if (this._showMidPrice) {
+      this.stage.addChild(this.midMarketPriceLabel);
+    }
     this.stage.addChild(this.buyPriceText);
     this.stage.addChild(this.buyVolumeText);
     this.stage.addChild(this.sellPriceText);
@@ -367,6 +377,7 @@ export class UI extends EventEmitter {
       height,
       resolution,
       this.colors,
+      this._fontFamily,
     );
 
     this.verticalAxis.update(
@@ -375,6 +386,7 @@ export class UI extends EventEmitter {
       height,
       resolution,
       this.colors,
+      this._fontFamily,
     );
 
     this.midMarketPriceLabel.update(

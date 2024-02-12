@@ -28,6 +28,7 @@ export class HorizontalAxis extends Container {
     height: number,
     resolution: number = 1,
     colors: HorizontalAxisColors,
+    fontFamily: string,
   ) {
     const numTicks = width / resolution / 200;
     const ticks = scale.ticks(numTicks);
@@ -48,7 +49,7 @@ export class HorizontalAxis extends Container {
     for (const node of enter) {
       const text = new Text(tickFormat(node), {
         fill: colors.textSecondary,
-        fontFamily: "monospace",
+        fontFamily: fontFamily,
         fontSize: FONT_SIZE,
       });
 

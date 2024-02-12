@@ -1,11 +1,3 @@
-export type { AreaChartProps } from "./feature/area-chart";
-export { AreaChart } from "./feature/area-chart";
-export type { CandlestickChartProps } from "./feature/candlestick-chart";
-export { CandlestickChart } from "./feature/candlestick-chart";
 export type { DepthChartHandle, DepthChartProps } from "./feature/depth-chart";
 export { DepthChart } from "./feature/depth-chart";
-export type { LineChartProps } from "./feature/line-chart";
-export { LineChart } from "./feature/line-chart";
-export type { PriceChartProps } from "./feature/price-chart";
-export { PriceChart } from "./feature/price-chart";
 export * from "./util/types";

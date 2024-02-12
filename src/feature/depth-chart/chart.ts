@@ -59,6 +59,7 @@ export class Chart extends EventEmitter {
 
   private _colors: Colors;
   private _dimensions: Dimensions;
+  private _fontFamily: string = "monospace";
 
   constructor(options: {
     chartView: HTMLCanvasElement;
@@ -70,6 +71,8 @@ export class Chart extends EventEmitter {
     volumeFormat: (volume: number) => string;
     colors: Colors;
     dimensions: Dimensions;
+    fontFamily?: string;
+    showMidPrice: boolean;
   }) {
     super();
 
@@ -77,6 +80,10 @@ export class Chart extends EventEmitter {
     this.volumeFormat = options.volumeFormat;
     this._colors = options.colors;
     this._dimensions = options.dimensions;
+
+    if (options.fontFamily) {
+      this._fontFamily = options.fontFamily;
+    }
 
     this.chart = new Contents({
       view: options.chartView,
@@ -93,6 +100,8 @@ export class Chart extends EventEmitter {
       width: options.width,
       height: options.height,
       colors: options.colors,
+      fontFamily: this._fontFamily,
+      showMidPrice: options.showMidPrice,
     });
 
     this.axis
