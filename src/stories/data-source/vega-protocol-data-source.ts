@@ -24,6 +24,8 @@ import { addDecimal } from "./number";
 
 /** The interval for trade candles when subscribing via Vega GraphQL, default is I15M */
 export enum Interval {
+  /** 7 day interval */
+  INTERVAL_I7D = "INTERVAL_I7D",
   /** 1 day interval */
   INTERVAL_I1D = "INTERVAL_I1D",
   /** 1 hour interval */
@@ -32,19 +34,29 @@ export enum Interval {
   INTERVAL_I1M = "INTERVAL_I1M",
   /** 5 minute interval */
   INTERVAL_I5M = "INTERVAL_I5M",
+  /** 4 hour interval */
+  INTERVAL_I4H = "INTERVAL_I6H",
   /** 6 hour interval */
   INTERVAL_I6H = "INTERVAL_I6H",
+  /** 12 hour interval */
+  INTERVAL_I12H = "INTERVAL_I12H",
   /** 15 minute interval (default) */
   INTERVAL_I15M = "INTERVAL_I15M",
+  /** 15 minute interval (default) */
+  INTERVAL_I30M = "INTERVAL_I30M",
 }
 
 const INTERVAL_TO_PENNANT_MAP = {
   [PennantInterval.I1M]: Interval.INTERVAL_I1M,
   [PennantInterval.I5M]: Interval.INTERVAL_I5M,
   [PennantInterval.I15M]: Interval.INTERVAL_I15M,
+  [PennantInterval.I30M]: Interval.INTERVAL_I30M,
   [PennantInterval.I1H]: Interval.INTERVAL_I1H,
+  [PennantInterval.I4H]: Interval.INTERVAL_I4H,
   [PennantInterval.I6H]: Interval.INTERVAL_I6H,
+  [PennantInterval.I12H]: Interval.INTERVAL_I12H,
   [PennantInterval.I1D]: Interval.INTERVAL_I1D,
+  [PennantInterval.I7D]: Interval.INTERVAL_I7D,
 };
 
 const defaultConfig = {
@@ -172,8 +184,8 @@ export class VegaDataSource implements DataSource {
       >({
         query: CandlesDocument,
         variables: {
-          marketId: this.marketId,
           interval: INTERVAL_TO_PENNANT_MAP[interval],
+          marketId: this.marketId,
           since: from,
         },
         fetchPolicy: "no-cache",

@@ -73,12 +73,20 @@ export function getSubMinutes(interval: Interval, visibleCandleCount: number) {
       return visibleCandleCount * 5;
     case Interval.I15M:
       return visibleCandleCount * 15;
+    case Interval.I30M:
+      return visibleCandleCount * 30;
     case Interval.I1H:
       return visibleCandleCount * 60;
+    case Interval.I4H:
+      return visibleCandleCount * 60 * 4;
     case Interval.I6H:
       return visibleCandleCount * 60 * 6;
+    case Interval.I12H:
+      return visibleCandleCount * 60 * 12;
     case Interval.I1D:
       return visibleCandleCount * 60 * 24;
+    case Interval.I7D:
+      return visibleCandleCount * 60 * 24 * 7;
     default:
       throw new Error("Invalid interval");
   }

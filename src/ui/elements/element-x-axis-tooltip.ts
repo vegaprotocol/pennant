@@ -27,7 +27,7 @@ function addXAxisTooltipPath(
     const value = xScale.invert(x);
     const xPad = 5;
     const text = dateFormat(value, interval);
-    const textWidth = ctx.measureText(text).width;
+    const textWidth = ctx.measureText(text ?? "").width;
     const rectWidth = textWidth + xPad * 2;
     const rectHeight = 19;
 
@@ -59,7 +59,7 @@ function addXAxisTooltipPath(
 
     ctx.beginPath();
     ctx.fillStyle = colors.textPrimary;
-    ctx.fillText(text, xAdjusted, height - rectHeight / 2);
+    ctx.fillText(text ?? "", xAdjusted, height - rectHeight / 2);
     ctx.closePath();
   }
 }
