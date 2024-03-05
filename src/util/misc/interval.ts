@@ -96,6 +96,8 @@ export function getSubMinutes(interval: Interval, visibleCandleCount: number) {
       return visibleCandleCount * 60 * 4;
     case Interval.I6H:
       return visibleCandleCount * 60 * 6;
+    case Interval.I8H:
+      return visibleCandleCount * 60 * 8;
     case Interval.I12H:
       return visibleCandleCount * 60 * 12;
     case Interval.I1D:
