@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/vegaprotocol/pennant/compare/v1.15.0...v1.16.0) (2024-03-05)
+
+
+### Features
+
+* add additional intervals ([a56c744](https://github.com/vegaprotocol/pennant/commit/a56c7447a852aa2c0fe4258920262ea1eec9d196))
+* add additional intervals ([0f8ee10](https://github.com/vegaprotocol/pennant/commit/0f8ee10317275594cb4287951d66001502ab1328))
+
 ## [1.15.0](https://github.com/vegaprotocol/pennant/compare/v1.14.1...v1.15.0) (2023-11-23)
 
 
