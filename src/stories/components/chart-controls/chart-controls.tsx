@@ -73,6 +73,11 @@ export const ChartControls = ({
               text={intervalLabels[Interval.I15M]}
               onClick={() => onSetInterval(Interval.I15M)}
             />
+            <MenuItem
+              icon={interval === Interval.I30M ? "tick" : "blank"}
+              text={intervalLabels[Interval.I30M]}
+              onClick={() => onSetInterval(Interval.I30M)}
+            />
             <MenuDivider title="Hours" />
             <MenuItem
               icon={interval === Interval.I1H ? "tick" : "blank"}
@@ -80,15 +85,35 @@ export const ChartControls = ({
               onClick={() => onSetInterval(Interval.I1H)}
             />
             <MenuItem
+              icon={interval === Interval.I4H ? "tick" : "blank"}
+              text={intervalLabels[Interval.I4H]}
+              onClick={() => onSetInterval(Interval.I4H)}
+            />
+            <MenuItem
               icon={interval === Interval.I6H ? "tick" : "blank"}
               text={intervalLabels[Interval.I6H]}
               onClick={() => onSetInterval(Interval.I6H)}
+            />
+            <MenuItem
+              icon={interval === Interval.I8H ? "tick" : "blank"}
+              text={intervalLabels[Interval.I8H]}
+              onClick={() => onSetInterval(Interval.I8H)}
+            />
+            <MenuItem
+              icon={interval === Interval.I12H ? "tick" : "blank"}
+              text={intervalLabels[Interval.I12H]}
+              onClick={() => onSetInterval(Interval.I12H)}
             />
             <MenuDivider title="Days" />
             <MenuItem
               icon={interval === Interval.I1D ? "tick" : "blank"}
               text={intervalLabels[Interval.I1D]}
               onClick={() => onSetInterval(Interval.I1D)}
+            />
+            <MenuItem
+              icon={interval === Interval.I7D ? "tick" : "blank"}
+              text={intervalLabels[Interval.I7D]}
+              onClick={() => onSetInterval(Interval.I7D)}
             />
           </Menu>
         }

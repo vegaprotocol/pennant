@@ -3,11 +3,16 @@
  */
 export enum Interval {
   I15M = "I15M",
+  I30M = "I30M",
   I1D = "I1D",
+  I7D = "I7D",
   I1H = "I1H",
   I1M = "I1M",
   I5M = "I5M",
+  I12H = "I12H",
+  I8H = "I8H",
   I6H = "I6H",
+  I4H = "I4H",
 }
 
 /**

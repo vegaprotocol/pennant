@@ -27,7 +27,7 @@ function addXAxisPath(
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     ctx.font = `${TICK_LABEL_FONT_SIZE}px ${TICK_LABEL_FONT}`;
-    ctx.fillText(xTickLabels[i], xScale(xTicks[i]), 9);
+    ctx.fillText(xTickLabels?.[i] ?? "", xScale(xTicks[i]), 9);
     ctx.closePath();
   }
 }
