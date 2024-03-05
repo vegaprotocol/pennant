@@ -30,11 +30,21 @@ export function dateFormat(date: Date, interval: Interval) {
       return formatMinute(date);
     case Interval.I15M:
       return formatMinute(date);
+    case Interval.I30M:
+      return formatMinute(date);
     case Interval.I1H:
+      return formatHour(date);
+    case Interval.I4H:
       return formatHour(date);
     case Interval.I6H:
       return formatHour(date);
+    case Interval.I8H:
+      return formatHour(date);
+    case Interval.I12H:
+      return formatHour(date);
     case Interval.I1D:
+      return formatDay(date);
+    case Interval.I7D:
       return formatDay(date);
   }
 }
@@ -61,7 +71,8 @@ export function tickFormat(ticks: Date[], interval: Interval) {
   switch (interval) {
     case Interval.I1M:
     case Interval.I5M:
-    case Interval.I15M: {
+    case Interval.I15M:
+    case Interval.I30M: {
       const arr = [];
 
       for (let i = 0; i < ticks.length; i++) {
@@ -78,7 +89,10 @@ export function tickFormat(ticks: Date[], interval: Interval) {
       return arr;
     }
     case Interval.I1H:
-    case Interval.I6H: {
+    case Interval.I4H:
+    case Interval.I6H:
+    case Interval.I8H:
+    case Interval.I12H: {
       const arr = [];
 
       for (let i = 0; i < ticks.length; i++) {
@@ -94,6 +108,7 @@ export function tickFormat(ticks: Date[], interval: Interval) {
 
       return arr;
     }
+    case Interval.I7D:
     case Interval.I1D: {
       const arr = [];
 

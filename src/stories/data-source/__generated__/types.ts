@@ -1192,6 +1192,8 @@ export enum Interval {
   INTERVAL_I4H = "INTERVAL_I4H",
   /** 6 hour interval */
   INTERVAL_I6H = "INTERVAL_I6H",
+  /** 8 hour interval */
+  INTERVAL_I8H = "INTERVAL_I8H",
   /** 12 hour interval */
   INTERVAL_I12H = "INTERVAL_I12H",
   /** 30 minute interval */

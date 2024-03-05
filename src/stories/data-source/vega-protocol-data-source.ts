@@ -35,14 +35,16 @@ export enum Interval {
   /** 5 minute interval */
   INTERVAL_I5M = "INTERVAL_I5M",
   /** 4 hour interval */
-  INTERVAL_I4H = "INTERVAL_I6H",
+  INTERVAL_I4H = "INTERVAL_I4H",
   /** 6 hour interval */
   INTERVAL_I6H = "INTERVAL_I6H",
+  /** 8 hour interval */
+  INTERVAL_I8H = "INTERVAL_I8H",
   /** 12 hour interval */
   INTERVAL_I12H = "INTERVAL_I12H",
   /** 15 minute interval (default) */
   INTERVAL_I15M = "INTERVAL_I15M",
-  /** 15 minute interval (default) */
+  /** 30 minute interval */
   INTERVAL_I30M = "INTERVAL_I30M",
 }
 
@@ -54,6 +56,7 @@ const INTERVAL_TO_PENNANT_MAP = {
   [PennantInterval.I1H]: Interval.INTERVAL_I1H,
   [PennantInterval.I4H]: Interval.INTERVAL_I4H,
   [PennantInterval.I6H]: Interval.INTERVAL_I6H,
+  [PennantInterval.I8H]: Interval.INTERVAL_I8H,
   [PennantInterval.I12H]: Interval.INTERVAL_I12H,
   [PennantInterval.I1D]: Interval.INTERVAL_I1D,
   [PennantInterval.I7D]: Interval.INTERVAL_I7D,

@@ -74,6 +74,58 @@
     ],
     "__typename": "Market"
   },
+  "I8H": {
+    "id": "5A86B190C384997F",
+    "decimalPlaces": 5,
+    "candles": [
+      {
+        "datetime": "2021-02-23T00:00:00Z",
+        "high": "62531964",
+        "low": "55133110",
+        "open": "58930885",
+        "close": "55819369",
+        "volume": "2764352",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-23T08:00:00Z",
+        "high": "61520697",
+        "low": "55081302",
+        "open": "55808878",
+        "close": "56448321",
+        "volume": "2673589",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-23T16:00:00Z",
+        "high": "59760727",
+        "low": "56371917",
+        "open": "56471617",
+        "close": "59760727",
+        "volume": "2691278",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-24T00:00:00Z",
+        "high": "59853149",
+        "low": "59573469",
+        "open": "59759391",
+        "close": "59574276",
+        "volume": "2834972",
+        "__typename": "Candle"
+      },
+      {
+        "datetime": "2021-02-24T08:00:00Z",
+        "high": "59719977",
+        "low": "59442433",
+        "open": "59574276",
+        "close": "59719977",
+        "volume": "1762142",
+        "__typename": "Candle"
+      }
+    ],
+    "__typename": "Market"
+  },
   "I6H": {
     "id": "5A86B190C384997F",
     "decimalPlaces": 5,
