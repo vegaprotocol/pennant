@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.2](https://github.com/vegaprotocol/pennant/compare/v1.16.1...v1.16.2) (2024-03-06)
+
+
+### Bug Fixes
+
+* add missing 8H interval to getSubMinutes ([e2f8884](https://github.com/vegaprotocol/pennant/commit/e2f88848aad9bd671dba941a4cc82de967b49f79))
+
 ### [1.16.1](https://github.com/vegaprotocol/pennant/compare/v1.16.0...v1.16.1) (2024-03-05)
 
 ## [1.16.0](https://github.com/vegaprotocol/pennant/compare/v1.15.0...v1.16.0) (2024-03-05)
