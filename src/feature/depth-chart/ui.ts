@@ -32,6 +32,7 @@ type UiColors = Pick<
   | "sellStroke"
   | "textPrimary"
   | "textSecondary"
+  | "backgroundLabel"
 >;
 
 function pointer(event: any) {

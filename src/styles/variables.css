@@ -167,6 +167,9 @@
   /* Dimensions. */
   --pennant-candlestick-stroke-width: 1px;
   --pennant-depth-stroke-width: 2px;
+
+  /* Label bg */
+  --pennant-background-label-color: var(--pennant-background-surface-color);
 }
 
 [data-theme="dark"] {
@@ -218,4 +221,7 @@
   /* Typography. */
   --pennant-font-color-base: var(--pennant-color-content);
   --pennant-font-color-secondary: var(--pennant-color-content-secondary);
+
+  /* Label bg */
+  --pennant-background-label-color: var(--pennant-background-surface-color);
 }
