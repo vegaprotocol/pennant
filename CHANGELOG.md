@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/vegaprotocol/pennant/compare/v1.16.2...v1.17.0) (2024-03-25)
+
+
+### Features
+
+* add color for depth chart background label ([#931](https://github.com/vegaprotocol/pennant/issues/931)) ([018676e](https://github.com/vegaprotocol/pennant/commit/018676e703ead3f4dcc7b571ebf33494aebef561))
+
 ### [1.16.2](https://github.com/vegaprotocol/pennant/compare/v1.16.1...v1.16.2) (2024-03-06)
 
 
