@@ -27,7 +27,7 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "@d3fc/d3fc-technical-indicator": "^8.0.1",
-    "@floating-ui/react-dom": "^1.0.1",
+    "@floating-ui/react-dom": "^2.0.0",
     "@types/d3-array": "^2.9.0",
     "@types/d3-dispatch": "^2.0.0",
     "@types/d3-drag": "^2.0.0",
