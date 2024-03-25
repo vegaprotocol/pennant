@@ -8,6 +8,10 @@ export interface Colors {
   backgroundSurface: number;
   textPrimary: number;
   textSecondary: number;
+  /**
+   * Behind labels on axis, can be useful to prevent unclear numbers
+   */
+  backgroundLabel: number;
 }
 
 export function getColors(element: HTMLElement | null): Colors {
@@ -47,6 +51,11 @@ export function getColors(element: HTMLElement | null): Colors {
     backgroundSurface: string2hex(
       cssStyleDeclaration
         ?.getPropertyValue("--pennant-background-surface-color")
+        .trim() || "#0a0a0a",
+    ),
+    backgroundLabel: string2hex(
+      cssStyleDeclaration
+        ?.getPropertyValue("--pennant-background-label-color")
         .trim() || "#0a0a0a",
     ),
   };

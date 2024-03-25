@@ -2,7 +2,7 @@ import { Container, Graphics, Text } from "@ui/renderer";
 
 import { Colors } from "../helpers";
 
-type LabelColors = Pick<Colors, "backgroundSurface" | "textPrimary">;
+type LabelColors = Pick<Colors, "backgroundLabel" | "textPrimary">;
 
 /**
  * Draw a label
@@ -47,7 +47,7 @@ export class Label extends Container {
     const padding = resolution * 1.5;
 
     this.background.clear();
-    this.background.beginFill(colors.backgroundSurface, 1);
+    this.background.beginFill(colors.backgroundLabel, 1);
     this.background.drawRect(
       x - (anchorX * width + padding),
       y - (anchorY * height + padding),
