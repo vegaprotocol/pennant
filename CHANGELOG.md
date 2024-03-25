@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/vegaprotocol/pennant/compare/v1.14.1...v1.15.0) (2024-03-25)
+
+
+### Features
+
+* add additional intervals ([a56c744](https://github.com/vegaprotocol/pennant/commit/a56c7447a852aa2c0fe4258920262ea1eec9d196))
+* add additional intervals ([0f8ee10](https://github.com/vegaprotocol/pennant/commit/0f8ee10317275594cb4287951d66001502ab1328))
+* add color for depth chart background label ([#931](https://github.com/vegaprotocol/pennant/issues/931)) ([018676e](https://github.com/vegaprotocol/pennant/commit/018676e703ead3f4dcc7b571ebf33494aebef561))
+* add option to format y-axis tick in line-chart ([22f9f2c](https://github.com/vegaprotocol/pennant/commit/22f9f2c661650aae834b6ed35a6ffb3b4e6d7bde))
+
+
+### Bug Fixes
+
+* add missing 8H interval to getSubMinutes ([e2f8884](https://github.com/vegaprotocol/pennant/commit/e2f88848aad9bd671dba941a4cc82de967b49f79))
+
 ### [1.16.2](https://github.com/vegaprotocol/pennant/compare/v1.16.1...v1.16.2) (2024-03-06)
 
 
