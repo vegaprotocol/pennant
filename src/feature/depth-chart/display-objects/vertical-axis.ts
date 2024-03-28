@@ -28,6 +28,7 @@ export class VerticalAxis extends Container {
     height: number,
     resolution: number = 1,
     colors: VerticalAxisColors,
+    fontFamily: string,
   ) {
     const numTicks = height / resolution / 50;
     const ticks = scale.ticks(numTicks).filter((tick) => tick !== 0);
@@ -48,7 +49,7 @@ export class VerticalAxis extends Container {
     for (const node of enter) {
       const text = new Text(tickFormat(node), {
         fill: colors.textSecondary,
-        fontFamily: "monospace",
+        fontFamily: fontFamily,
         fontSize: FONT_SIZE,
       });
 
