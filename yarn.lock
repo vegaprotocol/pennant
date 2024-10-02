@@ -1406,6 +1406,13 @@
   dependencies:
     tslib "~2.5.0"
 
+"@blueprintjs/colors@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-5.1.2.tgz#caa1edf6521670e4be3e9f2061cd3fe14e363a5b"
+  integrity sha512-7CWwVsXK4YTN9Z/wkjnS3p7VE8YfIXXv2UaySAbtcw6rBkmoSHjLRtfohSA5yNy8xYTQ4KY2odKZSUW0W/Nltw==
+  dependencies:
+    tslib "~2.6.2"
+
 "@blueprintjs/core@4.20.2", "@blueprintjs/core@^4.20.2":
   version "4.20.2"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.20.2.tgz#ae1bbaf13bd1bf887b506760c478cc940f6d6e20"
@@ -1423,6 +1430,22 @@
     react-transition-group "^4.4.5"
     tslib "~2.5.0"
 
+"@blueprintjs/core@^5.13.1":
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-5.13.1.tgz#8d84dfb7289958930d0ace19c56e8cf3db572bcb"
+  integrity sha512-PDZ9X/xGBetwU2AqQuCDGVWZZMmt6+/BCnmoKXxsBBZIuWQuHDiKcwvb9rzup0htsA6P7KGl5aw7ocmDvZPpBw==
+  dependencies:
+    "@blueprintjs/colors" "^5.1.2"
+    "@blueprintjs/icons" "^5.13.0"
+    "@popperjs/core" "^2.11.8"
+    classnames "^2.3.1"
+    normalize.css "^8.0.1"
+    react-popper "^2.3.0"
+    react-transition-group "^4.4.5"
+    react-uid "^2.3.3"
+    tslib "~2.6.2"
+    use-sync-external-store "^1.2.0"
+
 "@blueprintjs/icons@^4.16.0":
   version "4.16.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.16.0.tgz#47f9e8abe64d84fc18721080b8f191d8aac075d8"
@@ -1432,7 +1455,25 @@
     classnames "^2.3.1"
     tslib "~2.5.0"
 
-"@blueprintjs/popover2@1.14.11", "@blueprintjs/popover2@^1.14.11":
+"@blueprintjs/icons@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-5.13.0.tgz#ae806e17db9980597778aefa1cce59d048ab07ed"
+  integrity sha512-L096dBjzfnWW7fWXM311S2C/5Zn0EuEK9q6G84QvWP0BZJOTowU1EIWLj90IgGtNajld/3ZUAj6eJf+ryt/kjQ==
+  dependencies:
+    change-case "^4.1.2"
+    classnames "^2.3.1"
+    tslib "~2.6.2"
+
+"@blueprintjs/popover2@2.1.11":
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-2.1.11.tgz#2f52eb7ac0689c420f687e61dd7ebb4182e8cfad"
+  integrity sha512-qXUmviRGxpvPrUbfyL+P0jhF43LlPmZI90YW/LuPNYaUlGbbxlyYHJbA7OVsfSIhzl9Mgm/bpsygSdArIiNP9w==
+  dependencies:
+    "@blueprintjs/core" "^5.13.1"
+    classnames "^2.3.1"
+    tslib "~2.6.2"
+
+"@blueprintjs/popover2@^1.14.11":
   version "1.14.11"
   resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.14.11.tgz#0698fdeaf6710460cef0b71bed592ca37f40d1f9"
   integrity sha512-5XAjeb2mlWjYXC0pqrNDLzHSsX85Zaiv8jixxUN9abarMUUFKGATgGF8MRsWTLAW94Gli6CB1lzVkrYkRHHf6Q==
@@ -2391,7 +2432,7 @@
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
-"@popperjs/core@2.11.8", "@popperjs/core@^2.11.7":
+"@popperjs/core@2.11.8", "@popperjs/core@^2.11.7", "@popperjs/core@^2.11.8":
   version "2.11.8"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
@@ -10201,6 +10242,13 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-uid@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/react-uid/-/react-uid-2.3.3.tgz#6a485ccc868555997f3506c6db97a3e735d97adf"
+  integrity sha512-iNpDovcb9qBpBTo8iUgqRSQOS8GV3bWoNaTaUptHkXtAooXSo0OWe7vN6TqqB8x3x0bNBbQx96kkmSltQ5h9kQ==
+  dependencies:
+    tslib "^2.0.0"
+
 react-virtualized-auto-sizer@^1.0.4:
   version "1.0.20"
   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.20.tgz#d9a907253a7c221c52fa57dc775a6ef40c182645"
@@ -11431,6 +11479,11 @@ tslib@~2.5.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.3.tgz#24944ba2d990940e6e982c4bea147aba80209913"
   integrity sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==
 
+tslib@~2.6.2:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.3.tgz#0438f810ad7a9edcde7a241c3d80db693c8cbfe0"
+  integrity sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==
+
 tsutils@^3.21.0:
   version "3.21.0"
   resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-3.21.0.tgz#b48717d394cea6c1e096983eed58e9d61715b623"
@@ -11648,6 +11701,11 @@ use-resize-observer@^9.0.0, use-resize-observer@^9.1.0:
   integrity sha512-R25VqO9Wb3asSD4eqtcxk8sJalvIOYBqS8MNZlpDSQ4l4xMQxC/J7Id9HoTqPq8FwULIn0PVW+OAqF2dyYbjow==
   dependencies:
     "@juggle/resize-observer" "^3.3.1"
+
+use-sync-external-store@^1.2.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.2.tgz#c3b6390f3a30eba13200d2302dcdf1e7b57b2ef9"
+  integrity sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
