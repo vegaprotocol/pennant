@@ -101,7 +101,7 @@
     "@babel/preset-typescript": "7.22.5",
     "@blueprintjs/core": "4.20.2",
     "@blueprintjs/popover2": "1.14.11",
-    "@blueprintjs/select": "4.9.24",
+    "@blueprintjs/select": "5.2.5",
     "@popperjs/core": "2.11.8",
     "@rollup/plugin-babel": "6.0.3",
     "@rollup/plugin-commonjs": "25.0.3",
