@@ -134,7 +134,7 @@
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "10.0.0",
-    "eslint-plugin-storybook": "0.6.12",
+    "eslint-plugin-storybook": "0.10.1",
     "ethers": "5.7.2",
     "graphql": "16.7.1",
     "graphql-ws": "5.14.0",
